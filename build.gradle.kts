@@ -133,7 +133,7 @@ tasks {
         // NOTE: sonarqube picks up combined coverage correctly without further configuration from:
         // build/reports/jacoco/test/jacocoTestReport.xml
         properties {
-            property("sonar.projectKey", "digitalservice4germany_kotlin-application-template")
+            property("sonar.projectKey", "digitalservice4germany_eid-qrcode-service")
             property("sonar.organization", "digitalservice4germany")
             property("sonar.host.url", "https://sonarcloud.io")
         }
