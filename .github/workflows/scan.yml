@@ -15,6 +15,7 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: read
       security-events: write
     steps:
