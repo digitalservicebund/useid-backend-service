@@ -1,4 +1,4 @@
-# Kotlin Application Template
+# eID QRCode Service
 
 [![Pipeline](https://github.com/digitalservice4germany/eid-qrcode-service/actions/workflows/pipeline.yml/badge.svg)](https://github.com/digitalservice4germany/eid-qrcode-service/actions/workflows/pipeline.yml)
 [![Scan](https://github.com/digitalservice4germany/eid-qrcode-service/actions/workflows/scan.yml/badge.svg)](https://github.com/digitalservice4germany/eid-qrcode-service/actions/workflows/scan.yml)
