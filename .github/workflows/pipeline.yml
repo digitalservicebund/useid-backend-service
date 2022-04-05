@@ -110,6 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     # We only want to deploy from trunk, never for pull requests!
     if: github.event_name != 'pull_request'
+    environment: staging
     needs: build
     permissions:
       packages: write
