@@ -1,1 +1,1 @@
-rootProject.name = "eid-qrcode-service"
+rootProject.name = "useid-backend-service"

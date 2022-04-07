@@ -158,7 +158,7 @@ jobs:
       - name: Update image tag for staging
         run: |
           cd manifests/overlays/staging
-          kustomize edit set image ghcr.io/digitalservice4germany/eid-qrcode-service:${{ env.CONTAINER_IMAGE_VERSION }}
+          kustomize edit set image ghcr.io/digitalservice4germany/useid-backend-service:${{ env.CONTAINER_IMAGE_VERSION }}
       - name: Commit and push changes for infra repository
         # Third-party action, pin to commit SHA!
         # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
