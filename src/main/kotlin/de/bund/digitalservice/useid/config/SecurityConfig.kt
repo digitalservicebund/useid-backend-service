@@ -11,6 +11,6 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 class SecurityConfig {
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-        return http.authorizeExchange().anyExchange().permitAll().and().build()
+        return http.authorizeExchange().anyExchange().permitAll().and().csrf().disable().build()
     }
 }
