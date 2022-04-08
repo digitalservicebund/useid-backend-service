@@ -159,7 +159,7 @@ spotless {
     val prettierVersion = "2.6.1"
 
     format("misc") {
-        target("**/*.js", "**/*.json", "**/*.md", "**/*.yml")
+        target("**/*.html", "**/*.js", "**/*.json", "**/*.md", "**/*.yml")
         prettier(prettierVersion)
     }
     format("properties") {
