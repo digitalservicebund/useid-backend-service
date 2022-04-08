@@ -43,6 +43,14 @@ class PingController {
                     .data(data.t2)
                     .build()
             }
+            .concatWith(
+                Mono.just(
+                    ServerSentEvent.builder<Int>()
+                        .event("close")
+                        .data(0)
+                        .build()
+                )
+            )
     }
 
     @PostMapping("/success")
