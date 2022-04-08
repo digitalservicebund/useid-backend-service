@@ -21,6 +21,10 @@
         align-items: center;
       }
     </style>
+    <script>
+      const eventSource = new EventSource("/sse");
+      eventSource.addEventListener("ping", (event) => console.log(event.data));
+    </script>
   </head>
 
   <body>
