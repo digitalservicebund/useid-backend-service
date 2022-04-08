@@ -1,4 +1,4 @@
-package de.bund.digitalservice.template
+package de.bund.digitalservice.useid
 
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest

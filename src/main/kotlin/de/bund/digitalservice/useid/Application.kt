@@ -1,4 +1,4 @@
-package de.bund.digitalservice.template
+package de.bund.digitalservice.useid
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
