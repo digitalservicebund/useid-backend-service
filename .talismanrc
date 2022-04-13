@@ -6,6 +6,6 @@ fileignoreconfig:
   - filename: .github/workflows/pipeline.yml
     checksum: 3d13a8da87096ccfcba4f8c1302fa28e9b273d6fecba494d5b951f9dad60dce5
   - filename: .github/workflows/secrets-check.yml
-    checksum: 3064edb927d0f5a9097ac3e5474775b6b39b600517d28e1c781459afbebe7977
+    checksum: 836ea67ce7c67ecfb56519ff7f65ff461821cc221797f15c635108f212646664
   - filename: .github/workflows/scan.yml
     checksum: 0e868ce9c94b51467fb0d9573635297d7d188460b3abae5ac1fb1363a8971756
