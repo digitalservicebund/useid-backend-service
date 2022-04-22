@@ -8,10 +8,10 @@ Kotlin service built with the [Spring WebFlux reactive stack](https://docs.sprin
 
 ## Prerequisites
 
-Kotlin 1.6 w/ Java 11, Docker for building + running the containerized application:
+Kotlin 1.6 w/ Java 17, Docker for building + running the containerized application:
 
 ```bash
-brew install openjdk@11
+brew install openjdk@17
 brew install --cask docker # or just `brew install docker` if you don't want the Desktop app
 ```
 
