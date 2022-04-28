@@ -110,6 +110,17 @@ tasks {
             html.isEnabled = true
         }
         dependsOn(getByName("integrationTest")) // All tests are required to run before generating a report..
+
+        // Avoid config classes skewing coverage..
+        classDirectories.setFrom(
+            files(
+                classDirectories.files.map {
+                    fileTree(it) {
+                        exclude("**/config/**")
+                    }
+                }
+            )
+        )
     }
 
     bootBuildImage {
@@ -136,6 +147,7 @@ tasks {
             property("sonar.projectKey", "digitalservice4germany_useid-backend-service")
             property("sonar.organization", "digitalservice4germany")
             property("sonar.host.url", "https://sonarcloud.io")
+            property("sonar.coverage.exclusions", "**/config/**")
         }
     }
     getByName("sonarqube") {
