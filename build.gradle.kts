@@ -5,7 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
-    id("com.diffplug.spotless") version "6.4.1"
+    id("com.diffplug.spotless") version "6.5.1"
     id("jacoco")
     id("org.sonarqube") version "3.3"
     id("com.github.jk1.dependency-license-report") version "2.1"
