@@ -116,7 +116,7 @@ tasks {
             files(
                 classDirectories.files.map {
                     fileTree(it) {
-                        exclude("**/config/**")
+                        exclude("**/config/**", "**/PingController**", "**/SuccessEvent**")
                     }
                 }
             )
@@ -147,7 +147,10 @@ tasks {
             property("sonar.projectKey", "digitalservice4germany_useid-backend-service")
             property("sonar.organization", "digitalservice4germany")
             property("sonar.host.url", "https://sonarcloud.io")
-            property("sonar.coverage.exclusions", "**/config/**")
+            property(
+                "sonar.coverage.exclusions",
+                "**/config/**,**/PingController**,**/SuccessEvent**"
+            )
         }
     }
     getByName("sonarqube") {
