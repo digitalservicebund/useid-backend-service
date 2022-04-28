@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks.Many
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
+import java.security.SecureRandom
 import java.time.Duration
-import java.util.concurrent.ThreadLocalRandom
 
 @RestController
 class PingController {
@@ -33,7 +33,7 @@ class PingController {
             .map { seq: Long ->
                 Tuples.of(
                     seq,
-                    ThreadLocalRandom.current().nextInt()
+                    SecureRandom().nextInt()
                 )
             }
             .map { data: Tuple2<Long, Int> ->
