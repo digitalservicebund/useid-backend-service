@@ -125,12 +125,12 @@ tasks {
             )
         )
 
-        // Avoid config classes skewing coverage...
+        // Avoid untested prototype code skewing coverage...
         classDirectories.setFrom(
             files(
                 classDirectories.files.map {
                     fileTree(it) {
-                        exclude("**/config/**", "**/PingController**", "**/SuccessEvent**")
+                        exclude("**/PingController**", "**/SuccessEvent**")
                     }
                 }
             )
