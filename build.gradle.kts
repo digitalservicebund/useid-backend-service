@@ -116,10 +116,7 @@ tasks {
         val executionDataTree = fileTree(project.buildDir.absolutePath) {
             include("jacoco/*.exec")
         }
-        reports {
-            xml.isEnabled = true
-            html.isEnabled = true
-        }
+
         dependsOn(getByName("integrationTest")) // All tests are required to run before generating a report..
 
         // Avoid config classes skewing coverage..
