@@ -130,7 +130,7 @@ tasks {
             files(
                 classDirectories.files.map {
                     fileTree(it) {
-                        exclude("**/PingController**", "**/SuccessEvent**")
+                        exclude("**/ApplicationKt**", "**/PingController**", "**/SuccessEvent**")
                     }
                 }
             )
