@@ -72,7 +72,7 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform {
-            excludeTags("integration")
+            excludeTags("integration", "journey")
         }
         testLogging {
             events("passed", "skipped", "failed")
@@ -96,6 +96,17 @@ tasks {
     }
     check {
         dependsOn(getByName("integrationTest"))
+    }
+
+    register<Test>("journeyTest") {
+        description = "Runs the journey tests."
+        group = "verification"
+        useJUnitPlatform {
+            includeTags("journey")
+        }
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
     }
 
     jacocoTestReport {
