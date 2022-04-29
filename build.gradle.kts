@@ -111,18 +111,17 @@ tasks {
 
     jacocoTestReport {
         // Jacoco hooks into all tasks of type: Test automatically, but results for each of these
-        // tasks are kept separately and are not combined out of the box.. we want to gather
+        // tasks are kept separately and are not combined out of the box... we want to gather
         // coverage of our unit and integration tests as a single report!
-        val executionDataTree = fileTree(project.buildDir.absolutePath) {
-            include("jacoco/*.exec")
-        }
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-        }
-        dependsOn(getByName("integrationTest")) // All tests are required to run before generating a report..
+        executionData.setFrom(
+            files(
+                fileTree(project.buildDir.absolutePath) {
+                    include("jacoco/*.exec")
+                }
+            )
+        )
 
-        // Avoid config classes skewing coverage..
+        // Avoid config classes skewing coverage...
         classDirectories.setFrom(
             files(
                 classDirectories.files.map {
@@ -132,6 +131,13 @@ tasks {
                 }
             )
         )
+
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+
+        dependsOn(getByName("integrationTest")) // All tests are required to run before generating a report..
     }
 
     bootBuildImage {
