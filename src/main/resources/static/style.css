@@ -1,0 +1,30 @@
+  html {
+    height: 100%;
+  }
+
+  body,
+  div {
+    height: inherit;
+  }
+
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  li {
+    padding: 1rem 6rem;
+  }
+
+  ul li.active {
+    background-color: lightgray;
+  }
+
+  ul li.success {
+    background-color: limegreen;
+  }

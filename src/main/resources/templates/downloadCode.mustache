@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome!</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+      const eventSource = new EventSource("/sse");
+      eventSource.addEventListener("ping", (event) => {
+        const getQRCode = document.getElementById("downloadQR");
+        getQRCode.src = "/api/v1/qrcode/100?url=http%3A%2F%2Fwww.google.com" + "&uuid=" + event.data
+      });
+      eventSource.addEventListener("close", (event) => {
+        console.log(event.data)
+        eventSource.close();
+        window.location.href = "/authentication"
+      });
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <ul>
+        <li class="active">Download</li>
+        <li>Scan</li>
+    </ul>
+    <div>
+        <img id="downloadQR" src="">
+    </div>
+</div>
+
+</body>
+</html>

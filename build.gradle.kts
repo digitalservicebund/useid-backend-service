@@ -34,6 +34,8 @@ configurations.all {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-mustache")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-webflux") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
@@ -56,6 +58,7 @@ dependencies {
     // => CVE-2021-42550
     implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("ch.qos.logback:logback-core:1.2.9")
+    implementation("com.google.zxing:javase:3.4.1")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
