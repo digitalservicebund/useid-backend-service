@@ -13,6 +13,12 @@
       "moduleLicense": "Apache License, Version 2.0"
     },
     {
+      "moduleLicense": "Apache License 2.0"
+    },
+    {
+      "moduleLicense": "The (New) BSD License"
+    },
+    {
       "moduleLicense": "Public Domain, per Creative Commons CC0"
     },
     {
@@ -45,6 +51,16 @@
       "moduleLicense": null,
       "moduleVersion": "1.5.2",
       "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+    },
+    {
+      "moduleLicense": "LICENSE.txt",
+      "moduleVersion": "1.4.0",
+      "moduleName": "com.github.jai-imageio:jai-imageio-core"
+    },
+    {
+      "moduleLicense": "BSD 3-clause License w/nuclear disclaimer",
+      "moduleVersion": "1.4.0",
+      "moduleName": "com.github.jai-imageio:jai-imageio-core"
     }
   ]
 }
