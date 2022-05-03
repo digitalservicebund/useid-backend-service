@@ -12,7 +12,7 @@ env:
   CONTAINER_IMAGE_VERSION: ${{ github.sha }}
 
 jobs:
-  scan:
+  vulnerability-scan:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -47,7 +47,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           type: ${{ job.status }}
-          job_name: "Security scan :point_right:"
+          job_name: "Vulnerability scan :point_right:"
           mention: "here"
           mention_if: "failure"
           commit: true
