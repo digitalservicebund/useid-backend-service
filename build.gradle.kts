@@ -154,7 +154,8 @@ tasks {
         val containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
 
         imageName = "$containerRegistry/$containerImageName:$containerImageVersion"
-        setPublish(false)
+        isPublish = false
+
         docker {
             publishRegistry {
                 username = System.getenv("CONTAINER_REGISTRY_USER") ?: ""
