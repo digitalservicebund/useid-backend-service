@@ -59,7 +59,8 @@ running any integration tests.
 
 Denoting an integration test is accomplished by using a JUnit 5 tag annotation: `@Tag("integration")`.
 
-Furthermore, there is another type of test worth mentioning. We're using [ArchUnit](https://www.archunit.org/getting-started)
+Furthermore, there is another type of test worth mentioning. We're
+using [ArchUnit](https://www.archunit.org/getting-started)
 for ensuring certain architectural characteristics, for instance making sure that there are no cyclic dependencies.
 
 ## Formatting & Linting
@@ -109,7 +110,8 @@ The hooks are supposed to help you to:
 
 ## Code quality analysis
 
-Continuous code quality analysis is done in the pipeline upon pushes to trunk.
+Continuous code quality analysis is performed in the pipeline upon pushing to trunk; it requires a
+token provided as `SONAR_TOKEN` repository secret that needs to be obtained from https://sonarcloud.io.
 
 **To run the analysis locally:**
 
@@ -117,9 +119,8 @@ Continuous code quality analysis is done in the pipeline upon pushes to trunk.
 SONAR_TOKEN=[sonar-token] ./gradlew sonarqube
 ```
 
-Go
-to [https://sonarcloud.io](https://sonarcloud.io/dashboard?id=digitalservice4germany_useid-backend-service)
-for the results.
+Go to [https://sonarcloud.io](https://sonarcloud.io/dashboard?id=digitalservice4germany_useid-backend-service)
+for the analysis results.
 
 ## Container image
 
@@ -189,8 +190,8 @@ When omitting the `STAGING_URL` env variable journey tests run against the local
 
 ## Vulnerability Scanning
 
-Scanning container images for vulnerabilities is done with [Trivy](https://github.com/aquasecurity/trivy)
-as part of the build pipeline step, as well as each night for the latest published image in the container
+Scanning container images for vulnerabilities is performed with [Trivy](https://github.com/aquasecurity/trivy)
+as part of the pipeline's `build` job, as well as each night for the latest published image in the container
 repository.
 
 **To run a scan locally:**
@@ -208,8 +209,8 @@ trivy image --severity HIGH,CRITICAL ghcr.io/digitalservice4germany/useid-backen
 
 ## License Scanning
 
-Continuous license scanning is performed as part of the pipeline's build job. Whenever a production
-dependency is being added with a yet unknown license the build is going to fail.
+License scanning is performed as part of the pipeline's `build` job. Whenever a production dependency
+is being added with a yet unknown license the build is going to fail.
 
 **To run a scan locally:**
 
