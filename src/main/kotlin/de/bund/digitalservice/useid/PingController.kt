@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks.Many
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
-import java.security.SecureRandom
 import java.time.Duration
+import java.util.UUID
 
 @RestController
 class PingController {
@@ -27,30 +27,37 @@ class PingController {
         path = ["/sse"],
         produces = [MediaType.TEXT_EVENT_STREAM_VALUE]
     )
-    fun ping(): Flux<ServerSentEvent<Int>> {
-        return Flux.interval(Duration.ofSeconds(1))
-            .takeUntilOther(eventNotifications!!.asFlux())
-            .map { seq: Long ->
-                Tuples.of(
-                    seq,
-                    SecureRandom().nextInt()
-                )
-            }
-            .map { data: Tuple2<Long, Int> ->
-                ServerSentEvent.builder<Int>()
-                    .event("ping")
-                    .id(data.t1.toString())
-                    .data(data.t2)
-                    .build()
-            }
-            .concatWith(
-                Mono.just(
-                    ServerSentEvent.builder<Int>()
-                        .event("close")
-                        .data(0)
+    fun ping(): Flux<ServerSentEvent<String>> {
+        val uuid: String = UUID.randomUUID().toString()
+        val initialEvent = Flux.just(
+            ServerSentEvent.builder<String>()
+                .event(EventStatus.READY.eventName)
+                .data(uuid)
+                .build()
+        )
+        return initialEvent.concatWith(
+            Flux.interval(Duration.ofSeconds(1))
+                .takeUntilOther(eventNotifications!!.asFlux())
+                .takeUntil { seq: Long -> seq >= 5 }
+                .map { seq: Long ->
+                    Tuples.of(seq, uuid)
+                }
+                .map { data: Tuple2<Long, String> ->
+                    ServerSentEvent.builder<String>()
+                        .event(EventStatus.IN_PROGRESS.eventName)
+                        .id(data.t1.toString())
+                        .data(uuid)
                         .build()
+                }
+                .concatWith(
+                    Mono.just(
+                        ServerSentEvent.builder<String>()
+                            .event(EventStatus.FINISHED.eventName)
+                            .data(uuid)
+                            .build()
+                    )
                 )
-            )
+        )
     }
 
     @PostMapping("/success")
