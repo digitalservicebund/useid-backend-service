@@ -9,7 +9,5 @@ fileignoreconfig:
     checksum: a189c6b31aa1517bf09f0b8fb078132ee76ed53000f4def13f21f9289e2266bf
   - filename: .github/workflows/scan.yml
     checksum: 57a954617f128d52274d11930cbf2ab0066b26b9bbba1ab9fbce668162b309bc
-  - filename: src/main/resources/static/fonts/BundesSans-Web-RegularItalic.woff
-    checksum: 0636be519cfaffae9986b27c2979e42fcd521cdc82032c2748e3563dc138e403
-  - filename: src/main/resources/static/fonts/BundesSans-Web-BlackItalic.woff2
-    checksum: e1d5025ea6f271f019b48943b4e9c2f284989541ca13db218558cc1557f0ff9c
+  - filename: '*.woff*'
+    checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
