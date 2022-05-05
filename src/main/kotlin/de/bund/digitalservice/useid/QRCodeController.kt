@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping
 
 @Controller
 class QRCodeController {
-    @GetMapping("/download")
-    fun downloadCode(model: Model): String = "downloadCode"
-
-    @GetMapping("/authentication")
-    fun authenticationCode(model: Model): String = "authenticationCode"
+    @GetMapping("/widget")
+    fun widget(model: Model): String = "widget"
 }
