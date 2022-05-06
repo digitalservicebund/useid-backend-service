@@ -58,7 +58,7 @@ dependencies {
     // => CVE-2021-42550
     implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("ch.qos.logback:logback-core:1.2.9")
-    implementation("com.google.zxing:javase:3.4.1")
+    implementation("com.google.zxing:javase:3.5.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
