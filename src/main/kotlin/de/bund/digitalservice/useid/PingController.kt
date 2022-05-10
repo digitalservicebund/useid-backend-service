@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid
 
+import de.bund.digitalservice.useid.config.EventStatusConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -31,7 +32,7 @@ class PingController {
         val uuid: String = UUID.randomUUID().toString()
         val initialEvent = Flux.just(
             ServerSentEvent.builder<String>()
-                .event(EventStatus.READY.eventName)
+                .event(EventStatusConfig.READY.eventName)
                 .data(uuid)
                 .build()
         )
@@ -44,7 +45,7 @@ class PingController {
                 }
                 .map { data: Tuple2<Long, String> ->
                     ServerSentEvent.builder<String>()
-                        .event(EventStatus.IN_PROGRESS.eventName)
+                        .event(EventStatusConfig.IN_PROGRESS.eventName)
                         .id(data.t1.toString())
                         .data(uuid)
                         .build()
@@ -52,7 +53,7 @@ class PingController {
                 .concatWith(
                     Mono.just(
                         ServerSentEvent.builder<String>()
-                            .event(EventStatus.FINISHED.eventName)
+                            .event(EventStatusConfig.FINISHED.eventName)
                             .data(uuid)
                             .build()
                     )
