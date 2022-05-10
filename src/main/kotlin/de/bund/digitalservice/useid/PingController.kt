@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid
 
+import de.bund.digitalservice.useid.config.EventConfig
 import de.bund.digitalservice.useid.config.EventStatusConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -22,7 +23,7 @@ import java.util.UUID
 class PingController {
     @Autowired
     @NonNull
-    private val eventNotifications: Many<SuccessEvent>? = null
+    private val eventNotifications: Many<EventConfig.SuccessEvent>? = null
 
     @GetMapping(
         path = ["/sse"],
@@ -65,7 +66,7 @@ class PingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun success(): Mono<Any> {
         println("==> SUCCESS")
-        eventNotifications!!.tryEmitNext(SuccessEvent(this))
+        eventNotifications!!.tryEmitNext(EventConfig.SuccessEvent(this))
         return Mono.empty()
     }
 }

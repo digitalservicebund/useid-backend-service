@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.config
 
-import de.bund.digitalservice.useid.SuccessEvent
+import org.springframework.context.ApplicationEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.core.publisher.Sinks
@@ -13,4 +13,6 @@ class EventConfig {
     fun eventNotifications(): Many<SuccessEvent>? {
         return Sinks.many().replay().limit(Duration.ofSeconds(3))
     }
+
+    class SuccessEvent(source: Any?) : ApplicationEvent(source!!)
 }
