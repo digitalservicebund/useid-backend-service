@@ -9,5 +9,5 @@ class ArchitectureFitnessTest {
 
     @ArchTest
     val `prevent package import cycles` =
-        slices().matching("de.bund.digitalservice.(*)..").should().beFreeOfCycles()
+        slices().matching("de.bund.digitalservice.(**)").should().beFreeOfCycles()
 }
