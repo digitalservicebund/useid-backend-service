@@ -4,22 +4,29 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import java.net.URI
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class QRCodeImageControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class QRCodeImageControllerIntegrationTest(
+    @Autowired val webTestClient: WebTestClient,
+    @Autowired @LocalServerPort val port: Int
+) {
     private val fixture = ClassPathResource("qr-300-digitalservice-bund-de.png")
     private val fixtureByteArray = fixture.file.readBytes()
 
     @Test
-    fun `should return correct QR Code when the url is encoded`() {
+    fun `should return correct QR Code when the url is not encoded`() {
+        // WebTestClient's uri() when given a string will use Spring's default uri builder which encodes the given string,
+        // thus using `URI.create()` to make explicit the url being requested!
         webTestClient
             .get()
-            .uri("/api/v1/qrcode/300?url=https%3A%2F%2Fdigitalservice.bund.de%2F")
+            .uri(URI.create("http://localhost:$port/api/v1/qrcode/300?url=https://digitalservice.bund.de/"))
             .exchange()
             .expectStatus()
             .isOk
@@ -30,10 +37,12 @@ class QRCodeImageControllerIntegrationTest(@Autowired val webTestClient: WebTest
     }
 
     @Test
-    fun `should return correct QR Code when the url is not encoded`() {
+    fun `should return correct QR Code when the url is encoded`() {
+        // WebTestClient's uri() when given a string will use Spring's default uri builder which encodes the given string,
+        // thus using `URI.create()` to make explicit the url being requested!
         webTestClient
             .get()
-            .uri("/api/v1/qrcode/300?url=https://digitalservice.bund.de/")
+            .uri(URI.create("http://localhost:$port/api/v1/qrcode/300?url=https%3A%2F%2Fdigitalservice.bund.de%2F"))
             .exchange()
             .expectStatus()
             .isOk
