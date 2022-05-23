@@ -44,13 +44,15 @@
     },
     {
       "moduleLicense": null,
-      "moduleVersion": "2.13.2",
       "moduleName": "com.fasterxml.jackson:jackson-bom"
     },
     {
       "moduleLicense": null,
-      "moduleVersion": "1.5.2",
       "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+    },
+    {
+      "moduleLicense": null,
+      "moduleName": "org.jetbrains.kotlinx:kotlinx-coroutines-bom"
     },
     {
       "moduleLicense": "LICENSE.txt",
