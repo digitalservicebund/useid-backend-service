@@ -66,7 +66,7 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.23.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:4.5.1")
+    testImplementation("org.mockito:mockito-junit-jupiter:4.6.1")
 }
 
 tasks {
