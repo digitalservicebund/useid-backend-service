@@ -3,8 +3,8 @@ package de.bund.digitalservice.useid
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -15,7 +15,7 @@ import java.net.URI
 @Tag("integration")
 class QRCodeImageControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
-    @Autowired @LocalServerPort val port: Int
+    @Autowired @Value("\${local.server.port}") val port: Int
 ) {
     private val fixture = ClassPathResource("qr-300-digitalservice-bund-de.png")
     private val fixtureByteArray = fixture.file.readBytes()
