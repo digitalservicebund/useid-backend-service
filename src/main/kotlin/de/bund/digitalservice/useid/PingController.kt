@@ -9,6 +9,7 @@ import org.springframework.http.codec.ServerSentEvent
 import org.springframework.lang.NonNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
@@ -20,6 +21,7 @@ import java.time.Duration
 import java.util.UUID
 
 @RestController
+@RequestMapping("/v1")
 class PingController {
     @Autowired
     @NonNull
