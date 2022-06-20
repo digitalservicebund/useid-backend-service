@@ -1,6 +1,0 @@
-springdoc:
-  api-docs:
-    path: /v1
-  swagger-ui:
-    path: /swagger/docs.html
-    operationsSorter: method
