@@ -1,7 +1,5 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.ping
 
-import de.bund.digitalservice.useid.config.EventConfig
-import de.bund.digitalservice.useid.config.EventStatusConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -18,7 +16,7 @@ import reactor.core.publisher.Sinks.Many
 import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 import java.time.Duration
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/v1")

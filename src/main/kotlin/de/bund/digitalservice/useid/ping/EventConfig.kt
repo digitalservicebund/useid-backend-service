@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.config
+package de.bund.digitalservice.useid.ping
 
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.annotation.Bean
