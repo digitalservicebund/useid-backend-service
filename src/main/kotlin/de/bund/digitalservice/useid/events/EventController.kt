@@ -5,7 +5,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.codec.ServerSentEvent
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.FluxSink
 import reactor.core.publisher.Mono
@@ -45,6 +52,6 @@ class EventController(eventHandler: EventHandler) { // TODO write tests
 
     private fun createServerSentEvent(data: Any?) = ServerSentEvent.builder<Any>()
             .data(data) // TODO return encrypted refreshURL and widgetSessionId
-            .event("success") // TODO make this an enum
+            .event(EventType.SUCCESS.eventName)
             .build()
 }
