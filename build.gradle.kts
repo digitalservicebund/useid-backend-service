@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.7.0"
     id("com.diffplug.spotless") version "6.6.0"
     id("jacoco")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.4.0.2513"
     id("com.github.jk1.dependency-license-report") version "2.1"
 }
 
