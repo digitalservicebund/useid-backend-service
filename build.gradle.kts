@@ -52,6 +52,7 @@ dependencies {
     implementation("ch.qos.logback:logback-core:1.2.9")
     implementation("com.google.zxing:javase:3.5.0")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
+    implementation("org.projectlombok:lombok:1.18.22")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
