@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.widget
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.client.j2se.MatrixToImageWriter
