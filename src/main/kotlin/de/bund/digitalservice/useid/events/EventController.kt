@@ -45,8 +45,8 @@ class EventController(eventHandler: EventHandler) { // TODO write tests
     @CrossOrigin
     @GetMapping(path = ["/events/{consumerId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun consumer(@PathVariable consumerId: String): Flux<ServerSentEvent<Any>>? {
-        return Flux.create { sink: FluxSink<Any?> -> eventHandler.subscribeConsumer(consumerId) { t: Event? -> sink.next(t!!) } }
-                .map { data: Any? -> createServerSentEvent(data) } // TODO make data type explicit
+        return Flux.create { sink: FluxSink<Event> -> eventHandler.subscribeConsumer(consumerId) { event: Event -> sink.next(event) } }
+                .map { event: Event -> createServerSentEvent(event) }
     }
 
     private fun createServerSentEvent(data: Any?) = ServerSentEvent.builder<Any>()
