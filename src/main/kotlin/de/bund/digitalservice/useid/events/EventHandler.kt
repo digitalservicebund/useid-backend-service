@@ -22,9 +22,9 @@ class EventHandler { // TODO write tests
     /**
      * This method publishes the given event to the according consumer. The consumer id is specified in the event.
      */
-    fun publish(event: Event?) {
-        val consumerId = event!!.consumerId
-        log.info { "Publish event to consumer $consumerId: $event" }
+    fun publish(event: Event) {
+        val consumerId = event.consumerId
+        log.info { "Publish event to consumer $consumerId" }
         consumers[consumerId]!!.accept(event)
     }
 }

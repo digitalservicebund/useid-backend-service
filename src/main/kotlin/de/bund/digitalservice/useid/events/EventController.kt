@@ -33,10 +33,10 @@ class EventController(eventHandler: EventHandler) { // TODO write tests
      */
     @PostMapping("/events")
     @ResponseStatus(HttpStatus.CREATED)
-    fun send(@RequestBody event: Event?): Mono<Event> {
-        log.info { "Received event: $event" }
+    fun send(@RequestBody event: Event): Mono<Event> {
+        log.info { "Received event for consumer: ${event.consumerId}" }
         eventHandler.publish(event)
-        return Mono.just(event!!)
+        return Mono.just(event)
     }
 
     /**
@@ -49,8 +49,8 @@ class EventController(eventHandler: EventHandler) { // TODO write tests
                 .map { event: Event -> createServerSentEvent(event) }
     }
 
-    private fun createServerSentEvent(data: Any?) = ServerSentEvent.builder<Any>()
-            .data(data) // TODO return encrypted refreshURL and widgetSessionId
+    private fun createServerSentEvent(event: Event) = ServerSentEvent.builder<Any>()
+            .data(event)
             .event(EventType.SUCCESS.eventName)
             .build()
 }
