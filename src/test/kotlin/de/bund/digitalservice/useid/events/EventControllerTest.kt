@@ -98,7 +98,7 @@ internal class EventControllerTest(
                 .verifyLater()
 
         // When
-        webTestClient.post().uri("/api/v1/events")
+        webTestClient.post().uri("")
                 .contentType(APPLICATION_JSON)
                 .body(Mono.just(event))
                 .exchange()
