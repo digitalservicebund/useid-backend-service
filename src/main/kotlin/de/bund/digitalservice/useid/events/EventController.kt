@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.events
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.codec.ServerSentEvent
@@ -21,7 +20,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/api/v1")
 class EventController(eventHandler: EventHandler) { // TODO write tests
-    private val log: Logger = LoggerFactory.getLogger(EventController::class.java) // TODO make this implicit with lombok
+    private val log = KotlinLogging.logger {}
 
     private val eventHandler: EventHandler
 
@@ -35,7 +34,7 @@ class EventController(eventHandler: EventHandler) { // TODO write tests
     @PostMapping("/events")
     @ResponseStatus(HttpStatus.CREATED)
     fun send(@RequestBody event: Event?): Mono<Event> {
-        log.info("Received event: '{}'", event.toString())
+        log.info { "Received event: $event" }
         eventHandler.publish(event)
         return Mono.just(event!!)
     }
