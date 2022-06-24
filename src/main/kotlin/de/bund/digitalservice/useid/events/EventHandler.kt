@@ -27,4 +27,8 @@ class EventHandler { // TODO write tests
         log.info { "Publish event to consumer $consumerId" }
         consumers[consumerId]!!.accept(event)
     }
+
+    fun numberConsumers(): Int {
+        return consumers.size
+    }
 }
