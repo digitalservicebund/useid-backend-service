@@ -212,7 +212,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     environment: staging
-    needs: build-and-push-image
+    needs: [build-and-push-image]
     steps:
       - name: Deploy new image
         uses: digitalservicebund/github-actions/argocd-deploy@ed57ae223fac0d578e2261b004b145c39cbdc839
@@ -251,7 +251,7 @@ jobs:
   deploy-staging-verify:
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
-    needs: deploy-staging
+    needs: [deploy-staging]
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
