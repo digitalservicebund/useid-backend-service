@@ -23,15 +23,6 @@ jacoco {
     toolVersion = "0.8.8"
 }
 
-// Force version for transient dependencies...=> CVE-2021-43797
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "io.netty" && requested.name != "netty-tcnative-classes") {
-            useVersion("4.1.72.Final")
-        }
-    }
-}
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
@@ -42,7 +33,7 @@ dependencies {
         because("CVE-2021-43797, not using Tomcat")
     }
     // => CVE-2021-37136, CVE-2021-37137, CVE-2021-43797
-    implementation("io.netty:netty-all:4.1.72.Final") {
+    implementation("io.netty:netty-all:4.1.77.Final") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
     }
