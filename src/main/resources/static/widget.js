@@ -1,36 +1,36 @@
-function getIframe() {
-  let tcTokenURL = new URL(document.currentScript.src).searchParams.get(
-    "tcTokenURL"
-  );
-  if (tcTokenURL === null) {
-    tcTokenURL = document.getElementById("useid-widget").dataset.tcTokenUrl;
+const useIdUrl = "https://useid.dev.ds4g.net"; // TODO: Inject via env
+const widgetContainerId = "useid-widget-container";
 
-    if (tcTokenURL === undefined) {
-      const error = document.createElement("div");
-      error.innerHTML = "Fehlerhafte Konfiguration: TC Token nicht definiert.";
-      return error;
-    }
+const widgetContainer = document.getElementById(widgetContainerId) ?? (() => {
+  const container = document.createElement("div");
+  container.id = widgetContainerId;
+  document.write(container.outerHTML);
+  return container;
+})();
+// TODO: Default styling for container? Discuss with design team.
+
+widgetContainer.appendChild((() => {
+  const tcTokenURL = widgetContainer?.dataset.tcTokenUrl
+    ?? new URLSearchParams(new URL(document.currentScript.src).hash.substring(1)).get("tcTokenURL");
+
+  if (!tcTokenURL) {
+    const error = document.createElement("div");
+    error.innerHTML = "Fehlerhafte Konfiguration: TC-Token-URL nicht definiert.";
+    return error;
   }
 
   const iframe = document.createElement("iframe");
   iframe.setAttribute(
     "src",
-    `https://useid.dev.ds4g.net/widget?tcTokenURL=${tcTokenURL}`
+    `${useIdUrl}/widget?hostname=${location.hostname}#tcTokenURL=${tcTokenURL}`
   );
-  iframe.style.border = "2px solid #B8BDC3";
-  iframe.style.borderRadius = "20px";
   iframe.style.width = "100%";
-  iframe.style.minHeight = "600px"; // TODO: Set height to fit
+  iframe.style.minHeight = "600px"; // TODO: Adjust to design? Discuss with design team.
   return iframe;
-}
-
-const container = document.getElementById("useid-widget-container");
-container === null
-  ? document.write(getIframe().outerHTML)
-  : container.appendChild(getIframe());
+})());
 
 window.addEventListener("message", (e) => {
-  if (e.origin === "https://useid.dev.ds4g.net") {
+  if (e.origin === useIdUrl) {
     location.href = e.data;
   }
 });
