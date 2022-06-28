@@ -132,7 +132,7 @@ tasks {
             files(
                 classDirectories.files.map {
                     fileTree(it) {
-                        exclude("**/ApplicationKt**", "**/PingController**", "**/SuccessEvent**")
+                        exclude("**/ApplicationKt**")
                     }
                 }
             )
@@ -173,7 +173,7 @@ tasks {
             property("sonar.host.url", "https://sonarcloud.io")
             property(
                 "sonar.coverage.exclusions",
-                "**/config/**,**/PingController**,**/SuccessEvent**"
+                "**/config/**"
             )
         }
     }
