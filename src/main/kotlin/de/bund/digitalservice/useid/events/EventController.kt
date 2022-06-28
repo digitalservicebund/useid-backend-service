@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/api/v1")
-class EventController(eventHandler: EventHandler) { // TODO write tests
+class EventController(eventHandler: EventHandler) {
     private val log = KotlinLogging.logger {}
 
     private val eventHandler: EventHandler

@@ -6,7 +6,7 @@ import java.util.function.Consumer
 
 
 @Service
-class EventHandler { // TODO write tests
+class EventHandler {
     private val log = KotlinLogging.logger {}
 
     private val consumers: MutableMap<String, Consumer<Event>> = HashMap()
