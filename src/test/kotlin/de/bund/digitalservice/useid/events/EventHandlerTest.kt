@@ -13,7 +13,7 @@ private const val CONSUMER_ID = "some-id"
 
 @Tag("test")
 internal class EventHandlerTest {
-    private val eventHandler: EventHandler = EventHandler();
+    private val eventHandler: EventHandler = EventHandler()
     private val consumer = mockk<Consumer<Event>>()
 
     @Test
@@ -50,7 +50,7 @@ internal class EventHandlerTest {
             // When
             eventHandler.publish(event)
         }
-        verify (exactly = 0){ consumer.accept(event) }
+        verify(exactly = 0) { consumer.accept(event) }
     }
 
     private fun event(consumerId: String) = Event(consumerId, "some-refresh-address", "some-widget-id")

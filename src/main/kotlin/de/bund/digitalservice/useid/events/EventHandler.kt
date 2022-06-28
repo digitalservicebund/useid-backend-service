@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.util.function.Consumer
 
-
 @Service
 class EventHandler {
     private val log = KotlinLogging.logger {}

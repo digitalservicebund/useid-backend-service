@@ -16,7 +16,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.FluxSink
 import reactor.core.publisher.Mono
 
-
 @RestController
 @RequestMapping("/api/v1")
 class EventController(eventHandler: EventHandler) {
@@ -46,11 +45,11 @@ class EventController(eventHandler: EventHandler) {
     @GetMapping(path = ["/events/{consumerId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun consumer(@PathVariable consumerId: String): Flux<ServerSentEvent<Any>>? {
         return Flux.create { sink: FluxSink<Event> -> eventHandler.subscribeConsumer(consumerId) { event: Event -> sink.next(event) } }
-                .map { event: Event -> createServerSentEvent(event) }
+            .map { event: Event -> createServerSentEvent(event) }
     }
 
     private fun createServerSentEvent(event: Event) = ServerSentEvent.builder<Any>()
-            .data(event)
-            .event(EventType.SUCCESS.eventName)
-            .build()
+        .data(event)
+        .event(EventType.SUCCESS.eventName)
+        .build()
 }

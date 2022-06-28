@@ -20,7 +20,7 @@ private const val CONSUMER_ID = "some-id"
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 internal class EventControllerTest(
-        @Autowired @Value("\${local.server.port}") val port: Int
+    @Autowired @Value("\${local.server.port}") val port: Int
 ) {
 
     lateinit var webClient: WebClient
@@ -28,39 +28,38 @@ internal class EventControllerTest(
     @BeforeEach
     fun setup() {
         webClient = WebClient.builder()
-                .clientConnector(ReactorClientHttpConnector())
-                .codecs { it.defaultCodecs() }
-                .exchangeStrategies(ExchangeStrategies.withDefaults())
-                .baseUrl("http://localhost:$port/api/v1")
-                .build()
+            .clientConnector(ReactorClientHttpConnector())
+            .codecs { it.defaultCodecs() }
+            .exchangeStrategies(ExchangeStrategies.withDefaults())
+            .baseUrl("http://localhost:$port/api/v1")
+            .build()
     }
-
 
     @Test
     fun `publish and receive event happy case`() {
         // Given
-        val event = event(CONSUMER_ID);
+        val event = event(CONSUMER_ID)
 
         val verifier = webClient.get().uri("/events/$CONSUMER_ID")
-                .accept(TEXT_EVENT_STREAM)
-                .retrieve()
-                .bodyToFlux(Event::class.java)
-                .log()
-                .`as` { StepVerifier.create(it) }
-                .consumeNextWith {
-                    // Then
-                    assertEquals(event, it)
-                }
-                .thenCancel()
-                .verifyLater()
+            .accept(TEXT_EVENT_STREAM)
+            .retrieve()
+            .bodyToFlux(Event::class.java)
+            .log()
+            .`as` { StepVerifier.create(it) }
+            .consumeNextWith {
+                // Then
+                assertEquals(event, it)
+            }
+            .thenCancel()
+            .verifyLater()
 
         // When
         webClient.post().uri("/events")
-                .contentType(APPLICATION_JSON)
-                .bodyValue(event)
-                .exchange()
-                .then()
-                .block()
+            .contentType(APPLICATION_JSON)
+            .bodyValue(event)
+            .exchange()
+            .then()
+            .block()
 
         verifier.verify()
     }
@@ -68,25 +67,25 @@ internal class EventControllerTest(
     @Test
     fun `publish event to different consumer `() {
         // Given
-        val event = event("some-other-consumer");
+        val event = event("some-other-consumer")
 
         val verifier = webClient.get().uri("/events/$CONSUMER_ID")
-                .accept(TEXT_EVENT_STREAM)
-                .retrieve()
-                .bodyToFlux(Event::class.java)
-                .log()
-                .`as` { StepVerifier.create(it) }
-                .expectNextCount(0)
-                .thenCancel()
-                .verifyLater()
+            .accept(TEXT_EVENT_STREAM)
+            .retrieve()
+            .bodyToFlux(Event::class.java)
+            .log()
+            .`as` { StepVerifier.create(it) }
+            .expectNextCount(0)
+            .thenCancel()
+            .verifyLater()
 
         // When
         webClient.post().uri("/events")
-                .contentType(APPLICATION_JSON)
-                .bodyValue(event)
-                .exchange()
-                .then()
-                .block()
+            .contentType(APPLICATION_JSON)
+            .bodyValue(event)
+            .exchange()
+            .then()
+            .block()
 
         // Then
         verifier.verify(ofSeconds(1))
