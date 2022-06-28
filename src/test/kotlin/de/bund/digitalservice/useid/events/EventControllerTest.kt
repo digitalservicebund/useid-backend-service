@@ -10,25 +10,19 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_EVENT_STREAM
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.test.web.reactive.server.FluxExchangeResult
-import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.body
-import org.springframework.test.web.reactive.server.returnResult
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import java.time.Duration.ofSeconds
 
 private const val CONSUMER_ID = "some-id"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 internal class EventControllerTest(
-        @Autowired val eventController: EventController,
         @Autowired @Value("\${local.server.port}") val port: Int
 ) {
 
-    lateinit var webTestClient: WebTestClient
     lateinit var webClient: WebClient
 
     @BeforeEach
@@ -37,22 +31,17 @@ internal class EventControllerTest(
                 .clientConnector(ReactorClientHttpConnector())
                 .codecs { it.defaultCodecs() }
                 .exchangeStrategies(ExchangeStrategies.withDefaults())
-                .baseUrl("http://localhost:$port/api/v1/events")
-                .build()
-
-        webTestClient = WebTestClient.bindToController(eventController)
-                .configureClient()
-                .baseUrl("/api/v1/events")
+                .baseUrl("http://localhost:$port/api/v1")
                 .build()
     }
 
 
     @Test
-    fun `receive event happy case`() {
+    fun `publish and receive event happy case`() {
         // Given
         val event = event(CONSUMER_ID);
 
-        val verifier = webClient.get().uri("/$CONSUMER_ID")
+        val verifier = webClient.get().uri("/events/$CONSUMER_ID")
                 .accept(TEXT_EVENT_STREAM)
                 .retrieve()
                 .bodyToFlux(Event::class.java)
@@ -66,7 +55,7 @@ internal class EventControllerTest(
                 .verifyLater()
 
         // When
-        webClient.post().uri("")
+        webClient.post().uri("/events")
                 .contentType(APPLICATION_JSON)
                 .bodyValue(event)
                 .exchange()
@@ -77,34 +66,30 @@ internal class EventControllerTest(
     }
 
     @Test
-    fun `receive event happy case 2`() {
+    fun `publish event to different consumer `() {
         // Given
-        val event = event(CONSUMER_ID)
+        val event = event("some-other-consumer");
 
-        val result: FluxExchangeResult<Event> = webTestClient.get().uri("/$CONSUMER_ID")
+        val verifier = webClient.get().uri("/events/$CONSUMER_ID")
                 .accept(TEXT_EVENT_STREAM)
-                .exchange()
-                .expectStatus().isOk
-                .returnResult()
-
-        val verifyLater = StepVerifier.create(result.responseBody)
-                .expectNext(event)
-                .expectNextCount(1)
-                .consumeNextWith { e ->
-                    // Then
-                    assertEquals(event, e)
-                }
+                .retrieve()
+                .bodyToFlux(Event::class.java)
+                .log()
+                .`as` { StepVerifier.create(it) }
+                .expectNextCount(0)
                 .thenCancel()
                 .verifyLater()
 
         // When
-        webTestClient.post().uri("")
+        webClient.post().uri("/events")
                 .contentType(APPLICATION_JSON)
-                .body(Mono.just(event))
+                .bodyValue(event)
                 .exchange()
-                .expectStatus().isOk
+                .then()
+                .block()
 
-        verifyLater.verify()
+        // Then
+        verifier.verify(ofSeconds(1))
     }
 
     private fun event(consumerId: String) = Event(consumerId, "some-refresh-address", "some-widget-id")
