@@ -33,7 +33,7 @@ class EventController(eventHandler: EventHandler) {
     @PostMapping("/events")
     @ResponseStatus(HttpStatus.CREATED)
     fun send(@RequestBody event: Event): Mono<Event> {
-        log.info { "Received event for consumer: ${event.consumerId}" }
+        log.info { "Received event for consumer: ${event.widgetSessionId}" }
         eventHandler.publish(event)
         return Mono.just(event)
     }
@@ -42,9 +42,9 @@ class EventController(eventHandler: EventHandler) {
      * At this endpoint, consumers can open an SSE channel to consume events.
      */
     @CrossOrigin
-    @GetMapping(path = ["/events/{consumerId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun consumer(@PathVariable consumerId: String): Flux<ServerSentEvent<Any>>? {
-        return Flux.create { sink: FluxSink<Event> -> eventHandler.subscribeConsumer(consumerId) { event: Event -> sink.next(event) } }
+    @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun consumer(@PathVariable widgetSessionId: String): Flux<ServerSentEvent<Any>>? {
+        return Flux.create { sink: FluxSink<Event> -> eventHandler.subscribeConsumer(widgetSessionId) { event: Event -> sink.next(event) } }
             .map { event: Event -> createServerSentEvent(event) }
     }
 

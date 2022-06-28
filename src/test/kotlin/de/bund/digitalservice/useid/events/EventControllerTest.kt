@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.test.StepVerifier
 import java.time.Duration.ofSeconds
 
-private const val CONSUMER_ID = "some-id"
+private const val WIDGET_SESSION_ID = "some-id"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -38,9 +38,9 @@ internal class EventControllerTest(
     @Test
     fun `publish and receive event happy case`() {
         // Given
-        val event = event(CONSUMER_ID)
+        val event = event(WIDGET_SESSION_ID)
 
-        val verifier = webClient.get().uri("/events/$CONSUMER_ID")
+        val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
             .accept(TEXT_EVENT_STREAM)
             .retrieve()
             .bodyToFlux(Event::class.java)
@@ -67,9 +67,9 @@ internal class EventControllerTest(
     @Test
     fun `publish event to different consumer `() {
         // Given
-        val event = event("some-other-consumer")
+        val event = event("some-other-id")
 
-        val verifier = webClient.get().uri("/events/$CONSUMER_ID")
+        val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
             .accept(TEXT_EVENT_STREAM)
             .retrieve()
             .bodyToFlux(Event::class.java)
@@ -91,5 +91,5 @@ internal class EventControllerTest(
         verifier.verify(ofSeconds(1))
     }
 
-    private fun event(consumerId: String) = Event(consumerId, "some-refresh-address", "some-widget-id")
+    private fun event(widgetSessionId: String) = Event(widgetSessionId, "some-refresh-address")
 }

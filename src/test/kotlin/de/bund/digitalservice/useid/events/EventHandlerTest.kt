@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.function.Consumer
 
-private const val CONSUMER_ID = "some-id"
+private const val WIDGET_SESSION_ID = "some-id"
 
 @Tag("test")
 internal class EventHandlerTest {
@@ -19,11 +19,11 @@ internal class EventHandlerTest {
     @Test
     internal fun `subscribe and publish happy path`() {
         // Given
-        val event = event(CONSUMER_ID)
+        val event = event(WIDGET_SESSION_ID)
         every { consumer.accept(any()) } returns Unit
 
         // When
-        eventHandler.subscribeConsumer(CONSUMER_ID, consumer)
+        eventHandler.subscribeConsumer(WIDGET_SESSION_ID, consumer)
 
         // Then
         assertEquals(1, eventHandler.numberConsumers())
@@ -38,11 +38,11 @@ internal class EventHandlerTest {
     @Test
     internal fun `publish to unknown customer throws exception`() {
         // Given
-        val event = event("unknown-consumer-id")
+        val event = event("some-unknown-id")
         every { consumer.accept(any()) } returns Unit
 
         // When
-        eventHandler.subscribeConsumer(CONSUMER_ID, consumer)
+        eventHandler.subscribeConsumer(WIDGET_SESSION_ID, consumer)
 
         // Then
         assertEquals(1, eventHandler.numberConsumers())
@@ -53,5 +53,5 @@ internal class EventHandlerTest {
         verify(exactly = 0) { consumer.accept(event) }
     }
 
-    private fun event(consumerId: String) = Event(consumerId, "some-refresh-address", "some-widget-id")
+    private fun event(widgetSessionId: String) = Event(widgetSessionId, "some-refresh-address")
 }

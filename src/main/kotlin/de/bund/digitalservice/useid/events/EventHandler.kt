@@ -13,18 +13,18 @@ class EventHandler {
     /**
      * This method subscribes a consumer to events sent to the given id.
      */
-    fun subscribeConsumer(id: String, consumer: Consumer<Event>) {
-        consumers[id] = consumer
-        log.info { "New consumer added with id $id, total consumers: ${consumers.size}" }
+    fun subscribeConsumer(widgetSessionId: String, consumer: Consumer<Event>) {
+        consumers[widgetSessionId] = consumer
+        log.info { "New consumer added with id $widgetSessionId, total consumers: ${consumers.size}" }
     }
 
     /**
      * This method publishes the given event to the according consumer. The consumer id is specified in the event.
      */
     fun publish(event: Event) {
-        val consumerId = event.consumerId
-        log.info { "Publish event to consumer $consumerId" }
-        consumers[consumerId]!!.accept(event)
+        val widgetSessionId = event.widgetSessionId
+        log.info { "Publish event to consumer $widgetSessionId" }
+        consumers[widgetSessionId]!!.accept(event)
     }
 
     fun numberConsumers(): Int {
