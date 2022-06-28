@@ -35,7 +35,7 @@ class EventController(eventHandler: EventHandler) {
     fun send(@RequestBody event: Event): Mono<Event> {
         log.info { "Received event for consumer: ${event.widgetSessionId}" }
         eventHandler.publish(event)
-        return Mono.just(event)
+        return Mono.empty()
     }
 
     /**
