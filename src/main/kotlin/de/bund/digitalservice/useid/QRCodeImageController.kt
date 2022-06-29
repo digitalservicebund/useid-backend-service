@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 import java.io.ByteArrayOutputStream
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/api/v1")
 class QRCodeImageController {
     @GetMapping(
         path = ["/qrcode/{imageSize}"],
