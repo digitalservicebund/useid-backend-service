@@ -55,7 +55,11 @@ dependencies {
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude("org.mockito", "mockito-core")
+        because("Use MockK instead of Mockito since it is better suited for Kotlin")
+    }
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.23.0")
