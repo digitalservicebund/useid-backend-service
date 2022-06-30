@@ -1,0 +1,25 @@
+# 1. Record architecture decisions
+
+Date: 2022-06-30
+
+## Status
+
+Accepted
+
+## Context
+
+QR Code is embedded in the eService page and it is used to allow user to start identification process via the UseID app camera which later. The QR Code contains `tcTokenURL`, `widgetSessionId` and `encryptionKey`. For this decision record, [ADR 0006](LINK TO 0006) 
+```
+eid://127.0.0.1:24727/eID-Client?tcTokenURL={{tcTokenURL}}&widgetSessionId={{widgetSessionId}}&mobile={{isMobileDevice}}#{{encryptionKey}}
+```
+The current QR Code generation is handled in the server `/v1/qrcode/{imageSize}`
+
+## Decision
+
+In order to improve the security measures, QR Code should be handled on the client side.
+1. eService provides the necessary information  `tcTokenURL`, `widgetSessionId` and `encryptionKey`
+2. Widget provides the eService with QR Code library
+
+## Consequences
+1. Increase load time
+2. UseID Backend will not have any knowledge of `tcTokenUrl`
