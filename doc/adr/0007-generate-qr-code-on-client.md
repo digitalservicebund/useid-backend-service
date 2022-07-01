@@ -16,8 +16,8 @@ The current QR Code generation is handled in the server `/v1/qrcode/{imageSize}`
 
 We decided to move QR Code render to client-side instead of server side with the following reasons:
 
-1. We want to increase security aspect of the `tcTokenURL` since it's very crucial and it is used to trigger identification in app
-2. We include `encryptionKey` in the QR Code, so that the mobile app can encrypt the `RefreshAddress` (the address where the users will be taken to, after a successful authentication) and the encryption key should not be exposed to a third component (UseID Backend) and only available between eService and the App.
+1. We want to increase security aspect of the `tcTokenURL` since it's very crucial, and it is used to trigger identification in app
+2. We include `encryptionKey` in the QR Code, so that the mobile app can encrypt the `RefreshAddress` (the address where the users will be taken to, after a successful authentication)
 
 ## Consequences
 
