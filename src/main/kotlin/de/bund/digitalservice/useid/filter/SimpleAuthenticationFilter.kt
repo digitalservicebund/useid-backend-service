@@ -12,15 +12,13 @@ class SimpleAuthenticationFilter : WebFilter {
     override fun filter(serverWebExchange: ServerWebExchange, webFilterchain: WebFilterChain): Mono<Void> {
         val authorizationHeader: String? = serverWebExchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)
 
-        // TODO: Is there another way writing this code below more reactive?
         return when {
-            !isValidHeader(authorizationHeader) -> Mono.error(ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing: Invalid header"))
-            else -> webFilterchain.filter(serverWebExchange)
+            isValidHeader(authorizationHeader) -> webFilterchain.filter(serverWebExchange)
+            else -> Mono.error(ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing: Invalid header"))
         }
     }
     private fun isValidHeader(authHeader: String?): Boolean {
-        return authHeader != null &&
-            authHeader.startsWith(prefix = "Bearer ") &&
-            authHeader.endsWith("ShouldAvailableAsEnvVar", ignoreCase = false)
+        val token = "ShouldAvailableAsEnvVar"
+        return authHeader != null && authHeader.contentEquals("Bearer $token")
     }
 }
