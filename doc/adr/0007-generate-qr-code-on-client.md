@@ -1,4 +1,4 @@
-# 1. Record architecture decisions
+# 1. Generate QR Code on the client instead of on the backend
 
 Date: 2022-06-30
 
