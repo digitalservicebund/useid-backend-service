@@ -16,7 +16,7 @@ The current QR Code generation is handled in the server `/v1/qrcode/{imageSize}`
 
 ## Decision
 
-In order to improve the security measures, QR Code should be handled on the client side.
+We generate the QR code on the client side. This improves the security, since we don't need to send any data to the server.
 1. eService provides the necessary information  `tcTokenURL`, `widgetSessionId` and `encryptionKey`
 2. Widget provides the eService with QR Code library
 
