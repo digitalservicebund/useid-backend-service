@@ -68,6 +68,22 @@ class IdentityControllerIntegrationTest(
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
             .jsonPath("$.status").isEqualTo("404")
-            .jsonPath("$.message").isEqualTo("Invalid sessionId")
+            .jsonPath("$.message").isEqualTo("Error: sessionId is not found")
+    }
+
+    @Test
+    fun `should handle missing sessionId`() {
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/identity"))
+            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody()
+            .jsonPath("$.status").isEqualTo("400")
+            .jsonPath("$.error").isEqualTo("Bad Request")
     }
 }
