@@ -20,7 +20,7 @@ class IdentityService(private val sessionDataSource: SessionDataSource) {
                 sessionDataSource.removeSession(sessionId)
             }.switchIfEmpty {
                 Mono.error {
-                    throw NoSuchElementException("Invalid sessionId")
+                    throw NoSuchElementException("Error: sessionId is not found")
                 }
             }
     }

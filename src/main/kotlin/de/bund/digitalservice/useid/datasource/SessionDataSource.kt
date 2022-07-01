@@ -1,15 +1,15 @@
 package de.bund.digitalservice.useid.datasource
 
-import de.bund.digitalservice.useid.model.ClientResponseTCTokenUrl
+import de.bund.digitalservice.useid.model.SessionResponse
 import org.springframework.stereotype.Repository
 
 @Repository
 class SessionDataSource {
-    private val sessionStore = mutableListOf<ClientResponseTCTokenUrl>()
+    private val sessionStore = mutableListOf<SessionResponse>()
 
-    fun addSession(clientResponseTcTokenUrl: ClientResponseTCTokenUrl): ClientResponseTCTokenUrl {
-        sessionStore.add(clientResponseTcTokenUrl)
-        return clientResponseTcTokenUrl
+    fun addSession(sessionResponse: SessionResponse): SessionResponse {
+        sessionStore.add(sessionResponse)
+        return sessionResponse
     }
 
     fun removeSession(sessionId: String): String {
@@ -17,5 +17,5 @@ class SessionDataSource {
         return sessionId
     }
 
-    fun getSession(): Collection<ClientResponseTCTokenUrl> = sessionStore
+    fun getSession(): Collection<SessionResponse> = sessionStore
 }

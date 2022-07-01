@@ -32,7 +32,7 @@ class SessionControllerIntegrationTest(
 
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/init-session"))
+            .uri(URI.create("http://localhost:$port/api/v1/session"))
             .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
             .exchange()
@@ -51,7 +51,7 @@ class SessionControllerIntegrationTest(
     fun `should return error when request is made without Authorization header`() {
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/init-session"))
+            .uri(URI.create("http://localhost:$port/api/v1/session"))
             .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
