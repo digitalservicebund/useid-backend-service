@@ -1,55 +1,22 @@
 {
   "allowedLicenses": [
     {
-      "moduleLicense": "MIT"
+      "moduleLicense": "Apache License, Version 2.0"
     },
     {
       "moduleLicense": "MIT License"
     },
     {
-      "moduleLicense": "The MIT License (MIT)"
-    },
-    {
-      "moduleLicense": "The Apache Software License, Version 2.0"
-    },
-    {
-      "moduleLicense": "The Apache License, Version 2.0"
-    },
-    {
-      "moduleLicense": "Apache 2.0"
-    },
-    {
-      "moduleLicense": "Apache License, Version 2.0"
-    },
-    {
-      "moduleLicense": "Apache License 2.0"
-    },
-    {
-      "moduleLicense": "The (New) BSD License"
-    },
-    {
-      "moduleLicense": "Public Domain, per Creative Commons CC0"
-    },
-    {
-      "moduleLicense": "CC0"
+      "moduleLicense": "Eclipse Public License - v 2.0"
     },
     {
       "moduleLicense": "Eclipse Public License - v 1.0"
     },
     {
-      "moduleLicense": "Eclipse Public License v. 2.0"
+      "moduleLicense": "Creative Commons Legal Code"
     },
     {
-      "moduleLicense": "EPL 2.0"
-    },
-    {
-      "moduleLicense": "GNU Lesser General Public License"
-    },
-    {
-      "moduleLicense": "GNU General Public License, version 2 with the GNU Classpath Exception"
-    },
-    {
-      "moduleLicense": "GPL2 w/ CPE"
+      "moduleLicense": "The 2-Clause BSD License"
     },
     {
       "moduleLicense": null,
@@ -65,12 +32,10 @@
     },
     {
       "moduleLicense": "LICENSE.txt",
-      "moduleVersion": "1.4.0",
       "moduleName": "com.github.jai-imageio:jai-imageio-core"
     },
     {
       "moduleLicense": "BSD 3-clause License w/nuclear disclaimer",
-      "moduleVersion": "1.4.0",
       "moduleName": "com.github.jai-imageio:jai-imageio-core"
     }
   ]
