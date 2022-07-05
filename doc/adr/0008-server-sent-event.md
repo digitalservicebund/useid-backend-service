@@ -1,4 +1,4 @@
-# 7. Server Sent Events for success event from backend server to specific client
+# 8. Server Sent Events for success event from backend server to specific client
 
 Date: 2022-07-05
 
