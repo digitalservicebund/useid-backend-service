@@ -14,7 +14,7 @@ The QR code needs to include the ClientURL, including the `tcTokenURL`, (see [TR
 
 Additionally, some kind of widget session id needs to be added, so that the proxy message server can identify this exact widget when the mobile app wants to send a message to the widget.
 
-Lastly, an [encryption key](https://github.com/digitalservicebund/useid-architecture/blob/df7596d0725fdbfab70f08d3b29a5641ac711fde/doc/adr/0004-e2ee-for-refresh-address.md) needs to added. This should never be sent to any server and only be known to the widget and the mobile app.
+Lastly, an [encryption key](https://github.com/digitalservicebund/useid-architecture/blob/df7596d0725fdbfab70f08d3b29a5641ac711fde/doc/adr/0004-e2ee-for-refresh-address.md) needs to be included. This should never be sent to any server and only be known to the widget and the mobile app.
 
 On mobile devices, the user won't see a QR code, but only a link. The app behaves differently on mobile devices (opening the refresh address instead of informing the UseID Backend Server), so the mobile app needs to know if the user started from mobile device or not.
 
