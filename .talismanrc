@@ -11,3 +11,5 @@ fileignoreconfig:
     checksum: 76b4692ec1346d100fe7bcf5a42603795a9c455200a54ab7b00fb01c8b44e06e
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
+  - filename: doc/adr/0006-url-format-in-qr-code.md
+    checksum: 764b26fe5e377fb6e42aae69f0b515104515c10b77a336da2120182a6e945ac4
