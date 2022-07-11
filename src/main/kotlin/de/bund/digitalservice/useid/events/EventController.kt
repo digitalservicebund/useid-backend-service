@@ -31,7 +31,7 @@ class EventController(eventHandler: EventHandler) {
      * This endpoint receives events from the eID client (i.e. Ident-App) and publishes them to the respective consumer.
      */
     @PostMapping("/events")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     fun send(@RequestBody event: Event): Mono<Event> {
         log.info { "Received event for consumer: ${event.widgetSessionId}" }
         eventHandler.publish(event)
