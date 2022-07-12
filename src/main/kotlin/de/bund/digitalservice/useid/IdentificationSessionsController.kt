@@ -1,11 +1,11 @@
 package de.bund.digitalservice.useid
 
-import de.bund.digitalservice.useid.model.ClientRequestSession
+import de.bund.digitalservice.useid.model.CreateIdentitySessionRequest
+import de.bund.digitalservice.useid.model.CreateIdentitySessionResponse
 import de.bund.digitalservice.useid.model.ErrorMessage
 import de.bund.digitalservice.useid.model.IdentityAttributes
-import de.bund.digitalservice.useid.model.SessionResponse
+import de.bund.digitalservice.useid.service.IdentificationSessionService
 import de.bund.digitalservice.useid.service.IdentityService
-import de.bund.digitalservice.useid.service.SessionService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono
 @RequestMapping("/api/v1/identification/sessions")
 class IdentificationSessionsController(
     private val identityService: IdentityService,
-    private val sessionService: SessionService
+    private val identificationSessionService: IdentificationSessionService
 ) {
 
     @ExceptionHandler(NoSuchElementException::class)
@@ -36,8 +36,8 @@ class IdentificationSessionsController(
     }
 
     @PostMapping
-    fun createSession(@RequestBody clientRequestSession: ClientRequestSession): Mono<SessionResponse> {
-        return sessionService.createSession(clientRequestSession)
+    fun createSession(@RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest): Mono<CreateIdentitySessionResponse> {
+        return identificationSessionService.createSession(createIdentitySessionRequest)
     }
 
     @GetMapping("/{sessionId}")

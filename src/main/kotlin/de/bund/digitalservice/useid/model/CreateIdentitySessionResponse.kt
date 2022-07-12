@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.model
 
-data class SessionResponse(
+data class CreateIdentitySessionResponse(
     val tcTokenUrl: String,
     val sessionId: String
 )

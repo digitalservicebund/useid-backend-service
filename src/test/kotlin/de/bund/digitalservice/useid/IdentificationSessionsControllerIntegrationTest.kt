@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid
 
-import de.bund.digitalservice.useid.model.ClientRequestSession
+import de.bund.digitalservice.useid.model.CreateIdentitySessionRequest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,11 +21,11 @@ class IdentificationSessionsControllerIntegrationTest(
     val attributes = listOf("DG1", "DG2")
 
     @Test
-    fun `should return TCToken Url and Session Id when request is made with correct payload`() {
+    fun `starting session returns TCToken Url and Session Id if the request is made with a correct payload`() {
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
+            .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
             .isOk
@@ -38,13 +38,13 @@ class IdentificationSessionsControllerIntegrationTest(
             }
     }
     @Test
-    fun `should return correct identity`() {
+    fun `getting identity data returns with 200 and data attributes if the session id cannot be found`() {
         var mockUuid = ""
 
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
+            .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectBody()
             .jsonPath("$.sessionId").value<String> { sessionId ->
@@ -69,7 +69,7 @@ class IdentificationSessionsControllerIntegrationTest(
     }
 
     @Test
-    fun `should handle incorrect sessionId`() {
+    fun `getting identity data fails with 404 if the session id cannot be found`() {
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/1111-1111-1111-1111"))

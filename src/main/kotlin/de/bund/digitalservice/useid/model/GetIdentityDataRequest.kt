@@ -1,5 +1,5 @@
 package de.bund.digitalservice.useid.model
 
-data class ClientRequestIdentity(
+data class GetIdentityDataRequest(
     val sessionId: String
 )
