@@ -11,17 +11,11 @@ class IdentityService(private val sessionDataSource: SessionDataSource) {
     fun getIdentity(sessionId: String): Mono<IdentityAttributes> {
         return Mono.just(IdentityAttributes("firstname", "lastname"))
             .filter {
-                sessionDataSource
-                    .getSession()
-                    .any {
-                        it.sessionId == sessionId
-                    }
+                sessionDataSource.getSession().any { it.sessionId == sessionId }
             }.doOnNext {
                 sessionDataSource.removeSession(sessionId)
             }.switchIfEmpty {
-                Mono.error {
-                    throw NoSuchElementException("Error: sessionId is not found")
-                }
+                Mono.error { throw NoSuchElementException("Error: sessionId is not found") }
             }
     }
 }

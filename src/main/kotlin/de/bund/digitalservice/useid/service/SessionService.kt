@@ -9,14 +9,10 @@ import reactor.core.publisher.Mono
 
 @Service
 class SessionService(private val sessionDataSource: SessionDataSource) {
-    fun getSession(clientRequestSession: ClientRequestSession): Mono<SessionResponse> {
+    fun createSession(clientRequestSession: ClientRequestSession): Mono<SessionResponse> {
         return Mono.just(
-            SessionResponse(
-                clientRequestSession.refreshAddress,
-                generateUUID()
-            )
-        ).doOnNext {
-                sessionResponse ->
+            SessionResponse(clientRequestSession.refreshAddress, generateUUID())
+        ).doOnNext { sessionResponse ->
             sessionDataSource.addSession(sessionResponse)
         }
     }
