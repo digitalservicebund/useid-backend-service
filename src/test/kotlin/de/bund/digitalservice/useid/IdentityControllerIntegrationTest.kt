@@ -33,14 +33,12 @@ class IdentityControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/session"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
             .exchange()
 
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identity"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .body(BodyInserters.fromValue(ClientRequestIdentity("my-fake-uuid")))
             .exchange()
             .expectStatus()
@@ -59,7 +57,6 @@ class IdentityControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identity"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .body(BodyInserters.fromValue(ClientRequestIdentity("non-existing-session-id")))
             .exchange()
             .expectStatus()
@@ -76,7 +73,6 @@ class IdentityControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identity"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .exchange()
             .expectStatus()
             .isBadRequest

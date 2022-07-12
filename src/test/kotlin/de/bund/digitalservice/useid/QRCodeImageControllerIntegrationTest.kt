@@ -27,7 +27,6 @@ class QRCodeImageControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/qrcode/300?url=https://digitalservice.bund.de/"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .exchange()
             .expectStatus()
             .isOk
@@ -44,7 +43,6 @@ class QRCodeImageControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/qrcode/300?url=https%3A%2F%2Fdigitalservice.bund.de%2F"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .exchange()
             .expectStatus()
             .isOk

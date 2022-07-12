@@ -33,7 +33,6 @@ class SessionControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/session"))
-            .header("Authorization", "Bearer ShouldAvailableAsEnvVar")
             .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
@@ -45,21 +44,5 @@ class SessionControllerIntegrationTest(
             .jsonPath("$.sessionId").isEqualTo("my-fake-uuid")
 
         unmockkObject(IdGenerator)
-    }
-
-    @Test
-    fun `should return error when request is made without Authorization header`() {
-        webTestClient
-            .post()
-            .uri(URI.create("http://localhost:$port/api/v1/session"))
-            .body(BodyInserters.fromValue(ClientRequestSession("https://digitalservice.bund.de", attributes)))
-            .exchange()
-            .expectStatus()
-            .isUnauthorized
-            .expectHeader()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody()
-            .jsonPath("$.status").isEqualTo("401")
-            .jsonPath("$.error").isEqualTo("Unauthorized")
     }
 }
