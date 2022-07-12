@@ -1,8 +1,6 @@
 package de.bund.digitalservice.useid
 
 import de.bund.digitalservice.useid.model.ClientRequestSession
-import de.bund.digitalservice.useid.utils.IdGenerator
-import io.mockk.unmockkObject
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -68,8 +66,6 @@ class IdentificationSessionsControllerIntegrationTest(
             .expectBody()
             .jsonPath("$.dg1").isEqualTo("firstname")
             .jsonPath("$.dg2").isEqualTo("lastname")
-
-        unmockkObject(IdGenerator)
     }
 
     @Test
