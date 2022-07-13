@@ -17,7 +17,7 @@ internal class EventHandlerTest {
     private val consumer = mockk<Consumer<Event>>()
 
     @Test
-    internal fun `subscribe and publish happy path`() {
+    fun `subscribe and publish happy path`() {
         // Given
         val event = event(WIDGET_SESSION_ID)
         every { consumer.accept(any()) } returns Unit
@@ -36,7 +36,7 @@ internal class EventHandlerTest {
     }
 
     @Test
-    internal fun `publish to unknown customer throws exception`() {
+    fun `publish throws exception if customer is unkown`() {
         // Given
         val unknownId = "some-unknown-id"
         val event = event(unknownId)

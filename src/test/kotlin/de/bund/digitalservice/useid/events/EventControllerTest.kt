@@ -65,7 +65,7 @@ internal class EventControllerTest(
     }
 
     @Test
-    fun `publish event to different consumer `() {
+    fun `published event is not consumed if sent to different consumer `() {
         // Given
         val event = event("some-other-id")
 
