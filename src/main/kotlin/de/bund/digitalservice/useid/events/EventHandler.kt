@@ -24,7 +24,8 @@ class EventHandler {
     fun publish(event: Event) {
         val widgetSessionId = event.widgetSessionId
         log.info { "Publish event to consumer $widgetSessionId" }
-        consumers[widgetSessionId]!!.accept(event)
+        val consumer = consumers[widgetSessionId] ?: throw ConsumerNotFoundException(widgetSessionId)
+        consumer.accept(event)
     }
 
     fun numberConsumers(): Int {

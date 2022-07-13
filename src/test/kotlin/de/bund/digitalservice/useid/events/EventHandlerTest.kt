@@ -38,7 +38,8 @@ internal class EventHandlerTest {
     @Test
     internal fun `publish to unknown customer throws exception`() {
         // Given
-        val event = event("some-unknown-id")
+        val unknownId = "some-unknown-id"
+        val event = event(unknownId)
         every { consumer.accept(any()) } returns Unit
 
         // When
@@ -46,10 +47,11 @@ internal class EventHandlerTest {
 
         // Then
         assertEquals(1, eventHandler.numberConsumers())
-        assertThrows<NullPointerException> {
+        val exception = assertThrows<ConsumerNotFoundException> {
             // When
             eventHandler.publish(event)
         }
+        assertEquals("No consumer found for widget session with id $unknownId.", exception.message)
         verify(exactly = 0) { consumer.accept(event) }
     }
 

@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid.events
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.ServerSentEvent
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -32,9 +33,13 @@ class EventController(eventHandler: EventHandler) {
      */
     @PostMapping("/events")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun send(@RequestBody event: Event): Mono<Event> {
+    fun send(@RequestBody event: Event): Mono<ResponseEntity<ErrorResponseBody>> {
         log.info { "Received event for consumer: ${event.widgetSessionId}" }
-        eventHandler.publish(event)
+        try {
+            eventHandler.publish(event)
+        } catch (e: ConsumerNotFoundException) {
+            return createNotFoundResponse(e.message!!)
+        }
         return Mono.empty()
     }
 
@@ -52,4 +57,10 @@ class EventController(eventHandler: EventHandler) {
         .data(event)
         .event(EventType.SUCCESS.eventName)
         .build()
+
+    private fun createNotFoundResponse(message: String) = Mono.just(
+        ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ErrorResponseBody(HttpStatus.NOT_FOUND.value(), message))
+    )
 }

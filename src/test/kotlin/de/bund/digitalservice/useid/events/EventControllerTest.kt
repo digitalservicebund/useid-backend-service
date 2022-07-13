@@ -10,9 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_EVENT_STREAM
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.test.StepVerifier
+import java.net.URI
 import java.time.Duration.ofSeconds
 
 private const val WIDGET_SESSION_ID = "some-id"
@@ -20,7 +23,8 @@ private const val WIDGET_SESSION_ID = "some-id"
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 internal class EventControllerTest(
-    @Autowired @Value("\${local.server.port}") val port: Int
+    @Autowired @Value("\${local.server.port}") val port: Int,
+    @Autowired val webTestClient: WebTestClient,
 ) {
 
     lateinit var webClient: WebClient
@@ -54,12 +58,8 @@ internal class EventControllerTest(
             .verifyLater()
 
         // When
-        webClient.post().uri("/events")
-            .contentType(APPLICATION_JSON)
-            .bodyValue(event)
-            .exchange()
-            .then()
-            .block()
+        publishEvent(event)
+        publishEvent(event)
 
         verifier.verify()
     }
@@ -80,16 +80,70 @@ internal class EventControllerTest(
             .verifyLater()
 
         // When
-        webClient.post().uri("/events")
-            .contentType(APPLICATION_JSON)
-            .bodyValue(event)
-            .exchange()
-            .then()
-            .block()
+        publishEvent(event)
 
         // Then
         verifier.verify(ofSeconds(1))
     }
 
+    @Test
+    fun `publish event returns 404 if session id is unknown `() {
+        // Given
+        val unknownId = "some-unknown-id"
+        val event = event(unknownId)
+
+        // When
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/events"))
+            .bodyValue(event)
+            .exchange()
+            // Then
+            .expectStatus().isNotFound
+            .expectBody()
+            .json("{\"status\":404,\"message\":\"No consumer found for widget session with id $unknownId.\"}")
+    }
+
+    @Test
+    fun `publish event returns 415 if the request body doesn't contain json `() {
+        // Given
+        val event = "some-malformed-event"
+
+        // When
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/events"))
+            .bodyValue(event)
+            .exchange()
+            // Then
+            .expectStatus().isEqualTo(415)
+    }
+
+    @Test
+    fun `publish event returns 400 if the event is malformed `() {
+        // Given
+        val event = MalformedEvent("some-string")
+
+        // When
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/events"))
+            .bodyValue(event)
+            .exchange()
+            // Then
+            .expectStatus().isBadRequest
+    }
+
+    private fun publishEvent(event: Event) {
+        webClient.post().uri("/events")
+            .contentType(APPLICATION_JSON)
+            .bodyValue(event)
+            .retrieve()
+            .bodyToMono<ErrorResponseBody>()
+            .subscribe()
+    }
+
     private fun event(widgetSessionId: String) = Event(widgetSessionId, "some-refresh-address")
+
+    data class MalformedEvent(val something: String)
 }
