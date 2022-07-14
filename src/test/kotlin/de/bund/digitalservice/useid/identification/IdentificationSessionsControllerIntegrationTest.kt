@@ -39,7 +39,7 @@ class IdentificationSessionsControllerIntegrationTest(
     }
 
     @Test
-    fun `getting identity data returns with 200 and data attributes if the session id cannot be found`() {
+    fun `getting identity data returns with 200 and data attributes if the session id is valid and found`() {
         var mockUuid = ""
 
         webTestClient
