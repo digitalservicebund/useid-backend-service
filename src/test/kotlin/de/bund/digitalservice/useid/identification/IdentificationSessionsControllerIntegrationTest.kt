@@ -15,7 +15,8 @@ import java.util.UUID
 @Tag("integration")
 class IdentificationSessionsControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
-    @Autowired @Value("\${local.server.port}") val port: Int
+    @Autowired @Value("\${local.server.port}")
+    val port: Int
 ) {
     val attributes = listOf("DG1", "DG2")
 
@@ -36,6 +37,7 @@ class IdentificationSessionsControllerIntegrationTest(
                 UUID.fromString(sessionId) is UUID
             }
     }
+
     @Test
     fun `getting identity data returns with 200 and data attributes if the session id cannot be found`() {
         var mockUuid = ""

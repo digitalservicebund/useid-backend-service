@@ -15,7 +15,8 @@ import java.net.URI
 @Tag("integration")
 class QRCodeImageControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
-    @Autowired @Value("\${local.server.port}") val port: Int
+    @Autowired @Value("\${local.server.port}")
+    val port: Int
 ) {
     private val fixture = ClassPathResource("qr-300-digitalservice-bund-de.png")
     private val fixtureByteArray = fixture.file.readBytes()
