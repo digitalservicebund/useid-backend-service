@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.spring") version "1.7.0"
-    id("com.diffplug.spotless") version "6.7.2"
+    id("com.diffplug.spotless") version "6.8.0"
     id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
     id("com.github.jk1.dependency-license-report") version "2.1"
@@ -216,6 +216,6 @@ licenseReport {
     filters = arrayOf(
         // With second arg true we get the default transformations:
         // https://github.com/jk1/Gradle-License-Report/blob/7cf695c38126b63ef9e907345adab84dfa92ea0e/src/main/resources/default-license-normalizer-bundle.json
-        LicenseBundleNormalizer(null, true),
+        LicenseBundleNormalizer(null, true)
     )
 }
