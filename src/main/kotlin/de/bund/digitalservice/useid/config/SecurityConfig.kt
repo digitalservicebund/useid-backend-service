@@ -10,7 +10,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 @EnableWebFluxSecurity
 class SecurityConfig {
     @Bean
-    fun webHttpSecurity(http: ServerHttpSecurity): SecurityWebFilterChain {
+    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http
             .headers().frameOptions().disable()
             .and()

@@ -1,6 +1,5 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.model.CreateIdentitySessionRequest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +31,7 @@ class IdentificationSessionsControllerIntegrationTest(
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").isEqualTo("https://digitalservice.bund.de")
+            .jsonPath("$.tcTokenUrl").isEqualTo("http://127.0.0.1:24727/eID-Client?tcTokenURL=mock")
             .jsonPath("$.sessionId").value<String> { sessionId ->
                 UUID.fromString(sessionId) is UUID
             }
