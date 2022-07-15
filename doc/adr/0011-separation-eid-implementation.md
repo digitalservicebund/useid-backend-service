@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-Some eService ("Dienstanbieter") don't have an existing eID integration in place. Therefore, we need to implement the eID integration in our backend to extend our possible customer range. 
+Some eService ("Dienstanbieter") don't have an existing eID integration in place. Therefore, we need to implement the eID integration in our backend to extend our possible customer range.
 
 ## Decision
 
@@ -21,4 +21,4 @@ Some eService ("Dienstanbieter") don't have an existing eID integration in place
 
 - We are not re-writing the SDK in another programming language because it will increase our development time.
 - The interoperability of Java and Kotlin will ease our development.
-- Any eService can integrate with our solution. 
+- Any eService can integrate with our solution.
