@@ -24,8 +24,9 @@ private const val WIDGET_SESSION_ID = "some-id"
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 internal class EventControllerTest(
-    @Autowired @Value("\${local.server.port}") val port: Int,
-    @Autowired val webTestClient: WebTestClient,
+    @Autowired @Value("\${local.server.port}")
+    val port: Int,
+    @Autowired val webTestClient: WebTestClient
 ) {
 
     lateinit var webClient: WebClient
