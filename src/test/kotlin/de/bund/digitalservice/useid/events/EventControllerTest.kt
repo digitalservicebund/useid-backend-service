@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_EVENT_STREAM
+import org.springframework.http.ResponseEntity
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.client.ExchangeStrategies
@@ -100,8 +101,7 @@ internal class EventControllerTest(
             .exchange()
             // Then
             .expectStatus().isNotFound
-            .expectBody()
-            .json("{\"status\":404,\"message\":\"No consumer found for widget session with id $unknownId.\"}")
+            .expectBody().isEmpty
     }
 
     @Test
@@ -139,7 +139,7 @@ internal class EventControllerTest(
             .contentType(APPLICATION_JSON)
             .bodyValue(event)
             .retrieve()
-            .bodyToMono<ErrorResponseBody>()
+            .bodyToMono<ResponseEntity<Nothing>>()
             .subscribe()
     }
 

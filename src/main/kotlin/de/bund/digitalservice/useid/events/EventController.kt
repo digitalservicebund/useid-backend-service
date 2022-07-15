@@ -33,14 +33,16 @@ class EventController(eventHandler: EventHandler) {
      */
     @PostMapping("/events")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun send(@RequestBody event: Event): Mono<ResponseEntity<ErrorResponseBody>> {
+    fun send(@RequestBody event: Event): Mono<ResponseEntity<Nothing>> {
         log.info { "Received event for consumer: ${event.widgetSessionId}" }
-        try {
-            eventHandler.publish(event)
-        } catch (e: ConsumerNotFoundException) {
-            return createNotFoundResponse(e.message!!)
-        }
-        return Mono.empty()
+
+        return Mono.fromCallable { eventHandler.publish(event) }
+            .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(null) }
+            .doOnError { log.error(it.message) }
+            .onErrorReturn(
+                ConsumerNotFoundException::class.java,
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
+            )
     }
 
     /**
@@ -57,10 +59,4 @@ class EventController(eventHandler: EventHandler) {
         .data(event)
         .event(EventType.SUCCESS.eventName)
         .build()
-
-    private fun createNotFoundResponse(message: String) = Mono.just(
-        ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponseBody(HttpStatus.NOT_FOUND.value(), message))
-    )
 }
