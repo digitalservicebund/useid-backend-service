@@ -8,12 +8,12 @@ Accepted
 
 ## Context
 
-After a success identification via mobile app, we want to inform user on the website (the start of the identification process), specifically on the widget where the user initially scanned the QR Code. We have to inform our backend that identification process has been finished, so that backend can relay the message to the page (eService), also we need to keep in mind that eService shall not request to our backend to get the status of the identification every time, because the backend will be overloaded with multiple requests from clients (e.g. eService)
+After a successful identification via mobile app, we need to inform the widget where the user initially scanned the QR Code to proceed with the identification flow. We want to ensure a unidirectional connection from our backend to the widget (e.g. no websocket connection) and avoid polling by the widget to minimize network traffic.
 
 ## Decision
 
-We use server-sent event to inform client (eService) the status of the identification (failure or success) from backend.
+We use [server-sent event](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) (SSE) to inform the client (eService) about the status of the identification (failure or success) from backend.
 
 ## Consequences
 
-User will be redirected to a correct address after a successful/unsuccessful identification and continue the journey as expected
+We benefit from the advantages of SSE. 
