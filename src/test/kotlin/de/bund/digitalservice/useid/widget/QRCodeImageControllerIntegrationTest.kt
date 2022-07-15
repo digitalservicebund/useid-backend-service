@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.widget
 
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
