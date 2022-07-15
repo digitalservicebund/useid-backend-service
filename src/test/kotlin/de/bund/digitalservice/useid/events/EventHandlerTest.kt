@@ -7,9 +7,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 import java.util.function.Consumer
 
-private const val WIDGET_SESSION_ID = "some-id"
+private val WIDGET_SESSION_ID = UUID.randomUUID()
 
 @Tag("test")
 internal class EventHandlerTest {
@@ -38,7 +39,7 @@ internal class EventHandlerTest {
     @Test
     fun `publish throws exception if customer is unkown`() {
         // Given
-        val unknownId = "some-unknown-id"
+        val unknownId = UUID.randomUUID()
         val event = event(unknownId)
         every { consumer.accept(any()) } returns Unit
 
@@ -55,5 +56,5 @@ internal class EventHandlerTest {
         verify(exactly = 0) { consumer.accept(event) }
     }
 
-    private fun event(widgetSessionId: String) = Event(widgetSessionId, "some-refresh-address")
+    private fun event(widgetSessionId: UUID) = Event(widgetSessionId, "some-refresh-address")
 }

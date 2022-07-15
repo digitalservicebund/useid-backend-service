@@ -18,8 +18,9 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.test.StepVerifier
 import java.net.URI
 import java.time.Duration.ofSeconds
+import java.util.UUID
 
-private const val WIDGET_SESSION_ID = "some-id"
+private val WIDGET_SESSION_ID: UUID = UUID.randomUUID()
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -69,7 +70,7 @@ internal class EventControllerTest(
     @Test
     fun `published event is not consumed if sent to different consumer `() {
         // Given
-        val event = event("some-other-id")
+        val event = event(UUID.randomUUID())
 
         val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
             .accept(TEXT_EVENT_STREAM)
@@ -91,7 +92,7 @@ internal class EventControllerTest(
     @Test
     fun `publish event returns 404 if session id is unknown `() {
         // Given
-        val unknownId = "some-unknown-id"
+        val unknownId = UUID.randomUUID()
         val event = event(unknownId)
 
         // When
@@ -123,7 +124,22 @@ internal class EventControllerTest(
     @Test
     fun `publish event returns 400 if the event is malformed `() {
         // Given
-        val event = MalformedEvent("some-string")
+        val event = MalformedEventWithWrongAttributes("some-string")
+
+        // When
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/events"))
+            .bodyValue(event)
+            .exchange()
+            // Then
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `publish event returns 400 if the event id is not a valid UUID `() {
+        // Given
+        val event = MalformedEventWithoutUUID("some-id-string", "some-refresh-address")
 
         // When
         webTestClient
@@ -144,7 +160,8 @@ internal class EventControllerTest(
             .subscribe()
     }
 
-    private fun event(widgetSessionId: String) = Event(widgetSessionId, "some-refresh-address")
+    private fun event(widgetSessionId: UUID) = Event(widgetSessionId, "some-refresh-address")
 
-    data class MalformedEvent(val something: String)
+    data class MalformedEventWithWrongAttributes(val something: String)
+    data class MalformedEventWithoutUUID(val widgetSessionId: String, val encryptedRefreshAddress: String)
 }

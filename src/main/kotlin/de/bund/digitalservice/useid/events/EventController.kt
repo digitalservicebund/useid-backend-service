@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.FluxSink
 import reactor.core.publisher.Mono
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/v1")
@@ -50,7 +51,7 @@ class EventController(eventHandler: EventHandler) {
      */
     @CrossOrigin
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun consumer(@PathVariable widgetSessionId: String): Flux<ServerSentEvent<Any>>? {
+    fun consumer(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>>? {
         return Flux.create { sink: FluxSink<Event> -> eventHandler.subscribeConsumer(widgetSessionId) { event: Event -> sink.next(event) } }
             .map { event: Event -> createServerSentEvent(event) }
     }
