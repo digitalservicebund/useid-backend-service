@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-Our programming language and framework ideally interoperates with the eID-Server Java SDK. Due to security needs and our open source policy, we need a well maintained and proven tech-stack. 
+Our programming language and framework ideally interoperates with the eID-Server Java SDK. Due to security needs and our open source policy, we need a well maintained and proven tech-stack.
 
 ## Decision
 
