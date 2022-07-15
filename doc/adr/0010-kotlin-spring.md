@@ -8,11 +8,11 @@ Accepted
 
 ## Context
 
-There are a lot of programming language and its web framework, since we decided that we use Spring Webflux as our web framework, there are 2 options available in Spring Webflux, Java and Kotlin. Both of them are first-class citizen which means they will get both support from Spring contributors.
+Our programming language and framework ideally interoperates with the eID-Server Java SDK. Due to security needs and our open source policy, we need a well maintained and proven tech-stack. 
 
 ## Decision
 
-We would use Kotlin for UseID backend
+We use Kotlin as our language due to the interoperability with Java and Spring as a well known web framework to fulfil our needs for security, stability and maintenance.
 
 ## Consequences
 
