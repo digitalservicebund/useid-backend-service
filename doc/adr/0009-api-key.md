@@ -8,11 +8,11 @@ Accepted
 
 ## Context
 
-We want to filter incoming requests in the UseID backend that only client with an approved integration could access UseID endpoints.
+We want to filter incoming requests in the UseID backend, so that only authorized clients are able to access the API.
 
 ## Decision
 
-We use Bearer authentication. The Client (eService) should add a token in the Authorization header when requesting to the endpoints and the token should be a random string of 51 characters.
+We use Bearer authentication. The Client (eService) should add a token in the Authorization header when requesting to the endpoints and the token should be a string of 51 characters which was issued to the client by us.
 
 e.g.
 
@@ -22,5 +22,5 @@ The token should, for MVP purpose, be configured as environment variable. For th
 
 ## Consequences
 
-1. Reduce our security risk, since we only allow known client in the UseID backend
+1. Reduce our security risk, since we only allow authorized clients to access the API
 2. Reduce resource usage, since we are filtering unknown requests, and we do not process them further
