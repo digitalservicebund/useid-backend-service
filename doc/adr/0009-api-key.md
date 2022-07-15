@@ -18,7 +18,6 @@ e.g.
 
 `Authorization: Bearer <token>`
 
-
 ## Consequences
 
 Reduce our security risk, since we only allow authorized clients to access the API
