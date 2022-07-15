@@ -18,9 +18,7 @@ e.g.
 
 `Authorization: Bearer <token>`
 
-The token should, for MVP purpose, be configured as environment variable. For the future releases, a lifecycle of token should be defined, e.g. validity of the token.
 
 ## Consequences
 
-1. Reduce our security risk, since we only allow authorized clients to access the API
-2. Reduce resource usage, since we are filtering unknown requests, and we do not process them further
+Reduce our security risk, since we only allow authorized clients to access the API
