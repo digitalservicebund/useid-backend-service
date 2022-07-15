@@ -16,7 +16,7 @@ The current QR Code generation is handled on the server, the decision was not do
 
 We decided to move QR Code render to client-side instead of server side with the following reasons:
 
-Since the QR Code includes sensitive data which should not be known to our backend server (e.g. `encryptionKey` and `tcTokenURL`), the rendering must happen on client-side. 
+Since the QR Code includes sensitive data which should not be known to our backend server (e.g. `encryptionKey` and `tcTokenURL`), the rendering must happen on client-side.
 
 ## Consequences
 
