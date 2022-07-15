@@ -16,8 +16,8 @@ We use Kotlin as our language due to the interoperability with Java and Spring a
 
 ## Consequences
 
-1. Kotlin eliminates boilerplate code which is usually often seen in Java
-2. Kotlin is null-safe by default
-3. Interoperability between Java and Kotlin. We could still use Java third-party libraries in Kotlin.
-4. It will take time for us to write code in Kotlin way
-5. We will attract more engineers in the future
+- Kotlin eliminates boilerplate code which is usually often seen in Java
+- Kotlin is null-safe by default
+- Interoperability between Java and Kotlin. We could still use Java third-party libraries in Kotlin.
+- It will take time for us to write code in Kotlin way
+- We will attract more engineers in the future
