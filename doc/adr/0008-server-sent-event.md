@@ -16,4 +16,4 @@ We use [server-sent event](https://developer.mozilla.org/en-US/docs/Web/API/Serv
 
 ## Consequences
 
-We benefit from the advantages of SSE. 
+We benefit from the advantages of SSE.
