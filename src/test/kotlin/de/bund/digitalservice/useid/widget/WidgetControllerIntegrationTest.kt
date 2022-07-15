@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.widget
 
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -8,7 +8,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class QRCodeControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
     @Test
     fun `should disable X-Frame-Options`() {
