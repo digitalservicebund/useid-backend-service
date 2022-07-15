@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.events
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -44,27 +43,24 @@ internal class EventControllerTest(
 
     @Test
     fun `publish and receive event happy case`() {
-        // Given
         val event = event(WIDGET_SESSION_ID)
 
-        val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
+        publishEvent(event)
+
+        val result = webTestClient
+            .get()
+            .uri(URI.create("http://localhost:$port/api/v1/events/$WIDGET_SESSION_ID"))
             .accept(TEXT_EVENT_STREAM)
-            .retrieve()
-            .bodyToFlux(Event::class.java)
-            .log()
-            .`as` { StepVerifier.create(it) }
-            .consumeNextWith {
-                // Then
-                assertEquals(event, it)
-            }
+            .exchange()
+            .expectStatus().isOk
+            .expectHeader().contentTypeCompatibleWith(TEXT_EVENT_STREAM)
+            .returnResult(Event::class.java)
+
+        StepVerifier.create(result.responseBody)
+            .expectNext(event)
             .thenCancel()
-            .verifyLater()
-
-        // When
-        publishEvent(event)
-        publishEvent(event)
-
-        verifier.verify()
+            .log()
+            .verify()
     }
 
     @Test
