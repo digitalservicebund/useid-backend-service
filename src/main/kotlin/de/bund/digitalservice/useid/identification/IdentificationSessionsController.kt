@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
+import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -16,40 +17,56 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1/identification/sessions")
 class IdentificationSessionsController(
-    private val identificationSessionHandler: IdentificationSessionHandler
+    private val identificationSessionService: IdentificationSessionService,
+    private val tcTokenUrlService: TcTokenUrlService
 ) {
+    private val log = KotlinLogging.logger {}
+
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNotFound(notFoundException: NoSuchElementException): Mono<ResponseEntity<ErrorMessage>> {
         return Mono.just(
             ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(ErrorMessage(HttpStatus.NOT_FOUND.value(), notFoundException.message!!))
+                .body(ErrorMessage(HttpStatus.NOT_FOUND.value(), "Could not find session."))
         )
     }
 
     @PostMapping
-    fun createSession(@RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest): Mono<CreateIdentitySessionResponse> {
+    fun createSession(@RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
         // Currently returns a mock session response
-        return Mono.just(
-            CreateIdentitySessionResponse("http://127.0.0.1:24727/eID-Client?tcTokenURL=mock", UUID.randomUUID().toString())
-        ).doOnNext {
-            identificationSessionHandler.save(
-                it.sessionId,
-                it.tcTokenUrl,
-                createIdentitySessionRequest.refreshAddress,
-                createIdentitySessionRequest.requestAttributes
         return tcTokenUrlService.getTcTokenUrl()
+            .flatMap { tcToken ->
+                identificationSessionService.save(
+                    tcToken,
+                    createIdentitySessionRequest.refreshAddress,
+                    createIdentitySessionRequest.requestAttributes
+                )
+            }.map {
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(
+                        CreateIdentitySessionResponse(
+                            tcTokenUrl = it.tcTokenUrl,
+                            sessionId = it.sessionId
+                        )
+                    )
+            }.doOnError { exception ->
+                log.error { "error occurred when creating identification session: ${exception.message}" }
+            }.onErrorReturn(
+                ResponseEntity
+                    .internalServerError()
+                    .body(null)
             )
-        }
     }
 
     @GetMapping("/{sessionId}")
-    fun getIdentity(@PathVariable sessionId: String): Mono<IdentityAttributes> {
+    fun getIdentity(@PathVariable sessionId: UUID): Mono<IdentityAttributes> {
         // Currently mock identity
         return Mono.just(IdentityAttributes("firstname", "lastname"))
             .filter {
-                identificationSessionHandler.hasValidSessionId(sessionId)
-            }
+                identificationSessionService.sessionExists(sessionId)
+            }.switchIfEmpty(Mono.error { throw NoSuchElementException() })
     }
 }
