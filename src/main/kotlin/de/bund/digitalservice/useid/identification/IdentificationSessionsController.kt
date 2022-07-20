@@ -36,9 +36,9 @@ class IdentificationSessionsController(
     fun createSession(@RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
         // Currently returns a mock session response
         return tcTokenUrlService.getTcTokenUrl()
-            .flatMap { tcToken ->
+            .flatMap { tcTokenUrl ->
                 identificationSessionService.save(
-                    tcToken,
+                    tcTokenUrl,
                     createIdentitySessionRequest.refreshAddress,
                     createIdentitySessionRequest.requestAttributes
                 )
