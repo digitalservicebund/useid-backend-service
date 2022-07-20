@@ -1,18 +1,17 @@
 package de.bund.digitalservice.useid.identification
 
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
+import java.util.UUID
 
 @Service
-class IdentificationSessionHandler(private val mockDatasource: MockDatasource) {
+class IdentificationSessionService(private val mockDatasource: MockDatasource) {
 
-    fun save(sessionId: String, tcTokenUrl: String, refreshAddress: String, requestAttributes: List<String>) {
-        mockDatasource.save(sessionId, tcTokenUrl, refreshAddress, requestAttributes)
+    fun save(tcTokenUrl: String, refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
+        return mockDatasource.save(tcTokenUrl, refreshAddress, requestAttributes)
     }
 
-    fun hasValidSessionId(sessionId: String): Boolean {
-        if (!mockDatasource.hasValidSessionId(sessionId)) {
-            throw NoSuchElementException("Error: sessionId is not found")
-        }
-        return mockDatasource.hasValidSessionId(sessionId)
+    fun sessionExists(sessionId: UUID): Boolean {
+        return mockDatasource.sessionExists(sessionId)
     }
 }
