@@ -32,7 +32,7 @@ class IdentificationSessionsControllerIntegrationTest(
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").isEqualTo("http://127.0.0.1:24727/eID-Client?tcTokenURL=mock")
+            .jsonPath("$.tcTokenUrl").isEqualTo("https://useid.dev/12345678")
             .jsonPath("$.sessionId").value<String> { sessionId ->
                 UUID.fromString(sessionId) is UUID
             }
@@ -73,7 +73,7 @@ class IdentificationSessionsControllerIntegrationTest(
     fun `getting identity data fails with 404 if the session id cannot be found`() {
         webTestClient
             .get()
-            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/1111-1111-1111-1111"))
+            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219"))
             .exchange()
             .expectStatus()
             .isNotFound
@@ -81,6 +81,6 @@ class IdentificationSessionsControllerIntegrationTest(
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
             .jsonPath("$.status").isEqualTo("404")
-            .jsonPath("$.message").isEqualTo("Error: sessionId is not found")
+            .jsonPath("$.message").isEqualTo("Could not find session.")
     }
 }
