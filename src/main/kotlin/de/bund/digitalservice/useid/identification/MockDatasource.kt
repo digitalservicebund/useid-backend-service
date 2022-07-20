@@ -1,16 +1,23 @@
 package de.bund.digitalservice.useid.identification
 
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Mono
+import java.util.UUID
 
 @Repository
 class MockDatasource {
-    private val sessions: MutableMap<String, IdentificationSession> = mutableMapOf()
+    private val sessions = mutableListOf<IdentificationSession>()
 
-    fun save(sessionId: String, tcTokenUrl: String, refreshAddress: String, requestAttributes: List<String>) {
-        sessions[sessionId] = IdentificationSession(refreshAddress, requestAttributes, tcTokenUrl)
+    fun save(tcTokenUrl: String, refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
+        val currentSessionId = UUID.randomUUID()
+
+        val identificationSession = IdentificationSession(refreshAddress, requestAttributes, currentSessionId, tcTokenUrl)
+        sessions.add(identificationSession)
+
+        return Mono.just(identificationSession)
     }
 
-    fun hasValidSessionId(sessionId: String): Boolean {
-        return sessions.containsKey(sessionId)
+    fun sessionExists(sessionId: UUID): Boolean {
+        return sessions.any { it.sessionId == sessionId }
     }
 }
