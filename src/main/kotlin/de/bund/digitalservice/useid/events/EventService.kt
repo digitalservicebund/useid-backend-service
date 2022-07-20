@@ -6,7 +6,7 @@ import java.util.UUID
 import java.util.function.Consumer
 
 @Service
-class EventHandler {
+class EventService {
     private val log = KotlinLogging.logger {}
 
     private val consumers: MutableMap<UUID, Consumer<Event>> = HashMap()

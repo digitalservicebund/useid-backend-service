@@ -20,13 +20,13 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/api/v1")
-class EventController(eventHandler: EventHandler) {
+class EventController(eventService: EventService) {
     private val log = KotlinLogging.logger {}
 
-    private val eventHandler: EventHandler
+    private val eventService: EventService
 
     init {
-        this.eventHandler = eventHandler
+        this.eventService = eventService
     }
 
     /**
@@ -37,7 +37,7 @@ class EventController(eventHandler: EventHandler) {
     fun send(@RequestBody event: Event): Mono<ResponseEntity<Nothing>> {
         log.info { "Received event for consumer: ${event.widgetSessionId}" }
 
-        return Mono.fromCallable { eventHandler.publish(event) }
+        return Mono.fromCallable { eventService.publish(event) }
             .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(null) }
             .doOnError { log.error(it.message) }
             .onErrorReturn(
@@ -52,7 +52,7 @@ class EventController(eventHandler: EventHandler) {
     @CrossOrigin
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun consumer(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>>? {
-        return Flux.create { sink: FluxSink<Event> -> eventHandler.subscribeConsumer(widgetSessionId) { event: Event -> sink.next(event) } }
+        return Flux.create { sink: FluxSink<Event> -> eventService.subscribeConsumer(widgetSessionId) { event: Event -> sink.next(event) } }
             .map { event: Event -> createServerSentEvent(event) }
     }
 

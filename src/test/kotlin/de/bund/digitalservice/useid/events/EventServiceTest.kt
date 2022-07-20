@@ -13,8 +13,8 @@ import java.util.function.Consumer
 private val WIDGET_SESSION_ID = UUID.randomUUID()
 
 @Tag("test")
-internal class EventHandlerTest {
-    private val eventHandler: EventHandler = EventHandler()
+internal class EventServiceTest {
+    private val eventService: EventService = EventService()
     private val consumer = mockk<Consumer<Event>>()
 
     @Test
@@ -24,13 +24,13 @@ internal class EventHandlerTest {
         every { consumer.accept(any()) } returns Unit
 
         // When
-        eventHandler.subscribeConsumer(WIDGET_SESSION_ID, consumer)
+        eventService.subscribeConsumer(WIDGET_SESSION_ID, consumer)
 
         // Then
-        assertEquals(1, eventHandler.numberConsumers())
+        assertEquals(1, eventService.numberConsumers())
 
         // When
-        eventHandler.publish(event)
+        eventService.publish(event)
 
         // Then
         verify { consumer.accept(event) }
@@ -44,13 +44,13 @@ internal class EventHandlerTest {
         every { consumer.accept(any()) } returns Unit
 
         // When
-        eventHandler.subscribeConsumer(WIDGET_SESSION_ID, consumer)
+        eventService.subscribeConsumer(WIDGET_SESSION_ID, consumer)
 
         // Then
-        assertEquals(1, eventHandler.numberConsumers())
+        assertEquals(1, eventService.numberConsumers())
         val exception = assertThrows<ConsumerNotFoundException> {
             // When
-            eventHandler.publish(event)
+            eventService.publish(event)
         }
         assertEquals("No consumer found for widget session with id $unknownId.", exception.message)
         verify(exactly = 0) { consumer.accept(event) }
