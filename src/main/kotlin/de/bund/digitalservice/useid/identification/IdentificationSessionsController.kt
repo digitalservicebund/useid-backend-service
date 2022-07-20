@@ -39,6 +39,7 @@ class IdentificationSessionsController(
                 it.tcTokenUrl,
                 createIdentitySessionRequest.refreshAddress,
                 createIdentitySessionRequest.requestAttributes
+        return tcTokenUrlService.getTcTokenUrl()
             )
         }
     }
