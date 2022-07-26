@@ -2,14 +2,12 @@ fileignoreconfig:
   - filename: "*README.md"
     ignore_detectors: [filecontent]
   - filename: build.gradle.kts
-    checksum: 18aa5a0e9ca329933334b8d0af569f12cda84fcd352695baee60419760edc34c
+    checksum: c1ff16c4d3302cf03cd490b098c2b2818c4c9e31a6020150caa4b0cd8850d012
   - filename: .github/workflows/pipeline.yml
-    checksum: ae1848d76a2078ed21b908d1644439922610264d942fd2602413f2e1ade0de2c
+    checksum: 88a240096a1848a21030c10e85ba88368ef1402ec0bbe3bc5378262d44c56c95
   - filename: .github/workflows/secrets-check.yml
     checksum: d7fbfab653dad354f2854b45545faed3a604e3ba356446e0f92f5889826e4a09
   - filename: .github/workflows/scan.yml
     checksum: 76b4692ec1346d100fe7bcf5a42603795a9c455200a54ab7b00fb01c8b44e06e
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
-  - filename: doc/adr/0006-url-format-in-qr-code.md
-    checksum: 3835e193f8fae4c734c01df480ad6a349a03c3f1e52035569d1d63794cfe7808

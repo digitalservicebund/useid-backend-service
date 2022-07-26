@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.spring") version "1.7.0"
-    id("com.diffplug.spotless") version "6.7.2"
+    id("com.diffplug.spotless") version "6.8.0"
     id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
     id("com.github.jk1.dependency-license-report") version "2.1"
@@ -44,19 +44,24 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     // => CVE-2021-44228, CVE-2021-45105
-    implementation("org.apache.logging.log4j:log4j-api:2.17.0")
+    implementation("org.apache.logging.log4j:log4j-api:2.18.0")
     // => CVE-2021-44228, CVE-2021-45105
-    implementation("org.apache.logging.log4j:log4j-to-slf4j:2.17.0")
+    implementation("org.apache.logging.log4j:log4j-to-slf4j:2.18.0")
     // => CVE-2021-42550
     implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("ch.qos.logback:logback-core:1.2.9")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")
     implementation("com.google.zxing:javase:3.5.0")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude("org.mockito", "mockito-core")
+        because("Use MockK instead of Mockito since it is better suited for Kotlin")
+    }
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.23.0")
@@ -127,7 +132,7 @@ tasks {
             files(
                 classDirectories.files.map {
                     fileTree(it) {
-                        exclude("**/ApplicationKt**", "**/PingController**", "**/SuccessEvent**")
+                        exclude("**/ApplicationKt**")
                     }
                 }
             )
@@ -168,7 +173,7 @@ tasks {
             property("sonar.host.url", "https://sonarcloud.io")
             property(
                 "sonar.coverage.exclusions",
-                "**/config/**,**/PingController**,**/SuccessEvent**"
+                "**/config/**"
             )
         }
     }
@@ -216,6 +221,6 @@ licenseReport {
     filters = arrayOf(
         // With second arg true we get the default transformations:
         // https://github.com/jk1/Gradle-License-Report/blob/7cf695c38126b63ef9e907345adab84dfa92ea0e/src/main/resources/default-license-normalizer-bundle.json
-        LicenseBundleNormalizer(null, true),
+        LicenseBundleNormalizer(null, true)
     )
 }

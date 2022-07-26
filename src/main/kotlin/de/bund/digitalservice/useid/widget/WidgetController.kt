@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.widget
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import reactor.core.publisher.Mono
 
 @Controller
-class QRCodeController {
+class WidgetController {
     @GetMapping("/widget")
     fun widget(model: Model): Mono<String> = Mono.just("widget")
 }

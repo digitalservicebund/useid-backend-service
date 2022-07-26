@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid
+package de.bund.digitalservice.useid.widget
 
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -15,7 +15,8 @@ import java.net.URI
 @Tag("integration")
 class QRCodeImageControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
-    @Autowired @Value("\${local.server.port}") val port: Int
+    @Autowired @Value("\${local.server.port}")
+    val port: Int
 ) {
     private val fixture = ClassPathResource("qr-300-digitalservice-bund-de.png")
     private val fixtureByteArray = fixture.file.readBytes()
@@ -26,7 +27,7 @@ class QRCodeImageControllerIntegrationTest(
         // thus using `URI.create()` to make explicit the url being requested!
         webTestClient
             .get()
-            .uri(URI.create("http://localhost:$port/v1/qrcode/300?url=https://digitalservice.bund.de/"))
+            .uri(URI.create("http://localhost:$port/api/v1/qrcode/300?url=https://digitalservice.bund.de/"))
             .exchange()
             .expectStatus()
             .isOk
@@ -42,7 +43,7 @@ class QRCodeImageControllerIntegrationTest(
         // thus using `URI.create()` to make explicit the url being requested!
         webTestClient
             .get()
-            .uri(URI.create("http://localhost:$port/v1/qrcode/300?url=https%3A%2F%2Fdigitalservice.bund.de%2F"))
+            .uri(URI.create("http://localhost:$port/api/v1/qrcode/300?url=https%3A%2F%2Fdigitalservice.bund.de%2F"))
             .exchange()
             .expectStatus()
             .isOk
