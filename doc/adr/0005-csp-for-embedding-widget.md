@@ -4,7 +4,7 @@ Date: 2022-06-24
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
@@ -24,12 +24,14 @@ The page inside the iframe can't get the domain of the parent page. Therefore th
 
 The backend can check the domain from the query parameter with the list of registered domains and if the domain is found, it is added into the CSP header.
 
-We evaluated using a kind of api key (which would then be public), but creating a mapping of domain to api key would be quite easy, so we use the domain name as quasi public api key.
+We evaluated using a kind of api key (which would then be public) and decided to use the domain name as quasi public api key.
 
 ## Consequences
 
 Only the registered domains are allowed to embed widgets and this behaviour is enforced by the browsers, when a CSP header with `frame-ancestors` is present.
 
 By adding the parent domain as query parameter, the server can check this domain in the list. We therefore need to have a list of registered domains in the backend server.
+
+It is possible to automatically check, whether a domain name is registered for this service or not. If this information should not be leaked, a switch to randomly chosen (public) API keys could be done.
 
 It's not possible to MITM this embedding (in default browsers). The domain can't be chosen arbitrarily, since we check it in the list of registered domains on the backend server. So we have a direct dependency/connection between embedding and embedded page.
