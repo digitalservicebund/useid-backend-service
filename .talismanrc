@@ -12,4 +12,4 @@ fileignoreconfig:
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
   - filename: src/test/resources/application.properties
-    checksum: 994f8b5c15c7bdf10bcddad7dc83f3713f98566b60cb4f9acb5259d5ce4830d4
+    checksum: 9168889b085ab87ed30b13ed6adb4f2b197c1dec81f8fa24c5eaa0001daa7ac7
