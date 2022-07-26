@@ -12,8 +12,6 @@ env:
   CONTAINER_REGISTRY: ghcr.io
   CONTAINER_IMAGE_NAME: ${{ github.repository }}
   CONTAINER_IMAGE_VERSION: ${{ github.sha }}
-  ACTIONS_TEST_USERNAME: ${{ secrets.ACTIONS_TEST_USERNAME }}
-  ACTIONS_TEST_PASSWORD: ${{ secrets.ACTIONS_TEST_PASSWORD }}
 
 jobs:
   build:
