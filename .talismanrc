@@ -1,6 +1,8 @@
 fileignoreconfig:
   - filename: "*README.md"
     ignore_detectors: [filecontent]
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
+    checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
     checksum: c1ff16c4d3302cf03cd490b098c2b2818c4c9e31a6020150caa4b0cd8850d012
   - filename: .github/workflows/pipeline.yml
