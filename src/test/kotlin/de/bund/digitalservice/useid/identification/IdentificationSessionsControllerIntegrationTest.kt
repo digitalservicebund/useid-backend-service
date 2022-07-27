@@ -18,13 +18,30 @@ class IdentificationSessionsControllerIntegrationTest(
     @Autowired @Value("\${local.server.port}")
     val port: Int
 ) {
+    @Value("\${api.user.username}")
+    lateinit var username: String
+
+    @Value("\${api.user.password}")
+    lateinit var password: String
+
     val attributes = listOf("DG1", "DG2")
+
+    @Test
+    fun `requesting identification sessions returns 401 when the request is made without basic authentication`() {
+        webTestClient
+            .get()
+            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/"))
+            .exchange()
+            .expectStatus()
+            .isUnauthorized
+    }
 
     @Test
     fun `starting session returns TCToken Url and Session Id if the request is made with a correct payload`() {
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
+            .headers { headers -> headers.setBasicAuth(username, password) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
@@ -45,6 +62,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
+            .headers { headers -> headers.setBasicAuth(username, password) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectBody()
@@ -59,6 +77,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/$mockUuid"))
+            .headers { headers -> headers.setBasicAuth(username, password) }
             .exchange()
             .expectStatus()
             .isOk
@@ -74,6 +93,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219"))
+            .headers { headers -> headers.setBasicAuth(username, password) }
             .exchange()
             .expectStatus()
             .isNotFound
