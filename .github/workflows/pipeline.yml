@@ -28,6 +28,34 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
+      - name: Send status to Slack
+        # Third-party action, pin to commit SHA!
+        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
+        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
+        if: ${{ failure() && github.ref == 'refs/heads/main' && env.SLACK_WEBHOOK_URL }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          type: ${{ job.status }}
+          job_name: "Build :point_right:"
+          mention: "here"
+          mention_if: "failure"
+          commit: true
+          url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  audit-licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17.0"
+          distribution: "temurin"
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Run license scanner
         run: ./gradlew checkLicense
       - name: Send status to Slack
@@ -39,7 +67,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           type: ${{ job.status }}
-          job_name: "Build :point_right:"
+          job_name: "License audit :point_right:"
           mention: "here"
           mention_if: "failure"
           commit: true
