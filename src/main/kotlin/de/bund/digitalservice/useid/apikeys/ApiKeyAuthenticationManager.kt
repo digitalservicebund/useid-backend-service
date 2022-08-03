@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.apikeys
 
+import de.bund.digitalservice.useid.config.ApiProperties
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.core.Authentication
