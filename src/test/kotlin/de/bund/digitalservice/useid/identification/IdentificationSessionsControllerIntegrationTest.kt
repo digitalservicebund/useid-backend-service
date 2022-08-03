@@ -21,12 +21,6 @@ class IdentificationSessionsControllerIntegrationTest(
     @Autowired @Value("\${local.server.port}")
     val port: Int
 ) {
-    @Value("\${api.user.username}")
-    lateinit var username: String
-
-    @Value("\${api.user.password}")
-    lateinit var password: String
-
     val attributes = listOf("DG1", "DG2")
 
     @Test
@@ -44,7 +38,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { headers -> headers.setBasicAuth(username, password) }
+            .headers { headers -> setAuthorizationHeader(headers) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
