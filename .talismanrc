@@ -17,3 +17,6 @@ fileignoreconfig:
     checksum: 9168889b085ab87ed30b13ed6adb4f2b197c1dec81f8fa24c5eaa0001daa7ac7
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/apikeys/ApiKeyAuthenticationManager.kt
+    checksum: a7aa4b69251f8ba40c47623d523c1f38b490df36543603b0e9ec43696e26c4a6
+
