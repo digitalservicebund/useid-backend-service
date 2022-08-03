@@ -1,39 +1,41 @@
 package de.bund.digitalservice.useid.config
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter
+import org.springframework.security.web.server.authentication.ServerAuthenticationConverter
 
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig {
 
-    @Value("\${api.user.username}")
-    var username: String? = null
-
-    @Value("\${api.user.password}")
-    var password: String? = null
-
     @Bean
-    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+    fun springSecurityFilterChain(
+        http: ServerHttpSecurity,
+        authenticationManager: ReactiveAuthenticationManager,
+        authenticationConverter: ServerAuthenticationConverter
+    ): SecurityWebFilterChain {
         return http.authorizeExchange()
             .pathMatchers("/api/v1/identification/**").authenticated()
             .anyExchange().permitAll()
-            .and().httpBasic()
             .and().csrf().disable()
             .headers().frameOptions().disable()
-            .and().build()
+            .and().addFilterAfter(
+                authenticationFilter(authenticationManager, authenticationConverter),
+                SecurityWebFiltersOrder.REACTOR_CONTEXT
+            )
+            .build()
     }
 
     @Bean
-    fun userDetailsService(): MapReactiveUserDetailsService {
-        val admin: UserDetails = User.builder().username("$username").password("{noop}$password").roles("USER").build()
-        return MapReactiveUserDetailsService(admin)
+    fun authenticationFilter(manager: ReactiveAuthenticationManager, converter: ServerAuthenticationConverter): AuthenticationWebFilter? {
+        val filter = AuthenticationWebFilter(manager)
+        filter.setServerAuthenticationConverter(converter)
+        return filter
     }
 }
