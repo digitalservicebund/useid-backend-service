@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "api")
 class ApiProperties {
-    var keys: List<String> = emptyList()
+    var apiKeys: List<String> = emptyList()
 }

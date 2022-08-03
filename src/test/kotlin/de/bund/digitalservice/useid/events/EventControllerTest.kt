@@ -62,7 +62,6 @@ internal class EventControllerTest(
 
         // When
         publishEvent(event)
-        publishEvent(event)
 
         verifier.verify()
     }
