@@ -21,6 +21,12 @@ fileignoreconfig:
     checksum: 87bb316ca3d14b93c4a22c6a76914a532d9b766b3f490009cf65713ae09b14bf
   - filename: src/main/kotlin/de/bund/digitalservice/useid/apikeys/ApiKeyAuthenticationManager.kt
     checksum: 9f1df29f3b14372399ce9bf469276b2e92a62906af56f161b27dd01c0d1a3f28
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/apikeys/ApiKeyAuthenticationConverter.kt
+    checksum: ebed67d47eb513c6ba5d44a1f42c923583a3623ebe6de22ce1b4aa9e2ca221eb
+  - filename: src/test/kotlin/de/bund/digitalservice/useid/apikeys/ApiKeyAuthenticationManagerTest.kt
+    checksum: 5f38b46e764372c2766d7590f2dc73bd12c4c2760e3db15ef8022d5fa6c2d9f3
   - filename: src/test/kotlin/de/bund/digitalservice/useid/apikeys/ApiKeyAuthenticationConverterTest.kt
     checksum: 7acd129e6ce59738f1b819adc2b482b49a43ffdbe1e21a33bbb33443afaed88d
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/apikeys/ApiKeyAuthenticationToken.kt
+    checksum: 61c0baa54d9ef1e1281e19db74dcb8be96c37be2b09c41e4d8d9bdca8865f69c
 
