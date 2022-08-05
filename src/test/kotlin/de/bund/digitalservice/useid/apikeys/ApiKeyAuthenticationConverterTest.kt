@@ -16,7 +16,7 @@ import java.util.stream.Stream
 private const val API_KEY = "some-api-key"
 
 @Tag("test")
-internal class ApiKeyAuthenticationConverterTest {
+internal class ApiKeyAuthenticationConverterTest() {
     private val authenticationConverter: ApiKeyAuthenticationConverter = ApiKeyAuthenticationConverter()
 
     @Test
@@ -64,10 +64,10 @@ internal class ApiKeyAuthenticationConverterTest {
 
     private fun invalidHeaders(): Stream<Arguments?>? {
         return Stream.of(
-            Arguments.of(null),
-            Arguments.of(""),
-            Arguments.of("Bearer"),
-            Arguments.of("wrong prefix")
+            Arguments.of(null), // no header
+            Arguments.of(""), // empty header
+            Arguments.of("wrong prefix"), // wrong prefix
+            Arguments.of("Bearer") // empty api key
         )
     }
 }

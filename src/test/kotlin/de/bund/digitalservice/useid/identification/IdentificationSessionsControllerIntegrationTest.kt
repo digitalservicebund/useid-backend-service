@@ -24,7 +24,7 @@ class IdentificationSessionsControllerIntegrationTest(
     val attributes = listOf("DG1", "DG2")
 
     @Test
-    fun `requesting identification sessions returns 401 when the request is made without basic authentication`() {
+    fun `requesting identification sessions returns 401 when the request is made without authentication`() {
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/"))
