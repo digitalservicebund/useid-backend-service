@@ -3,7 +3,7 @@ package de.bund.digitalservice.useid.apikeys
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-class ApiKeyAuthenticationToken(private val apiKey: String, private var authenticated: Boolean) : Authentication {
+class ApiKeyAuthenticationToken(private val apiKey: String, private var authenticated: Boolean = false) : Authentication {
 
     override fun getName(): String? {
         return null

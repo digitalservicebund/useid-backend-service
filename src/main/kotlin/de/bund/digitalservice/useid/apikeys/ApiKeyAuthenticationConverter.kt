@@ -24,7 +24,7 @@ class ApiKeyAuthenticationConverter : ServerAuthenticationConverter {
             }
             .switchIfEmpty(Mono.empty())
             .map { token: String ->
-                ApiKeyAuthenticationToken(token, false)
+                ApiKeyAuthenticationToken(token)
             }
     }
 }
