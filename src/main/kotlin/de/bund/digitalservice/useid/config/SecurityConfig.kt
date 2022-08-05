@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_ENDPOINT
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.ReactiveAuthenticationManager
@@ -21,7 +22,7 @@ class SecurityConfig {
         authenticationConverter: ServerAuthenticationConverter
     ): SecurityWebFilterChain {
         return http.authorizeExchange()
-            .pathMatchers("/api/v1/identification/**").authenticated()
+            .pathMatchers("$IDENTIFICATION_SESSIONS_ENDPOINT/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
             .headers().frameOptions().disable()

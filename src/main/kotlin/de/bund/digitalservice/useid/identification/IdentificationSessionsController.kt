@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.util.UUID
 
+internal const val IDENTIFICATION_SESSIONS_ENDPOINT = "/api/v1/identification/sessions"
+
 @RestController
-@RequestMapping("/api/v1/identification/sessions")
+@RequestMapping(IDENTIFICATION_SESSIONS_ENDPOINT)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val tcTokenUrlService: TcTokenUrlService
@@ -34,7 +36,7 @@ class IdentificationSessionsController(
 
     @PostMapping
     fun createSession(@RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
-        // Currently returns a mock session response
+        // Currently, returns a mock session response
         return tcTokenUrlService.getTcTokenUrl()
             .flatMap { tcTokenUrl ->
                 identificationSessionService.save(
