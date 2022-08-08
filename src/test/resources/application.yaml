@@ -3,4 +3,6 @@ application:
     url: ${STAGING_URL:http://localhost:8080}
 
 api:
-  apiKeys: some-api-key
+  apiKeys:
+  - keyValue: some-api-key
+    refreshAddress: some-refresh-address

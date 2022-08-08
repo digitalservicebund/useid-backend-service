@@ -15,6 +15,7 @@ import reactor.test.StepVerifier
 import java.util.stream.Stream
 
 private const val API_KEY = "some-api-key"
+private const val REFRESH_ADDRESS = "some-refresh-address"
 
 @Tag("test")
 private class ApiKeyAuthenticationManagerTest {
@@ -28,7 +29,7 @@ private class ApiKeyAuthenticationManagerTest {
         // Given
         val unauthenticatedToken = ApiKeyAuthenticationToken(API_KEY)
 
-        every { apiProperties.apiKeys } returns listOf(API_KEY)
+        every { apiProperties.apiKeys } returns apiKeys()
 
         // When
         val authenticationMono = authenticationManager.authenticate(unauthenticatedToken)
@@ -43,7 +44,7 @@ private class ApiKeyAuthenticationManagerTest {
     @MethodSource("invalidAuthenticationArguments")
     fun `authenticate returns empty if api key is invalid`(authentication: Authentication) {
         // Given
-        every { apiProperties.apiKeys } returns listOf(API_KEY)
+        every { apiProperties.apiKeys } returns apiKeys()
 
         // When
         val authenticationMono = authenticationManager.authenticate(authentication)
@@ -59,5 +60,12 @@ private class ApiKeyAuthenticationManagerTest {
             Arguments.of(ApiKeyAuthenticationToken("invalid-api-key")), // invalid api key
             Arguments.of(mockk<UsernamePasswordAuthenticationToken>()) // wrong authentication type
         )
+    }
+
+    private fun apiKeys(): List<ApiProperties.ApiKey> {
+        val apiKey = ApiProperties.ApiKey()
+        apiKey.keyValue = API_KEY
+        apiKey.refreshAddress = REFRESH_ADDRESS
+        return listOf(apiKey)
     }
 }

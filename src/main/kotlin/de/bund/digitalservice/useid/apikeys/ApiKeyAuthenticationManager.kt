@@ -18,7 +18,7 @@ class ApiKeyAuthenticationManager(val apiProperties: ApiProperties) : ReactiveAu
             .filter { it is ApiKeyAuthenticationToken }
             .map { it as ApiKeyAuthenticationToken }
             .map { it.principal }
-            .filter { apiProperties.apiKeys.contains(it) }
+            .filter { keyValue -> apiProperties.apiKeys.any { it.keyValue == keyValue } }
             .switchIfEmpty(Mono.error(BadCredentialsException("API key invalid.")))
             .map { ApiKeyAuthenticationToken(it, true) }
     }
