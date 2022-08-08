@@ -38,7 +38,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { headers -> setAuthorizationHeader(headers) }
+            .headers { setAuthorizationHeader(it) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
@@ -59,7 +59,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { headers -> setAuthorizationHeader(headers) }
+            .headers { setAuthorizationHeader(it) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus().isOk
@@ -75,7 +75,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/$mockUuid"))
-            .headers { headers -> setAuthorizationHeader(headers) }
+            .headers { setAuthorizationHeader(it) }
             .exchange()
             .expectStatus()
             .isOk
@@ -91,7 +91,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219"))
-            .headers { headers -> setAuthorizationHeader(headers) }
+            .headers { setAuthorizationHeader(it) }
             .exchange()
             .expectStatus()
             .isNotFound
