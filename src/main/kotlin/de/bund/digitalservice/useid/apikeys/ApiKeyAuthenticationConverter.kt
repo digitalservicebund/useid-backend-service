@@ -9,6 +9,11 @@ import reactor.core.publisher.Mono
 
 private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
+/**
+ * This class is responsible to extract an API key from incoming HTTP requests and create an unauthenticated
+ * [ApiKeyAuthenticationToken] if present. The actual validation of the API key happens in the
+ * [ApiKeyAuthenticationManager].
+ */
 @Component
 class ApiKeyAuthenticationConverter : ServerAuthenticationConverter {
     override fun convert(exchange: ServerWebExchange): Mono<Authentication> {
