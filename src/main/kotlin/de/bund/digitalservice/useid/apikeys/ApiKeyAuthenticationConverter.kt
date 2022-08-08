@@ -27,7 +27,6 @@ class ApiKeyAuthenticationConverter : ServerAuthenticationConverter {
             .map { header: String ->
                 header.substring(AUTH_HEADER_VALUE_PREFIX.length)
             }
-            .switchIfEmpty(Mono.empty())
             .map { token: String ->
                 ApiKeyAuthenticationToken(token)
             }
