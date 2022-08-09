@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import java.net.URI
 import java.util.UUID
+
+private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -18,16 +21,10 @@ class IdentificationSessionsControllerIntegrationTest(
     @Autowired @Value("\${local.server.port}")
     val port: Int
 ) {
-    @Value("\${api.user.username}")
-    lateinit var username: String
-
-    @Value("\${api.user.password}")
-    lateinit var password: String
-
     val attributes = listOf("DG1", "DG2")
 
     @Test
-    fun `requesting identification sessions returns 401 when the request is made without basic authentication`() {
+    fun `requesting identification sessions returns 401 when the request is made without authentication`() {
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/"))
@@ -41,7 +38,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { headers -> headers.setBasicAuth(username, password) }
+            .headers { setAuthorizationHeader(it) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
             .expectStatus()
@@ -62,9 +59,10 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .post()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { headers -> headers.setBasicAuth(username, password) }
+            .headers { setAuthorizationHeader(it) }
             .body(BodyInserters.fromValue(CreateIdentitySessionRequest("https://digitalservice.bund.de", attributes)))
             .exchange()
+            .expectStatus().isOk
             .expectBody()
             .jsonPath("$.sessionId").value<String> { sessionId ->
                 /**
@@ -77,7 +75,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/$mockUuid"))
-            .headers { headers -> headers.setBasicAuth(username, password) }
+            .headers { setAuthorizationHeader(it) }
             .exchange()
             .expectStatus()
             .isOk
@@ -93,7 +91,7 @@ class IdentificationSessionsControllerIntegrationTest(
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219"))
-            .headers { headers -> headers.setBasicAuth(username, password) }
+            .headers { setAuthorizationHeader(it) }
             .exchange()
             .expectStatus()
             .isNotFound
@@ -102,5 +100,9 @@ class IdentificationSessionsControllerIntegrationTest(
             .expectBody()
             .jsonPath("$.status").isEqualTo("404")
             .jsonPath("$.message").isEqualTo("Could not find session.")
+    }
+
+    private fun setAuthorizationHeader(headers: HttpHeaders) {
+        headers.set(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER)
     }
 }

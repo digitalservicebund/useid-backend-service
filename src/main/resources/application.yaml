@@ -1,0 +1,19 @@
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      livenessState:
+        enabled: true
+      readinessState:
+        enabled: true
+
+server:
+  shutdown: graceful
+
+springdoc:
+  api-docs:
+    path: /v1
+  swagger-ui:
+    path: /swagger/docs.html
+    operationsSorter: method
