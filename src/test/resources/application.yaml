@@ -1,8 +1,0 @@
-application:
-  staging:
-    url: ${STAGING_URL:http://localhost:8080}
-
-api:
-  apiKeys:
-  - keyValue: some-api-key
-    refreshAddress: some-refresh-address

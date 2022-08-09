@@ -10,7 +10,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @ExtendWith(SpringExtension::class)
 @Tag("journey")
-@TestPropertySource(locations = ["classpath:application.yaml"])
+@TestPropertySource(locations = ["classpath:application.properties"])
 class ApplicationJourneyTest {
     @Value("\${application.staging.url}")
     private val stagingUrl: String? = null
