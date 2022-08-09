@@ -35,7 +35,13 @@ internal class ApiKeyAuthenticationConverterTest() {
 
         // Then
         StepVerifier.create(authenticationMono)
-            .expectNextMatches { it.principal.equals(API_KEY) && !it.isAuthenticated }
+            .expectNextMatches {
+                it.principal.equals(API_KEY) &&
+                    it.details is ApiKeyDetails &&
+                    (it.details as ApiKeyDetails).keyValue == API_KEY &&
+                    (it.details as ApiKeyDetails).refreshAddress == null &&
+                    !it.isAuthenticated
+            }
             .verifyComplete()
     }
 
