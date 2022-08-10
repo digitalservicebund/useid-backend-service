@@ -10,6 +10,7 @@ plugins {
     id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
     id("com.github.jk1.dependency-license-report") version "2.1"
+    id("com.adarshr.test-logger") version "3.2.0"
 }
 
 group = "de.bund.digitalservice"
@@ -23,6 +24,8 @@ repositories {
 jacoco {
     toolVersion = "0.8.8"
 }
+
+testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -81,9 +84,6 @@ tasks {
         useJUnitPlatform {
             excludeTags("integration", "journey")
         }
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
     }
 
     register<Test>("integrationTest") {
@@ -92,9 +92,7 @@ tasks {
         useJUnitPlatform {
             includeTags("integration")
         }
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
+
         // So that running integration test require running unit tests first,
         // and we won"t even attempt running integration tests when there are
         // failing unit tests.
@@ -110,9 +108,6 @@ tasks {
         group = "verification"
         useJUnitPlatform {
             includeTags("journey")
-        }
-        testLogging {
-            events("passed", "skipped", "failed")
         }
     }
 
