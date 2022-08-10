@@ -7,11 +7,19 @@ import java.util.UUID
 @Service
 class IdentificationSessionService(private val mockDatasource: MockDatasource) {
 
-    fun save(tcTokenUrl: String, refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
-        return mockDatasource.save(tcTokenUrl, refreshAddress, requestAttributes)
+    fun save(refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
+        return mockDatasource.save(refreshAddress, requestAttributes)
     }
 
-    fun sessionExists(sessionId: UUID): Boolean {
-        return mockDatasource.sessionExists(sessionId)
+    fun sessionExists(useIDSessionId: UUID): Boolean {
+        return mockDatasource.sessionExists(useIDSessionId)
+    }
+
+    fun findByIdOrFail(useIDSessionId: UUID): Mono<IdentificationSession> {
+        return mockDatasource.findByIdOrFail(useIDSessionId)
+    }
+
+    fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {
+        return mockDatasource.updateEIDSessionId(useIDSessionId, eIDSessionId)
     }
 }
