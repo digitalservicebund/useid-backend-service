@@ -9,20 +9,22 @@ object XmlHelper {
     /**
      * This method marshals any element that is annotated with [javax.xml.bind.annotation.XmlRootElement].
      *
-     * @param object the annotated XML object
+     * @param inputObject the annotated XML object
      * @return the string representation of the XML object
      */
-    fun marshalObject(`object`: Any): String {
+    fun marshalObject(inputObject: Any): String {
         return try {
-            val jc = JAXBContext.newInstance(`object`.javaClass)
-            val marshaller = jc.createMarshaller()
+            val jaxbContext = JAXBContext.newInstance(inputObject.javaClass)
+            val marshaller = jaxbContext.createMarshaller()
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8")
             val stringWriter = StringWriter()
-            marshaller.marshal(`object`, stringWriter)
+            stringWriter.use {
+                marshaller.marshal(inputObject, stringWriter)
+            }
             stringWriter.toString()
         } catch (e: JAXBException) {
-            throw IllegalStateException("error while marshalling class " + `object`.javaClass.name, e)
+            throw IllegalStateException("error while marshalling class " + inputObject.javaClass.name, e)
         }
     }
 }
