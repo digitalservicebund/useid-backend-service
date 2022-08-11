@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bos_bremen.gov.autent.common.Utils
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +10,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import java.net.URI
-import java.net.URLDecoder
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
@@ -52,7 +50,7 @@ class IdentificationSessionsControllerIntegrationTest(
 
     @Test
     fun `getting identity data returns with 200 and data attributes if the session id is valid and found`() {
-        var mockTCTokenUrl = ""
+    /*  var mockTCTokenUrl = ""
 
         webTestClient
             .post()
@@ -66,13 +64,13 @@ class IdentificationSessionsControllerIntegrationTest(
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.tcTokenUrl").value<String> { tcTokenUrl ->
-                /**
-                 * Store tcTokenUrl temporarily in mockTCTokenUrl so that the next request can call it
-                 */
+                *//**
+         * Store tcTokenUrl temporarily in mockTCTokenUrl so that the next request can call it
+         *//*
                 mockTCTokenUrl = URLDecoder.decode(tcTokenUrl, Utils.ENCODING)
             }
 
-        /* webTestClient
+         webTestClient
             .get()
             .uri(URI.create(mockTCTokenUrl))
             .headers { setAuthorizationHeader(it) }
