@@ -146,7 +146,6 @@ class EidServiceConfig : EidServiceConfiguration {
     override fun getEidServiceUrl(): String = serviceUrl
 
     override fun getTruststore(): KeyStore {
-        // TODO: Do we need to securely store the keystorePassword?
         return KeyStoreSupporter.toKeyStore(
             readCertificate(autentTlsCertPath),
             "eid",
