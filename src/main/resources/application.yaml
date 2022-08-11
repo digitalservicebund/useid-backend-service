@@ -20,11 +20,13 @@ springdoc:
 
 autent:
   keystore:
-    password: ${AUTENT_KEYSTORE_PASSWORD}
+    password: ${AUTENT_KEYSTORE_PASSWORD:test}
   eidservice:
     wsdl:
-      url: ${AUTENT_KEYSTORE_EIDSERVICE_WSDL_URL}
-    url: ${AUTENT_KEYSTORE_EIDSERVICE_URL}
+      # The url will come from environment variables
+      # it's a mock url for running the test
+      url: ${AUTENT_KEYSTORE_EIDSERVICE_WSDL_URL:https://www.test.dev}
+    url: ${AUTENT_KEYSTORE_EIDSERVICE_URL:https://www.test.dev}
     tls:
       path: /testKeys/demo.governikus-eid.ws_ssl.cer
     sig:
@@ -35,15 +37,15 @@ tls:
     path: /testKeys/auth.localhost_9846.p12
     type: PKCS12
     alias: auth.localhost
-    password: ${TLS_KEYSTORE_PASSWORD}
+    password: ${TLS_KEYSTORE_PASSWORD:test}
     key:
-      password: ${TLS_KEYSTORE_KEY_PASSWORD}
+      password: ${TLS_KEYSTORE_KEY_PASSWORD:test}
 
 xmlsig:
   keystore:
     path: /testKeys/sign.localhost_2382.p12
     type: PKCS12
     alias: sign.localhost
-    password: ${XMLSIG_KEYSTORE_PASSWORD}
+    password: ${XMLSIG_KEYSTORE_PASSWORD:test}
     key:
-      password: ${XMLSIG_KEYSTORE_KEYSTORE_PASSWORD}
+      password: ${XMLSIG_KEYSTORE_KEYSTORE_PASSWORD:test}
