@@ -17,3 +17,33 @@ springdoc:
   swagger-ui:
     path: /swagger/docs.html
     operationsSorter: method
+
+autent:
+  keystore:
+    password: ${AUTENT_KEYSTORE_PASSWORD}
+  eidservice:
+    wsdl:
+      url: ${AUTENT_KEYSTORE_EIDSERVICE_WSDL_URL}
+    url: ${AUTENT_KEYSTORE_EIDSERVICE_URL}
+    tls:
+      path: /testKeys/demo.governikus-eid.ws_ssl.cer
+    sig:
+      path: /testKeys/demo.governikus-eid.ws_sig.cer
+
+tls:
+  keystore:
+    path: /testKeys/auth.localhost_9846.p12
+    type: PKCS12
+    alias: auth.localhost
+    password: ${TLS_KEYSTORE_PASSWORD}
+    key:
+      password: ${TLS_KEYSTORE_KEY_PASSWORD}
+
+xmlsig:
+  keystore:
+    path: /testKeys/sign.localhost_2382.p12
+    type: PKCS12
+    alias: sign.localhost
+    password: ${XMLSIG_KEYSTORE_PASSWORD}
+    key:
+      password: ${XMLSIG_KEYSTORE_KEYSTORE_PASSWORD}
