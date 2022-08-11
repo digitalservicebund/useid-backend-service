@@ -20,4 +20,4 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
-    checksum: 76494569f6a450e2c58485d0f0b233f2a6b26867cf5cfe1565eb1a993e0e6a6b
+    checksum: 13b1c96af8f88fd272af0136acfa2a7b8f9fe5c70bc054df90fe79aece480746

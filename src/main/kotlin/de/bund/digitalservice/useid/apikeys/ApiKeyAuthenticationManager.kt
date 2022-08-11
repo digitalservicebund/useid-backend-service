@@ -22,7 +22,6 @@ class ApiKeyAuthenticationManager(val apiProperties: ApiProperties) : ReactiveAu
             .map { it as ApiKeyAuthenticationToken }
             .map { it.principal }
             .mapNotNull { keyValue ->
-                apiProperties.apiKeys.forEach { log.debug { "API Key: ${it.keyValue}, ${it.refreshAddress}" } }
                 val validApiKey = apiProperties.apiKeys.find { it.keyValue == keyValue }
                 if (validApiKey == null) {
                     log.debug { "Invalid API key." }
