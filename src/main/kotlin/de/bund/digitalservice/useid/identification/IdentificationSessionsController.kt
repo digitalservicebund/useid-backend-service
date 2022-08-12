@@ -70,7 +70,7 @@ class IdentificationSessionsController(
     }
 
     @GetMapping(
-        path = ["/$TCTOKEN_ENDPOINT/{useIDSessionId}"],
+        path = ["/{useIDSessionId}/$TCTOKEN_ENDPOINT"],
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
