@@ -90,9 +90,6 @@ tasks {
         useJUnitPlatform {
             excludeTags("integration", "journey")
         }
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
     }
 
     register<Test>("integrationTest") {
@@ -100,9 +97,6 @@ tasks {
         group = "verification"
         useJUnitPlatform {
             includeTags("integration")
-        }
-        testLogging {
-            events("passed", "skipped", "failed")
         }
         // So that running integration test require running unit tests first,
         // and we won"t even attempt running integration tests when there are
@@ -119,9 +113,6 @@ tasks {
         group = "verification"
         useJUnitPlatform {
             includeTags("journey")
-        }
-        testLogging {
-            events("passed", "skipped", "failed")
         }
     }
 
