@@ -89,22 +89,6 @@ class IdentificationSessionsControllerIntegrationTest(
         // .xpath("TCTokenType/RefreshAddress[contains(text(), '/^(.*?)sessionId=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}.*/')]").exists()
     }
 
-    @Test
-    fun `getting identity data fails with 404 if the session id cannot be found`() {
-        webTestClient
-            .get()
-            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219"))
-            .headers { setAuthorizationHeader(it) }
-            .exchange()
-            .expectStatus()
-            .isNotFound
-            .expectHeader()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody()
-            .jsonPath("$.status").isEqualTo("404")
-            .jsonPath("$.message").isEqualTo("Could not find session.")
-    }
-
     // TCToken
     @Test
     fun `getting TCToken returns with 500 if the UseIDSessionId of the tc token is invalid`() {
