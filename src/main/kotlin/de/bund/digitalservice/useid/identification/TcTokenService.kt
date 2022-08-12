@@ -18,5 +18,7 @@ class TcTokenService(
         * and also usage of Reactor's BlockHound is preferred
         */
         return Mono.just(eidService.getTcToken(refreshAddress))
+            // TODO: Use proper logic to report error (via Sentry
+            .doOnError { log.error { "error retrieving tcToken from eID server" } }
     }
 }
