@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.utils.XmlHelper
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -19,8 +18,5 @@ class TcTokenService(
         * and also usage of Reactor's BlockHound is preferred
         */
         return Mono.just(eidService.getTcToken(refreshAddress))
-            .doOnNext {
-                log.info("created tcToken ${XmlHelper.marshalObject(it)}")
-            }
     }
 }
