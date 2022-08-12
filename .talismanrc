@@ -1,8 +1,6 @@
 fileignoreconfig:
   - filename: "*README.md"
     ignore_detectors: [filecontent]
-  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidWebService.kt
-    ignore_detectors: [filecontent]
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
     checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
