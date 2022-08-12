@@ -23,4 +23,6 @@ fileignoreconfig:
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
     checksum: 5b25633dd40fdf23622b826ead10806b4b16bfabeef28e8013bcc6d2c7ff450f
+  - filename: src/main/resources/application.yaml
+    checksum: 4025c1a2ab82ac99c63e8db8bbd47cf48f02a3d7a97632d2cf8a5ad832f7f1a0
 
