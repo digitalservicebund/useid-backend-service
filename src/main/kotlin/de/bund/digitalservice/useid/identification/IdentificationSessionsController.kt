@@ -41,7 +41,7 @@ class IdentificationSessionsController(
         )
     }
 
-    @PostMapping
+    @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
         @RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest,
         serverHttpRequest: ServerHttpRequest
@@ -69,7 +69,10 @@ class IdentificationSessionsController(
             )
     }
 
-    @GetMapping("/$TCTOKEN_ENDPOINT/{useIDSessionId}")
+    @GetMapping(
+        path = ["/$TCTOKEN_ENDPOINT/{useIDSessionId}"],
+        produces = [MediaType.APPLICATION_XML_VALUE]
+    )
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
         return identificationSessionService.findByIdOrFail(useIDSessionId)
             .flatMap {
