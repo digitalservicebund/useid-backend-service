@@ -50,7 +50,7 @@ class IdentificationSessionsController(
             .save(
                 refreshAddress = "https://localhost:8443/", // Currently a mock value, later will inject from env var mapped by API Key
                 requestAttributes = createIdentitySessionRequest.requestAttributes
-            ) // PublishOn is suggested by IntelliJ, maybe there is another way to resolve blocking URLEncoder.encode()
+            )
             .publishOn(Schedulers.boundedElastic())
             .map {
                 val encodedTcTokenUrl = URLEncoder.encode("${serverHttpRequest.uri}/$TCTOKEN_ENDPOINT/${it.useIDSessionId}", Utils.ENCODING)
