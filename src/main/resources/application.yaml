@@ -18,6 +18,8 @@ springdoc:
     path: /swagger/docs.html
     operationsSorter: method
 
+# TODO: certs should be added for dev in src/main/resources/testKeys
+# this will be fixed in the next story
 autent:
   keystore:
     password: ${AUTENT_KEYSTORE_PASSWORD:test}
