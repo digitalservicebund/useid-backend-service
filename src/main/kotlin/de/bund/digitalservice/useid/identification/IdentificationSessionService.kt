@@ -7,8 +7,8 @@ import java.util.UUID
 @Service
 class IdentificationSessionService(private val mockDatasource: MockDatasource) {
 
-    fun save(refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
-        return mockDatasource.save(refreshAddress, requestAttributes)
+    fun create(refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
+        return mockDatasource.create(refreshAddress, requestAttributes)
     }
 
     fun sessionExists(useIDSessionId: UUID): Boolean {

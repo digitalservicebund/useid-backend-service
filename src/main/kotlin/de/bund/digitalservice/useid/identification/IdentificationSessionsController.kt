@@ -47,7 +47,7 @@ class IdentificationSessionsController(
         serverHttpRequest: ServerHttpRequest
     ): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
         return identificationSessionService
-            .save(
+            .create(
                 refreshAddress = "https://localhost:8443/", // Currently a mock value, later will inject from env var mapped by API Key
                 requestAttributes = createIdentitySessionRequest.requestAttributes
             )
