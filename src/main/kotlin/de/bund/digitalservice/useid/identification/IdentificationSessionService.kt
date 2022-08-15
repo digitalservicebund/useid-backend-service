@@ -16,7 +16,7 @@ class IdentificationSessionService(private val mockDatasource: MockDatasource) {
     }
 
     fun findByIdOrFail(useIDSessionId: UUID): Mono<IdentificationSession> {
-        return mockDatasource.findByIdOrFail(useIDSessionId)
+        return Mono.just(mockDatasource.findByIdOrFail(useIDSessionId))
     }
 
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {

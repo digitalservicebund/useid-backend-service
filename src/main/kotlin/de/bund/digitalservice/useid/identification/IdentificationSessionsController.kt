@@ -1,12 +1,14 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bos_bremen.gov.autent.common.Utils
+import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -44,11 +46,12 @@ class IdentificationSessionsController(
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
         @RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest,
-        serverHttpRequest: ServerHttpRequest
+        serverHttpRequest: ServerHttpRequest,
+        authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
         return identificationSessionService
             .create(
-                refreshAddress = "https://localhost:8443/", // Currently a mock value, later will inject from env var mapped by API Key
+                refreshAddress = (authentication as ApiKeyAuthenticationToken).details.refreshAddress!!,
                 requestAttributes = createIdentitySessionRequest.requestAttributes
             )
             .publishOn(Schedulers.boundedElastic())
