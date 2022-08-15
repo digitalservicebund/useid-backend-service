@@ -44,3 +44,6 @@ src/main/resources/testKeys
 *.p12
 *.cer
 *.pem
+
+### Local development profile ###
+application-local.yaml
