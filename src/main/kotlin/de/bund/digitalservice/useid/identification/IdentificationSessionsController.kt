@@ -20,11 +20,11 @@ import reactor.core.scheduler.Schedulers
 import java.net.URLEncoder
 import java.util.UUID
 
-internal const val IDENTIFICATION_SESSIONS_ENDPOINT = "/api/v1/identification/sessions"
-internal const val TCTOKEN_ENDPOINT = "tc-token"
+internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
+internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
-@RequestMapping(IDENTIFICATION_SESSIONS_ENDPOINT)
+@RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val tcTokenService: TcTokenService
@@ -70,7 +70,7 @@ class IdentificationSessionsController(
     }
 
     @GetMapping(
-        path = ["/{useIDSessionId}/$TCTOKEN_ENDPOINT"],
+        path = ["/{useIDSessionId}/$TCTOKEN_PATH_SUFFIX"],
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
