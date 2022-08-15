@@ -17,23 +17,3 @@ springdoc:
   swagger-ui:
     path: /swagger/docs.html
     operationsSorter: method
-
-eidproperties:
-  keystore-password: ${EIDPROPERTIES_KEYSTORE_PASSWORD}
-  eidservice:
-    wsdl-url: ${EIDPROPERTIES_EIDSERVICE_WSDL_URL}
-    url: ${EIDPROPERTIES_EIDSERVICE_URL}
-    tls-path: ${EIDPROPERTIES_EIDSERVICE_TLS_PATH}
-    sig-path: ${EIDPROPERTIES_EIDSERVICE_SIG_PATH}
-  tls-keystore:
-    path: ${EIDPROPERTIES_TLS_KEYSTORE_PATH}
-    type: ${EIDPROPERTIES_TLS_KEYSTORE_TYPE}
-    alias: ${EIDPROPERTIES_TLS_KEYSTORE_ALIAS}
-    password: ${EIDPROPERTIES_TLS_KEYSTORE_PASSWORD}
-    key-password: ${EIDPROPERTIES_TLS_KEYSTORE_KEY_PASSWORD}
-  xmlsig-keystore:
-    path: ${EIDPROPERTIES_XMLSIG_KEYSTORE_PATH}
-    type: ${EIDPROPERTIES_XMLSIG_KEYSTORE_TYPE}
-    alias: ${EIDPROPERTIES_XMLSIG_KEYSTORE_ALIAS}
-    password: ${EIDPROPERTIES_XMLSIG_KEYSTORE_PASSWORD}
-    key-password: ${EIDPROPERTIES_XMLSIG_KEYSTORE_KEY_PASSWORD}
