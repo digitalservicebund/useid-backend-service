@@ -7,7 +7,7 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 
 @Component
-@ConfigurationProperties("eidservice")
+@ConfigurationProperties(prefix = "eidservice")
 @Validated
 class EidAutentProperties {
     @NotBlank
