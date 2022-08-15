@@ -2,7 +2,7 @@ fileignoreconfig:
   - filename: "*README.md"
     ignore_detectors: [filecontent]
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt
-    checksum: fea18c6221ef7666ff580416814dd16097dc0af19c6f4d330bebbd3c6c719a9f
+    checksum: f1cb989364c269eae8365dc480f5b66964cf0dec095b1e3ef274883555cdf71c
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
     checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
@@ -22,5 +22,7 @@ fileignoreconfig:
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
     checksum: 5b25633dd40fdf23622b826ead10806b4b16bfabeef28e8013bcc6d2c7ff450f
   - filename: src/main/resources/application.yaml
-    checksum: 4025c1a2ab82ac99c63e8db8bbd47cf48f02a3d7a97632d2cf8a5ad832f7f1a0
+    checksum: 0def175055e86bde28f456242239bf039c86086408686279f033f52bf2d06729
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidAutentProperties.kt
+    checksum: b84a4b0e2f9801fe2abde5e5425f324862ea401c16eccfa7b01eee3e4d2d7cbc
 
