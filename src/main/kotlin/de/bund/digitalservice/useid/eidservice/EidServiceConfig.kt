@@ -14,46 +14,46 @@ import java.security.cert.X509Certificate
 import javax.xml.ws.BindingProvider
 
 @Configuration
-class EidServiceConfig(private var eidAutentProperties: EidAutentProperties) : EidServiceConfiguration {
-    override fun getEidServiceWsdlUrl(): String = eidAutentProperties.eidservice.wsdlUrl
+class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) : EidServiceConfiguration {
+    override fun getEidServiceWsdlUrl(): String = eidServiceProperties.eidservice.wsdlUrl
 
-    override fun getEidServiceUrl(): String = eidAutentProperties.eidservice.url
+    override fun getEidServiceUrl(): String = eidServiceProperties.eidservice.url
 
     override fun getTruststore(): KeyStore {
         return KeyStoreSupporter.toKeyStore(
-            readCertificate(eidAutentProperties.eidservice.tlsPath),
+            readCertificate(eidServiceProperties.eidservice.tlsPath),
             "eid",
-            eidAutentProperties.keystorePassword,
+            eidServiceProperties.keystorePassword,
             KeyStoreSupporter.KeyStoreType.JKS
         )
     }
 
-    override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidAutentProperties.eidservice.sigPath)
+    override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidServiceProperties.eidservice.sigPath)
     override fun getXmlSignatureCreationKeystore(): KeyStoreAccessor {
         val sigKeyStore = KeyStoreSupporter.readKeyStore(
-            ClassPathResource(eidAutentProperties.xmlSigKeystore.path).inputStream,
-            KeyStoreSupporter.KeyStoreType.valueOf(eidAutentProperties.xmlSigKeystore.type),
-            eidAutentProperties.xmlSigKeystore.password
+            ClassPathResource(eidServiceProperties.xmlSigKeystore.path).inputStream,
+            KeyStoreSupporter.KeyStoreType.valueOf(eidServiceProperties.xmlSigKeystore.type),
+            eidServiceProperties.xmlSigKeystore.password
         )
         return KeyStoreAccessor(
             sigKeyStore,
-            eidAutentProperties.xmlSigKeystore.password,
-            eidAutentProperties.xmlSigKeystore.alias,
-            eidAutentProperties.xmlSigKeystore.keyPassword
+            eidServiceProperties.xmlSigKeystore.password,
+            eidServiceProperties.xmlSigKeystore.alias,
+            eidServiceProperties.xmlSigKeystore.keyPassword
         )
     }
 
     override fun getSslKeystoreForMutualTlsAuthentication(): KeyStoreAccessor {
         val tlsKeyStore = KeyStoreSupporter.readKeyStore(
-            ClassPathResource(eidAutentProperties.tlsKeystore.path).inputStream,
-            KeyStoreSupporter.KeyStoreType.valueOf(eidAutentProperties.tlsKeystore.type),
-            eidAutentProperties.tlsKeystore.password
+            ClassPathResource(eidServiceProperties.tlsKeystore.path).inputStream,
+            KeyStoreSupporter.KeyStoreType.valueOf(eidServiceProperties.tlsKeystore.type),
+            eidServiceProperties.tlsKeystore.password
         )
         return KeyStoreAccessor(
             tlsKeyStore,
-            eidAutentProperties.tlsKeystore.password,
-            eidAutentProperties.tlsKeystore.alias,
-            eidAutentProperties.tlsKeystore.keyPassword
+            eidServiceProperties.tlsKeystore.password,
+            eidServiceProperties.tlsKeystore.alias,
+            eidServiceProperties.tlsKeystore.keyPassword
         )
     }
 

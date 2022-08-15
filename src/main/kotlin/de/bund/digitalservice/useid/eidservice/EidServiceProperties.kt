@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 @Component
 @ConfigurationProperties(prefix = "eidservice")
 @Validated
-class EidAutentProperties {
+class EidServiceProperties {
     @NotBlank
     lateinit var keystorePassword: String
 
