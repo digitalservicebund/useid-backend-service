@@ -1,24 +1,27 @@
 package de.bund.digitalservice.useid
 
+import de.bund.digitalservice.useid.config.TestApplicationProperties
+import de.bund.digitalservice.useid.config.TestConfig
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.test.context.TestPropertySource
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @ExtendWith(SpringExtension::class)
 @Tag("journey")
-@TestPropertySource(locations = ["classpath:application.properties"])
+@Import(TestConfig::class)
 class ApplicationJourneyTest {
-    @Value("\${application.staging.url}")
-    private val stagingUrl: String? = null
+
+    @Autowired
+    private lateinit var testApplicationProperties: TestApplicationProperties
 
     @Test
     fun `application health`() {
         WebTestClient.bindToServer()
-            .baseUrl(stagingUrl!!)
+            .baseUrl(testApplicationProperties.staging!!.url)
             .build()
             .get()
             .uri("/actuator/health")
