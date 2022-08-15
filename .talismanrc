@@ -1,10 +1,12 @@
 fileignoreconfig:
   - filename: "*README.md"
     ignore_detectors: [filecontent]
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
+    checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
-    checksum: cf72a74e2d073ea30669047f7f57b02922859d55b4d046cb0e8c5454fb4b004f
+    checksum: 9907456bfa5b4fec1e625343142f9a630c709ba1261c2bc975ffbbbeff6b6f58
   - filename: .github/workflows/pipeline.yml
-    checksum: 48060058da40c8771fc100397b8b897ce550cb47c258e5efca7960e61467c7fd
+    checksum: 10e93d4e52fc4b8ed850fb58d1746a262edf982c0511be6438286414c6224864
   - filename: .github/workflows/secrets-check.yml
     checksum: d7fbfab653dad354f2854b45545faed3a604e3ba356446e0f92f5889826e4a09
   - filename: .github/workflows/scan.yml
@@ -13,16 +15,9 @@ fileignoreconfig:
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
+  - filename: src/test/resources/application.yaml
+    checksum: d0db4798a099371f3af9e6119dcf407e441590e6b3d76bc805e5607119b7125f
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
-    checksum: 5b25633dd40fdf23622b826ead10806b4b16bfabeef28e8013bcc6d2c7ff450f
-  - filename: src/main/resources/application.yaml
-    checksum: 0def175055e86bde28f456242239bf039c86086408686279f033f52bf2d06729
-  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidAutentProperties.kt
-    checksum: b84a4b0e2f9801fe2abde5e5425f324862ea401c16eccfa7b01eee3e4d2d7cbc
-  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt
-    checksum: f1cb989364c269eae8365dc480f5b66964cf0dec095b1e3ef274883555cdf71c
-  - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
-    checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
-
+    checksum: 13b1c96af8f88fd272af0136acfa2a7b8f9fe5c70bc054df90fe79aece480746
