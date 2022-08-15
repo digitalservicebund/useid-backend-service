@@ -27,18 +27,15 @@ class MockDatasource {
         return sessions.any { it.useIDSessionId == useIDSessionId }
     }
 
-    fun findByIdOrFail(useIDSessionId: UUID): Mono<IdentificationSession> {
+    fun findByIdOrFail(useIDSessionId: UUID): IdentificationSession {
         if (!sessionExists(useIDSessionId)) {
             throw Error("no session found with useIDSessionId $useIDSessionId")
         }
-        return Mono.just(sessions.find { it.useIDSessionId == useIDSessionId }!!)
+        return sessions.find { it.useIDSessionId == useIDSessionId }!!
     }
 
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {
-        // use !! here bc findByIdOrFail was already executed
-        val session = sessions.find {
-            it.useIDSessionId == useIDSessionId
-        }!!
+        val session = findByIdOrFail(useIDSessionId)
         session.eIDSessionId = eIDSessionId
         log.info { "set new eIDSessionId: ${session.eIDSessionId} for session with useIDSessionId: $useIDSessionId" }
     }
