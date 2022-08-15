@@ -97,7 +97,7 @@ jobs:
         uses: aquasecurity/trivy-action@81b9a6f5abb1047d697af7a3ca18c13f55a97315
         with:
           image-ref: ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
-          format: "sarif"
+          format: "table"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
           exit-code: "1" # Fail the build!
