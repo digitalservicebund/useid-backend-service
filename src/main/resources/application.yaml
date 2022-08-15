@@ -18,36 +18,22 @@ springdoc:
     path: /swagger/docs.html
     operationsSorter: method
 
-# TODO: certs should be added for dev in src/main/resources/testKeys
-# this will be fixed in the next story
-autent:
-  keystore:
-    password: ${AUTENT_KEYSTORE_PASSWORD:test}
+eidproperties:
+  keystore-password: ${EIDPROPERTIES_KEYSTORE_PASSWORD}
   eidservice:
-    wsdl:
-      # The url will come from environment variables
-      # it's a mock url for running the test
-      url: ${AUTENT_KEYSTORE_EIDSERVICE_WSDL_URL:https://www.test.dev}
-    url: ${AUTENT_KEYSTORE_EIDSERVICE_URL:https://www.test.dev}
-    tls:
-      path: /testKeys/demo.governikus-eid.ws_ssl.cer
-    sig:
-      path: /testKeys/demo.governikus-eid.ws_sig.cer
-
-tls:
-  keystore:
-    path: /testKeys/auth.localhost_9846.p12
-    type: PKCS12
-    alias: auth.localhost
-    password: ${TLS_KEYSTORE_PASSWORD:test}
-    key:
-      password: ${TLS_KEYSTORE_KEY_PASSWORD:test}
-
-xmlsig:
-  keystore:
-    path: /testKeys/sign.localhost_2382.p12
-    type: PKCS12
-    alias: sign.localhost
-    password: ${XMLSIG_KEYSTORE_PASSWORD:test}
-    key:
-      password: ${XMLSIG_KEYSTORE_KEYSTORE_PASSWORD:test}
+    wsdl-url: ${EIDPROPERTIES_EIDSERVICE_WSDL_URL}
+    url: ${EIDPROPERTIES_EIDSERVICE_URL}
+    tls-path: ${EIDPROPERTIES_EIDSERVICE_TLS_PATH}
+    sig-path: ${EIDPROPERTIES_EIDSERVICE_SIG_PATH}
+  tls-keystore:
+    path: ${EIDPROPERTIES_TLS_KEYSTORE_PATH}
+    type: ${EIDPROPERTIES_TLS_KEYSTORE_TYPE}
+    alias: ${EIDPROPERTIES_TLS_KEYSTORE_ALIAS}
+    password: ${EIDPROPERTIES_TLS_KEYSTORE_PASSWORD}
+    key-password: ${EIDPROPERTIES_TLS_KEYSTORE_KEY_PASSWORD}
+  xmlsig-keystore:
+    path: ${EIDPROPERTIES_XMLSIG_KEYSTORE_PATH}
+    type: ${EIDPROPERTIES_XMLSIG_KEYSTORE_TYPE}
+    alias: ${EIDPROPERTIES_XMLSIG_KEYSTORE_ALIAS}
+    password: ${EIDPROPERTIES_XMLSIG_KEYSTORE_PASSWORD}
+    key-password: ${EIDPROPERTIES_XMLSIG_KEYSTORE_KEY_PASSWORD}
