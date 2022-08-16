@@ -98,6 +98,8 @@ jobs:
         with:
           image-ref: ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
           format: "sarif"
+          ignore-unfixed: true
+          trivyignores: ".trivyignore"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
           exit-code: "1" # Fail the build!
