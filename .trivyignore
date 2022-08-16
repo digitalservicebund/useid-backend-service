@@ -1,0 +1,4 @@
+# Ignore SDK vulnerability for now
+
+CVE-2018-10237
+CVE-2020-8908
