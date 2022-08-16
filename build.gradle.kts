@@ -64,6 +64,12 @@ dependencies {
     // Governikus Autent SDK
     implementation("de.governikus.autent.sdk:eid-webservice-sdk:3.73.9")
     implementation("de.governikus.autent.utils:autent-key-utils:4.0.14")
+    // => CVE-2015-7501, CVE-2015-6420
+    implementation("commons-collections:commons-collections:3.2.2")
+    // => CVE-2021-40690
+    implementation("org.apache.santuario:xmlsec:2.3.0")
+    // => CVE-2020-28052
+    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
