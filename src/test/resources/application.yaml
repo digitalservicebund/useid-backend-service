@@ -9,11 +9,10 @@ api:
 
 eidservice:
   keystore-password: testkeystore
-  eidservice:
-    wsdl-url: https://mock.url
-    url: https://mock.url
-    tls-path: mock/path
-    sig-path: mock/path
+  wsdl-url: https://mock.url
+  url: https://mock.url
+  tls-path: mock/path
+  sig-path: mock/path
   tls-keystore:
     path: mock/path
     type: PKCS12

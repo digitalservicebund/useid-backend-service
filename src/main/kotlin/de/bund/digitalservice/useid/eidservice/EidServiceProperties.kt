@@ -13,28 +13,23 @@ class EidServiceProperties {
     @NotBlank
     lateinit var keystorePassword: String
 
-    @Valid
-    var eidservice: EidService = EidService()
+    @NotBlank
+    lateinit var wsdlUrl: String
+
+    @NotBlank
+    lateinit var url: String
+
+    @NotBlank
+    lateinit var tlsPath: String
+
+    @NotBlank
+    lateinit var sigPath: String
 
     @Valid
     var tlsKeystore: TLSKeystore = TLSKeystore()
 
     @Valid
     var xmlSigKeystore: XMLSigKeystore = XMLSigKeystore()
-
-    class EidService {
-        @NotBlank
-        lateinit var wsdlUrl: String
-
-        @NotBlank
-        lateinit var url: String
-
-        @NotBlank
-        lateinit var tlsPath: String
-
-        @NotBlank
-        lateinit var sigPath: String
-    }
 
     class TLSKeystore {
         @NotBlank

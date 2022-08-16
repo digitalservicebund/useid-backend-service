@@ -15,20 +15,20 @@ import javax.xml.ws.BindingProvider
 
 @Configuration
 class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) : EidServiceConfiguration {
-    override fun getEidServiceWsdlUrl(): String = eidServiceProperties.eidservice.wsdlUrl
+    override fun getEidServiceWsdlUrl(): String = eidServiceProperties.wsdlUrl
 
-    override fun getEidServiceUrl(): String = eidServiceProperties.eidservice.url
+    override fun getEidServiceUrl(): String = eidServiceProperties.url
 
     override fun getTruststore(): KeyStore {
         return KeyStoreSupporter.toKeyStore(
-            readCertificate(eidServiceProperties.eidservice.tlsPath),
+            readCertificate(eidServiceProperties.tlsPath),
             "eid",
             eidServiceProperties.keystorePassword,
             KeyStoreSupporter.KeyStoreType.JKS
         )
     }
 
-    override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidServiceProperties.eidservice.sigPath)
+    override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidServiceProperties.sigPath)
     override fun getXmlSignatureCreationKeystore(): KeyStoreAccessor {
         val sigKeyStore = KeyStoreSupporter.readKeyStore(
             ClassPathResource(eidServiceProperties.xmlSigKeystore.path).inputStream,
