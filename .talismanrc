@@ -16,10 +16,12 @@ fileignoreconfig:
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
   - filename: src/test/resources/application.yaml
-    checksum: f696efb87f70fcafc7fde0a4f37f6143fa47f9f650fdfdfcdd39d1f1b342f375
+    checksum: 55740c40b6d40ae0be87dc7163bcd37d94ce5d31346fcf5d8f1635647a57b803
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt
-    checksum: 22fe1c829bf99846d49e2152e10831db6940f4e069d0e47391c20df390c7c08f
+    checksum: d701edcc11579ba2e3e067e41a9d54ee84c93934fc9e4a16c941630104c1ef5b
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceProperties.kt
+    checksum: 42d75bfb9bd646af0a74078b88b14c12377f6e957bd3e0ebba925ec3fe64f9f7
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
     checksum: 13b1c96af8f88fd272af0136acfa2a7b8f9fe5c70bc054df90fe79aece480746
