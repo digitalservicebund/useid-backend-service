@@ -4,7 +4,7 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
     checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
-    checksum: 9907456bfa5b4fec1e625343142f9a630c709ba1261c2bc975ffbbbeff6b6f58
+    checksum: e540103224ca88c118adc354dc647d0b9391dd0c6fa905fedf024c6d0d1d26f6
   - filename: .github/workflows/pipeline.yml
     checksum: 10e93d4e52fc4b8ed850fb58d1746a262edf982c0511be6438286414c6224864
   - filename: .github/workflows/secrets-check.yml
