@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bos_bremen.gov.autent.common.Utils
 import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import java.net.URLEncoder
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -29,7 +27,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
-    private val tcTokenService: TcTokenService
+    private val tcTokenService: ITcTokenService
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -59,7 +57,7 @@ class IdentificationSessionsController(
                 /* TODO: Find a way to build the url, by using serverHttpRequest.uri is not preferable
                     since the path parameter can be different (in case of in proxy server)
                  */
-                val encodedTcTokenUrl = URLEncoder.encode("${serverHttpRequest.uri}/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX", Utils.ENCODING)
+                val encodedTcTokenUrl = "${serverHttpRequest.uri}/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)

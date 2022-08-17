@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.eidservice
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank
 @Component
 @ConfigurationProperties(prefix = "eidservice")
 @Validated
+@ConditionalOnProperty("feature.eid-service-integration.enabled", havingValue = "true")
 class EidServiceProperties {
     @NotBlank
     lateinit var keystorePassword: String

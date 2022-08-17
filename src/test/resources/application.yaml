@@ -25,3 +25,7 @@ eidservice:
     alias: sign.localhost
     password: mockpassword
     key-password: mockpassword
+
+feature:
+  eid-service-integration:
+    enabled: true
