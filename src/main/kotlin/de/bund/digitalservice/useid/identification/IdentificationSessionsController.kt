@@ -59,7 +59,7 @@ class IdentificationSessionsController(
                 /* TODO: Find a way to build the url, by using serverHttpRequest.uri is not preferable
                     since the path parameter can be different (in case of in proxy server)
                  */
-                val encodedTcTokenUrl = URLEncoder.encode("${serverHttpRequest.uri}/$TCTOKEN_PATH_SUFFIX/${it.useIDSessionId}", Utils.ENCODING)
+                val encodedTcTokenUrl = URLEncoder.encode("${serverHttpRequest.uri}/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX/", Utils.ENCODING)
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
