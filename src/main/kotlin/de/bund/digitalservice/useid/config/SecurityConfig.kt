@@ -22,6 +22,7 @@ class SecurityConfig {
         authenticationConverter: ServerAuthenticationConverter
     ): SecurityWebFilterChain {
         return http.authorizeExchange()
+            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
