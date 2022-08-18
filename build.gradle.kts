@@ -19,6 +19,9 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://nexus-ext.governikus.de/nexus/content/groups/public/")
+    }
 }
 
 jacoco {
@@ -58,6 +61,15 @@ dependencies {
     implementation("com.google.zxing:javase:3.5.0")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
+    // Governikus Autent SDK
+    implementation("de.governikus.autent.sdk:eid-webservice-sdk:3.73.9")
+    implementation("de.governikus.autent.utils:autent-key-utils:4.0.14")
+    // => CVE-2015-7501, CVE-2015-6420
+    implementation("commons-collections:commons-collections:3.2.2")
+    // => CVE-2021-40690
+    implementation("org.apache.santuario:xmlsec:2.3.0")
+    // => CVE-2020-28052
+    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -91,7 +103,6 @@ tasks {
         useJUnitPlatform {
             includeTags("integration")
         }
-
         // So that running integration test require running unit tests first,
         // and we won"t even attempt running integration tests when there are
         // failing unit tests.

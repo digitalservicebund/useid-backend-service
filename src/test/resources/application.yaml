@@ -6,3 +6,26 @@ api:
   apiKeys:
   - keyValue: some-api-key
     refreshAddress: some-refresh-address
+
+eidservice:
+  keystore-password: testkeystore
+  wsdl-url: https://mock.url
+  url: https://mock.url
+  tls-path: mock/path
+  sig-path: mock/path
+  tls-keystore:
+    path: mock/path
+    type: PKCS12
+    alias: auth.localhost
+    password: mockpassword
+    key-password: mockpassword
+  xmlsig-keystore:
+    path: mock/path
+    type: PKCS12
+    alias: sign.localhost
+    password: mockpassword
+    key-password: mockpassword
+
+feature:
+  eid-service-integration:
+    enabled: true
