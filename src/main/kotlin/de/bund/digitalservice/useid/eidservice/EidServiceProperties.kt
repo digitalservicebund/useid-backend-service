@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.eidservice
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 import javax.validation.Valid
@@ -21,11 +22,9 @@ class EidServiceProperties {
     @NotBlank
     lateinit var url: String
 
-    @NotBlank
-    lateinit var tlsPath: String
+    lateinit var tlsCert: Resource
 
-    @NotBlank
-    lateinit var sigPath: String
+    lateinit var sigCert: Resource
 
     @Valid
     var tlsKeystore: TLSKeystore = TLSKeystore()
@@ -34,8 +33,7 @@ class EidServiceProperties {
     var xmlSigKeystore: XMLSigKeystore = XMLSigKeystore()
 
     class TLSKeystore {
-        @NotBlank
-        lateinit var path: String
+        lateinit var keystore: Resource
 
         @NotBlank
         lateinit var type: String
@@ -51,8 +49,7 @@ class EidServiceProperties {
     }
 
     class XMLSigKeystore {
-        @NotBlank
-        lateinit var path: String
+        lateinit var keystore: Resource
 
         @NotBlank
         lateinit var type: String

@@ -6,7 +6,7 @@ import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
 import de.governikus.autent.sdk.eidservice.wrapper.KeyStoreAccessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.Resource
 import java.io.IOException
 import java.security.KeyStore
 import java.security.cert.CertificateException
@@ -23,17 +23,17 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
 
     override fun getTruststore(): KeyStore {
         return KeyStoreSupporter.toKeyStore(
-            readCertificate(eidServiceProperties.tlsPath),
+            readCertificate(eidServiceProperties.tlsCert),
             "eid",
             eidServiceProperties.keystorePassword,
             KeyStoreSupporter.KeyStoreType.JKS
         )
     }
 
-    override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidServiceProperties.sigPath)
+    override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidServiceProperties.sigCert)
     override fun getXmlSignatureCreationKeystore(): KeyStoreAccessor {
         val sigKeyStore = KeyStoreSupporter.readKeyStore(
-            ClassPathResource(eidServiceProperties.xmlSigKeystore.path).inputStream,
+            eidServiceProperties.xmlSigKeystore.keystore.inputStream,
             KeyStoreSupporter.KeyStoreType.valueOf(eidServiceProperties.xmlSigKeystore.type),
             eidServiceProperties.xmlSigKeystore.password
         )
@@ -47,7 +47,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
 
     override fun getSslKeystoreForMutualTlsAuthentication(): KeyStoreAccessor {
         val tlsKeyStore = KeyStoreSupporter.readKeyStore(
-            ClassPathResource(eidServiceProperties.tlsKeystore.path).inputStream,
+            eidServiceProperties.tlsKeystore.keystore.inputStream,
             KeyStoreSupporter.KeyStoreType.valueOf(eidServiceProperties.tlsKeystore.type),
             eidServiceProperties.tlsKeystore.password
         )
@@ -69,12 +69,11 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
      * @param path classpath to the certificate
      * @return the certificate
      */
-    private fun readCertificate(path: String): X509Certificate {
+    private fun readCertificate(cert: Resource): X509Certificate {
         try {
-            val certificateResource = ClassPathResource(path)
             val certFactory = CertificateFactory.getInstance("X.509")
 
-            return certificateResource.inputStream.use {
+            return cert.inputStream.use {
                 certFactory.generateCertificate(it) as X509Certificate
             }
         } catch (e: CertificateException) {
