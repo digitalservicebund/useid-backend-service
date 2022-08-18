@@ -91,14 +91,13 @@ class IdentificationSessionsControllerIntegrationTest(
 
     // TCToken
     @Test
-    fun `getting TCToken returns with 500 if the UseIDSessionId of the tc token is invalid`() {
+    fun `getting TCToken returns with 400 if the useIDSessionId does not exist`() {
         webTestClient
             .get()
             .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219/tc-token"))
             .headers { setAuthorizationHeader(it) }
             .exchange()
-            .expectStatus()
-            .is5xxServerError
+            .expectStatus().isNotFound
     }
 
     private fun setAuthorizationHeader(headers: HttpHeaders) {

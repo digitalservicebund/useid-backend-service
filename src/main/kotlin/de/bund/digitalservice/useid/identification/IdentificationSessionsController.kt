@@ -76,7 +76,7 @@ class IdentificationSessionsController(
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
-        return identificationSessionService.findByIdOrFail(useIDSessionId)
+        return identificationSessionService.findById(useIDSessionId)
             .flatMap {
                 tcTokenService.getTcToken(it.refreshAddress)
             }
@@ -93,6 +93,7 @@ class IdentificationSessionsController(
                     .contentType(MediaType.APPLICATION_XML)
                     .body(it)
             }
+            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
                 log.error { "error occurred while getting the tc token for session with id $useIDSessionId; ${exception.message}" }
             }
