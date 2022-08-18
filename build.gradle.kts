@@ -159,7 +159,8 @@ tasks {
         val containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
 
         imageName = "$containerRegistry/$containerImageName:$containerImageVersion"
-        builder = "paketobuildpacks/builder:tiny"
+        // TODO re-enable the tiny builder to reduces attack surface as well as size. Only commented out for debugging.
+        // builder = "paketobuildpacks/builder:tiny"
         isPublish = false
 
         docker {
