@@ -16,5 +16,6 @@ class TestApplicationProperties {
 
     class StagingProperties {
         lateinit var url: String
+        lateinit var apiKey: String
     }
 }
