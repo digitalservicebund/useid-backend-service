@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid
 import de.bund.digitalservice.useid.config.TestApplicationProperties
 import de.bund.digitalservice.useid.config.TestConfig
 import de.bund.digitalservice.useid.identification.CreateIdentitySessionRequest
+import mu.KotlinLogging
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.Tag
@@ -22,6 +23,7 @@ import java.net.URI
 @Tag("journey")
 @Import(TestConfig::class)
 class IdentificationSessionJourneyTest {
+    private val log = KotlinLogging.logger {}
 
     @Autowired
     private lateinit var testApplicationProperties: TestApplicationProperties
@@ -47,10 +49,11 @@ class IdentificationSessionJourneyTest {
             .expectBody()
             .jsonPath("$.tcTokenUrl").value<String> { tcTokenUrl = it }
 
+        log.info("TC Token URL: $tcTokenUrl")
+
         val returnResult = webTestClient
             .get()
             .uri(URI.create(tcTokenUrl))
-            .headers { setAuthorizationHeader(it) }
             .exchange()
             .expectStatus()
             .isOk
