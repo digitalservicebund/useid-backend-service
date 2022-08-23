@@ -56,7 +56,6 @@ class IdentificationSessionsControllerIntegrationTest(
 
     @Test
     fun `tcToken endpoint returns valid tc-token and sets correct eIdSessionId in IdentificationSession`() {
-
         val mockTCToken = mockk<TCTokenType>()
         val eIdSessionId = UUID.randomUUID()
         every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=$eIdSessionId"
@@ -93,6 +92,7 @@ class IdentificationSessionsControllerIntegrationTest(
             .expectStatus()
             .isBadRequest
     }
+
     @Test
     fun `tcToken endpoint returns 404 when passed a random UUID as useIdSessionID`() {
         val tcTokenURL = "http://localhost:$port/api/v1/identification/sessions/${UUID.randomUUID()}/tc-token"
