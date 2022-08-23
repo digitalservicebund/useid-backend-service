@@ -183,10 +183,10 @@ from unit and integration test sets.
 **To run the journey tests:**
 
 ```bash
-STAGING_URL=[staging-url] ./gradlew journeyTest
+STAGING_URL=[staging-url] && STAGING_API_KEY=[staging-api-key] ./gradlew journeyTest
 ```
 
-When omitting the `STAGING_URL` env variable journey tests run against the local spring application.
+When omitting the `STAGING_URL` and `STAGING_API_KEY` env variable journey tests run against the local spring application.
 
 ## Vulnerability Scanning
 
