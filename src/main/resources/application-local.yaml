@@ -1,0 +1,8 @@
+feature:
+  eid-service-integration:
+    enabled: true
+
+api:
+  apiKeys:
+    - keyvalue: foobar
+      refreshAddress: https://foobar.com

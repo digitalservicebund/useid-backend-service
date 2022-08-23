@@ -45,5 +45,5 @@ src/main/resources/testKeys
 *.cer
 *.pem
 
-### Local development profile ###
-application-local.yaml
+### Local profile for eid service integration ###
+application-local-eid.yaml
