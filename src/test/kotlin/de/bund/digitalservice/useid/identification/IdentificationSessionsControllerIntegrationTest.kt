@@ -1,5 +1,11 @@
 package de.bund.digitalservice.useid.identification
 
+import com.ninjasquad.springmockk.MockkBean
+import de.bund.digitalservice.useid.eidservice.EidService
+import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,7 +15,9 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
@@ -22,24 +30,15 @@ class IdentificationSessionsControllerIntegrationTest(
 ) {
     val attributes = listOf("DG1", "DG2")
 
-    @Test
-    fun `requesting identification sessions returns 401 when the request is made without authentication`() {
-        webTestClient
-            .get()
-            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/"))
-            .exchange()
-            .expectStatus()
-            .isUnauthorized
-    }
+    @Autowired
+    private lateinit var identificationSessionService: IdentificationSessionService
+
+    @MockkBean
+    private lateinit var eidService: EidService
 
     @Test
-    fun `starting session returns TCTokenUrl if the request is made with a correct payload`() {
-        webTestClient
-            .post()
-            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { setAuthorizationHeader(it) }
-            .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
-            .exchange()
+    fun `start session endpoint returns TCTokenUrl`() {
+        sendCreateSessionRequest()
             .expectStatus()
             .isOk
             .expectHeader()
@@ -49,55 +48,98 @@ class IdentificationSessionsControllerIntegrationTest(
     }
 
     @Test
-    fun `getting identity data returns with 200 and data attributes if the session id is valid and found`() {
-    /*  var mockTCTokenUrl = ""
+    fun `start session endpoint returns 401 when no authorization header was passed`() {
+        sendTCTokenRequest("http://localhost:$port/api/v1/identification/sessions/")
+            .expectStatus()
+            .isUnauthorized
+    }
 
-        webTestClient
-            .post()
-            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
-            .headers { setAuthorizationHeader(it) }
-            .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
-            .exchange()
+    @Test
+    fun `tcToken endpoint returns valid tc-token and sets correct eIdSessionId in IdentificationSession`() {
+
+        val mockTCToken = mockk<TCTokenType>()
+        val eIdSessionId = UUID.randomUUID()
+        every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=$eIdSessionId"
+        every { eidService.getTcToken(any()) } returns mockTCToken
+
+        var tcTokenURL = ""
+        sendCreateSessionRequest()
             .expectStatus()
             .isOk
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").value<String> { tcTokenUrl ->
-                *//**
-         * Store tcTokenUrl temporarily in mockTCTokenUrl so that the next request can call it
-         *//*
-                mockTCTokenUrl = URLDecoder.decode(tcTokenUrl, Utils.ENCODING)
+            .jsonPath("$.tcTokenUrl").value<String> {
+                tcTokenURL = it
             }
 
-         webTestClient
-            .get()
-            .uri(URI.create(mockTCTokenUrl))
-            .headers { setAuthorizationHeader(it) }
-            .exchange()
+        sendTCTokenRequest(tcTokenURL)
             .expectStatus()
             .isOk
             .expectHeader()
             .contentType(MediaType.APPLICATION_XML)
             .expectBody()
             .xpath("TCTokenType").exists()
-            .xpath("TCTokenType/ServerAddress").exists()
-            .xpath("TCTokenType/RefreshAddress").exists()
-            .xpath("TCTokenType/RefreshAddress[contains(text(), 'sessionId=')]").exists()
-        */
-        // implement regex search for UUID -> example: https://regex101.com/r/17Gvse/1
-        // .xpath("TCTokenType/RefreshAddress[contains(text(), '/^(.*?)sessionId=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}.*/')]").exists()
+
+        val session = retrieveIdentificationSession(tcTokenURL)
+        assertEquals(eIdSessionId, session.eIDSessionId)
     }
 
-    // TCToken
     @Test
-    fun `getting TCToken returns with 400 if the useIDSessionId does not exist`() {
-        webTestClient
-            .get()
-            .uri(URI.create("http://localhost:$port/api/v1/identification/sessions/4793d3d3-a40e-4445-b344-189fe88f9219/tc-token"))
-            .headers { setAuthorizationHeader(it) }
-            .exchange()
-            .expectStatus().isNotFound
+    fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
+        val invalidId = "IamInvalid"
+        val tcTokenURL = "http://localhost:$port/api/v1/identification/sessions/$invalidId/tc-token"
+        sendTCTokenRequest(tcTokenURL)
+            .expectStatus()
+            .isBadRequest
+    }
+    @Test
+    fun `tcToken endpoint returns 404 when passed a random UUID as useIdSessionID`() {
+        val tcTokenURL = "http://localhost:$port/api/v1/identification/sessions/${UUID.randomUUID()}/tc-token"
+        sendTCTokenRequest(tcTokenURL)
+            .expectStatus()
+            .isNotFound
+    }
+
+    @Test
+    fun `tcToken endpoint returns 500 when error is thrown`() {
+        every { eidService.getTcToken(any()) } throws Error("internal server error")
+
+        var tcTokenURL = ""
+        sendCreateSessionRequest()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.tcTokenUrl").value<String> {
+                tcTokenURL = it
+            }
+
+        sendTCTokenRequest(tcTokenURL)
+            .expectStatus()
+            .is5xxServerError
+    }
+
+    private fun sendTCTokenRequest(tcTokenURL: String) = webTestClient
+        .get()
+        .uri(URI.create(tcTokenURL))
+        .exchange()
+
+    private fun sendCreateSessionRequest() = webTestClient
+        .post()
+        .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
+        .headers { setAuthorizationHeader(it) }
+        // TODO: REMOVE ATTRIBUTES WHEN TICKET USEID-299 IS FINISHED
+        .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
+        .exchange()
+
+    private fun retrieveIdentificationSession(tcTokenURL: String): IdentificationSession {
+        val pathSegments = UriComponentsBuilder
+            .fromHttpUrl(tcTokenURL)
+            .encode().build().pathSegments
+        val useIDSessionId = pathSegments[pathSegments.size - 2]
+        return identificationSessionService.findById(UUID.fromString(useIDSessionId)).block()!!
     }
 
     private fun setAuthorizationHeader(headers: HttpHeaders) {
