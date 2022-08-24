@@ -7,23 +7,23 @@ api:
     refreshAddress: some-refresh-address
 
 eidservice:
-  keystore-password: testkeystore
+  keystore-password: 123456
   wsdl-url: https://mock.url
   url: https://mock.url
-  tls-path: mock/path
-  sig-path: mock/path
+  tls-cert: classpath:testKeys/sig_cert.cer
+  sig-cert: classpath:testKeys/tls_cert.cer
   tls-keystore:
-    path: mock/path
+    keystore: classpath:testKeys/test_tls_keystore.p12
     type: PKCS12
-    alias: auth.localhost
-    password: mockpassword
-    key-password: mockpassword
+    alias: test_tls_keystore
+    password: 123456
+    key-password: 123456
   xmlsig-keystore:
-    path: mock/path
+    keystore: classpath:testKeys/test_xmlsig_keystore.p12
     type: PKCS12
-    alias: sign.localhost
-    password: mockpassword
-    key-password: mockpassword
+    alias: test_xmlsig_keystore
+    password: 123456
+    key-password: 123456
 
 feature:
   eid-service-integration:

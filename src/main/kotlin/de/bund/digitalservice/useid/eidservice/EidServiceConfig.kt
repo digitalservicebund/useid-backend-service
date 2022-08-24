@@ -39,7 +39,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
         return createKeystoreAccessor(eidServiceProperties.tlsKeystore)
     }
 
-    private fun createKeystoreAccessor(keystore: EidServiceProperties.Keystore): KeyStoreAccessor {
+    fun createKeystoreAccessor(keystore: EidServiceProperties.Keystore): KeyStoreAccessor {
         val tlsKeyStore = KeyStoreSupporter.readKeyStore(
             keystore.keystore.inputStream,
             KeyStoreSupporter.KeyStoreType.valueOf(keystore.type),
@@ -58,7 +58,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
      * @param path classpath to the certificate
      * @return the certificate
      */
-    private fun readCertificate(cert: Resource): X509Certificate {
+    fun readCertificate(cert: Resource): X509Certificate {
         try {
             val certFactory = CertificateFactory.getInstance("X.509")
 
