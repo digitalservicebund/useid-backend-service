@@ -27,28 +27,12 @@ class EidServiceProperties {
     lateinit var sigCert: Resource
 
     @Valid
-    var tlsKeystore: TLSKeystore = TLSKeystore()
+    var tlsKeystore: Keystore = Keystore()
 
     @Valid
-    var xmlSigKeystore: XMLSigKeystore = XMLSigKeystore()
+    var xmlSigKeystore: Keystore = Keystore()
 
-    class TLSKeystore {
-        lateinit var keystore: Resource
-
-        @NotBlank
-        lateinit var type: String
-
-        @NotBlank
-        lateinit var alias: String
-
-        @NotBlank
-        lateinit var password: String
-
-        @NotBlank
-        lateinit var keyPassword: String
-    }
-
-    class XMLSigKeystore {
+    class Keystore {
         lateinit var keystore: Resource
 
         @NotBlank

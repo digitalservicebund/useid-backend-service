@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -26,7 +27,8 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
-    private val tcTokenService: ITcTokenService
+    private val tcTokenService: ITcTokenService,
+    private val applicationProperties: ApplicationProperties
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -52,10 +54,7 @@ class IdentificationSessionsController(
                 requestAttributes = createIdentitySessionRequest.requestAttributes
             )
             .map {
-                /* TODO: Find a way to build the url, by using serverHttpRequest.uri is not preferable
-                    since the path parameter can be different (in case of in proxy server)
-                 */
-                val tcTokenUrl = "${serverHttpRequest.uri}/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
+                val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)

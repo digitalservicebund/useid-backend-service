@@ -1,0 +1,11 @@
+app:
+  base-url: http://localhost:8080
+
+feature:
+  eid-service-integration:
+    enabled: true
+
+api:
+  apiKeys:
+    - keyvalue: foobar
+      refreshAddress: https://foobar.com

@@ -1,6 +1,5 @@
-application:
-  staging:
-    url: ${STAGING_URL:http://localhost:8080}
+app:
+  base-url: http://localhost:8080
 
 api:
   apiKeys:

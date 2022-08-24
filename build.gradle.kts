@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.spring") version "1.7.0"
-    id("com.diffplug.spotless") version "6.9.1"
+    id("com.diffplug.spotless") version "6.10.0"
     id("jacoco")
     id("org.sonarqube") version "3.4.0.2513"
     id("com.github.jk1.dependency-license-report") version "2.1"
@@ -58,7 +58,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("ch.qos.logback:logback-core:1.2.9")
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")
-    implementation("com.google.zxing:javase:3.5.0")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
     // Governikus Autent SDK
@@ -67,9 +66,9 @@ dependencies {
     // => CVE-2015-7501, CVE-2015-6420
     implementation("commons-collections:commons-collections:3.2.2")
     // => CVE-2021-40690
-    implementation("org.apache.santuario:xmlsec:2.3.0")
+    implementation("org.apache.santuario:xmlsec:3.0.0")
     // => CVE-2020-28052
-    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
