@@ -9,25 +9,19 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class IdentificationSessionsControllerIntegrationTest(
-    @Autowired val webTestClient: WebTestClient,
-    @Autowired @Value("\${local.server.port}")
-    val port: Int
-) {
+class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
     val attributes = listOf("DG1", "DG2")
 
     @Autowired
@@ -49,7 +43,7 @@ class IdentificationSessionsControllerIntegrationTest(
 
     @Test
     fun `start session endpoint returns 401 when no authorization header was passed`() {
-        sendTCTokenRequest("http://localhost:$port/api/v1/identification/sessions/")
+        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH)
             .expectStatus()
             .isUnauthorized
     }
@@ -72,7 +66,7 @@ class IdentificationSessionsControllerIntegrationTest(
                 tcTokenURL = it
             }
 
-        sendTCTokenRequest(tcTokenURL)
+        sendGETRequest(tcTokenURL)
             .expectStatus()
             .isOk
             .expectHeader()
@@ -87,16 +81,16 @@ class IdentificationSessionsControllerIntegrationTest(
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        val tcTokenURL = "http://localhost:$port/api/v1/identification/sessions/$invalidId/tc-token"
-        sendTCTokenRequest(tcTokenURL)
+        val tcTokenURL = "/api/v1/identification/sessions/$invalidId/tc-token"
+        sendGETRequest(tcTokenURL)
             .expectStatus()
             .isBadRequest
     }
 
     @Test
     fun `tcToken endpoint returns 404 when passed a random UUID as useIdSessionID`() {
-        val tcTokenURL = "http://localhost:$port/api/v1/identification/sessions/${UUID.randomUUID()}/tc-token"
-        sendTCTokenRequest(tcTokenURL)
+        val tcTokenURL = "/api/v1/identification/sessions/${UUID.randomUUID()}/tc-token"
+        sendGETRequest(tcTokenURL)
             .expectStatus()
             .isNotFound
     }
@@ -116,19 +110,19 @@ class IdentificationSessionsControllerIntegrationTest(
                 tcTokenURL = it
             }
 
-        sendTCTokenRequest(tcTokenURL)
+        sendGETRequest(tcTokenURL)
             .expectStatus()
             .is5xxServerError
     }
 
-    private fun sendTCTokenRequest(tcTokenURL: String) = webTestClient
+    private fun sendGETRequest(uri: String) = webTestClient
         .get()
-        .uri(URI.create(tcTokenURL))
+        .uri(uri)
         .exchange()
 
     private fun sendCreateSessionRequest() = webTestClient
         .post()
-        .uri(URI.create("http://localhost:$port/api/v1/identification/sessions"))
+        .uri(IDENTIFICATION_SESSIONS_BASE_PATH)
         .headers { setAuthorizationHeader(it) }
         // TODO: REMOVE ATTRIBUTES WHEN TICKET USEID-299 IS FINISHED
         .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
