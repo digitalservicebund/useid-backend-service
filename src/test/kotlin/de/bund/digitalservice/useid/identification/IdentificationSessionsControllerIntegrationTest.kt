@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
 import com.ninjasquad.springmockk.MockkBean
-import de.bund.digitalservice.useid.UUID_PATTERN
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
@@ -11,7 +10,6 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -44,16 +42,14 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
     @Test
     fun `start session endpoint returns TCTokenUrl`() {
-        val tcTokenPattern = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/($UUID_PATTERN)/tc-token"
         var tcTokenURL = ""
 
-        sendCreateSessionRequest()
+        val bodyContentSpec = sendCreateSessionRequest()
             .expectStatus()
             .isOk
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").value(matchesPattern(tcTokenPattern))
             .jsonPath("$.tcTokenUrl").value<String> {
                 tcTokenURL = it
             }
@@ -63,6 +59,9 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         assertThat(session.useIDSessionId, notNullValue())
         assertThat(session.requestAttributes, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
+
+        val expectedTcTokenUrl = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIDSessionId}/tc-token"
+        bodyContentSpec.jsonPath("$.tcTokenUrl").isEqualTo(expectedTcTokenUrl)
     }
 
     @Test
