@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
+import de.bund.digitalservice.useid.UUID_PATTERN
 import de.bund.digitalservice.useid.config.TestApplicationProperties
 import de.bund.digitalservice.useid.config.TestConfig
 import mu.KotlinLogging
@@ -70,8 +71,7 @@ class IdentificationSessionJourneyTest {
 
     private fun validateSessionIdParameter(returnResult: EntityExchangeResult<ByteArray>) {
         val tcToken = String(returnResult.responseBody!!, Charsets.UTF_8)
-        val uuidPattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-        assertThat(tcToken, matchesPattern("^(.*?)sessionId=$uuidPattern.*"))
+        assertThat(tcToken, matchesPattern("^(.*?)sessionId=$UUID_PATTERN.*"))
     }
 
     private fun setAuthorizationHeader(headers: HttpHeaders) {

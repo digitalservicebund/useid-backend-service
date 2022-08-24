@@ -1,10 +1,17 @@
 package de.bund.digitalservice.useid.identification
 
 import com.ninjasquad.springmockk.MockkBean
+import de.bund.digitalservice.useid.UUID_PATTERN
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -19,6 +26,7 @@ import java.net.URI
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
+private const val REFRESH_ADDRESS = "some-refresh-address"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -28,18 +36,33 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     @Autowired
     private lateinit var identificationSessionService: IdentificationSessionService
 
+    @Autowired
+    private lateinit var applicationProperties: ApplicationProperties
+
     @MockkBean
     private lateinit var eidService: EidService
 
     @Test
     fun `start session endpoint returns TCTokenUrl`() {
+        val tcTokenPattern = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/($UUID_PATTERN)/tc-token"
+        var tcTokenURL = ""
+
         sendCreateSessionRequest()
             .expectStatus()
             .isOk
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").exists()
+            .jsonPath("$.tcTokenUrl").value(matchesPattern(tcTokenPattern))
+            .jsonPath("$.tcTokenUrl").value<String> {
+                tcTokenURL = it
+            }
+
+        val session = retrieveIdentificationSession(tcTokenURL)
+        assertThat(session.eIDSessionId, nullValue())
+        assertThat(session.useIDSessionId, notNullValue())
+        assertThat(session.requestAttributes, `is`(attributes))
+        assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
     }
 
     @Test
