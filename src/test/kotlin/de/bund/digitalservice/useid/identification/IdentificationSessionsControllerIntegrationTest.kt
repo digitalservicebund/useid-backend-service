@@ -45,14 +45,9 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         var tcTokenURL = ""
 
         sendCreateSessionRequest()
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody()
-            .jsonPath("$.tcTokenUrl").value<String> {
-                tcTokenURL = it
-            }
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         val session = retrieveIdentificationSession(tcTokenURL)
         assertThat(session.eIDSessionId, nullValue())
@@ -66,9 +61,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
     @Test
     fun `start session endpoint returns 401 when no authorization header was passed`() {
-        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH)
-            .expectStatus()
-            .isUnauthorized
+        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isUnauthorized
     }
 
     @Test
@@ -80,22 +73,15 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
         var tcTokenURL = ""
         sendCreateSessionRequest()
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .contentType(MediaType.APPLICATION_JSON)
-            .expectBody()
-            .jsonPath("$.tcTokenUrl").value<String> {
-                tcTokenURL = it
-            }
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         sendGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .contentType(MediaType.APPLICATION_XML)
-            .expectBody()
-            .xpath("TCTokenType").exists()
+            .exchange()
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_XML)
+            .expectBody().xpath("TCTokenType").exists()
 
         val session = retrieveIdentificationSession(tcTokenURL)
         assertEquals(eIdSessionId, session.eIDSessionId)
@@ -104,18 +90,13 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        val tcTokenURL = "/api/v1/identification/sessions/$invalidId/tc-token"
-        sendGETRequest(tcTokenURL)
-            .expectStatus()
-            .isBadRequest
+        sendGETRequest("/api/v1/identification/sessions/$invalidId/tc-token").exchange().expectStatus().isBadRequest
     }
 
     @Test
-    fun `tcToken endpoint returns 404 when passed a random UUID as useIdSessionID`() {
-        val tcTokenURL = "/api/v1/identification/sessions/${UUID.randomUUID()}/tc-token"
-        sendGETRequest(tcTokenURL)
-            .expectStatus()
-            .isNotFound
+    fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
+        val unknownId = UUID.randomUUID()
+        sendGETRequest("/api/v1/identification/sessions/$unknownId/tc-token").exchange().expectStatus().isNotFound
     }
 
     @Test
@@ -124,18 +105,41 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
         var tcTokenURL = ""
         sendCreateSessionRequest()
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .contentType(MediaType.APPLICATION_JSON)
-            .expectBody()
-            .jsonPath("$.tcTokenUrl").value<String> {
-                tcTokenURL = it
-            }
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .expectStatus()
-            .is5xxServerError
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL)).exchange().expectStatus().is5xxServerError
+    }
+
+    @Test
+    fun `get identity returns with 200 and data attributes if the session id is valid and found`() {
+        var tcTokenURL = ""
+
+        sendCreateSessionRequest()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+
+        sendGETRequest("/api/v1/identification/sessions/$useIdSessionId")
+            .headers { setAuthorizationHeader(it) }
+            .exchange()
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody()
+            .jsonPath("$.dg1").isEqualTo("firstname")
+            .jsonPath("$.dg2").isEqualTo("lastname")
+    }
+
+    @Test
+    fun `getting identity data fails with 404 if the session id cannot be found`() {
+        val unknownUUID = UUID.randomUUID()
+        sendGETRequest("/api/v1/identification/sessions/$unknownUUID")
+            .headers { setAuthorizationHeader(it) }
+            .exchange()
+            .expectStatus().isNotFound
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
     }
 
     private fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
@@ -143,22 +147,26 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     private fun sendGETRequest(uri: String) = webTestClient
         .get()
         .uri(uri)
-        .exchange()
 
     private fun sendCreateSessionRequest() = webTestClient
         .post()
-        .uri(IDENTIFICATION_SESSIONS_BASE_PATH)
+        .uri("/api/v1/identification/sessions")
         .headers { setAuthorizationHeader(it) }
         // TODO: REMOVE ATTRIBUTES WHEN TICKET USEID-299 IS FINISHED
         .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
         .exchange()
 
     private fun retrieveIdentificationSession(tcTokenURL: String): IdentificationSession {
+        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        return identificationSessionService.findById(useIDSessionId).block()!!
+    }
+
+    private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {
         val pathSegments = UriComponentsBuilder
             .fromHttpUrl(tcTokenURL)
             .encode().build().pathSegments
-        val useIDSessionId = pathSegments[pathSegments.size - 2]
-        return identificationSessionService.findById(UUID.fromString(useIDSessionId)).block()!!
+        val useIdSessionId = pathSegments[pathSegments.size - 2]
+        return UUID.fromString(useIdSessionId)!!
     }
 
     private fun setAuthorizationHeader(headers: HttpHeaders) {
