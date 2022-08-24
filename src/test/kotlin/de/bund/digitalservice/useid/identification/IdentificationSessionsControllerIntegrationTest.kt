@@ -44,7 +44,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     fun `start session endpoint returns TCTokenUrl`() {
         var tcTokenURL = ""
 
-        val bodyContentSpec = sendCreateSessionRequest()
+        sendCreateSessionRequest()
             .expectStatus()
             .isOk
             .expectHeader()
@@ -60,8 +60,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         assertThat(session.requestAttributes, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenUrl = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIDSessionId}/tc-token"
-        bodyContentSpec.jsonPath("$.tcTokenUrl").isEqualTo(expectedTcTokenUrl)
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIDSessionId}/tc-token"
+        assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
     @Test
