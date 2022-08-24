@@ -10,7 +10,7 @@ fileignoreconfig:
   - filename: .github/workflows/secrets-check.yml
     checksum: 335f81e88f030498a8c4480c0be3fccc7347ae9ce2808d8580f656b80d982774
   - filename: .github/workflows/scan.yml
-    checksum: ca23dfbb1e6b7ba8814a1a19075949c9a01eee92fa9b8a31d0f9016dd33d79ba
+    checksum: d6e1cf4ed69b40c90c9dfe76d520033b367f6e64144dd7e266d88240cfd0e557
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
   - filename: doc/adr/0006-url-format-in-qr-code.md
