@@ -16,7 +16,9 @@ fileignoreconfig:
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
   - filename: src/test/resources/application.yaml
-    checksum: 8aafb663e664e82b58706a6ce87b8df40183cb7868096345f1ce01016ef132a4
+    checksum: b5457284d913065b2f9c1ad37b60901ec157d2db03b8172c2cb507b9abcb9060
+  - filename: src/test/resources/application-journey-test.yaml
+    checksum: e204bd731b8f167e65cc85ce9a2e94fe731ff78e36eb3e311f1df821e67e6d29
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt

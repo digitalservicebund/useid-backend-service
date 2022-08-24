@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
@@ -66,7 +67,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
                 tcTokenURL = it
             }
 
-        sendGETRequest(tcTokenURL)
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
             .expectStatus()
             .isOk
             .expectHeader()
@@ -110,10 +111,12 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
                 tcTokenURL = it
             }
 
-        sendGETRequest(tcTokenURL)
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
             .expectStatus()
             .is5xxServerError
     }
+
+    private fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
 
     private fun sendGETRequest(uri: String) = webTestClient
         .get()

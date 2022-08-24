@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource
  * This configuration class is used to provide test configuration properties for test cases.
  */
 @EnableConfigurationProperties(TestApplicationProperties::class)
-@PropertySource("classpath:application.yaml", factory = YamlPropertySourceFactory::class)
+@PropertySource("classpath:application-journey-test.yaml", factory = YamlPropertySourceFactory::class)
 @ConfigurationProperties(prefix = "application")
 class TestApplicationProperties {
     var staging: StagingProperties? = null
