@@ -1,0 +1,4 @@
+application:
+  staging:
+    url: ${STAGING_URL:http://localhost:8080}
+    apiKey: ${STAGING_API_KEY:foobar}

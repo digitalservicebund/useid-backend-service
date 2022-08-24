@@ -4,9 +4,9 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
     checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
-    checksum: 9907456bfa5b4fec1e625343142f9a630c709ba1261c2bc975ffbbbeff6b6f58
+    checksum: c5719984ebf9383e8ac692b283a79ccf251f84fd0530a743438de88f41ee1fcb
   - filename: .github/workflows/pipeline.yml
-    checksum: 10e93d4e52fc4b8ed850fb58d1746a262edf982c0511be6438286414c6224864
+    checksum: f5c1d5c5ad0e13823b96d38fc6417ba021c398a93adb909c16b1d043a47dac46
   - filename: .github/workflows/secrets-check.yml
     checksum: d7fbfab653dad354f2854b45545faed3a604e3ba356446e0f92f5889826e4a09
   - filename: .github/workflows/scan.yml
@@ -15,9 +15,17 @@ fileignoreconfig:
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
-  - filename: src/test/resources/application.properties
-    checksum: 5cbd1d4ab0dcfec12730ead2035d2c9d417036b4524fc1f4d45fd881729636e1
+  - filename: src/test/resources/application.yaml
+    checksum: b5457284d913065b2f9c1ad37b60901ec157d2db03b8172c2cb507b9abcb9060
+  - filename: src/test/resources/application-journey-test.yaml
+    checksum: e204bd731b8f167e65cc85ce9a2e94fe731ff78e36eb3e311f1df821e67e6d29
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt
+    checksum: 4aeae6609316389ec81836d855de5ce60f6b9f169a6ae42092d4f6a6e40d978a
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceProperties.kt
+    checksum: 306c9775269cebf3ab814718f265846df98d6be9355af0ae423a454975aa903e
+  - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidService.kt
+    checksum: 584431cb9924657f9ab4449633294b688383cc53c0a897dc91c14b059f21b825
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
     checksum: 13b1c96af8f88fd272af0136acfa2a7b8f9fe5c70bc054df90fe79aece480746

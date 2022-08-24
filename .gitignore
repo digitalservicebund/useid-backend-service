@@ -38,3 +38,12 @@ out/
 ### Lefthook ###
 .lefthook-local
 lefthook-local.yml
+
+### Test Keys/Certs for SDK ###
+src/main/resources/testKeys
+*.p12
+*.cer
+*.pem
+
+### Local profile for eid service integration ###
+application-local-eid.yaml
