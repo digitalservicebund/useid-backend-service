@@ -4,11 +4,11 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
     checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
-    checksum: 4db7cd96861f35194b94b02345298b8e46e2370e4c2e140283bb63d11977317a
+    checksum: 2d502df37e5ea50cbaf5e35a688cb05087195c91b78944d9af6ad3a00406452d
   - filename: .github/workflows/pipeline.yml
     checksum: f5c1d5c5ad0e13823b96d38fc6417ba021c398a93adb909c16b1d043a47dac46
   - filename: .github/workflows/secrets-check.yml
-    checksum: d7fbfab653dad354f2854b45545faed3a604e3ba356446e0f92f5889826e4a09
+    checksum: 335f81e88f030498a8c4480c0be3fccc7347ae9ce2808d8580f656b80d982774
   - filename: .github/workflows/scan.yml
     checksum: ca23dfbb1e6b7ba8814a1a19075949c9a01eee92fa9b8a31d0f9016dd33d79ba
   - filename: "*.woff*"
