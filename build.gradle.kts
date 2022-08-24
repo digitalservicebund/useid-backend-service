@@ -68,7 +68,7 @@ dependencies {
     // => CVE-2021-40690
     implementation("org.apache.santuario:xmlsec:2.3.0")
     // => CVE-2020-28052
-    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
