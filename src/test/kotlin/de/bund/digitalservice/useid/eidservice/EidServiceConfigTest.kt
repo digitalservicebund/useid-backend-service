@@ -1,16 +1,20 @@
 package de.bund.digitalservice.useid.eidservice
 
-import de.governikus.autent.key.utils.exceptions.KeyStoreCreationFailedException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.Resource
+import org.springframework.test.context.TestPropertySource
+import java.io.FileNotFoundException
 import java.security.KeyStore
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
+@TestPropertySource(properties = ["test.invalid-resource=/foobar"])
 internal class EidServiceConfigTest {
 
     @Autowired
@@ -18,6 +22,9 @@ internal class EidServiceConfigTest {
 
     @Autowired
     private lateinit var eidServiceProperties: EidServiceProperties
+
+    @Value("\${test.invalid-resource}")
+    private lateinit var invalidResource: Resource
 
     @Test
     fun `getEidServiceWsdlUrl returns a value`() {
@@ -56,9 +63,9 @@ internal class EidServiceConfigTest {
     @Test
     fun `createKeystoreAccessor throws error when passed a false keystore`() {
         val keystore = eidServiceProperties.xmlSigKeystore
-        // keystore.alias = "!!!_InValidAlias_!!!"
+        keystore.keystore = invalidResource
 
-        val exception = Assertions.assertThrows(KeyStoreCreationFailedException::class.java) {
+        Assertions.assertThrows(FileNotFoundException::class.java) {
             config.createKeystoreAccessor(keystore)
         }
 
