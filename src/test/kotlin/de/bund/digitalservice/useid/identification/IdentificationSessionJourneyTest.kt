@@ -33,7 +33,7 @@ class IdentificationSessionJourneyTest {
             .baseUrl(testApplicationProperties.staging!!.url)
             .build()
 
-        var tcTokenUrl = ""
+        var tcTokenURL = ""
         webTestClient
             .post()
             .uri("/api/v1/identification/sessions")
@@ -46,13 +46,13 @@ class IdentificationSessionJourneyTest {
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").value<String> { tcTokenUrl = it }
+            .jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        log.info("TC Token URL: $tcTokenUrl")
+        log.info("TC Token URL: $tcTokenURL")
 
         val returnResult = webTestClient
             .get()
-            .uri(URI.create(tcTokenUrl))
+            .uri(extractRelativePathFromURL(tcTokenURL))
             .exchange()
             .expectStatus()
             .isOk
@@ -77,4 +77,6 @@ class IdentificationSessionJourneyTest {
     private fun setAuthorizationHeader(headers: HttpHeaders) {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer ${testApplicationProperties.staging!!.apiKey}")
     }
+
+    private fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
 }
