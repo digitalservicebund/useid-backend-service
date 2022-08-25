@@ -29,3 +29,11 @@ fileignoreconfig:
     checksum: 6d1d471d2f647e2db02d0d0b033cb5858e428b2de26e47b002b6632a2c3db8df
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
     checksum: 13b1c96af8f88fd272af0136acfa2a7b8f9fe5c70bc054df90fe79aece480746
+  - filename: src/test/resources/testKeys/test_tls_keystore.p12
+    checksum: ec2039c25b9e7319200a2a69b5ecdd57f1c9f0e859ac0d29f98762903e49d026
+  - filename: src/test/resources/testKeys/test_xmlsig_keystore.p12
+    checksum: 6c11b46deb4a975895b8b6af3b254db6e7c41ee3339e9406d7a03e5657259851
+  - filename: src/test/resources/testKeys/sig_cert.cer
+    checksum: 78c9986dbfc647f732c396f2f682405583c18dd83c59d9651ee7756581bf10ee
+  - filename: src/test/resources/testKeys/tls_cert.cer
+    checksum: b00f7529dfbf6c7e2070094094de842af686a717c84aff0d7704e85945cf0aaa
