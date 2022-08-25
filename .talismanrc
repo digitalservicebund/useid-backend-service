@@ -22,7 +22,7 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 41d614a71b4854ed5832eaf804712a1252c9bc8406616137303b35fcdec79c82
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt
-    checksum: 4aeae6609316389ec81836d855de5ce60f6b9f169a6ae42092d4f6a6e40d978a
+    checksum: c45a27d3162006cdc9160f4a841cd39d12698f7bd31fb478b90903f1bebc0d51
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceProperties.kt
     checksum: 306c9775269cebf3ab814718f265846df98d6be9355af0ae423a454975aa903e
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidService.kt
@@ -37,3 +37,5 @@ fileignoreconfig:
     checksum: 78c9986dbfc647f732c396f2f682405583c18dd83c59d9651ee7756581bf10ee
   - filename: src/test/resources/testKeys/tls_cert.cer
     checksum: b00f7529dfbf6c7e2070094094de842af686a717c84aff0d7704e85945cf0aaa
+  - filename: src/test/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfigTest.kt
+    checksum: c4ddc7d77082c6ceb6ca28a520fe5db78ebd71edb4faf2e936d3fc1e89a29a90

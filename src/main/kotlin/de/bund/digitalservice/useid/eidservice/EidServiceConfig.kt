@@ -55,10 +55,10 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
     /**
      * Read a certificate from the classpath.
      *
-     * @param path classpath to the certificate
+     * @param cert the certificate resource
      * @return the certificate
      */
-    fun readCertificate(cert: Resource): X509Certificate {
+    internal fun readCertificate(cert: Resource): X509Certificate {
         try {
             val certFactory = CertificateFactory.getInstance("X.509")
 
