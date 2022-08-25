@@ -29,6 +29,6 @@ class ApiKeyAuthenticationManager(val apiProperties: ApiProperties) : ReactiveAu
                 validApiKey
             }
             .switchIfEmpty(Mono.error(BadCredentialsException("API key invalid.")))
-            .map { ApiKeyAuthenticationToken(it!!.keyValue, it.refreshAddress, true) }
+            .map { ApiKeyAuthenticationToken(it!!.keyValue, it.refreshAddress, it.dataGroups, true) }
     }
 }
