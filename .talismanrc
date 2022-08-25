@@ -38,4 +38,4 @@ fileignoreconfig:
   - filename: src/test/resources/testKeys/tls_cert.cer
     checksum: b00f7529dfbf6c7e2070094094de842af686a717c84aff0d7704e85945cf0aaa
   - filename: src/test/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfigTest.kt
-    checksum: c4ddc7d77082c6ceb6ca28a520fe5db78ebd71edb4faf2e936d3fc1e89a29a90
+    checksum: 791ca6f10df6239d3b000222f55cf391470118c4a3902148ed8f01078e547ddc

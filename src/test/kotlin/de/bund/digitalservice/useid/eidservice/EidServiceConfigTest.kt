@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.eidservice
 
+import de.governikus.autent.key.utils.exceptions.KeyStoreCreationFailedException
 import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -62,8 +63,8 @@ internal class EidServiceConfigTest {
     }
 
     @Test
-    fun `createKeystoreAccessor throws error when passed a false keystore`() {
-        val keystore = eidServiceProperties.xmlSigKeystore
+    fun `createKeystoreAccessor throws exception when passed a false keystore`() {
+        val keystore = copyKeystore(eidServiceProperties.xmlSigKeystore)
         keystore.keystore = invalidResource
 
         Assertions.assertThrows(FileNotFoundException::class.java) {
@@ -72,11 +73,31 @@ internal class EidServiceConfigTest {
     }
 
     @Test
-    fun `readCertificate fails when passing a false resource path`() {
+    fun `createKeystoreAccessor throws exception if password is wrong`() {
+        val keystore = copyKeystore(eidServiceProperties.xmlSigKeystore)
+        keystore.password = "wrong-password"
+
+        Assertions.assertThrows(KeyStoreCreationFailedException::class.java) {
+            config.createKeystoreAccessor(keystore)
+        }
+    }
+
+    @Test
+    fun `readCertificate throws exception when passing a false resource path`() {
         val exception = Assertions.assertThrows(SslConfigException::class.java) {
             config.readCertificate(invalidResource)
         }
 
         assertThat(exception.cause, Matchers.instanceOf(FileNotFoundException::class.java))
+    }
+
+    private fun copyKeystore(keystore: EidServiceProperties.Keystore): EidServiceProperties.Keystore {
+        val copy = EidServiceProperties.Keystore()
+        copy.keystore = keystore.keystore
+        copy.password = keystore.password
+        copy.keyPassword = keystore.keyPassword
+        copy.alias = keystore.alias
+        copy.type = keystore.type
+        return copy
     }
 }
