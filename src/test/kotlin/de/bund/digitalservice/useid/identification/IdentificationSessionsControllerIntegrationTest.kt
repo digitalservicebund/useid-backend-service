@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
 import com.ninjasquad.springmockk.MockkBean
-import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
@@ -12,7 +11,6 @@ import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -116,9 +114,6 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
     @Test
     fun `get identity returns with 200 and data attributes if the session id is valid and found`() {
-        val response = GetResultResponseType()
-        every { eidService.getEidInformation(any()) } returns response
-
         var tcTokenURL = ""
 
         sendCreateSessionRequest()
@@ -132,11 +127,12 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody().json("{}")
+            .expectBody()
+            .jsonPath("$.dg1").isEqualTo("firstname")
+            .jsonPath("$.dg2").isEqualTo("lastname")
     }
 
     @Test
-    @Disabled("We do not validate if the session exist but we just pass through the response from the eID-Server")
     fun `getting identity data fails with 404 if the session id cannot be found`() {
         val unknownUUID = UUID.randomUUID()
         sendGETRequest("/api/v1/identification/sessions/$unknownUUID")
