@@ -19,5 +19,7 @@ class ApiProperties {
 
         @NotBlank
         lateinit var refreshAddress: String
+
+        var dataGroups: List<String> = emptyList()
     }
 }

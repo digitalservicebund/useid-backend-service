@@ -10,12 +10,12 @@ class MockDatasource {
     private val sessions = mutableListOf<IdentificationSession>()
     private val log = KotlinLogging.logger {}
 
-    fun create(refreshAddress: String, requestAttributes: List<String>): Mono<IdentificationSession> {
+    fun create(refreshAddress: String, requestDataGroups: List<String>): Mono<IdentificationSession> {
         val useIDSessionId = UUID.randomUUID()
 
         val identificationSession = IdentificationSession(
             refreshAddress = refreshAddress,
-            requestAttributes = requestAttributes,
+            requestDataGroups = requestDataGroups,
             useIDSessionId = useIDSessionId
         )
         sessions.add(identificationSession)

@@ -16,6 +16,7 @@ import java.util.stream.Stream
 
 private const val API_KEY = "some-api-key"
 private const val REFRESH_ADDRESS = "some-refresh-address"
+private val DATA_GROUPS = listOf("DG1", "DG2")
 
 @Tag("test")
 private class ApiKeyAuthenticationManagerTest {
@@ -41,6 +42,7 @@ private class ApiKeyAuthenticationManagerTest {
                     it.details is ApiKeyDetails &&
                     (it.details as ApiKeyDetails).keyValue == API_KEY &&
                     (it.details as ApiKeyDetails).refreshAddress == REFRESH_ADDRESS &&
+                    (it.details as ApiKeyDetails).requestDataGroups == DATA_GROUPS &&
                     it.isAuthenticated
             }
             .verifyComplete()
@@ -72,6 +74,7 @@ private class ApiKeyAuthenticationManagerTest {
         val apiKey = ApiProperties.ApiKey()
         apiKey.keyValue = API_KEY
         apiKey.refreshAddress = REFRESH_ADDRESS
+        apiKey.dataGroups = DATA_GROUPS
         return listOf(apiKey)
     }
 }

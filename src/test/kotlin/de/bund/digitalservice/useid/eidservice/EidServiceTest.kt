@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.eidservice
 
-import de.bund.bsi.eid230.AttributeRequestType
-import org.hamcrest.CoreMatchers.`is`
+import de.bund.bsi.eid230.UseIDRequestType
+import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -20,8 +20,6 @@ class EidServiceTest {
     fun `getWebserviceRequest returns a valid request`() {
         val webserviceRequest = eidService.webserviceRequest
 
-        assertThat(webserviceRequest.useOperations.givenNames, `is`(AttributeRequestType.REQUIRED))
-        assertThat(webserviceRequest.useOperations.placeOfResidence, `is`(AttributeRequestType.ALLOWED))
-        assertThat(webserviceRequest.useOperations.birthName, `is`(AttributeRequestType.ALLOWED))
+        assertThat(webserviceRequest, isA(UseIDRequestType::class.java))
     }
 }

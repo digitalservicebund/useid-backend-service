@@ -15,7 +15,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.EntityExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.web.reactive.function.BodyInserters
 import java.net.URI
 import java.time.Duration
 
@@ -40,8 +39,6 @@ class IdentificationSessionJourneyTest {
             .post()
             .uri("/api/v1/identification/sessions")
             .headers { setAuthorizationHeader(it) }
-            // TODO: REMOVE ATTRIBUTES WHEN TICKET USEID-299 IS FINISHED
-            .body(BodyInserters.fromValue(CreateIdentitySessionRequest(listOf("DG1", "DG2"))))
             .exchange()
             .expectStatus()
             .isOk
