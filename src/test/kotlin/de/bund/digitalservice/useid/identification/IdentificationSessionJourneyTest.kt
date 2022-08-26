@@ -17,6 +17,7 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import java.net.URI
+import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @Tag("journey")
@@ -31,6 +32,7 @@ class IdentificationSessionJourneyTest {
     fun `create identification session and fetch tc token`() {
         val webTestClient = WebTestClient.bindToServer()
             .baseUrl(testApplicationProperties.staging!!.url)
+            .responseTimeout(Duration.ofSeconds(10))
             .build()
 
         var tcTokenURL = ""
