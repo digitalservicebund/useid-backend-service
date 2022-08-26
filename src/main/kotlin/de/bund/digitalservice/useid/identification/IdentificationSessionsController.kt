@@ -1,7 +1,9 @@
 package de.bund.digitalservice.useid.identification
 
+import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -28,7 +30,8 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val tcTokenService: ITcTokenService,
-    private val applicationProperties: ApplicationProperties
+    private val applicationProperties: ApplicationProperties,
+    private val eidService: EidService
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -102,12 +105,7 @@ class IdentificationSessionsController(
     }
 
     @GetMapping("/{eIDSessionId}")
-    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<IdentityAttributes> {
-        // Currently, mock identity
-        return Mono.just(IdentityAttributes("firstname", "lastname"))
-            .filter {
-                identificationSessionService.sessionExists(eIDSessionId)
-            }
-            .switchIfEmpty(Mono.error { throw NoSuchElementException() })
+    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<GetResultResponseType> {
+        return Mono.just(eidService.getEidInformation(eIDSessionId.toString()))
     }
 }
