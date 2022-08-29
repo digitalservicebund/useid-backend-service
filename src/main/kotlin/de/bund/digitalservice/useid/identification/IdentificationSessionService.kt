@@ -11,12 +11,12 @@ class IdentificationSessionService(private val mockDatasource: MockDatasource) {
         return mockDatasource.create(refreshAddress, requestAttributes)
     }
 
-    fun sessionExists(useIDSessionId: UUID): Boolean {
-        return mockDatasource.sessionExists(useIDSessionId)
+    fun findByEIDSessionId(eIDSessionId: UUID): Mono<IdentificationSession> {
+        return Mono.justOrEmpty(mockDatasource.findByEIDSessionId(eIDSessionId))
     }
 
-    fun findById(useIDSessionId: UUID): Mono<IdentificationSession> {
-        return Mono.justOrEmpty(mockDatasource.findById(useIDSessionId))
+    fun findByUseIDSessionId(useIDSessionId: UUID): Mono<IdentificationSession> {
+        return Mono.justOrEmpty(mockDatasource.findByUseIDSessionId(useIDSessionId))
     }
 
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {

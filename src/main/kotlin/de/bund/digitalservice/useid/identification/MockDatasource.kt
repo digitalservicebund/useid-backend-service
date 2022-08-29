@@ -27,8 +27,12 @@ class MockDatasource {
         return sessions.any { it.useIDSessionId == useIDSessionId }
     }
 
-    fun findById(useIDSessionId: UUID): IdentificationSession? {
+    fun findByUseIDSessionId(useIDSessionId: UUID): IdentificationSession? {
         return sessions.find { it.useIDSessionId == useIDSessionId }
+    }
+
+    fun findByEIDSessionId(eIDSessionId: UUID): IdentificationSession? {
+        return sessions.find { it.eIDSessionId == eIDSessionId }
     }
 
     fun findByIdOrFail(useIDSessionId: UUID): IdentificationSession {

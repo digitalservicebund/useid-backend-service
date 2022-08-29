@@ -78,7 +78,7 @@ class IdentificationSessionsController(
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
-        return identificationSessionService.findById(useIDSessionId)
+        return identificationSessionService.findByUseIDSessionId(useIDSessionId)
             .flatMap {
                 tcTokenService.getTcToken(it.refreshAddress)
             }
@@ -105,7 +105,14 @@ class IdentificationSessionsController(
     }
 
     @GetMapping("/{eIDSessionId}")
-    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<GetResultResponseType> {
-        return Mono.just(eidService.getEidInformation(eIDSessionId.toString()))
+    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
+        return identificationSessionService.findByEIDSessionId(eIDSessionId)
+            .map {
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(eidService.getEidInformation(eIDSessionId.toString()))
+            }
+            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
     }
 }
