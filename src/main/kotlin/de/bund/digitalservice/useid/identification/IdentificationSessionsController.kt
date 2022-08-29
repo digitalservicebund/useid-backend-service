@@ -107,9 +107,5 @@ class IdentificationSessionsController(
     @GetMapping("/{eIDSessionId}")
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<GetResultResponseType> {
         return Mono.just(eidService.getEidInformation(eIDSessionId.toString()))
-            // .filter {
-            //     identificationSessionService.sessionExists(eIDSessionId)
-            // }
-            // .switchIfEmpty(Mono.error { throw NoSuchElementException() })
     }
 }
