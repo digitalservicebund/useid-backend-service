@@ -1,11 +1,18 @@
 package de.bund.digitalservice.useid.identification
 
 import com.ninjasquad.springmockk.MockkBean
+import de.bund.bsi.eid230.GetResultResponseType
+import de.bund.bsi.eid230.LevelOfAssuranceType
+import de.bund.bsi.eid230.OperationsResponderType
+import de.bund.bsi.eid230.PersonalDataType
+import de.bund.bsi.eid230.TransactionAttestationResponseType
+import de.bund.bsi.eid230.VerificationResultType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
+import oasis.names.tc.dss._1_0.core.schema.Result
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
@@ -113,34 +120,39 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     }
 
     @Test
-    fun `get identity returns with 200 and data attributes if the session id is valid and found`() {
-        var tcTokenURL = ""
+    fun `identity data endpoint returns 200 with valid response when passed a random UUID`() {
+        val mockResult = Result()
+        mockResult.resultMinor = "#invalidSession"
 
-        sendCreateSessionRequest()
-            .expectStatus().isOk
-            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+        val mockGetResultResponseType = mockk<GetResultResponseType>()
+        every { mockGetResultResponseType.personalData } returns PersonalDataType()
+        every { mockGetResultResponseType.fulfilsAgeVerification } returns VerificationResultType()
+        every { mockGetResultResponseType.fulfilsPlaceVerification } returns VerificationResultType()
+        every { mockGetResultResponseType.operationsAllowedByUser } returns OperationsResponderType()
+        every { mockGetResultResponseType.transactionAttestationResponse } returns TransactionAttestationResponseType()
+        every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.HTTP_EIDAS_EUROPA_EU_LO_A_LOW
+        every { mockGetResultResponseType.result } returns mockResult
+        every { eidService.getEidInformation(any()) } returns mockGetResultResponseType
 
-        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-
-        sendGETRequest("/api/v1/identification/sessions/$useIdSessionId")
-            .headers { setAuthorizationHeader(it) }
-            .exchange()
+        sendIdentityRequest(UUID.randomUUID().toString())
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody()
-            .jsonPath("$.dg1").isEqualTo("firstname")
-            .jsonPath("$.dg2").isEqualTo("lastname")
+            .expectBody().jsonPath("$.result").value<LinkedHashMap<String, String>> {
+                val resultMinor = it["resultMinor"]
+                assertEquals(resultMinor, mockResult.resultMinor)
+            }
     }
 
     @Test
-    fun `getting identity data fails with 404 if the session id cannot be found`() {
-        val unknownUUID = UUID.randomUUID()
-        sendGETRequest("/api/v1/identification/sessions/$unknownUUID")
+    fun `identity data endpoint returns 400 when passed an invalid string instead of UUID`() {
+        sendIdentityRequest("IamInvalid")
+            .expectStatus().isBadRequest
+    }
+
+    private fun sendIdentityRequest(eIdSessionId: String) =
+        sendGETRequest("/api/v1/identification/sessions/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
-            .expectStatus().isNotFound
-            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
-    }
 
     private fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
 
