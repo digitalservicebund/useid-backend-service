@@ -149,6 +149,11 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectStatus().isBadRequest
     }
 
+    @Test
+    fun `identity data endpoint returns 401 when no authorization header was passed`() {
+        sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isUnauthorized
+    }
+
     private fun sendIdentityRequest(eIdSessionId: String) =
         sendGETRequest("/api/v1/identification/sessions/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
