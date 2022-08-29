@@ -5,6 +5,7 @@ import de.bund.digitalservice.useid.config.TestConfig
 import mu.KotlinLogging
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.matchesPattern
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -28,6 +29,7 @@ class IdentificationSessionJourneyTest {
     private lateinit var testApplicationProperties: TestApplicationProperties
 
     @Test
+    @Disabled // for now, because the test eID server is not configured
     fun `create identification session and fetch tc token`() {
         val webTestClient = WebTestClient.bindToServer()
             .baseUrl(testApplicationProperties.staging!!.url)

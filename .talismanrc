@@ -26,7 +26,7 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceProperties.kt
     checksum: 306c9775269cebf3ab814718f265846df98d6be9355af0ae423a454975aa903e
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidService.kt
-    checksum: 1fcd5fa0932a905e3059732ab588f43c117ab2daae392165842b984dea58ba41
+    checksum: 8eba96d03cbee0ac974745afa4446c336cb387d8b856788202a2f1e040649278
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*
     checksum: 94c803f5050f08a608dfb240264e7cbb7a09e29bcf1587347b565dfcbf5f4ab4
   - filename: src/test/resources/testKeys/test_tls_keystore.p12

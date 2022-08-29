@@ -22,7 +22,9 @@ class EidService private constructor(config: EidServiceConfiguration) : EidServi
         val requestDataGroups = (SecurityContextHolder.getContext().authentication?.details as ApiKeyDetails?)?.requestDataGroups
         val request = UseIDRequestType()
 
-        if (requestDataGroups !== null) {
+        // Data groups are only one function of the eID.
+        // Further operators like age verification etc. can be added for further use cases.
+        if (requestDataGroups !== null && requestDataGroups.isNotEmpty()) {
             val selector = OperationsRequestorType()
 
             for (dataGroup in requestDataGroups) {
