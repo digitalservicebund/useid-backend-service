@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.widget
+package de.bund.digitalservice.useid.statics
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
