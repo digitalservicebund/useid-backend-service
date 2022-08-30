@@ -1,15 +1,23 @@
 package de.bund.digitalservice.useid.identification
 
 import com.ninjasquad.springmockk.MockkBean
+import de.bund.bsi.eid230.GetResultResponseType
+import de.bund.bsi.eid230.LevelOfAssuranceType
+import de.bund.bsi.eid230.OperationsResponderType
+import de.bund.bsi.eid230.PersonalDataType
+import de.bund.bsi.eid230.TransactionAttestationResponseType
+import de.bund.bsi.eid230.VerificationResultType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
+import oasis.names.tc.dss._1_0.core.schema.Result
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -49,7 +57,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        val session = retrieveIdentificationSession(tcTokenURL)
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        val session = retrieveIdentificationSession(useIdSessionId)
         assertThat(session.eIDSessionId, nullValue())
         assertThat(session.useIDSessionId, notNullValue())
         assertThat(session.requestAttributes, `is`(attributes))
@@ -66,16 +75,14 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
     @Test
     fun `tcToken endpoint returns valid tc-token and sets correct eIdSessionId in IdentificationSession`() {
-        val mockTCToken = mockk<TCTokenType>()
-        val eIdSessionId = UUID.randomUUID()
-        every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=$eIdSessionId"
-        every { eidService.getTcToken(any()) } returns mockTCToken
-
         var tcTokenURL = ""
         sendCreateSessionRequest()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        val eIdSessionId = UUID.randomUUID()
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
 
         sendGETRequest(extractRelativePathFromURL(tcTokenURL))
             .exchange()
@@ -83,7 +90,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectHeader().contentType(MediaType.APPLICATION_XML)
             .expectBody().xpath("TCTokenType").exists()
 
-        val session = retrieveIdentificationSession(tcTokenURL)
+        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        val session = retrieveIdentificationSession(useIDSessionId)
         assertEquals(eIdSessionId, session.eIDSessionId)
     }
 
@@ -113,6 +121,52 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     }
 
     @Test
+    fun `identity data endpoint returns valid personal data and removes identification session from database`() {
+        val eIdSessionId = UUID.randomUUID().toString()
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+
+        var tcTokenURL = ""
+        sendCreateSessionRequest()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody().xpath("TCTokenType").exists()
+
+        val mockResult = Result()
+        mockResult.resultMajor = "https://www.bsi.bund.de/ecard/api/1.1/resultmajor#success"
+        val personalData = PersonalDataType()
+        personalData.givenNames = "Ben"
+        val mockGetResultResponseType = mockk<GetResultResponseType>()
+        every { mockGetResultResponseType.personalData } returns personalData
+        every { mockGetResultResponseType.fulfilsAgeVerification } returns VerificationResultType()
+        every { mockGetResultResponseType.fulfilsPlaceVerification } returns VerificationResultType()
+        every { mockGetResultResponseType.operationsAllowedByUser } returns OperationsResponderType()
+        every { mockGetResultResponseType.transactionAttestationResponse } returns TransactionAttestationResponseType()
+        every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.HTTP_EIDAS_EUROPA_EU_LO_A_LOW
+        every { mockGetResultResponseType.result } returns mockResult
+        every { eidService.getEidInformation(any()) } returns mockGetResultResponseType
+
+        sendIdentityRequest(eIdSessionId)
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody()
+            .jsonPath("$.result").value<LinkedHashMap<String, String>> {
+                assertEquals(it["resultMajor"], mockResult.resultMajor)
+            }
+            .jsonPath("$.personalData").value<LinkedHashMap<String, String>> {
+                assertEquals(it["givenNames"], personalData.givenNames)
+            }
+
+        Assertions.assertThrows(NoSuchElementException::class.java) {
+            val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+            retrieveIdentificationSession(useIDSessionId) // should throw NoSuchElementException
+        }
+    }
+
+    @Test
     fun `identity data endpoint returns 400 when passed an invalid string instead of UUID`() {
         sendIdentityRequest("IamInvalid")
             .expectStatus().isBadRequest
@@ -127,6 +181,12 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     fun `identity data endpoint returns 404 when passed a random UUID`() {
         sendIdentityRequest(UUID.randomUUID().toString())
             .expectStatus().isNotFound
+    }
+
+    private fun mockTcToken(refreshAddress: String) {
+        val mockTCToken = mockk<TCTokenType>()
+        every { mockTCToken.refreshAddress } returns refreshAddress
+        every { eidService.getTcToken(any()) } returns mockTCToken
     }
 
     private fun sendIdentityRequest(eIdSessionId: String) =
@@ -148,9 +208,9 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
         .exchange()
 
-    private fun retrieveIdentificationSession(tcTokenURL: String): IdentificationSession {
-        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        return identificationSessionService.findByUseIDSessionId(useIDSessionId).block()!!
+    private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession {
+        return identificationSessionService.findByUseIDSessionId(useIDSessionId).block()
+            ?: throw NoSuchElementException()
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {

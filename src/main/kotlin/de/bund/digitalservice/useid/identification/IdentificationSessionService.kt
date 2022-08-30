@@ -22,4 +22,8 @@ class IdentificationSessionService(private val mockDatasource: MockDatasource) {
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {
         return mockDatasource.updateEIDSessionId(useIDSessionId, eIDSessionId)
     }
+
+    fun delete(session: IdentificationSession): Boolean {
+        return mockDatasource.delete(session)
+    }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -97,7 +98,7 @@ class IdentificationSessionsController(
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
-                log.error { "error occurred while getting the tc token for session with id $useIDSessionId; ${exception.message}" }
+                log.error { "error occurred while getting tc token for useIDSessionId $useIDSessionId;\n ${exception.message}" }
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
@@ -108,11 +109,32 @@ class IdentificationSessionsController(
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .map {
+                eidService.getEidInformation(eIDSessionId.toString())
+            }
+            .publishOn(Schedulers.boundedElastic())
+            .doOnNext {
+                // success case -> remove session from database
+                // TODO: REPLACED CONTAINS CONDITION WITH FIXED SUCCESS CASE (e.g. http://www.bsi.bund.de/ecard/api/1.1/resultmajor#success) AS SOON AS WE HAVE E2E SUCCESS FLOW DONE
+                if (it.result.resultMajor.contains("api")) {
+                    // rework following lines? -> session is fetched before. How can I use the previous value
+                    val session = identificationSessionService.findByEIDSessionId(eIDSessionId).block()!!
+                    identificationSessionService.delete(session)
+                } else {
+                    // possibility to catch other cases like "errors" or "data not ready yet"
+                }
+            }
+            .map {
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(eidService.getEidInformation(eIDSessionId.toString()))
+                    .body(it)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
+            .doOnError { exception ->
+                log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
+            }
+            .onErrorReturn(
+                ResponseEntity.internalServerError().body(null)
+            )
     }
 }
