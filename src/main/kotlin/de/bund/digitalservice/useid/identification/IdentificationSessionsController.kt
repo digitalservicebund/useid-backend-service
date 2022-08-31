@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -107,78 +106,14 @@ class IdentificationSessionsController(
 
     @GetMapping("/{eIDSessionId}")
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
-        // create publisher
-        // val getEidInformation = Mono.just(eidService.getEidInformation(eIDSessionId.toString()))
-        // val findSession = identificationSessionService.findByEIDSessionId(eIDSessionId)
-
-        // NOT WORKING
-        // val mono = Mono.zip(getEidInformation, findSession)
-        // return mono.map {
-        //     ResponseEntity
-        //         .status(HttpStatus.OK)
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .body(it.t1)
-        // }
-
-        // // NOT WORKING
-        // return Mono.zip(getEidInformation, findSession)
-        //     .map {
-        //         ResponseEntity
-        //             .status(HttpStatus.OK)
-        //             .contentType(MediaType.APPLICATION_JSON)
-        //             .body(it.t1)
-        //     }
-
-        // // NOT WORKING
-        // return identificationSessionService.findByEIDSessionId(eIDSessionId)
-        //     .zipWith(getEidInformation)
-        //     .map {
-        //         ResponseEntity
-        //             .status(HttpStatus.OK)
-        //             .contentType(MediaType.APPLICATION_JSON)
-        //             .body(it.t2)
-        //     }
-        //
-        // // WORKING
-        // return getEidInformation
-        //     .map {
-        //         ResponseEntity
-        //             .status(HttpStatus.OK)
-        //             .contentType(MediaType.APPLICATION_JSON)
-        //             .body(it)
-        //     }
-        //
-        // return identificationSessionService.findByEIDSessionId(eIDSessionId)
-        //     .zipWith(getEidInformation)
-        //     .doOnNext {
-        //         it.t2.personalData.givenNames = "JIDOAD"
-        //     }
-        //     .map {
-        //         ResponseEntity
-        //             .status(HttpStatus.OK)
-        //             .contentType(MediaType.APPLICATION_JSON)
-        //             .body(it.t2)
-        //     }
-        //
-        // return Mono.just(
-        //     ResponseEntity
-        //         .status(HttpStatus.OK)
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .body(eidService.getEidInformation(eIDSessionId.toString()))
-        // )
-
-        // BASE
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .map {
                 eidService.getEidInformation(eIDSessionId.toString())
             }
-            .publishOn(Schedulers.boundedElastic())
             .doOnNext {
-                // success case -> remove session from database
                 // TODO: REPLACED CONTAINS CONDITION WITH FIXED SUCCESS CASE (e.g. http://www.bsi.bund.de/ecard/api/1.1/resultmajor#success) AS SOON AS WE HAVE E2E SUCCESS FLOW DONE
                 if (it.result.resultMajor.contains("api")) {
-                    // rework following lines? -> session is fetched before. How can I use the previous value
-                    val session = identificationSessionService.findByEIDSessionId(eIDSessionId).block()!!
+                    val session = identificationSessionService.findByEIDSessionIdOrFail(eIDSessionId)
                     identificationSessionService.delete(session)
                 } else {
                     // possibility to catch other cases like "errors" or "data not ready yet"
