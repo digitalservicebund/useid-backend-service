@@ -107,6 +107,67 @@ class IdentificationSessionsController(
 
     @GetMapping("/{eIDSessionId}")
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
+        // create publisher
+        // val getEidInformation = Mono.just(eidService.getEidInformation(eIDSessionId.toString()))
+        // val findSession = identificationSessionService.findByEIDSessionId(eIDSessionId)
+
+        // NOT WORKING
+        // val mono = Mono.zip(getEidInformation, findSession)
+        // return mono.map {
+        //     ResponseEntity
+        //         .status(HttpStatus.OK)
+        //         .contentType(MediaType.APPLICATION_JSON)
+        //         .body(it.t1)
+        // }
+
+        // // NOT WORKING
+        // return Mono.zip(getEidInformation, findSession)
+        //     .map {
+        //         ResponseEntity
+        //             .status(HttpStatus.OK)
+        //             .contentType(MediaType.APPLICATION_JSON)
+        //             .body(it.t1)
+        //     }
+
+        // // NOT WORKING
+        // return identificationSessionService.findByEIDSessionId(eIDSessionId)
+        //     .zipWith(getEidInformation)
+        //     .map {
+        //         ResponseEntity
+        //             .status(HttpStatus.OK)
+        //             .contentType(MediaType.APPLICATION_JSON)
+        //             .body(it.t2)
+        //     }
+        //
+        // // WORKING
+        // return getEidInformation
+        //     .map {
+        //         ResponseEntity
+        //             .status(HttpStatus.OK)
+        //             .contentType(MediaType.APPLICATION_JSON)
+        //             .body(it)
+        //     }
+        //
+        // return identificationSessionService.findByEIDSessionId(eIDSessionId)
+        //     .zipWith(getEidInformation)
+        //     .doOnNext {
+        //         it.t2.personalData.givenNames = "JIDOAD"
+        //     }
+        //     .map {
+        //         ResponseEntity
+        //             .status(HttpStatus.OK)
+        //             .contentType(MediaType.APPLICATION_JSON)
+        //             .body(it.t2)
+        //     }
+        //
+        // return Mono.just(
+        //     ResponseEntity
+        //         .status(HttpStatus.OK)
+        //         .contentType(MediaType.APPLICATION_JSON)
+        //         .body(eidService.getEidInformation(eIDSessionId.toString()))
+        // )
+
+        // BASE
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .map {
                 eidService.getEidInformation(eIDSessionId.toString())
