@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.identification
 
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -26,8 +28,8 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
-    private val tcTokenService: ITcTokenService,
-    private val applicationProperties: ApplicationProperties
+    private val applicationProperties: ApplicationProperties,
+    private val eidService: EidService
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -76,7 +78,13 @@ class IdentificationSessionsController(
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
         return identificationSessionService.findById(useIDSessionId)
             .flatMap {
-                tcTokenService.getTcToken(it.refreshAddress)
+                /*
+                * We cannot just wrap a blocking call with a Mono or a Flux
+                * https://betterprogramming.pub/how-to-avoid-blocking-in-reactive-java-757ec7024676
+                */
+                Mono.fromCallable {
+                    eidService.getTcToken(it.refreshAddress) // a blocking operation
+                }.subscribeOn(Schedulers.boundedElastic())
             }
             .doOnNext {
                 val eIDSessionId = UriComponentsBuilder
