@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -47,14 +46,14 @@ class IdentificationSessionsController(
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
-        @RequestBody createIdentitySessionRequest: CreateIdentitySessionRequest,
         serverHttpRequest: ServerHttpRequest,
         authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
+        val apiKeyDetails = authentication.details as ApiKeyDetails
         return identificationSessionService
             .create(
-                refreshAddress = (authentication as ApiKeyAuthenticationToken).details.refreshAddress!!,
-                requestAttributes = createIdentitySessionRequest.requestAttributes
+                refreshAddress = apiKeyDetails.refreshAddress!!,
+                requestDataGroups = apiKeyDetails.requestDataGroups
             )
             .map {
                 val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"

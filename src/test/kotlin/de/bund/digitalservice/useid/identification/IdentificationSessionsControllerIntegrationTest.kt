@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.util.UUID
@@ -61,7 +60,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         val session = retrieveIdentificationSession(useIdSessionId)
         assertThat(session.eIDSessionId, nullValue())
         assertThat(session.useIDSessionId, notNullValue())
-        assertThat(session.requestAttributes, `is`(attributes))
+        assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
         val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIDSessionId}/tc-token"
@@ -204,8 +203,6 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         .post()
         .uri("/api/v1/identification/sessions")
         .headers { setAuthorizationHeader(it) }
-        // TODO: REMOVE ATTRIBUTES WHEN TICKET USEID-299 IS FINISHED
-        .body(BodyInserters.fromValue(CreateIdentitySessionRequest(attributes)))
         .exchange()
 
     private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession {

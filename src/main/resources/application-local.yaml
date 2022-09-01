@@ -9,3 +9,4 @@ api:
   apiKeys:
     - keyvalue: foobar
       refreshAddress: https://foobar.com
+      dataGroups: [DG1,DG2]

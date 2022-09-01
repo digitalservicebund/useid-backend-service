@@ -15,8 +15,8 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.EntityExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.web.reactive.function.BodyInserters
 import java.net.URI
+import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @Tag("journey")
@@ -31,28 +31,27 @@ class IdentificationSessionJourneyTest {
     fun `create identification session and fetch tc token`() {
         val webTestClient = WebTestClient.bindToServer()
             .baseUrl(testApplicationProperties.staging!!.url)
+            .responseTimeout(Duration.ofSeconds(10))
             .build()
 
-        var tcTokenUrl = ""
+        var tcTokenURL = ""
         webTestClient
             .post()
             .uri("/api/v1/identification/sessions")
             .headers { setAuthorizationHeader(it) }
-            // TODO: REMOVE ATTRIBUTES WHEN TICKET USEID-299 IS FINISHED
-            .body(BodyInserters.fromValue(CreateIdentitySessionRequest(listOf("DG1", "DG2"))))
             .exchange()
             .expectStatus()
             .isOk
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
-            .jsonPath("$.tcTokenUrl").value<String> { tcTokenUrl = it }
+            .jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        log.info("TC Token URL: $tcTokenUrl")
+        log.info("TC Token URL: $tcTokenURL")
 
         val returnResult = webTestClient
             .get()
-            .uri(URI.create(tcTokenUrl))
+            .uri(extractRelativePathFromURL(tcTokenURL))
             .exchange()
             .expectStatus()
             .isOk
@@ -77,4 +76,6 @@ class IdentificationSessionJourneyTest {
     private fun setAuthorizationHeader(headers: HttpHeaders) {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer ${testApplicationProperties.staging!!.apiKey}")
     }
+
+    private fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
 }

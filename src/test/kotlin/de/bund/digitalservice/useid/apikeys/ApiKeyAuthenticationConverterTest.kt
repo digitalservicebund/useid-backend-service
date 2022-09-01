@@ -40,6 +40,7 @@ internal class ApiKeyAuthenticationConverterTest() {
                     it.details is ApiKeyDetails &&
                     (it.details as ApiKeyDetails).keyValue == API_KEY &&
                     (it.details as ApiKeyDetails).refreshAddress == null &&
+                    (it.details as ApiKeyDetails).requestDataGroups == emptyList<String>() &&
                     !it.isAuthenticated
             }
             .verifyComplete()
