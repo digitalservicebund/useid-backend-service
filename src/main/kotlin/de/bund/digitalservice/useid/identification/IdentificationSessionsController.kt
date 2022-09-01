@@ -1,8 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.bsi.eid230.GetResultResponseType
-import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
+import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
