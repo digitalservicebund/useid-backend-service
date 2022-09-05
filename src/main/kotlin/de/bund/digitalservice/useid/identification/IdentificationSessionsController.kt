@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -106,16 +107,19 @@ class IdentificationSessionsController(
     @GetMapping("/{eIDSessionId}")
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
-            .map {
-                eidService.getEidInformation(eIDSessionId.toString())
+            .flatMap {
+                Mono.fromCallable {
+                    eidService.getEidInformation(eIDSessionId.toString())
+                }.subscribeOn(Schedulers.boundedElastic())
             }
             .doOnNext {
-                // TODO: REPLACED CONTAINS CONDITION WITH FIXED SUCCESS CASE (e.g. http://www.bsi.bund.de/ecard/api/1.1/resultmajor#success) AS SOON AS WE HAVE E2E SUCCESS FLOW DONE
-                if (it.result.resultMajor.contains("api")) {
+                // equal to the protected method in the SDK isUseIdResponseSuccessful in EidService230.java
+                if (it.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
                     val session = identificationSessionService.findByEIDSessionIdOrFail(eIDSessionId)
                     identificationSessionService.delete(session)
                 } else {
-                    // possibility to catch other cases like "errors" or "data not ready yet"
+                    // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
+                    log.info { "resultMinor for eIDSessionId: $eIDSessionId\n ${it.result.resultMinor}" }
                 }
             }
             .map {

@@ -135,7 +135,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectBody().xpath("TCTokenType").exists()
 
         val mockResult = Result()
-        mockResult.resultMajor = "https://www.bsi.bund.de/ecard/api/1.1/resultmajor#success"
+        mockResult.resultMajor = "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"
         val personalData = PersonalDataType()
         personalData.givenNames = "Ben"
         val mockGetResultResponseType = mockk<GetResultResponseType>()

@@ -48,11 +48,9 @@ class MockDatasource {
         log.info { "set new eIDSessionId: ${session.eIDSessionId} for session with useIDSessionId: $useIDSessionId" }
     }
 
-    fun delete(session: IdentificationSession): Boolean {
+    fun delete(session: IdentificationSession) {
         if (sessions.remove(session)) {
             log.info { "deleted session with useIdSessionId ${session.useIDSessionId}" }
-            return true
         }
-        return false
     }
 }

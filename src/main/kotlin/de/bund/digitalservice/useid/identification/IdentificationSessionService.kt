@@ -21,14 +21,14 @@ class IdentificationSessionService(private val mockDatasource: MockDatasource) {
 
     fun findByEIDSessionIdOrFail(eIDSessionId: UUID): IdentificationSession {
         return mockDatasource.findByEIDSessionId(eIDSessionId)
-            ?: throw Error("no session found with eIDSessionId $eIDSessionId")
+            ?: throw NoSuchElementException()
     }
 
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {
         return mockDatasource.updateEIDSessionId(useIDSessionId, eIDSessionId)
     }
 
-    fun delete(session: IdentificationSession): Boolean {
-        return mockDatasource.delete(session)
+    fun delete(session: IdentificationSession) {
+        mockDatasource.delete(session)
     }
 }
