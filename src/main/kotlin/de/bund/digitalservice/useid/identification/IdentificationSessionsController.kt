@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
+import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
@@ -76,7 +77,7 @@ class IdentificationSessionsController(
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
-        return identificationSessionService.findById(useIDSessionId)
+        return identificationSessionService.findByUseIDSessionId(useIDSessionId)
             .flatMap {
                 /*
                 * We cannot just wrap a blocking call with a Mono or a Flux
@@ -101,7 +102,7 @@ class IdentificationSessionsController(
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
-                log.error { "error occurred while getting the tc token for session with id $useIDSessionId; ${exception.message}" }
+                log.error { "error occurred while getting tc token for useIDSessionId $useIDSessionId;\n ${exception.message}" }
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
@@ -109,13 +110,35 @@ class IdentificationSessionsController(
     }
 
     @GetMapping("/{eIDSessionId}")
-    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<IdentityAttributes> {
-        // Currently, mock identity
-        // Later: fetch attributes, which are defined in authentication.details.requestDataGroups (see `createSession()`)
-        return Mono.just(IdentityAttributes("firstname", "lastname"))
-            .filter {
-                identificationSessionService.sessionExists(eIDSessionId)
+    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
+        return identificationSessionService.findByEIDSessionId(eIDSessionId)
+            .flatMap {
+                Mono.fromCallable {
+                    eidService.getEidInformation(eIDSessionId.toString())
+                }.subscribeOn(Schedulers.boundedElastic())
             }
-            .switchIfEmpty(Mono.error { throw NoSuchElementException() })
+            .doOnNext {
+                // equal to the protected method in the SDK isUseIdResponseSuccessful in EidService230.java
+                if (it.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+                    val session = identificationSessionService.findByEIDSessionIdOrFail(eIDSessionId)
+                    identificationSessionService.delete(session)
+                } else {
+                    // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
+                    log.info { "resultMinor for eIDSessionId: $eIDSessionId\n ${it.result.resultMinor}" }
+                }
+            }
+            .map {
+                ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(it)
+            }
+            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
+            .doOnError { exception ->
+                log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
+            }
+            .onErrorReturn(
+                ResponseEntity.internalServerError().body(null)
+            )
     }
 }

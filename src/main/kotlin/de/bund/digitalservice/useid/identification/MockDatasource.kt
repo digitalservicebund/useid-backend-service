@@ -27,8 +27,12 @@ class MockDatasource {
         return sessions.any { it.useIDSessionId == useIDSessionId }
     }
 
-    fun findById(useIDSessionId: UUID): IdentificationSession? {
+    fun findByUseIDSessionId(useIDSessionId: UUID): IdentificationSession? {
         return sessions.find { it.useIDSessionId == useIDSessionId }
+    }
+
+    fun findByEIDSessionId(eIDSessionId: UUID): IdentificationSession? {
+        return sessions.find { it.eIDSessionId == eIDSessionId }
     }
 
     fun findByIdOrFail(useIDSessionId: UUID): IdentificationSession {
@@ -42,5 +46,11 @@ class MockDatasource {
         val session = findByIdOrFail(useIDSessionId)
         session.eIDSessionId = eIDSessionId
         log.info { "set new eIDSessionId: ${session.eIDSessionId} for session with useIDSessionId: $useIDSessionId" }
+    }
+
+    fun delete(session: IdentificationSession) {
+        if (sessions.remove(session)) {
+            log.info { "deleted session with useIdSessionId ${session.useIDSessionId}" }
+        }
     }
 }
