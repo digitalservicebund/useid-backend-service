@@ -40,4 +40,4 @@ fileignoreconfig:
   - filename: src/test/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfigTest.kt
     checksum: 791ca6f10df6239d3b000222f55cf391470118c4a3902148ed8f01078e547ddc
   - filename: src/main/kotlin/de/bund/digitalservice/useid/identification/IdentificationSessionsController.kt
-    checksum: 1114ecba06fbbdc1d3e11270b61a6eec5ee69df689a297fa6994ec9a70337233
+    checksum: d034447b19bd0f82c00f7c044fba00a61b3f064f49ba5abf5d2f788ebd50b1ee
