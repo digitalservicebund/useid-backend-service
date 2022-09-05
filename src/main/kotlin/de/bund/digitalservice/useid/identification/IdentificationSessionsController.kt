@@ -29,7 +29,6 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
-    private val tcTokenService: ITcTokenService,
     private val applicationProperties: ApplicationProperties,
     private val eidService: EidService
 ) {
@@ -80,7 +79,13 @@ class IdentificationSessionsController(
     fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
         return identificationSessionService.findByUseIDSessionId(useIDSessionId)
             .flatMap {
-                tcTokenService.getTcToken(it.refreshAddress)
+                /*
+                * We cannot just wrap a blocking call with a Mono or a Flux
+                * https://betterprogramming.pub/how-to-avoid-blocking-in-reactive-java-757ec7024676
+                */
+                Mono.fromCallable {
+                    eidService.getTcToken(it.refreshAddress) // a blocking operation
+                }.subscribeOn(Schedulers.boundedElastic())
             }
             .doOnNext {
                 val eIDSessionId = UriComponentsBuilder
