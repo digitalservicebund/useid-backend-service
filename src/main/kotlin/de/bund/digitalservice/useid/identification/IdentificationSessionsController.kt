@@ -111,27 +111,23 @@ class IdentificationSessionsController(
 
     @GetMapping("/{eIDSessionId}")
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
+        val getIdentityResult = Mono.fromCallable { eidService.getEidInformation(eIDSessionId.toString()) }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
-            .flatMap {
-                Mono.fromCallable {
-                    eidService.getEidInformation(eIDSessionId.toString())
-                }.subscribeOn(Schedulers.boundedElastic())
-            }
+            .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnNext {
-                // equal to the protected method in the SDK isUseIdResponseSuccessful in EidService230.java
-                if (it.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    val session = identificationSessionService.findByEIDSessionIdOrFail(eIDSessionId)
-                    identificationSessionService.delete(session)
+                // resultMajor for success can be found in TR 03130 Part 1 -> 3.6.2 Call of Function getResult
+                if (it.t2.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+                    identificationSessionService.delete(it.t1)
                 } else {
                     // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
-                    log.info { "resultMinor for eIDSessionId: $eIDSessionId\n ${it.result.resultMinor}" }
+                    log.info { "resultMinor for eIDSessionId $eIDSessionId is ${it.t2.result.resultMinor}" }
                 }
             }
             .map {
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(it)
+                    .body(it.t2)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
