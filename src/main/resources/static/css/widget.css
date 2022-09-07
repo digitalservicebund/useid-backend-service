@@ -1,0 +1,115 @@
+body {
+    font-family: "BundesSansWeb", sans-serif;
+    padding: 3rem 0 3rem 0;
+}
+img.icon-list {
+    align-self: start;
+    padding: 0 0.75rem 0 0;
+    z-index: 1;
+}
+img.img-responsive {
+    max-width: 100%;
+    height: auto;
+}
+h1 {
+    font-family: "BundesSansWeb Bold", sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.1;
+}
+h2 {
+    font-family: "BundesSansWeb Bold", sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+.app-icon {
+    margin-top: -24px;
+}
+.app-stores {
+    background-color: #E0F1FB;
+    border-radius: 10px;
+    color: #004b76;
+    padding: 12px;
+    position: relative;
+}
+.app-stores h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+.app-stores__wrapper {
+    display: flex;
+    flex-direction: row;
+}
+.app-stores__content {
+    flex-direction: column;
+    justify-content: start;
+}
+.app-stores__content--images {
+    flex-direction: row;
+}
+.app-stores__content--images .app-store {
+    margin-left: 2px;
+}
+.app-stores__content--images .play-store {
+    margin-right: 2px;
+}
+.cards {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.connector-inside {
+    background-color: #6693ad;
+    bottom: 0;
+    left: 0;
+    margin-top: 35px;
+    margin-left: 23px;
+    position: absolute;
+    top: 0;
+    width: 2px;
+}
+.connector-outside {
+    background-color: #6693ad;
+    height: 20px;
+    margin-left: 23px;
+    width: 2px;
+}
+.container {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    width: 100%;
+}
+.headline {
+    align-items: center;
+    color: #004b76;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px 0 16px 0;
+}
+.identify {
+    align-items: center;
+    background-color: #004B76;
+    border-radius: 10px;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    padding: 12px;
+    text-decoration: none;
+}
+.identify:active {
+    background-color: #b3c9d6;
+    color: #004b76;
+}
+.identify:hover {
+    background-color: #336f91;
+    color: white;
+}
+.identify h2 {
+    margin: 0;
+}
+.widget {
+    max-width: 400px;
+}
