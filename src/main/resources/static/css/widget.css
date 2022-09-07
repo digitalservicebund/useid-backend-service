@@ -12,12 +12,12 @@ img.img-responsive {
     height: auto;
 }
 h1 {
-    font-family: "BundesSansWeb Bold", sans-serif;
+    font-weight: 700;
     font-size: 1.5rem;
     line-height: 1.1;
 }
 h2 {
-    font-family: "BundesSansWeb Bold", sans-serif;
+    font-weight: 700;
     font-size: 1.25rem;
     line-height: 1.2;
 }
