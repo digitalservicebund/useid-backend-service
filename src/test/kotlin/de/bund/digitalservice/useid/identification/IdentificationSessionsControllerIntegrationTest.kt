@@ -44,7 +44,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     @Autowired
     private lateinit var applicationProperties: ApplicationProperties
 
-    @MockkBean
+    @MockkBean(relaxed = true) // relaxed needed to mockk dataGroups behaviour
     private lateinit var eidService: EidService
 
     @Test

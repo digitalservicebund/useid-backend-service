@@ -80,11 +80,12 @@ class IdentificationSessionsController(
         return identificationSessionService.findByUseIDSessionId(useIDSessionId)
             .flatMap {
                 /*
-                * We cannot just wrap a blocking call with a Mono or a Flux
-                * https://betterprogramming.pub/how-to-avoid-blocking-in-reactive-java-757ec7024676
+                    Wrapping blocking call to the SDK into Mono.fromCallable
+                    https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
                 */
                 Mono.fromCallable {
-                    eidService.getTcToken(it.refreshAddress) // a blocking operation
+                    eidService.dataGroups = it.requestDataGroups
+                    eidService.getTcToken(it.refreshAddress)
                 }.subscribeOn(Schedulers.boundedElastic())
             }
             .doOnNext {
@@ -111,7 +112,13 @@ class IdentificationSessionsController(
 
     @GetMapping("/{eIDSessionId}")
     fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
-        val getIdentityResult = Mono.fromCallable { eidService.getEidInformation(eIDSessionId.toString()) }
+        /*
+            Wrapping blocking call to the SDK into Mono.fromCallable
+            https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
+        */
+        val getIdentityResult = Mono.fromCallable {
+            eidService.getEidInformation(eIDSessionId.toString())
+        }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnNext {
