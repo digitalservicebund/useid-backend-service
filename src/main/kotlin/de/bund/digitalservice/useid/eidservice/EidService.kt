@@ -24,7 +24,6 @@ class EidService constructor(config: EidServiceConfiguration) : EidService230(co
 
     var dataGroups: List<String> = emptyList<String>()
     public override fun getWebserviceRequest(): UseIDRequestType {
-
         // val requestDataGroups = emptyList<String>() // TODO: Get dataGroups for this eService
         val request = UseIDRequestType()
         val selector = OperationsRequestorType()
