@@ -13,6 +13,7 @@ fileignoreconfig:
     checksum: d6e1cf4ed69b40c90c9dfe76d520033b367f6e64144dd7e266d88240cfd0e557
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
+    ignore_detectors: [filecontent]
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
   - filename: src/test/resources/application.yaml
