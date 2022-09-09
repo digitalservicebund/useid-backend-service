@@ -4,7 +4,6 @@ import de.bund.bsi.eid230.OperationsRequestorType
 import de.bund.bsi.eid230.UseIDRequestType
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.eidservices.EidService230
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 
 /*
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service
     Page: 19 and following
  */
 @Service
-@ConditionalOnProperty("feature.eid-service-integration.enabled", havingValue = "true")
 class EidService private constructor(config: EidServiceConfiguration) : EidService230(config) {
     public override fun getWebserviceRequest(): UseIDRequestType {
         // val requestDataGroups = emptyList<String>() // TODO: Get dataGroups for this eService

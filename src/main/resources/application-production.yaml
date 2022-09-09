@@ -1,6 +1,2 @@
 app:
   base-url: https://useid.prod.ds4g.net
-
-feature:
-  eid-service-integration:
-    enabled: true
