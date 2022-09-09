@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.identification
 
-import com.ninjasquad.springmockk.MockkBean
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.bsi.eid230.LevelOfAssuranceType
 import de.bund.bsi.eid230.OperationsResponderType
@@ -12,6 +11,7 @@ import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import oasis.names.tc.dss._1_0.core.schema.Result
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
@@ -19,6 +19,7 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,8 +45,10 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     @Autowired
     private lateinit var applicationProperties: ApplicationProperties
 
-    @MockkBean(relaxed = true) // relaxed needed to mockk dataGroups behaviour
-    private lateinit var eidService: EidService
+    @BeforeAll
+    fun setup() {
+        mockkConstructor(EidService::class)
+    }
 
     @Test
     fun `start session endpoint returns TCTokenUrl`() {
@@ -81,6 +84,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         val eIdSessionId = UUID.randomUUID()
+
         mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
 
         sendGETRequest(extractRelativePathFromURL(tcTokenURL))
@@ -108,7 +112,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
 
     @Test
     fun `tcToken endpoint returns 500 when error is thrown`() {
-        every { eidService.getTcToken(any()) } throws Error("internal server error")
+        every { anyConstructed<EidService>().getTcToken(any()) } throws Error("internal server error")
 
         var tcTokenURL = ""
         sendCreateSessionRequest()
@@ -146,7 +150,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         every { mockGetResultResponseType.transactionAttestationResponse } returns TransactionAttestationResponseType()
         every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.HTTP_EIDAS_EUROPA_EU_LO_A_LOW
         every { mockGetResultResponseType.result } returns mockResult
-        every { eidService.getEidInformation(any()) } returns mockGetResultResponseType
+        every { anyConstructed<EidService>().getEidInformation(any()) } returns mockGetResultResponseType
 
         sendIdentityRequest(eIdSessionId)
             .expectStatus().isOk
@@ -185,7 +189,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     private fun mockTcToken(refreshAddress: String) {
         val mockTCToken = mockk<TCTokenType>()
         every { mockTCToken.refreshAddress } returns refreshAddress
-        every { eidService.getTcToken(any()) } returns mockTCToken
+        every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
     }
 
     private fun sendIdentityRequest(eIdSessionId: String) =

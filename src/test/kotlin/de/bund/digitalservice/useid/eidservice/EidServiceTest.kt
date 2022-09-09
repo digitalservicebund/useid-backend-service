@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.eidservice
 
 import de.bund.bsi.eid230.UseIDRequestType
+import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import org.hamcrest.CoreMatchers.isA
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Tag
@@ -13,13 +14,14 @@ import org.springframework.context.annotation.Import
 @Tag("test")
 @Import(EidServiceProperties::class)
 class EidServiceTest {
+
     @Autowired
-    private lateinit var eidService: EidService
+    private lateinit var config: EidServiceConfiguration
 
     @Test
     fun `getWebserviceRequest returns a valid request`() {
+        val eidService = EidService(config)
         val webserviceRequest = eidService.webserviceRequest
-
         assertThat(webserviceRequest, isA(UseIDRequestType::class.java))
     }
 }
