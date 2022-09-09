@@ -81,11 +81,3 @@
   src: url("../fonts/BundesSansCondWeb.woff2") format("woff2"),
   url("../fonts/BundesSansCondWeb.woff") format("woff");
 }
-
-@font-face {
-  font-family: "BundesSansOffice";
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-  src: url("../fonts/BundesSans-Office-Bold.ttf") format("truetype");
-}
