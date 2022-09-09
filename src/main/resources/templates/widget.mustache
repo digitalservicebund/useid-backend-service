@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div class="container widget" id="widget">
+    <div class="container widget">
         <div class="cards">
            <img class="img-responsive" src="images/id-1x.png" alt="image of id card" srcset="images/id-2x.png 2x" />
            <img class="app-icon" src="images/app-icon.svg"  alt="app icon" />
@@ -26,8 +26,12 @@
                 <div class="app-stores__content">
                     <h2>Bundes Login herunterladen</h2>
                     <div class="app-stores__content--images">
-                        <img class="play-store" src="images/play-store.svg" alt="google play store" />
-                        <img class="app-store" src="images/app-store.svg" alt="apple app store" />
+                        <a class="app-stores__content--button" href="#play-store">
+                            <img class="play-store" loading="lazy"src="images/play-store.svg" alt="google play store" />
+                        </a>
+                        <a class="app-stores__content--button" href="#app-store">
+                            <img class="app-store" loading="lazy" src="images/app-store.svg" alt="apple app store" />
+                        </a>
                     </div>
                 </div>
             </div>

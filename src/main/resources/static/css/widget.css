@@ -4,7 +4,6 @@ body {
 }
 img.icon-list {
     align-self: start;
-    padding: 0 0.75rem 0 0;
     z-index: 1;
 }
 img.img-responsive {
@@ -15,6 +14,8 @@ h1 {
     font-weight: 700;
     font-size: 1.5rem;
     line-height: 1.1;
+    margin-bottom: 0;
+    margin-top: 0;
 }
 h2 {
     font-weight: 700;
@@ -25,7 +26,7 @@ h2 {
     margin-top: -24px;
 }
 .app-stores {
-    background-color: #E0F1FB;
+    background-color: #dce8ef;
     border-radius: 10px;
     color: #004b76;
     padding: 12px;
@@ -37,20 +38,28 @@ h2 {
 }
 .app-stores__wrapper {
     display: flex;
-    flex-direction: row;
+    grid-column-gap: 9px;
+    grid-row-gap: 9px;
 }
 .app-stores__content {
     flex-direction: column;
     justify-content: start;
 }
 .app-stores__content--images {
+    display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    grid-column-gap: 12px;
+    grid-row-gap: 10px;
 }
-.app-stores__content--images .app-store {
-    margin-left: 2px;
+.app-stores__content--images img.play-store,
+.app-stores__content--images img.app-store {
+    height: 40px;
 }
-.app-stores__content--images .play-store {
-    margin-right: 2px;
+.app-stores__content--images a {
+    display: inline-block;
+    margin: -6px;
+    padding: 6px;
 }
 .cards {
     align-items: center;
@@ -96,16 +105,19 @@ h2 {
     color: white;
     display: flex;
     flex-direction: row;
+    grid-column-gap: 9px;
+    grid-row-gap: 9px;
     padding: 12px;
     text-decoration: none;
+}
+/*Hover should on top of mouse/tap event, otherwise e.g. active state won't work*/
+.identify:hover {
+    background-color: #336f91;
+    color: white;
 }
 .identify:active {
     background-color: #b3c9d6;
     color: #004b76;
-}
-.identify:hover {
-    background-color: #336f91;
-    color: white;
 }
 .identify h2 {
     margin: 0;
