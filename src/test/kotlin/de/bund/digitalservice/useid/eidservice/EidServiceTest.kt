@@ -30,8 +30,7 @@ class EidServiceTest {
 
     @Test
     fun `getWebserviceRequest includes specified data groups as part of operations in request`() {
-        val eidService = EidService(config)
-        eidService.dataGroups = listOf("DG1", "DG4", "DG10")
+        val eidService = EidService(config, listOf("DG1", "DG4", "DG10"))
         val operations = eidService.webserviceRequest.useOperations
         val required = AttributeRequestType.REQUIRED
         assertEquals(operations.documentType, required)
@@ -41,8 +40,7 @@ class EidServiceTest {
 
     @Test
     fun `getWebserviceRequest throws IllegalStateException when passed invalid list items as data groups`() {
-        val eidService = EidService(config)
-        eidService.dataGroups = listOf("iAmInvalid", "meToo")
+        val eidService = EidService(config, listOf("iAmInvalid", "meToo"))
         Assertions.assertThrows(IllegalStateException::class.java) {
             eidService.webserviceRequest.useOperations
         }
