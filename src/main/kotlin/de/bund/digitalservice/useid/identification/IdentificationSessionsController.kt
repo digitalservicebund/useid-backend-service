@@ -12,7 +12,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,16 +33,6 @@ class IdentificationSessionsController(
     private val config: EidServiceConfiguration
 ) {
     private val log = KotlinLogging.logger {}
-
-    @ExceptionHandler(NoSuchElementException::class)
-    fun handleNotFound(notFoundException: NoSuchElementException): Mono<ResponseEntity<ErrorMessage>> {
-        return Mono.just(
-            ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(ErrorMessage(HttpStatus.NOT_FOUND.value(), "Could not find session."))
-        )
-    }
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(

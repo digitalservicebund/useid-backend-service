@@ -30,12 +30,21 @@ class EidServiceTest {
 
     @Test
     fun `getWebserviceRequest includes specified data groups as part of operations in request`() {
-        val eidService = EidService(config, listOf("DG1", "DG4", "DG10"))
+        val eidService = EidService(config, listOf("DG1", "DG2", "DG3", "DG4", "DG5", "DG7", "DG8", "DG9", "DG10", "DG13", "DG17", "DG19"))
         val operations = eidService.webserviceRequest.useOperations
         val required = AttributeRequestType.REQUIRED
         assertEquals(operations.documentType, required)
+        assertEquals(operations.issuingState, required)
+        assertEquals(operations.dateOfExpiry, required)
         assertEquals(operations.givenNames, required)
+        assertEquals(operations.familyNames, required)
+        assertEquals(operations.academicTitle, required)
+        assertEquals(operations.dateOfBirth, required)
+        assertEquals(operations.placeOfBirth, required)
         assertEquals(operations.nationality, required)
+        assertEquals(operations.birthName, required)
+        assertEquals(operations.placeOfResidence, required)
+        assertEquals(operations.residencePermitI, required)
     }
 
     @Test
@@ -45,4 +54,5 @@ class EidServiceTest {
             eidService.webserviceRequest.useOperations
         }
     }
+
 }
