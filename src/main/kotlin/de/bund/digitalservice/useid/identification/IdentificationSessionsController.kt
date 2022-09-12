@@ -102,7 +102,7 @@ class IdentificationSessionsController(
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
-                log.error { "error occurred while getting tc token for useIDSessionId $useIDSessionId;\n ${exception.message}" }
+                log.error("error occurred while getting tc token for useIDSessionId $useIDSessionId", exception)
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)

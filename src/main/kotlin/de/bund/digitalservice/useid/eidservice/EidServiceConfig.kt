@@ -4,7 +4,6 @@ import de.governikus.autent.key.utils.KeyStoreSupporter
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
 import de.governikus.autent.sdk.eidservice.wrapper.KeyStoreAccessor
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
 import java.io.IOException
@@ -15,7 +14,6 @@ import java.security.cert.X509Certificate
 import javax.xml.ws.BindingProvider
 
 @Configuration
-@ConditionalOnProperty("feature.eid-service-integration.enabled", havingValue = "true")
 class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) : EidServiceConfiguration {
     override fun getEidServiceWsdlUrl(): String = eidServiceProperties.wsdlUrl
 
