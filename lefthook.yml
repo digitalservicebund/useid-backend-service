@@ -6,7 +6,7 @@ pre-commit:
   commands:
     check-format:
       tags: style
-      run: ./gradlew spotlessCheck
+      run: ./gradlew :spotlessApply
 pre-push:
   parallel: true
   commands:
