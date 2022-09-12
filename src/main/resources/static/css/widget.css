@@ -45,18 +45,18 @@ h2 {
     flex-direction: column;
     justify-content: start;
 }
-.app-stores__content--images {
+.app-stores__content__images {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     grid-column-gap: 12px;
     grid-row-gap: 10px;
 }
-.app-stores__content--images img.play-store,
-.app-stores__content--images img.app-store {
+.app-stores__content__images img.play-store,
+.app-stores__content__images img.app-store {
     height: 40px;
 }
-.app-stores__content--images a {
+.app-stores__content__images a {
     display: inline-block;
     margin: -6px;
     padding: 6px;
