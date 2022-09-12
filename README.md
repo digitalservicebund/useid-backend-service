@@ -2,7 +2,6 @@
 
 [![Pipeline](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/pipeline.yml/badge.svg)](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/pipeline.yml)
 [![Scan](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/scan.yml/badge.svg)](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/scan.yml)
-[![Secrets Check](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/secrets-check.yml/badge.svg)](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/secrets-check.yml)
 
 Kotlin service built with the [Spring WebFlux reactive stack](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#spring-webflux).
 
@@ -18,7 +17,7 @@ brew install --cask docker # or just `brew install docker` if you don't want the
 For the provided Git hooks you will need:
 
 ```bash
-brew install lefthook node talisman
+brew install lefthook node
 ```
 
 ## Getting started
