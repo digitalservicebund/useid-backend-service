@@ -4,7 +4,7 @@ fileignoreconfig:
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/SecurityConfig.kt
     checksum: 2a430e56585b6ff51cbae03cc63f43fa1043679306f9956a0200a2c222fcb355
   - filename: build.gradle.kts
-    checksum: e9e10316e89dc1c677d0e0b2d0fbac30769c7b26cfc6f258f20ec482c13db134
+    checksum: 57f8910c7014228e5f6edaaea0f0c916f8b8438530840980183e74d754f9fa52
   - filename: .github/workflows/pipeline.yml
     checksum: 1f469b3cb0bdbee40a9fae84f0786de53e4f2cf48ef5f42897e6e1a3e346188b
   - filename: .github/workflows/secrets-check.yml
@@ -13,18 +13,19 @@ fileignoreconfig:
     checksum: d6e1cf4ed69b40c90c9dfe76d520033b367f6e64144dd7e266d88240cfd0e557
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
+    ignore_detectors: [filecontent]
   - filename: doc/adr/0006-url-format-in-qr-code.md
     checksum: d03d40784b228768e836c22df9dc3925048e42c3c0e40dc7ad9ef91804ab0dce
   - filename: src/test/resources/application.yaml
-    checksum: 306b6b43133520995226e4d69d232c7308e37d973ff62b44678765fc5863a0f0
+    checksum: 2ac3f07ff447f7610a9f166ee6666fdf8f277d4e524d24483d4f3010003de10c
   - filename: src/test/resources/application-journey-test.yaml
     checksum: a59df99157f60839d9b18d02d4c4232b131a9d4c3fbff55f2690050f06af66a1
   - filename: src/main/kotlin/de/bund/digitalservice/useid/config/ApiProperties.kt
     checksum: 393908d4468e80d76ba65b7c64bec8a9a9367cc0e2299208b357519306dbaad8
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceConfig.kt
-    checksum: c45a27d3162006cdc9160f4a841cd39d12698f7bd31fb478b90903f1bebc0d51
+    checksum: 25cd09f2864f0cdb170bb31b19198908bfdb45fb01bf2cb0515cf5fba9837fe3
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidServiceProperties.kt
-    checksum: 306c9775269cebf3ab814718f265846df98d6be9355af0ae423a454975aa903e
+    checksum: 6e2dd5042a0270190b04fdefdfb7bb4c2ccfc1c36093df40f816591e3f8a64bb
   - filename: src/main/kotlin/de/bund/digitalservice/useid/eidservice/EidService.kt
     checksum: a1cc5103db1f4503f36af2f1e606c66d1e452c53a2a96a0c368f110a2cf77ab3
   - filename: src/*/kotlin/de/bund/digitalservice/useid/apikeys/*

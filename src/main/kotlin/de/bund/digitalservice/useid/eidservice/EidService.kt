@@ -24,9 +24,8 @@ import de.governikus.autent.sdk.eidservice.eidservices.EidService230
     BSI TR-03127 eID-Dokumente basierend auf Extended Access Control, Version 1.40 -> Chapter 3.4.3 eID-Anwendung
     https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr03127/tr-03127.html
  */
-
+ 
 class EidService constructor(config: EidServiceConfiguration, private val dataGroups: List<String> = emptyList()) : EidService230(config) {
-
     public override fun getWebserviceRequest(): UseIDRequestType {
         val request = UseIDRequestType()
         val selector = OperationsRequestorType()
