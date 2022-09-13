@@ -44,18 +44,17 @@ class IdentificationSessionsController(
             .create(
                 refreshAddress = apiKeyDetails.refreshAddress!!,
                 requestDataGroups = apiKeyDetails.requestDataGroups
-            )
+            ).doOnError { exception ->
+                log.error {
+                    "error occurred when creating identification session: ${exception.message}"
+                }
+            }
             .map {
                 val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(CreateIdentitySessionResponse(tcTokenUrl = tcTokenUrl))
-            }
-            .doOnError { exception ->
-                log.error {
-                    "error occurred when creating identification session: ${exception.message}"
-                }
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)

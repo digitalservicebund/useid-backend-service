@@ -6,7 +6,6 @@ import de.bund.bsi.eid230.OperationsResponderType
 import de.bund.bsi.eid230.PersonalDataType
 import de.bund.bsi.eid230.TransactionAttestationResponseType
 import de.bund.bsi.eid230.VerificationResultType
-import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
@@ -74,14 +73,6 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     @Test
     fun `start session endpoint returns 401 when no authorization header was passed`() {
         sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isUnauthorized
-    }
-
-    @Test
-    fun `start session returns 500 when identification session creation fails`() {
-        // TODO: THIS DOES NOT REACH THE doOnError PART. FIX!
-        mockkConstructor(ApiKeyDetails::class)
-        every { anyConstructed<ApiKeyDetails>().requestDataGroups } throws Exception("fail")
-        sendCreateSessionRequest().expectStatus().is5xxServerError
     }
 
     @Test
