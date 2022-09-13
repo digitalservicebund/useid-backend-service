@@ -47,7 +47,7 @@ dependencies {
     }
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-25857
-    implementation("org.yaml:snakeyaml:1.31")
+    implementation("org.yaml:snakeyaml:1.32")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
