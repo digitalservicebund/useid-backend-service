@@ -2,6 +2,8 @@ package de.bund.digitalservice.useid.eidservice
 
 import de.governikus.autent.key.utils.exceptions.KeyStoreCreationFailedException
 import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
+import io.mockk.every
+import io.mockk.mockk
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Assertions
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.Resource
 import org.springframework.test.context.TestPropertySource
 import java.io.FileNotFoundException
+import java.security.cert.CertificateException
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -83,12 +86,22 @@ internal class EidServiceConfigTest {
     }
 
     @Test
-    fun `readCertificate throws exception when passing a false resource path`() {
+    fun `readCertificate throws SslConfigException when passing a false resource path`() {
         val exception = Assertions.assertThrows(SslConfigException::class.java) {
             config.readCertificate(invalidResource)
         }
 
         assertThat(exception.cause, Matchers.instanceOf(FileNotFoundException::class.java))
+    }
+
+    @Test
+    fun `readCertificate throws SslConfigException when CertificateFactory throws error`() {
+        val mockCert = mockk<Resource>()
+        every { mockCert.inputStream } throws CertificateException()
+
+        Assertions.assertThrows(SslConfigException::class.java) {
+            config.readCertificate(mockCert)
+        }
     }
 
     private fun copyKeystore(keystore: EidServiceProperties.Keystore): EidServiceProperties.Keystore {

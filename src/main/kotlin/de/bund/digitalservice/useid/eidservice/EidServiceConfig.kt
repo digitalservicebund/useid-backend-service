@@ -47,7 +47,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
     }
 
     override fun configureEidPort(eidPort: BindingProvider) {
-        // No implementation since this method is an abstract method
+        // Not needed
     }
 
     /**
