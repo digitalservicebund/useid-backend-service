@@ -111,6 +111,9 @@ class IdentificationSessionsController(
         }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
+            .doOnError { exception ->
+                log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
+            }
             .doOnNext {
                 // resultMajor for success can be found in TR 03130 Part 1 -> 3.6.2 Call of Function getResult
                 if (it.t2.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
@@ -127,9 +130,6 @@ class IdentificationSessionsController(
                     .body(it.t2)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
-            .doOnError { exception ->
-                log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
-            }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
