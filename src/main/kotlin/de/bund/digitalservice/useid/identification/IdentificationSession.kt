@@ -7,7 +7,6 @@ import java.util.UUID
 
 @Table("identification_session")
 data class IdentificationSession(
-    @Id
     @Column("useid_session_id")
     var useIDSessionId: UUID,
 
@@ -15,11 +14,14 @@ data class IdentificationSession(
     var refreshAddress: String,
 
     @Column("request_data_groups")
-    private var requestDataGroups: String,
+    private var requestDataGroups: String
+) {
+    @Id
+    var id: Long? = null
 
     @Column("eid_session_id")
     var eIDSessionId: UUID? = null
-) {
+
     constructor(useIDSessionId: UUID, refreshAddress: String, requestDataGroupList: List<String>) : this(
         useIDSessionId,
         refreshAddress,
