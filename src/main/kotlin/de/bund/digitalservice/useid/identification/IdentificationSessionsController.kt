@@ -40,17 +40,13 @@ class IdentificationSessionsController(
         authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
-        return identificationSessionService
-            .create(
-                refreshAddress = apiKeyDetails.refreshAddress!!,
-                requestDataGroups = apiKeyDetails.requestDataGroups
-            )
+        return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
             .map {
                 val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(CreateIdentitySessionResponse(tcTokenUrl = tcTokenUrl))
+                    .body(CreateIdentitySessionResponse(tcTokenUrl))
             }
             .doOnError { exception ->
                 log.error {
@@ -74,7 +70,7 @@ class IdentificationSessionsController(
                     https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
                 */
                 Mono.fromCallable {
-                    val eidService = EidService(config, it.requestDataGroups)
+                    val eidService = EidService(config, it.getRequestedDataGroups())
                     eidService.getTcToken(it.refreshAddress)
                 }.subscribeOn(Schedulers.boundedElastic())
             }
@@ -115,7 +111,7 @@ class IdentificationSessionsController(
             .doOnNext {
                 // resultMajor for success can be found in TR 03130 Part 1 -> 3.6.2 Call of Function getResult
                 if (it.t2.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    identificationSessionService.delete(it.t1)
+                    identificationSessionService.delete(it.t1).subscribe()
                 } else {
                     // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
                     log.info { "resultMinor for eIDSessionId $eIDSessionId is ${it.t2.result.resultMinor}" }

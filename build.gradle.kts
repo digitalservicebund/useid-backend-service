@@ -36,6 +36,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.springframework.data:spring-data-r2dbc")
+    implementation("io.r2dbc:r2dbc-h2")
+    implementation("com.h2database:h2")
     implementation("org.springframework.boot:spring-boot-starter-webflux") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")

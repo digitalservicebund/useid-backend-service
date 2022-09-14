@@ -1,34 +1,48 @@
 package de.bund.digitalservice.useid.identification
 
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.util.UUID
 
 @Service
-class IdentificationSessionService(private val mockDatasource: MockDatasource) {
+class IdentificationSessionService(private val identificationSessionRepository: IdentificationSessionRepository) {
+
+    private val log = KotlinLogging.logger {}
 
     fun create(refreshAddress: String, requestDataGroups: List<String>): Mono<IdentificationSession> {
-        return mockDatasource.create(refreshAddress, requestDataGroups)
+        return identificationSessionRepository.save(
+            IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups)
+        ).doOnNext {
+            log.info("Created new identification session. useIDSessionId=${it.useIDSessionId}")
+        }
     }
 
     fun findByEIDSessionId(eIDSessionId: UUID): Mono<IdentificationSession> {
-        return Mono.justOrEmpty(mockDatasource.findByEIDSessionId(eIDSessionId))
+        return identificationSessionRepository.findByEIDSessionId(eIDSessionId)
     }
 
     fun findByUseIDSessionId(useIDSessionId: UUID): Mono<IdentificationSession> {
-        return Mono.justOrEmpty(mockDatasource.findByUseIDSessionId(useIDSessionId))
+        return identificationSessionRepository.findById(useIDSessionId)
     }
 
-    fun findByEIDSessionIdOrFail(eIDSessionId: UUID): IdentificationSession {
-        return mockDatasource.findByEIDSessionId(eIDSessionId)
-            ?: throw NoSuchElementException()
+    fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID): Mono<IdentificationSession> {
+        return findByUseIDSessionId(useIDSessionId).flatMap {
+            it.eIDSessionId = eIDSessionId
+            identificationSessionRepository.save(it)
+        }.doOnNext {
+            log.info("Updated eIDSessionId of identification session. useIDSessionId=${it.useIDSessionId}, eIDSessionId=${it.eIDSessionId}")
+        }.doOnError {
+            log.error("Failed to update identification session. useIDSessionId=$useIDSessionId", it)
+        }
     }
 
-    fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID) {
-        return mockDatasource.updateEIDSessionId(useIDSessionId, eIDSessionId)
-    }
-
-    fun delete(session: IdentificationSession) {
-        mockDatasource.delete(session)
+    fun delete(identificationSession: IdentificationSession): Mono<Void> {
+        return identificationSessionRepository.delete(identificationSession)
+            .doOnNext {
+                log.info("Deleted identification session. useIDSessionId=${identificationSession.useIDSessionId}")
+            }.doOnError {
+                log.error("Failed to delete identification session. useIDSessionId=${identificationSession.useIDSessionId}", it)
+            }
     }
 }
