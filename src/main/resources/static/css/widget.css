@@ -135,3 +135,51 @@ h2 {
 .widget {
     max-width: 400px;
 }
+
+/*INCOMPATIBLE PAGE*/
+.incompatible-notification__wrapper {
+    background-color: #f2f6f8;
+    color: #333;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+.incompatible-notification__wrapper img {
+    align-self: center;
+    max-width: 180px;
+    margin-top: -80px;
+    margin-bottom: 16px;
+}
+.incompatible-notification__wrapper h1 {
+    color: #004b76;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 12px;
+}
+.incompatible-notification__wrapper h3 {
+    font-size: 1.125rem;
+    font-weight: 400;
+    margin: 0;
+}
+.incompatible-notification__wrapper ul {
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    grid-column-gap: 4px;
+    grid-row-gap: 4px;
+    margin-top: 8px;
+    margin-left: -0.25em;
+}
+.incompatible-notification__wrapper p {
+    margin: 0;
+    color: #333;
+}
+.incompatible-notification__wrapper li p:first-child {
+    font-weight: 700;
+}
+
+.widget.incompatible {
+    padding: 48px 0 48px 0;
+}
