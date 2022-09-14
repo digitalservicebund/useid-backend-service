@@ -2,6 +2,8 @@
 body {
     font-family: "BundesSansWeb", sans-serif;
     padding: 3rem 0 3rem 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 img.icon-list {
     align-self: start;
