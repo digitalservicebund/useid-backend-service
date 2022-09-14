@@ -8,13 +8,13 @@ import java.util.UUID
 @Table("identification_session")
 data class IdentificationSession(
     @Column("useid_session_id")
-    var useIDSessionId: UUID,
+    val useIDSessionId: UUID,
 
     @Column("refresh_address")
-    var refreshAddress: String,
+    val refreshAddress: String,
 
     @Column("request_data_groups")
-    private var requestDataGroups: String
+    private val requestDataGroups: String
 ) {
     @Id
     var id: Long? = null

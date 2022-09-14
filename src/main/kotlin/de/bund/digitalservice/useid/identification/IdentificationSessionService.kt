@@ -23,7 +23,7 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     }
 
     fun findByUseIDSessionId(useIDSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findById(useIDSessionId)
+        return identificationSessionRepository.findByUseIDSessionId(useIDSessionId)
     }
 
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID): Mono<IdentificationSession> {
