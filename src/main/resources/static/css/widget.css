@@ -1,3 +1,4 @@
+/* WIDGET */
 body {
     font-family: "BundesSansWeb", sans-serif;
     padding: 3rem 0 3rem 0;
@@ -54,12 +55,16 @@ h2 {
 }
 .app-stores__content__images img.play-store,
 .app-stores__content__images img.app-store {
-    height: 40px;
+    height: 48px;
 }
 .app-stores__content__images a {
     display: inline-block;
-    margin: -6px;
-    padding: 6px;
+}
+.app-stores__content__images a:focus-visible {
+    border-radius: 10px;
+    -moz-box-shadow:    0 0 0 4px #fff, 0 0 0 8px #004b76;
+    -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
+    box-shadow:         0 0 0 4px #fff, 0 0 0 8px #004b76;
 }
 .cards {
     align-items: center;
@@ -118,6 +123,11 @@ h2 {
 .identify:active {
     background-color: #b3c9d6;
     color: #004b76;
+}
+.identify:focus-visible {
+    -moz-box-shadow:    0 0 0 4px #fff, 0 0 0 8px #004b76;
+    -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
+    box-shadow:         0 0 0 4px #fff, 0 0 0 8px #004b76;
 }
 .identify h2 {
     margin: 0;
