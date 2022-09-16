@@ -100,16 +100,22 @@ class IdentificationSessionsController(
     }
 
     @GetMapping("/{eIDSessionId}")
-    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
+    fun getIdentity(@PathVariable eIDSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
         /*
             Wrapping blocking call to the SDK into Mono.fromCallable
             https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
         */
+        val apiKeyDetails = authentication.details as ApiKeyDetails
         val getIdentityResult = Mono.fromCallable {
             val eidService = EidService(config)
             eidService.getEidInformation(eIDSessionId.toString())
         }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
+            .doOnNext {
+                if (apiKeyDetails.refreshAddress != it.refreshAddress) {
+                    throw SecurityException("APIKey unauthorized")
+                }
+            }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnError { exception ->
                 log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
@@ -130,6 +136,7 @@ class IdentificationSessionsController(
                     .body(it.t2)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
+            .onErrorReturn({ e -> e is SecurityException }, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null))
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
