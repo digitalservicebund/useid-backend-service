@@ -6,3 +6,6 @@ api:
     - keyvalue: foobar
       refreshAddress: https://foobar.com
       dataGroups: [DG1,DG2]
+    - keyvalue: foobar2
+      refreshAddress: https://foobar2.com
+      dataGroups: [DG1,DG2, DG3]
