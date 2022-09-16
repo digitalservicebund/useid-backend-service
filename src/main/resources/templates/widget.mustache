@@ -36,10 +36,13 @@
             </div>
         </div>
         <div class="connector-outside"></div>
-        <a href="eid://127.0.0.1" class="identify">
+        <a id="eid-client-button" href="#" target="_blank" class="identify">
             <img class="icon-list" src="images/list-2.svg" alt />
             <h2>Mit BundesIdent ausweisen</h2>
         </a>
     </div>
+    <script type="application/javascript">
+        document.getElementById('eid-client-button').setAttribute('href', "eid://127.0.0.1:24727/eID-Client?" + window.location.hash.replace("#", ""));
+    </script>
 </body>
 </html>

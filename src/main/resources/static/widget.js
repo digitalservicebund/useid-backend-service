@@ -13,7 +13,7 @@ const widgetContainer =
 
 widgetContainer.appendChild(
   (() => {
-    const tcTokenURL =
+    let tcTokenURL =
       widgetContainer?.dataset.tcTokenUrl ??
       new URLSearchParams(
         new URL(document.currentScript.src).hash.substring(1)
@@ -25,6 +25,8 @@ widgetContainer.appendChild(
         "Fehlerhafte Konfiguration: TC-Token-URL nicht definiert.";
       return error;
     }
+
+    tcTokenURL = encodeURIComponent(tcTokenURL);
 
     const iframe = document.createElement("iframe");
     iframe.setAttribute(
