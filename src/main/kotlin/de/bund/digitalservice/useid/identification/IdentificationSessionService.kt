@@ -14,24 +14,24 @@ class IdentificationSessionService(private val identificationSessionRepository: 
         return identificationSessionRepository.save(
             IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups)
         ).doOnNext {
-            log.info("Created new identification session. useIDSessionId=${it.useIDSessionId}")
+            log.info("Created new identification session. useIDSessionId=${it.useidSessionId}")
         }
     }
 
     fun findByEIDSessionId(eIDSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findByEIDSessionId(eIDSessionId)
+        return identificationSessionRepository.findByEidSessionId(eIDSessionId)
     }
 
     fun findByUseIDSessionId(useIDSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findByUseIDSessionId(useIDSessionId)
+        return identificationSessionRepository.findByUseidSessionId(useIDSessionId)
     }
 
     fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID): Mono<IdentificationSession> {
         return findByUseIDSessionId(useIDSessionId).flatMap {
-            it.eIDSessionId = eIDSessionId
+            it.eidSessionId = eIDSessionId
             identificationSessionRepository.save(it)
         }.doOnNext {
-            log.info("Updated eIDSessionId of identification session. useIDSessionId=${it.useIDSessionId}, eIDSessionId=${it.eIDSessionId}")
+            log.info("Updated eIDSessionId of identification session. useIDSessionId=${it.useidSessionId}, eIDSessionId=${it.eidSessionId}")
         }.doOnError {
             log.error("Failed to update identification session. useIDSessionId=$useIDSessionId", it)
         }
@@ -40,9 +40,9 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     fun delete(identificationSession: IdentificationSession): Mono<Void> {
         return identificationSessionRepository.delete(identificationSession)
             .doOnNext {
-                log.info("Deleted identification session. useIDSessionId=${identificationSession.useIDSessionId}")
+                log.info("Deleted identification session. useIDSessionId=${identificationSession.useidSessionId}")
             }.doOnError {
-                log.error("Failed to delete identification session. useIDSessionId=${identificationSession.useIDSessionId}", it)
+                log.error("Failed to delete identification session. useIDSessionId=${identificationSession.useidSessionId}", it)
             }
     }
 }

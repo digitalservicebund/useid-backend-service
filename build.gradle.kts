@@ -31,14 +31,12 @@ jacoco {
 testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
+    /** Spring Boot Starters **/
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.springframework.data:spring-data-r2dbc")
-    implementation("io.r2dbc:r2dbc-h2")
-    implementation("com.h2database:h2")
     implementation("org.springframework.boot:spring-boot-starter-webflux") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
@@ -48,17 +46,30 @@ dependencies {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
     }
+
+    /** Persistence **/
+    implementation("org.springframework.data:spring-data-r2dbc")
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
+    implementation("org.flywaydb:flyway-core:9.3.0")
+
+    /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-25857
     implementation("org.yaml:snakeyaml:1.32")
+
+    /** Kotlin specific **/
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")
+
+    /** Docs **/
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
-    // Governikus Autent SDK
+
+    /** Governikus Autent SDK **/
     implementation("de.governikus.autent.sdk:eid-webservice-sdk:3.73.9")
     implementation("de.governikus.autent.utils:autent-key-utils:4.0.14")
     // => CVE-2015-7501, CVE-2015-6420
@@ -68,8 +79,10 @@ dependencies {
     // => CVE-2020-28052
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
 
+    /** Development **/
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+    /** Testing **/
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.mockito", "mockito-core")
         because("Use MockK instead of Mockito since it is better suited for Kotlin")

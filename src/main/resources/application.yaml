@@ -17,9 +17,3 @@ springdoc:
   swagger-ui:
     path: /swagger/docs.html
     operationsSorter: method
-
-#spring:
-#  r2dbc:
-#    url: r2dbc:postgresql://localhost:5432/postgres
-#    username: postgres
-#    password: postgres

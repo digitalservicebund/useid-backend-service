@@ -5,6 +5,6 @@ import reactor.core.publisher.Mono
 import java.util.UUID
 
 interface IdentificationSessionRepository : ReactiveCrudRepository<IdentificationSession, UUID> {
-    fun findByEIDSessionId(eIDSessionId: UUID): Mono<IdentificationSession>
-    fun findByUseIDSessionId(useIDSessionId: UUID): Mono<IdentificationSession>
+    fun findByEidSessionId(eIDSessionId: UUID): Mono<IdentificationSession>
+    fun findByUseidSessionId(useIDSessionId: UUID): Mono<IdentificationSession>
 }

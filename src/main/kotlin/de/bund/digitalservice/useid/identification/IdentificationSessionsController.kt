@@ -45,7 +45,7 @@ class IdentificationSessionsController(
                 log.error("error occurred when creating identification session: ${it.message}")
             }
             .map {
-                val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
+                val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useidSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +77,7 @@ class IdentificationSessionsController(
                     .fromHttpUrl(it.refreshAddress)
                     .encode().build()
                     .queryParams.getFirst("sessionId")
-                identificationSessionService.updateEIDSessionId(useIDSessionId, UUID.fromString(eIDSessionId))
+                identificationSessionService.updateEIDSessionId(useIDSessionId, UUID.fromString(eIDSessionId)).subscribe()
             }
             .map {
                 ResponseEntity

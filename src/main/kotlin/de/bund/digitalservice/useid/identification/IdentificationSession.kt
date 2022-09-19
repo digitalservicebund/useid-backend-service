@@ -8,7 +8,7 @@ import java.util.UUID
 @Table("identification_session")
 data class IdentificationSession(
     @Column("useid_session_id")
-    val useIDSessionId: UUID,
+    val useidSessionId: UUID,
 
     @Column("refresh_address")
     val refreshAddress: String,
@@ -20,7 +20,7 @@ data class IdentificationSession(
     var id: Long? = null
 
     @Column("eid_session_id")
-    var eIDSessionId: UUID? = null
+    var eidSessionId: UUID? = null
 
     constructor(useIDSessionId: UUID, refreshAddress: String, requestDataGroupList: List<String>) : this(
         useIDSessionId,
