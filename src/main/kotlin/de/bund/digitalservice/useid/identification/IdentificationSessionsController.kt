@@ -12,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.Authentication
+import org.springframework.security.web.authentication.session.SessionAuthenticationException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -113,7 +114,7 @@ class IdentificationSessionsController(
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .doOnNext {
                 if (apiKeyDetails.refreshAddress != it.refreshAddress) {
-                    throw SecurityException("APIKey unauthorized")
+                    throw SessionAuthenticationException("API key differs from the API key used to start the identification session.")
                 }
             }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
@@ -136,7 +137,7 @@ class IdentificationSessionsController(
                     .body(it.t2)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
-            .onErrorReturn({ e -> e is SecurityException }, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null))
+            .onErrorReturn({ e -> e is SessionAuthenticationException }, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null))
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
