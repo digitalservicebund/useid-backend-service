@@ -12,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.Authentication
+import org.springframework.security.web.authentication.session.SessionAuthenticationException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -100,16 +101,22 @@ class IdentificationSessionsController(
     }
 
     @GetMapping("/{eIDSessionId}")
-    fun getIdentity(@PathVariable eIDSessionId: UUID): Mono<ResponseEntity<GetResultResponseType>> {
+    fun getIdentity(@PathVariable eIDSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
         /*
             Wrapping blocking call to the SDK into Mono.fromCallable
             https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
         */
+        val apiKeyDetails = authentication.details as ApiKeyDetails
         val getIdentityResult = Mono.fromCallable {
             val eidService = EidService(config)
             eidService.getEidInformation(eIDSessionId.toString())
         }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
+            .doOnNext {
+                if (apiKeyDetails.refreshAddress != it.refreshAddress) {
+                    throw SessionAuthenticationException("API key differs from the API key used to start the identification session.")
+                }
+            }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnError { exception ->
                 log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
@@ -130,6 +137,7 @@ class IdentificationSessionsController(
                     .body(it.t2)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
+            .onErrorReturn({ e -> e is SessionAuthenticationException }, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null))
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
