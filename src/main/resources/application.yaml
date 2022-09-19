@@ -10,6 +10,9 @@ management:
 
 server:
   shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
 
 springdoc:
   api-docs:

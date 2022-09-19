@@ -9,4 +9,7 @@ import reactor.core.publisher.Mono
 class WidgetController {
     @GetMapping("/widget")
     fun widget(model: Model): Mono<String> = Mono.just("widget")
+
+    @GetMapping("/incompatible")
+    fun noSupport(model: Model): Mono<String> = Mono.just("incompatible")
 }
