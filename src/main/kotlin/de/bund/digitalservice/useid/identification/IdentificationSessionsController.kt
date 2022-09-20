@@ -30,7 +30,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val applicationProperties: ApplicationProperties,
-    private val config: EidServiceConfiguration
+    private val eidServiceConfig: EidServiceConfiguration
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -68,7 +68,7 @@ class IdentificationSessionsController(
                     https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
                 */
                 Mono.fromCallable {
-                    val eidService = EidService(config, it.getRequestedDataGroups())
+                    val eidService = EidService(eidServiceConfig, it.getRequestDataGroups())
                     eidService.getTcToken(it.refreshAddress)
                 }.subscribeOn(Schedulers.boundedElastic())
             }
@@ -101,7 +101,7 @@ class IdentificationSessionsController(
             https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
         */
         val getIdentityResult = Mono.fromCallable {
-            val eidService = EidService(config)
+            val eidService = EidService(eidServiceConfig)
             eidService.getEidInformation(eIDSessionId.toString())
         }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)

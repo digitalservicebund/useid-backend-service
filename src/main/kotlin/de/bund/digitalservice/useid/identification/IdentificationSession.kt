@@ -28,7 +28,7 @@ data class IdentificationSession(
         requestDataGroupList.joinToString(",")
     )
 
-    fun getRequestedDataGroups(): List<String> {
+    fun getRequestDataGroups(): List<String> {
         return requestDataGroups.split(",")
     }
 }

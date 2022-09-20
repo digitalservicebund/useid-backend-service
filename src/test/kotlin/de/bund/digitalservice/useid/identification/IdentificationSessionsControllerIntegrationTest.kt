@@ -63,7 +63,7 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         val session = retrieveIdentificationSession(useIdSessionId)
         assertThat(session.eidSessionId, nullValue())
         assertThat(session.useidSessionId, notNullValue())
-        assertThat(session.requestDataGroups, `is`(attributes))
+        assertThat(session.getRequestDataGroups(), `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
         val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useidSessionId}/tc-token"

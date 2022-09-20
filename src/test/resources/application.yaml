@@ -25,3 +25,9 @@ eidservice:
     alias: test_xmlsig_keystore
     password: 123456
     key-password: 123456
+
+spring:
+  flyway:
+    url: mock
+    user: mock
+    password: mock

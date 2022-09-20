@@ -1,7 +1,11 @@
 package de.bund.digitalservice.useid.identification
 
 import com.ninjasquad.springmockk.MockkBean
+import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.eidservice.EidServiceConfig
+import de.bund.digitalservice.useid.eidservice.EidServiceProperties
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
@@ -11,19 +15,26 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.system.CapturedOutput
 import org.springframework.boot.test.system.OutputCaptureExtension
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("test")
-@ExtendWith(OutputCaptureExtension::class)
+@ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
+@WebFluxTest(controllers = [IdentificationSessionsController::class])
+@Import(value = [ApplicationProperties::class, EidServiceConfig::class, EidServiceProperties::class])
+@WithMockUser
 class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTestClient) {
 
     @MockkBean
@@ -31,12 +42,18 @@ class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTest
 
     @Test
     fun `identificationSessionService create method should log error message`(output: CapturedOutput) {
+        // Given
         every { identificationSessionService.create(any(), any()) } returns Mono.fromCallable {
             throw Error("log this!")
             mockk<IdentificationSession>()
         }
+        val apiKeyAuthenticationToken = ApiKeyAuthenticationToken("some-api-keys", "some-refresh-address")
+        apiKeyAuthenticationToken.isAuthenticated = true
+        SecurityContextHolder.getContext().authentication = apiKeyAuthenticationToken
 
+        // When
         webTestClient
+            .mutateWith(csrf())
             .post()
             .uri("/api/v1/identification/sessions")
             .headers { it.set(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER) }
@@ -44,6 +61,7 @@ class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTest
             .expectStatus()
             .is5xxServerError
 
+        // Then
         assertThat(output.all, containsString("log this!"))
     }
 
