@@ -27,7 +27,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     }
 
     @Test
-    fun `refresh endpoint redirect client to correct refresh address when eidSessionId is valid`() {
+    fun `refresh endpoint redirects client to correct refresh address when eidSessionId is valid`() {
         var tcTokenURL = ""
         val eIdSessionId = UUID.randomUUID()
         val mockTCToken = mockk<TCTokenType>()
