@@ -18,7 +18,7 @@ import java.util.UUID
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("test")
+@Tag("integration")
 class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
     @BeforeAll
