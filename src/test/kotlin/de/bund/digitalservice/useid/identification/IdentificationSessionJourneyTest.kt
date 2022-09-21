@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.config.TestApplicationProperties
-import de.bund.digitalservice.useid.config.TestConfig
+import de.bund.digitalservice.useid.journey.JourneyTestApplicationProperties
+import de.bund.digitalservice.useid.journey.JourneyTestConfig
 import mu.KotlinLogging
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.matchesPattern
@@ -20,17 +20,17 @@ import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @Tag("journey")
-@Import(TestConfig::class)
+@Import(JourneyTestConfig::class)
 class IdentificationSessionJourneyTest {
     private val log = KotlinLogging.logger {}
 
     @Autowired
-    private lateinit var testApplicationProperties: TestApplicationProperties
+    private lateinit var journeyTestApplicationProperties: JourneyTestApplicationProperties
 
     @Test
     fun `create identification session and fetch tc token`() {
         val webTestClient = WebTestClient.bindToServer()
-            .baseUrl(testApplicationProperties.staging!!.url)
+            .baseUrl(journeyTestApplicationProperties.staging!!.url)
             .responseTimeout(Duration.ofSeconds(10))
             .build()
 
@@ -74,7 +74,7 @@ class IdentificationSessionJourneyTest {
     }
 
     private fun setAuthorizationHeader(headers: HttpHeaders) {
-        headers.set(HttpHeaders.AUTHORIZATION, "Bearer ${testApplicationProperties.staging!!.apiKey}")
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer ${journeyTestApplicationProperties.staging!!.apiKey}")
     }
 
     private fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
