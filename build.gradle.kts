@@ -52,7 +52,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
     // Governikus Autent SDK
