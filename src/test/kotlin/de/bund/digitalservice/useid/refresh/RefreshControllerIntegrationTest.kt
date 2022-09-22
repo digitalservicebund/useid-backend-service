@@ -5,6 +5,8 @@ import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
+import io.mockk.unmockkAll
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -24,6 +26,11 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     @BeforeAll
     fun setup() {
         mockkConstructor(EidService::class)
+    }
+
+    @AfterAll
+    fun afterTests() {
+        unmockkAll()
     }
 
     @Test
@@ -53,6 +60,9 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .exchange()
             .expectStatus()
             .is3xxRedirection
+            .expectHeader()
+            // "some-refresh-address" value is defined in the test application.yaml
+            .location("some-refresh-address")
     }
 
     @Test
