@@ -19,10 +19,10 @@ class RefreshController(private val identificationSessionService: Identification
     private val log = KotlinLogging.logger {}
 
     @GetMapping
-    fun redirectService(@RequestParam sessionId: UUID): Mono<ResponseEntity<Unit>> {
-        return identificationSessionService.findByEIDSessionId(sessionId)
-            .doOnError { exception ->
-                log.error { "error occurred while checking $sessionId;\n ${exception.message}" }
+    fun redirectToEServiceRefreshAddress(@RequestParam("sessionId") eIDSessionId: UUID): Mono<ResponseEntity<Unit>> {
+        return identificationSessionService.findByEIDSessionId(eIDSessionId)
+            .doOnError {
+                log.error("Failed to load identification session with eIDSessionId: $eIDSessionId", it)
             }
             .map {
                 ResponseEntity
