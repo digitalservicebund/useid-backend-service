@@ -72,18 +72,18 @@ class IdentificationSessionsController(
                     eidService.getTcToken(it.refreshAddress)
                 }.subscribeOn(Schedulers.boundedElastic())
             }
-            .doOnNext {
+            .zipWhen {
                 val eIDSessionId = UriComponentsBuilder
                     .fromHttpUrl(it.refreshAddress)
                     .encode().build()
                     .queryParams.getFirst("sessionId")
-                identificationSessionService.updateEIDSessionId(useIDSessionId, UUID.fromString(eIDSessionId)).subscribe()
+                identificationSessionService.updateEIDSessionId(useIDSessionId, UUID.fromString(eIDSessionId))
             }
             .map {
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_XML)
-                    .body(it)
+                    .body(it.t1)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
