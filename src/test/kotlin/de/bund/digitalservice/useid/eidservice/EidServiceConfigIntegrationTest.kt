@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.eidservice
 
+import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import de.governikus.autent.key.utils.exceptions.KeyStoreCreationFailedException
 import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
 import io.mockk.every
@@ -9,20 +10,16 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.Resource
 import org.springframework.test.context.TestPropertySource
 import java.io.FileNotFoundException
 import java.security.cert.CertificateException
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
 @TestPropertySource(properties = ["test.invalid-resource=/foobar"])
-internal class EidServiceConfigTest {
+internal class EidServiceConfigIntegrationTest : PostgresTestcontainerIntegrationTest() {
 
     @Autowired
     private lateinit var config: EidServiceConfig

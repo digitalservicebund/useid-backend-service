@@ -8,6 +8,7 @@ import de.bund.bsi.eid230.TransactionAttestationResponseType
 import de.bund.bsi.eid230.VerificationResultType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
@@ -20,10 +21,8 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -34,9 +33,7 @@ import java.util.UUID
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 private const val REFRESH_ADDRESS = "some-refresh-address"
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
-class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
     val attributes = listOf("DG1", "DG2")
 
     @Autowired

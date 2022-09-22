@@ -25,13 +25,3 @@ eidservice:
     alias: test_xmlsig_keystore
     password: 123456
     key-password: 123456
-
-spring:
-  r2dbc:
-    url: r2dbc:tc:postgresql:///test?TC_IMAGE_TAG=12.12
-    username: user
-    password: password
-  flyway:
-    url: jdbc:tc:postgresql:12.12:///test
-    user: user
-    password: password
