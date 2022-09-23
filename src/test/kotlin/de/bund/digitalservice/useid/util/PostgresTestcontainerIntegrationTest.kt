@@ -7,6 +7,17 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 
+/**
+ * This class is a base class for integration tests which require a PostgreSQL database testcontainer.
+ * All test classes inheriting from this class will automatically use the same database container instance.
+ *
+ * Instead of letting testcontainers start the database container automatically just by configuration, it is created
+ * manually here due to the following reasons:
+ * - All integration tests shall reuse the same database instance to speed up the tests
+ * - Flyway does not support R2DBC and therefore uses JDBC to access the database which results in the Flyway migrations
+ * being executed on a different instance than the tests when using automatic start of containers.
+ * @see <a href="https://github.com/testcontainers/testcontainers-java/issues/4473">Testcontainers GitHub Issue</a>
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 class PostgresTestcontainerIntegrationTest {

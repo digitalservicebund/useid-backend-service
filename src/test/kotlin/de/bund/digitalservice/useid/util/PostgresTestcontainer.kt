@@ -2,6 +2,10 @@ package de.bund.digitalservice.useid.util
 
 import org.testcontainers.containers.PostgreSQLContainer
 
+/**
+ * This class implements the Singleton pattern for the postgres database testcontainer to create a single db container
+ * which is reused for all tests.
+ */
 class PostgresTestcontainer private constructor(dockerImageVersion: String) : PostgreSQLContainer<PostgresTestcontainer?>(dockerImageVersion) {
     companion object {
         private var container: PostgresTestcontainer? = null
