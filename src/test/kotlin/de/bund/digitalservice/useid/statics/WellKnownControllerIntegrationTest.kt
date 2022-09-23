@@ -8,7 +8,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class DeeplinkControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
     @Test
     fun `iOS deeplink endpoint returns JSON file`() {

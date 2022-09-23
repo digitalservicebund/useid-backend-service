@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import reactor.core.publisher.Mono
 
 @Controller
-class DeeplinkController {
+class WellKnownController {
 
     private val log = KotlinLogging.logger {}
 
@@ -16,7 +16,7 @@ class DeeplinkController {
         path = [".well-known/apple-app-site-association"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun getIOSUniversalLink(): Mono<ResponseEntity<IOSUniversalLink>> {
+    fun getAppleAppSiteAssociation(): Mono<ResponseEntity<IOSUniversalLink>> {
         val appIds = listOf(
             "VDTVKQ35RL.de.bund.digitalservice.UseID",
             "VDTVKQ35RL.de.bund.digitalservice.UseID-Preview"
