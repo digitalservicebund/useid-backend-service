@@ -1,8 +1,8 @@
 CREATE TABLE identification_session
 (
     id SERIAL PRIMARY KEY,
-    useid_session_id uuid NOT NULL,
+    useid_session_id uuid NOT NULL UNIQUE,
     refresh_address VARCHAR NOT NULL,
     request_data_groups VARCHAR(255) NOT NULL,
-    eid_session_id  uuid
+    eid_session_id  uuid UNIQUE
 );
