@@ -22,10 +22,24 @@ class EidServiceTest {
     private lateinit var config: EidServiceConfiguration
 
     @Test
-    fun `getWebserviceRequest returns a valid request`() {
+    fun `getWebserviceRequest returns a valid request with no operations set when passed no dataGroups`() {
         val eidService = EidService(config)
         val webserviceRequest = eidService.webserviceRequest
         assertThat(webserviceRequest, isA(UseIDRequestType::class.java))
+
+        val operations = webserviceRequest.useOperations
+        assertEquals(operations.documentType, null)
+        assertEquals(operations.issuingState, null)
+        assertEquals(operations.dateOfExpiry, null)
+        assertEquals(operations.givenNames, null)
+        assertEquals(operations.familyNames, null)
+        assertEquals(operations.academicTitle, null)
+        assertEquals(operations.dateOfBirth, null)
+        assertEquals(operations.placeOfBirth, null)
+        assertEquals(operations.nationality, null)
+        assertEquals(operations.birthName, null)
+        assertEquals(operations.placeOfResidence, null)
+        assertEquals(operations.residencePermitI, null)
     }
 
     @Test
