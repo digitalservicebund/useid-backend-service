@@ -9,3 +9,20 @@ api:
     - keyvalue: foobar2
       refreshAddress: https://foobar2.com
       dataGroups: [DG1,DG2, DG3]
+
+eidservice:
+  wsdl-url: https://demo.governikus-eid.de/eID-Server-230/eID?wsdl
+  url: https://demo.governikus-eid.de:8444/eID-Server-230/eID
+  tls-cert: classpath:eid-server-certificates/local/demo-governikus-eid-tls.cer
+  sig-cert: classpath:eid-server-certificates/local/demo-governikus-eid-sig.cer
+  truststore-password: 123456
+  soap-tls-keystore:
+    keystore: classpath:testKeys/auth.localhost_9846.p12
+    type: PKCS12
+    alias: auth.localhost
+    password: 9846
+  soap-sig-keystore:
+    keystore: classpath:testKeys/sign.localhost_2382.p12
+    type: PKCS12
+    alias: sign.localhost
+    password: 2382

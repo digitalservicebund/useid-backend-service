@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank
 @Validated
 class EidServiceProperties {
     @NotBlank
-    lateinit var keystorePassword: String
+    lateinit var truststorePassword: String
 
     @NotBlank
     lateinit var wsdlUrl: String
@@ -25,10 +25,10 @@ class EidServiceProperties {
     lateinit var sigCert: Resource
 
     @Valid
-    var tlsKeystore: Keystore = Keystore()
+    var soapTlsKeystore: Keystore = Keystore()
 
     @Valid
-    var xmlSigKeystore: Keystore = Keystore()
+    var soapSigKeystore: Keystore = Keystore()
 
     class Keystore {
         lateinit var keystore: Resource
@@ -41,8 +41,5 @@ class EidServiceProperties {
 
         @NotBlank
         lateinit var password: String
-
-        @NotBlank
-        lateinit var keyPassword: String
     }
 }

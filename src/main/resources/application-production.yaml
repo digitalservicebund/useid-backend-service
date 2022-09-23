@@ -1,2 +1,8 @@
 app:
   base-url: https://useid.prod.ds4g.net
+
+eidservice: # TODO config for dev system must be replaced once integrating with prod system
+  wsdl-url: https://eid-ref1.eid-service.de/eID-Server-230/eID?wsdl
+  url: https://eid-ref1.eid-service.de:9443/eID-Server-230/eID
+  tls-cert: classpath:eid-server-certificates/dev/dtrust-server-tls.cer
+  sig-cert: classpath:eid-server-certificates/dev/dtrust-server-sig.cer

@@ -22,19 +22,19 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
     override fun getTruststore(): KeyStore {
         return KeyStoreSupporter.toKeyStore(
             readCertificate(eidServiceProperties.tlsCert),
-            "eid",
-            eidServiceProperties.keystorePassword,
+            "eid-server",
+            eidServiceProperties.truststorePassword,
             KeyStoreSupporter.KeyStoreType.JKS
         )
     }
 
     override fun getXmlSignatureVerificationCertificate(): X509Certificate = readCertificate(eidServiceProperties.sigCert)
     override fun getXmlSignatureCreationKeystore(): KeyStoreAccessor {
-        return createKeystoreAccessor(eidServiceProperties.xmlSigKeystore)
+        return createKeystoreAccessor(eidServiceProperties.soapSigKeystore)
     }
 
     override fun getSslKeystoreForMutualTlsAuthentication(): KeyStoreAccessor {
-        return createKeystoreAccessor(eidServiceProperties.tlsKeystore)
+        return createKeystoreAccessor(eidServiceProperties.soapTlsKeystore)
     }
 
     fun createKeystoreAccessor(keystore: EidServiceProperties.Keystore): KeyStoreAccessor {
@@ -43,7 +43,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
             KeyStoreSupporter.KeyStoreType.valueOf(keystore.type),
             keystore.password
         )
-        return KeyStoreAccessor(tlsKeyStore, keystore.password, keystore.alias, keystore.keyPassword)
+        return KeyStoreAccessor(tlsKeyStore, keystore.password, keystore.alias, keystore.password)
     }
 
     override fun configureEidPort(eidPort: BindingProvider) {

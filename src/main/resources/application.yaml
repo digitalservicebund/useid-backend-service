@@ -20,3 +20,16 @@ springdoc:
   swagger-ui:
     path: /swagger/docs.html
     operationsSorter: method
+
+eidservice:
+  truststore-password: # set via environment
+  soap-tls-keystore:
+    keystore: file:/etc/secrets/soap-keystore/soap-keystore.jks
+    type: JKS
+    alias: soap-enc
+    password: # set via environment
+  soap-sig-keystore:
+    keystore: file:/etc/secrets/soap-keystore/soap-keystore.jks
+    type: JKS
+    alias: soap-sig
+    password: # set via environment

@@ -67,7 +67,7 @@ internal class EidServiceConfigTest {
 
     @Test
     fun `createKeystoreAccessor throws exception when passed a false keystore`() {
-        val keystore = copyKeystore(eidServiceProperties.xmlSigKeystore)
+        val keystore = copyKeystore(eidServiceProperties.soapSigKeystore)
         keystore.keystore = invalidResource
 
         Assertions.assertThrows(FileNotFoundException::class.java) {
@@ -77,7 +77,7 @@ internal class EidServiceConfigTest {
 
     @Test
     fun `createKeystoreAccessor throws exception if password is wrong`() {
-        val keystore = copyKeystore(eidServiceProperties.xmlSigKeystore)
+        val keystore = copyKeystore(eidServiceProperties.soapSigKeystore)
         keystore.password = "wrong-password"
 
         Assertions.assertThrows(KeyStoreCreationFailedException::class.java) {
@@ -108,7 +108,7 @@ internal class EidServiceConfigTest {
         val copy = EidServiceProperties.Keystore()
         copy.keystore = keystore.keystore
         copy.password = keystore.password
-        copy.keyPassword = keystore.keyPassword
+        copy.password = keystore.password
         copy.alias = keystore.alias
         copy.type = keystore.type
         return copy
