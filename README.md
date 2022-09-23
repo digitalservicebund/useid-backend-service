@@ -32,10 +32,16 @@ This will replace placeholders in the application template and install a couple 
 
 ## Run locally
 
-To run the application locally, some local config is required.
+To run the application locally, a local PostgreSQL database and some local config is required.
 
 Get the `application-local-eid.yaml` and the `testKeys` directory including the demo certificates from LastPass under
 "Shared-UseId-Dev > D-Trust Demo Certificates" and place both in the `resources` directory of the application.
+
+**To spin up the database run:**
+
+```bash
+docker-compose up -d
+```
 
 **To start the application locally run:**
 
