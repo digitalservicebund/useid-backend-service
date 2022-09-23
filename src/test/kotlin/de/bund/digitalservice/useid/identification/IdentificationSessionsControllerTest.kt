@@ -30,6 +30,8 @@ import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 
+private const val REFRESH_ADDRESS = "some-refresh-address"
+
 @Tag("test")
 @ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
 @WebFluxTest(controllers = [IdentificationSessionsController::class])
@@ -47,9 +49,7 @@ class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTest
             throw Error("log this!")
             mockk<IdentificationSession>()
         }
-        val apiKeyAuthenticationToken = ApiKeyAuthenticationToken("some-api-keys", "some-refresh-address")
-        apiKeyAuthenticationToken.isAuthenticated = true
-        SecurityContextHolder.getContext().authentication = apiKeyAuthenticationToken
+        mockApiKeyAuthentication()
 
         // When
         webTestClient
@@ -67,7 +67,8 @@ class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTest
 
     @Test
     fun `get identity data endpoint returns 401 when refreshAddress of passed APIKey does not match the refreshAddress stored in the session`() {
-        mockFindingSession("_ThisIsDifferent_") // refreshAddress != test application.yaml refreshAddress
+        mockApiKeyAuthentication()
+        mockFindSession("_ThisIsDifferent_")
 
         sendIdentityRequest()
             .expectStatus()
@@ -76,7 +77,8 @@ class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTest
 
     @Test
     fun `get identity data endpoint - eidService getEidInformation method should log error message`(output: CapturedOutput) {
-        mockFindingSession("some-refresh-address") // refreshAddress == test application.yaml refreshAddress
+        mockApiKeyAuthentication()
+        mockFindSession(REFRESH_ADDRESS)
 
         mockkConstructor(EidService::class)
         every { anyConstructed<EidService>().getEidInformation(any()) } throws Error("log that!")
@@ -93,10 +95,16 @@ class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTest
         // TODO: ADD TEST FOR RESULT MINOR ERROR LOGGING
     }
 
-    private fun mockFindingSession(refreshAddress: String) {
+    private fun mockFindSession(refreshAddress: String) {
         val mockSession = mockk<IdentificationSession>()
         every { mockSession.refreshAddress } returns refreshAddress
         every { identificationSessionService.findByEIDSessionId(any()) } returns Mono.just(mockSession)
+    }
+
+    private fun mockApiKeyAuthentication() {
+        val apiKeyAuthenticationToken = ApiKeyAuthenticationToken("some-api-keys", REFRESH_ADDRESS)
+        apiKeyAuthenticationToken.isAuthenticated = true
+        SecurityContextHolder.getContext().authentication = apiKeyAuthenticationToken
     }
 
     private fun sendIdentityRequest(eIdSessionId: UUID = UUID.randomUUID()) =
