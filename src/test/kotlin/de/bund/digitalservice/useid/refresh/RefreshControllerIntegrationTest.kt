@@ -62,7 +62,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .is3xxRedirection
             .expectHeader()
             // "some-refresh-address" value is defined in the test application.yaml
-            .location("some-refresh-address")
+            .location("some-refresh-address?sessionId=$eIdSessionId")
     }
 
     @Test

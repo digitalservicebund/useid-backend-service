@@ -29,7 +29,7 @@ class RefreshController(private val identificationSessionService: Identification
             .map {
                 ResponseEntity
                     .status(HttpStatus.SEE_OTHER)
-                    .location(URI.create(it.refreshAddress))
+                    .location(URI.create("${it.refreshAddress}?sessionId=$eIDSessionId"))
                     .build<Unit>()
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build())
