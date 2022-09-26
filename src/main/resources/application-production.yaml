@@ -1,5 +1,5 @@
 app:
-  base-url: https://useid.prod.ds4g.net
+  base-url: https://eid.digitalservicebund.de
 
 eidservice:
   wsdl-url: https://eid1.eid-service.de/eID-Server-230/eID?wsdl
