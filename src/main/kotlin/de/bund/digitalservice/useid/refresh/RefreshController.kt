@@ -12,8 +12,10 @@ import reactor.core.publisher.Mono
 import java.net.URI
 import java.util.UUID
 
+internal const val REFRESH_PATH = "/refresh"
+
 @RestController
-@RequestMapping("/refresh")
+@RequestMapping(REFRESH_PATH)
 class RefreshController(private val identificationSessionService: IdentificationSessionService) {
 
     private val log = KotlinLogging.logger {}
