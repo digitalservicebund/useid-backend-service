@@ -4,8 +4,8 @@ app:
 api:
   apiKeys:
     - keyvalue: foobar
-      refreshAddress: https://foobar.com
-      dataGroups: [DG1,DG2]
+      refreshAddress: http://localhost:8081/success
+      dataGroups: [DG4,DG5,DG17]
     - keyvalue: foobar2
       refreshAddress: https://foobar2.com
       dataGroups: [DG1,DG2, DG3]
