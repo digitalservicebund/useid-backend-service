@@ -14,11 +14,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import oasis.names.tc.dss._1_0.core.schema.Result
+import org.awaitility.Awaitility
+import org.awaitility.Awaitility.await
+import org.awaitility.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -45,6 +47,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     @BeforeAll
     fun setup() {
         mockkConstructor(EidService::class)
+
+        Awaitility.setDefaultTimeout(Duration.ONE_SECOND)
     }
 
     @Test
@@ -57,7 +61,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        val session = retrieveIdentificationSession(useIdSessionId)
+        val session = retrieveIdentificationSession(useIdSessionId)!!
         assertThat(session.eidSessionId, nullValue())
         assertThat(session.useidSessionId, notNullValue())
         assertThat(session.getRequestDataGroups(), `is`(attributes))
@@ -91,7 +95,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectBody().xpath("TCTokenType").exists()
 
         val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        val session = retrieveIdentificationSession(useIDSessionId)
+        val session = retrieveIdentificationSession(useIDSessionId)!!
         assertEquals(eIdSessionId, session.eidSessionId)
     }
 
@@ -160,10 +164,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
                 assertEquals(it["givenNames"], personalData.givenNames)
             }
 
-        Assertions.assertThrows(NoSuchElementException::class.java) {
-            val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-            retrieveIdentificationSession(useIDSessionId) // should throw NoSuchElementException
-        }
+        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        await().until { retrieveIdentificationSession(useIDSessionId) == null }
     }
 
     @Test
@@ -206,9 +208,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
-    private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession {
+    private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession? {
         return identificationSessionService.findByUseIDSessionId(useIDSessionId).block()
-            ?: throw NoSuchElementException()
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {
