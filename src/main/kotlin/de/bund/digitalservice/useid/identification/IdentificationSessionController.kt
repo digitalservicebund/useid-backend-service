@@ -40,7 +40,7 @@ class IdentificationSessionsController(
     fun createSession(
         serverHttpRequest: ServerHttpRequest,
         authentication: Authentication
-    ): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
+    ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
         return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
             .doOnError {
@@ -51,7 +51,7 @@ class IdentificationSessionsController(
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(CreateIdentitySessionResponse(tcTokenUrl))
+                    .body(CreateIdentificationSessionResponse(tcTokenUrl))
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)

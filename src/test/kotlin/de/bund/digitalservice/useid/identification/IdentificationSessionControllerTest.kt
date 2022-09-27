@@ -37,7 +37,7 @@ private const val REFRESH_ADDRESS = "some-refresh-address"
 @WebFluxTest(controllers = [IdentificationSessionsController::class])
 @Import(value = [ApplicationProperties::class, EidServiceConfig::class, EidServiceProperties::class])
 @WithMockUser
-class IdentificationSessionsControllerTest(@Autowired val webTestClient: WebTestClient) {
+class IdentificationSessionControllerTest(@Autowired val webTestClient: WebTestClient) {
 
     @MockkBean
     private lateinit var identificationSessionService: IdentificationSessionService

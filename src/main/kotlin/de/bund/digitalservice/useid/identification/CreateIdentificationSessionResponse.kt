@@ -1,5 +1,5 @@
 package de.bund.digitalservice.useid.identification
 
-data class CreateIdentitySessionResponse(
+data class CreateIdentificationSessionResponse(
     val tcTokenUrl: String
 )

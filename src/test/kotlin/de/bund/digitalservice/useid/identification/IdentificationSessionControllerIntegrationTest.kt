@@ -33,7 +33,7 @@ import java.util.UUID
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 private const val REFRESH_ADDRESS = "some-refresh-address"
 
-class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
+class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
     val attributes = listOf("DG1", "DG2")
 
     @Autowired
