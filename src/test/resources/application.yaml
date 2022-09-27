@@ -8,20 +8,18 @@ api:
     dataGroups: [DG1,DG2]
 
 eidservice:
-  keystore-password: 123456
   wsdl-url: https://mock.url
   url: https://mock.url
   tls-cert: classpath:testKeys/sig_cert.cer
   sig-cert: classpath:testKeys/tls_cert.cer
-  tls-keystore:
+  truststore-password: 123456
+  soap-tls-keystore:
     keystore: classpath:testKeys/test_tls_keystore.p12
     type: PKCS12
     alias: test_tls_keystore
     password: 123456
-    key-password: 123456
-  xmlsig-keystore:
+  soap-sig-keystore:
     keystore: classpath:testKeys/test_xmlsig_keystore.p12
     type: PKCS12
     alias: test_xmlsig_keystore
     password: 123456
-    key-password: 123456

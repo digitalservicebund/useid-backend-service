@@ -44,6 +44,3 @@ lefthook-local.yml
 
 ### Test Keys/Certs for SDK ###
 src/main/resources/testKeys
-
-### Local profile for eid service integration ###
-application-local-eid.yaml

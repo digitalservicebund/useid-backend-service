@@ -32,10 +32,10 @@ This will replace placeholders in the application template and install a couple 
 
 ## Run locally
 
-To run the application locally, a local PostgreSQL database and some local config is required.
+To run the application locally, a local PostgreSQL database and some test certificates are required.
 
-Get the `application-local-eid.yaml` and the `testKeys` directory including the demo certificates from LastPass under
-"Shared-UseId-Dev > D-Trust Demo Certificates" and place both in the `resources` directory of the application.
+Get the `testKeys` directory including the keystores for the demo system from LastPass under
+"Shared-UseId-Dev > D-Trust Demo Certificates" and place it in the `resources` directory of the application.
 
 **To spin up the database run:**
 
@@ -46,7 +46,7 @@ docker-compose up -d
 **To start the application locally run:**
 
 ```bash
-./gradlew bootRun --args='--spring.profiles.active=local,local-eid'
+./gradlew bootRun --args='--spring.profiles.active=local'
 ```
 
 ## Tests

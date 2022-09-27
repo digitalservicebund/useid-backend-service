@@ -1,2 +1,8 @@
 app:
-  base-url: https://useid.prod.ds4g.net
+  base-url: https://eid.digitalservicebund.de
+
+eidservice:
+  wsdl-url: https://eid1.eid-service.de/eID-Server-230/eID?wsdl
+  url: https://eid1.eid-service.de:9443/eID-Server-230/eID
+  tls-cert: classpath:eid-server-certificates/prod/prod-dtrust-eid-tls.cer
+  sig-cert: classpath:eid-server-certificates/prod/prod-dtrust-eid-sig.cer

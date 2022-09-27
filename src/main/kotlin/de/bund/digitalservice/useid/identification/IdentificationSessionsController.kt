@@ -4,6 +4,7 @@ import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
@@ -70,7 +71,7 @@ class IdentificationSessionsController(
                 */
                 Mono.fromCallable {
                     val eidService = EidService(eidServiceConfig, it.getRequestDataGroups())
-                    eidService.getTcToken(it.refreshAddress)
+                    eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
                 }.subscribeOn(Schedulers.boundedElastic())
             }
             .zipWhen {
