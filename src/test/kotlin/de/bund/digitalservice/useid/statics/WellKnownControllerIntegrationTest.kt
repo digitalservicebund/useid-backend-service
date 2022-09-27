@@ -1,14 +1,11 @@
 package de.bund.digitalservice.useid.statics
 
-import org.junit.jupiter.api.Tag
+import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
-class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
 
     @Test
     fun `iOS deeplink endpoint returns JSON file`() {
