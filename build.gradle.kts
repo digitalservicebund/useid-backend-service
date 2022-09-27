@@ -56,7 +56,7 @@ dependencies {
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-25857
-    implementation("org.yaml:snakeyaml:1.32")
+    implementation("org.yaml:snakeyaml:1.33")
 
     /** Kotlin specific **/
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
