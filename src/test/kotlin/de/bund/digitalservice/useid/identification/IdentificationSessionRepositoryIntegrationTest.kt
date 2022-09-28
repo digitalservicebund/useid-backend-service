@@ -66,7 +66,7 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
         assertThat(identificationSession.eidSessionId, equalTo(EID_SESSION_ID))
         assertThat(identificationSession.useidSessionId, equalTo(USEID_SESSION_ID))
         assertThat(identificationSession.refreshAddress, equalTo(REFRESH_ADDRESS))
-        assertThat(identificationSession.getRequestDataGroups(), hasItems(DG1))
-        assertThat(identificationSession.getRequestDataGroups(), hasItems(DG2))
+        assertThat(identificationSession.requestDataGroups, hasItems(DG1))
+        assertThat(identificationSession.requestDataGroups, hasItems(DG2))
     }
 }

@@ -14,21 +14,11 @@ data class IdentificationSession(
     val refreshAddress: String,
 
     @Column("request_data_groups")
-    private val requestDataGroups: String
+    val requestDataGroups: List<String>
 ) {
     @Id
     var id: Long? = null
 
     @Column("eid_session_id")
     var eidSessionId: UUID? = null
-
-    constructor(useIDSessionId: UUID, refreshAddress: String, requestDataGroupList: List<String>) : this(
-        useIDSessionId,
-        refreshAddress,
-        requestDataGroupList.joinToString(",")
-    )
-
-    fun getRequestDataGroups(): List<String> {
-        return requestDataGroups.split(",")
-    }
 }

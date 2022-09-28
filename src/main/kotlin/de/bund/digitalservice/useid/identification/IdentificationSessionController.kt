@@ -67,7 +67,7 @@ class IdentificationSessionsController(
                     https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
                 */
                 Mono.fromCallable {
-                    val eidService = EidService(eidServiceConfig, it.getRequestDataGroups())
+                    val eidService = EidService(eidServiceConfig, it.requestDataGroups)
                     eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
                 }.subscribeOn(Schedulers.boundedElastic())
             }
