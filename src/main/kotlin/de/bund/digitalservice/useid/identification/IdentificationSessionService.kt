@@ -11,11 +11,12 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     private val log = KotlinLogging.logger {}
 
     fun create(refreshAddress: String, requestDataGroups: List<String>): Mono<IdentificationSession> {
-        return identificationSessionRepository.save(
-            IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups)
-        ).doOnNext {
-            log.info("Created new identification session. useIDSessionId=${it.useidSessionId}")
-        }
+        return identificationSessionRepository.save(IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups))
+            .doOnNext {
+                log.info("Created new identification session. useIDSessionId=${it.useidSessionId}")
+            }.doOnError {
+                log.error("Failed to create identification session: ${it.message}")
+            }
     }
 
     fun findByEIDSessionId(eIDSessionId: UUID): Mono<IdentificationSession> {
@@ -31,7 +32,7 @@ class IdentificationSessionService(private val identificationSessionRepository: 
             it.eidSessionId = eIDSessionId
             identificationSessionRepository.save(it)
         }.doOnNext {
-            log.info("Updated eIDSessionId of identification session. useIDSessionId=${it.useidSessionId}, eIDSessionId=${it.eidSessionId}")
+            log.info("Updated eIDSessionId of identification session. useIDSessionId=${it.useidSessionId}")
         }.doOnError {
             log.error("Failed to update identification session. useIDSessionId=$useIDSessionId", it)
         }

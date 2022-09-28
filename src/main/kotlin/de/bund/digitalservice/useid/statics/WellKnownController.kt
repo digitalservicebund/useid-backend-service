@@ -29,7 +29,7 @@ class WellKnownController {
             ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(IOSUniversalLink(universalLink))
         )
             .doOnError {
-                log.error("Failed to return iOS Universal Link config", it)
+                log.error("Failed to return iOS Universal Link config.", it)
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().build()

@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
@@ -41,29 +40,6 @@ class IdentificationSessionControllerTest(@Autowired val webTestClient: WebTestC
 
     @MockkBean
     private lateinit var identificationSessionService: IdentificationSessionService
-
-    @Test
-    fun `createSession endpoint - identificationSessionService create method should log error message`(output: CapturedOutput) {
-        // Given
-        every { identificationSessionService.create(any(), any()) } returns Mono.fromCallable {
-            throw Error("log this!")
-            mockk<IdentificationSession>()
-        }
-        mockApiKeyAuthentication()
-
-        // When
-        webTestClient
-            .mutateWith(csrf())
-            .post()
-            .uri("/api/v1/identification/sessions")
-            .headers { it.set(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER) }
-            .exchange()
-            .expectStatus()
-            .is5xxServerError
-
-        // Then
-        assertThat(output.all, containsString("log this!"))
-    }
 
     @Test
     fun `get identity data endpoint returns 401 when refreshAddress of passed APIKey does not match the refreshAddress stored in the session`() {
