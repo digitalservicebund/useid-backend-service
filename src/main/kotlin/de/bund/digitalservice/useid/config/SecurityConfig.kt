@@ -13,7 +13,7 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig {
+class SecurityConfig(private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties) {
 
     @Bean
     fun springSecurityFilterChain(
@@ -21,12 +21,17 @@ class SecurityConfig {
         authenticationManager: ReactiveAuthenticationManager,
         authenticationConverter: ServerAuthenticationConverter
     ): SecurityWebFilterChain {
+        val cspConfig = contentSecurityPolicyProperties.defaultConfig + contentSecurityPolicyProperties.frameAncestors
+
         return http.authorizeExchange()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
-            .headers().frameOptions().disable()
+            .headers()
+            .contentSecurityPolicy(cspConfig)
+            .and()
+            .frameOptions().disable()
             .and().addFilterAfter(
                 authenticationFilter(authenticationManager, authenticationConverter),
                 SecurityWebFiltersOrder.REACTOR_CONTEXT
