@@ -29,4 +29,4 @@ eidservice:
 
 csp:
   defaultConfig: "default-src 'self';script-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self';"
-  frameAncestors: frame-ancestors 'self' localhost;
+  frameAncestors: frame-ancestors 'self';
