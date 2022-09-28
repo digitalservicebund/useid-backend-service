@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.util
 
 import org.junit.jupiter.api.Tag
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
@@ -18,9 +17,8 @@ import org.testcontainers.junit.jupiter.Container
  * being executed on a different instance than the tests when using automatic start of containers.
  * @see <a href="https://github.com/testcontainers/testcontainers-java/issues/4473">Testcontainers GitHub Issue</a>
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class PostgresTestcontainerIntegrationTest {
+open class PostgresTestcontainerIntegrationTest {
     companion object {
         @Container
         val postgresql = PostgresTestcontainer.instance!!.apply {

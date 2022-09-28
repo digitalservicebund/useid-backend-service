@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.Resource
 import org.springframework.test.context.TestPropertySource
 import java.io.FileNotFoundException
 import java.security.cert.CertificateException
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = ["test.invalid-resource=/foobar"])
 internal class EidServiceConfigIntegrationTest : PostgresTestcontainerIntegrationTest() {
 
