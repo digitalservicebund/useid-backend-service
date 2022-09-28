@@ -13,36 +13,32 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig(private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties) {
-
+class SecurityConfig(
+    private val cspProperties: ContentSecurityPolicyProperties,
+    private val authenticationManager: ReactiveAuthenticationManager,
+    private val authenticationConverter: ServerAuthenticationConverter
+) {
     @Bean
-    fun springSecurityFilterChain(
-        http: ServerHttpSecurity,
-        authenticationManager: ReactiveAuthenticationManager,
-        authenticationConverter: ServerAuthenticationConverter
-    ): SecurityWebFilterChain {
-        val cspConfig = contentSecurityPolicyProperties.defaultConfig + contentSecurityPolicyProperties.frameAncestors
-
+    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http.authorizeExchange()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
             .headers()
-            .contentSecurityPolicy(cspConfig)
-            .and()
+            .contentSecurityPolicy(cspProperties.getCSPHeaderValue()).and()
             .frameOptions().disable()
             .and().addFilterAfter(
-                authenticationFilter(authenticationManager, authenticationConverter),
+                authenticationFilter(),
                 SecurityWebFiltersOrder.REACTOR_CONTEXT
             )
             .build()
     }
 
     @Bean
-    fun authenticationFilter(manager: ReactiveAuthenticationManager, converter: ServerAuthenticationConverter): AuthenticationWebFilter? {
-        val filter = AuthenticationWebFilter(manager)
-        filter.setServerAuthenticationConverter(converter)
+    fun authenticationFilter(): AuthenticationWebFilter? {
+        val filter = AuthenticationWebFilter(authenticationManager)
+        filter.setServerAuthenticationConverter(authenticationConverter)
         return filter
     }
 }

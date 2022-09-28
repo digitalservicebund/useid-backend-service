@@ -14,4 +14,8 @@ class ContentSecurityPolicyProperties {
 
     @NotBlank
     lateinit var frameAncestors: String
+
+    fun getCSPHeaderValue(): String {
+        return defaultConfig + frameAncestors
+    }
 }
