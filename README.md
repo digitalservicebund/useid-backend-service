@@ -118,6 +118,34 @@ The hooks are supposed to help you to:
 - write [conventional commit messages](https://chris.beams.io/posts/git-commit/)
 - not accidentally push [secrets and sensitive information](https://thoughtworks.github.io/talisman/)
 
+## Vulnerability scan
+
+Trivy Action is triggered in the pipeline for scanning any vulnerable package.
+
+**To run the Trivy locally:**
+
+1. [Install Trivy](https://github.com/aquasecurity/trivy#get-trivy). For Homebrew:
+   ```bash
+   brew install aquasecurity/trivy/trivy
+   ```
+2. Docker should run in background
+3. Create [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with "Read Packages" as a selected option. This is required for Trivy to download the vulnerability database. The personal access token should be available as environment variable in the machine:
+   ```bash
+   CR_PAT=<YOUR_TOKEN>
+   ```
+4. [Signin to `ghcr.io` registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)
+   ```bash
+   docker login ghcr.io -u < YOUR_USERNAME > --password-stdin
+   ```
+5. By the time this tutorial is written, [Trivy requires `pom.xml` or JAR file to scan the vulnerabilities](https://aquasecurity.github.io/trivy/v0.22.0/vulnerability/detection/language/). Our project uses Gradle, therefore we need to build the project.
+   ```bash
+   ./gradlew :build
+   ```
+6. Run Trivy file system scan command
+   ```bash
+   trivy rootfs --severity HIGH,CRITICAL --exit-code 1 build/libs/useid-backend-service-0.0.1-SNAPSHOT.jggpuar
+   ```
+
 ## Code quality analysis
 
 Continuous code quality analysis is performed in the pipeline upon pushing to trunk; it requires a
