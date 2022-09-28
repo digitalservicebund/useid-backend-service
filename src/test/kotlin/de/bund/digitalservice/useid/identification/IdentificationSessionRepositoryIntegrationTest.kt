@@ -44,7 +44,7 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
     }
 
     @Test
-    fun testInsertAndQuery() {
+    fun `find identification by useidSessionId and eidSessionId returns the inserted entity`() {
         // Given
         val identificationSession = IdentificationSession(USEID_SESSION_ID, REFRESH_ADDRESS, DATA_GROUPS)
         identificationSession.eidSessionId = EID_SESSION_ID

@@ -120,7 +120,10 @@ class IdentificationSessionsController(
             .doOnNext {
                 // resultMajor for success can be found in TR 03130 Part 1 -> 3.6.2 Call of Function getResult
                 if (it.t2.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    identificationSessionService.delete(it.t1).subscribe()
+                    val toBeDeleted = it.t1
+                    identificationSessionService.delete(toBeDeleted)
+                        .doOnError { log.error("Failed to delete identification session ${toBeDeleted.id}") }
+                        .subscribe()
                 } else {
                     // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
                     log.info { "resultMinor for eIDSessionId $eIDSessionId is ${it.t2.result.resultMinor}" }
