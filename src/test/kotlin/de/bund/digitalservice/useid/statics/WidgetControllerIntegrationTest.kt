@@ -11,7 +11,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
     @Test
-    fun `should disable X-Frame-Options`() {
+    fun `widget endpoint should disable X-Frame-Options`() {
         webTestClient
             .get()
             .uri("/widget")
@@ -20,5 +20,20 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
             .isOk
             .expectHeader()
             .doesNotExist("X-Frame-Options")
+    }
+
+    @Test
+    fun `widget endpoint should deliver correct Content-Security-Protocol`() {
+        webTestClient
+            .get()
+            .uri("/widget")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self' localhost;"
+            )
     }
 }
