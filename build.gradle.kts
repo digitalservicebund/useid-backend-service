@@ -75,6 +75,8 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.23.0")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
 }
 
 tasks {
