@@ -49,7 +49,7 @@ dependencies {
 
     /** Persistence **/
     implementation("org.springframework.data:spring-data-r2dbc")
-    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:postgresql:42.4.1") // Pin version due to CVE-2022-31197
     runtimeOnly("org.postgresql:r2dbc-postgresql")
     implementation("org.flywaydb:flyway-core:9.3.0")
 
