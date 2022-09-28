@@ -14,7 +14,6 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig(
-    private val cspProperties: ContentSecurityPolicyProperties,
     private val authenticationManager: ReactiveAuthenticationManager,
     private val authenticationConverter: ServerAuthenticationConverter
 ) {
@@ -26,7 +25,6 @@ class SecurityConfig(
             .anyExchange().permitAll()
             .and().csrf().disable()
             .headers()
-            .contentSecurityPolicy(cspProperties.getCSPHeaderValue()).and()
             .frameOptions().disable()
             .and().addFilterAfter(
                 authenticationFilter(),

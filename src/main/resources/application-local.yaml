@@ -28,5 +28,7 @@ eidservice:
     password: 2382
 
 csp:
-  defaultConfig: "default-src 'self';script-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self';"
-  frameAncestors: frame-ancestors 'self';
+  allowedHosts:
+    - https://www.foo.bar
+    - https://www.bar.foo
+    - localhost:8080

@@ -26,4 +26,8 @@ eidservice:
 
 csp:
   defaultConfig: "some default value;"
-  frameAncestors: frame-ancestors 'self' localhost;
+  frameAncestors: "frame-ancestors 'self'"
+  allowedHosts:
+    - https://www.foo.bar
+    - https://www.bar.foo
+    - localhost
