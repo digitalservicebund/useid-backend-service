@@ -31,4 +31,4 @@ csp:
   allowedHosts:
     - https://www.foo.bar
     - https://www.bar.foo
-    - localhost:8080
+    - localhost
