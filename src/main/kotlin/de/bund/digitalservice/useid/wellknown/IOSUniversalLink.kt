@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.wellknown
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
