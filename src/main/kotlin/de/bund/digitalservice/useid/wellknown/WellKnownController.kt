@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.wellknown
 
-import de.bund.digitalservice.useid.config.WellKnownProperties
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
