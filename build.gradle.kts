@@ -98,6 +98,7 @@ dependencies {
     testImplementation("org.testcontainers:mysql:1.17.3")
     testImplementation("org.awaitility:awaitility:3.0.0")
 
+    /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
 }
 
