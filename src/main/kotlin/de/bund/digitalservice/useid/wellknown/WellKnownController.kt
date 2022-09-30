@@ -8,17 +8,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import reactor.core.publisher.Mono
 
-private const val IOS_APPID = "VDTVKQ35RL.de.bund.digitalservice.UseID"
-private const val IOS_APPID_PREVIEW = "VDTVKQ35RL.de.bund.digitalservice.UseID-Preview"
-private const val IOS_PATH_URL = "/eID-Client"
-
-private const val ANDROID_RELATION = "delegate_permission/common.handle_all_urls"
-private const val ANDROID_NAMESPACE = "android_app"
-private const val ANDROID_PACKAGE = "de.digitalService.useID"
-private const val ANDROID_PACKAGE_FINGERPRINT = "38:3A:63:60:60:BE:0B:E9:40:AB:F8:67:EA:BB:64:C8:91:99:0B:DC:01:D8:3D:34:89:A6:29:E4:1D:3B:85:9F"
-private const val ANDROID_PACKAGE_PREVIEW = "de.digitalService.useID.Preview"
-private const val ANDROID_PACKAGE_PREVIEW_FINGERPRINT = "15:7E:42:A7:92:6B:A5:CA:9E:B0:29:8E:88:EE:81:0D:C3:13:E9:B5:84:41:50:28:8A:88:17:B4:14:40:FB:42"
-
 @Controller
 class WellKnownController(
     private var wellKnownProperties: WellKnownProperties
