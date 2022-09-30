@@ -14,6 +14,11 @@ server:
     include-message: never
     include-stacktrace: never
 
+spring:
+  jackson:
+    serialization:
+      indent_output: true
+
 springdoc:
   api-docs:
     path: /v1
