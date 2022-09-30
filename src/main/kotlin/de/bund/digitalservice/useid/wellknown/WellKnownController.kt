@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.wellknown
 
+import de.bund.digitalservice.useid.config.WellKnownProperties
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -19,17 +20,20 @@ private const val ANDROID_PACKAGE_PREVIEW = "de.digitalService.useID.Preview"
 private const val ANDROID_PACKAGE_PREVIEW_FINGERPRINT = "15:7E:42:A7:92:6B:A5:CA:9E:B0:29:8E:88:EE:81:0D:C3:13:E9:B5:84:41:50:28:8A:88:17:B4:14:40:FB:42"
 
 @Controller
-class WellKnownController {
-
+class WellKnownController(
+    private var wellKnownProperties: WellKnownProperties
+) {
     private val log = KotlinLogging.logger {}
+    private val iosConfig = wellKnownProperties.iosConfig
+    private val androidConfig = wellKnownProperties.androidConfig
 
     @GetMapping(
         path = [".well-known/apple-app-site-association"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun getAppleAppSiteAssociation(): Mono<ResponseEntity<IOSUniversalLink>> {
-        val appIds = listOf(IOS_APPID, IOS_APPID_PREVIEW)
-        val components = listOf(Component(IOS_PATH_URL))
+        val appIds = listOf(iosConfig.appId, iosConfig.appIdPreview)
+        val components = listOf(Component(iosConfig.pathUrl))
         val details = listOf(Details(appIds, components))
         val universalLink = UniversalLink(details)
 
@@ -50,19 +54,19 @@ class WellKnownController {
     )
     fun getAndroidAppSiteAssociation(): Mono<ResponseEntity<AndroidAppLink>> {
         val androidApp = AndroidAppLinkItem(
-            listOf(ANDROID_RELATION),
+            listOf(androidConfig.relation),
             AppTarget(
-                ANDROID_NAMESPACE,
-                ANDROID_PACKAGE,
-                listOf(ANDROID_PACKAGE_FINGERPRINT)
+                androidConfig.namespace,
+                androidConfig.packageDefault.name,
+                listOf(androidConfig.packageDefault.fingerprint)
             )
         )
         val androidAppPreview = AndroidAppLinkItem(
-            listOf(ANDROID_RELATION),
+            listOf(androidConfig.relation),
             AppTarget(
-                ANDROID_NAMESPACE,
-                ANDROID_PACKAGE_PREVIEW,
-                listOf(ANDROID_PACKAGE_PREVIEW_FINGERPRINT)
+                androidConfig.namespace,
+                androidConfig.packagePreview.name,
+                listOf(androidConfig.packagePreview.fingerprint)
             )
         )
         val androidAppLink = AndroidAppLink()
