@@ -1,10 +1,10 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.wellknown
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class IOSUniversalLink(
     @JsonProperty("applinks")
-    val appLinks: UniversalLink
+    val universalLink: UniversalLink
 )
 
 data class UniversalLink(

@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ContentSecurityPolicyProperties
 import org.springframework.http.server.reactive.ServerHttpRequest

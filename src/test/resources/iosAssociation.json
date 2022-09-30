@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "VDTVKQ35RL.de.bund.digitalservice.UseID",
+          "VDTVKQ35RL.de.bund.digitalservice.UseID-Preview"
+        ],
+        "components": [
+          {
+            "/": "/eID-Client"
+          }
+        ]
+      }
+    ]
+  }
+}
