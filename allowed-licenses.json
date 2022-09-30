@@ -4,9 +4,6 @@
       "moduleLicense": "Apache License, Version 2.0"
     },
     {
-      "moduleLicense": "Bouncy Castle Licence"
-    },
-    {
       "moduleLicense": "MIT License"
     },
     {
@@ -22,10 +19,28 @@
       "moduleLicense": "EPL 1.0"
     },
     {
+      "moduleLicense": "The 2-Clause BSD License"
+    },
+    {
+      "moduleLicense": "The 3-Clause BSD License"
+    },
+    {
+      "moduleLicense": "BSD 4-Clause \"Original\" or \"Old\" License"
+    },
+    {
       "moduleLicense": "Creative Commons Legal Code"
     },
     {
-      "moduleLicense": "The 2-Clause BSD License"
+      "moduleLicense": "GNU GENERAL PUBLIC LICENSE, Version 2 + Classpath Exception"
+    },
+    {
+      "moduleLicense": "GNU Lesser General Public License"
+    },
+    {
+      "moduleLicense": "Bouncy Castle Licence"
+    },
+    {
+      "moduleLicense": "CDDL + GPLv2 with classpath exception"
     },
     {
       "moduleLicense": null,
