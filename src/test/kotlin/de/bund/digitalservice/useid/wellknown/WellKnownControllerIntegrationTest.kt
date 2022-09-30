@@ -1,25 +1,51 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.wellknown
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.ClassPathResource
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
+import java.nio.file.Files
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
+    val jacksonMapper = jacksonObjectMapper()
+
     @Test
     fun `iOS deeplink endpoint returns JSON file`() {
-        webTestClient
+        val iosAssociationResource = ClassPathResource("iosAssociation.json").file.toPath()
+        val iosAssociation = String(Files.readAllBytes(iosAssociationResource))
+
+        val response = webTestClient
             .get()
             .uri("/.well-known/apple-app-site-association")
             .exchange()
             .expectStatus()
             .isOk
-            .expectBody()
-            .jsonPath("$.applinks.details[0].appIDs").exists()
-            .jsonPath("$.applinks.details[0].components").exists()
+            .expectBody<String>().returnResult().responseBody
+
+        assertEquals(jacksonMapper.readTree(response), jacksonMapper.readTree(iosAssociation))
+    }
+
+    @Test
+    fun `Android deeplink endpoint returns JSON file`() {
+        val androidAssociationResource = ClassPathResource("androidAssociation.json").file.toPath()
+        val androidAssociation = String(Files.readAllBytes(androidAssociationResource))
+
+        val response = webTestClient
+            .get()
+            .uri("/.well-known/assetlinks.json")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectBody<String>().returnResult().responseBody
+
+        assertEquals(jacksonMapper.readTree(response), jacksonMapper.readTree(androidAssociation))
     }
 }
