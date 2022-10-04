@@ -25,4 +25,8 @@ class ContentSecurityPolicyProperties {
     fun getCSPHeaderValue(host: String): String {
         return "$defaultConfig$frameAncestors $host;"
     }
+
+    fun getDefaultCSPHeaderValue(): String {
+        return "$defaultConfig$frameAncestors;"
+    }
 }
