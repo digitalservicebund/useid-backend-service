@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.wellknown
 
+import io.micrometer.core.annotation.Timed
 import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import reactor.core.publisher.Mono
 
 @Controller
+@Timed
 class WellKnownController(
     private var wellKnownProperties: WellKnownProperties
 ) {

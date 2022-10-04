@@ -45,6 +45,7 @@ dependencies {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
     }
+    implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-25857
     implementation("org.yaml:snakeyaml:1.33")
