@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration
 class FlywayConfig(private val flywayProperties: FlywayProperties) {
     @Bean(initMethod = "migrate")
     fun flyway(): Flyway {
-        return Flyway(Flyway.configure().dataSource(flywayProperties.url, flywayProperties.user, flywayProperties.password))
+        return Flyway(
+            Flyway.configure()
+                .dataSource(flywayProperties.url, flywayProperties.user, flywayProperties.password)
+                .baselineOnMigrate(true)
+                .baselineVersion("0.0")
+        )
     }
 }
