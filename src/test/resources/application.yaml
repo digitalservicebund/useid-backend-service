@@ -44,6 +44,5 @@ csp:
   defaultConfig: "some default value;"
   frameAncestors: "frame-ancestors 'self'"
   allowedHosts:
-    - https://www.foo.bar
-    - https://www.bar.foo
-    - localhost
+    - foo.bar
+    - bar.foo

@@ -29,6 +29,5 @@ eidservice:
 
 csp:
   allowedHosts:
-    - https://www.foo.bar
-    - https://www.bar.foo
-    - localhost
+    - foo.bar
+    - bar.foo
