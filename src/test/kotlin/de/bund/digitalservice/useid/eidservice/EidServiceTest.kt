@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 
-@SpringBootTest
+@SpringBootTest(classes = [EidServiceConfig::class])
 @Tag("test")
-@Import(EidServiceProperties::class)
+@EnableConfigurationProperties(EidServiceProperties::class)
 class EidServiceTest {
 
     @Autowired

@@ -27,7 +27,7 @@ class RefreshController(private val identificationSessionService: Identification
     fun redirectToEServiceRefreshAddress(@RequestParam("sessionId") eIDSessionId: UUID, @RequestParam allParams: Map<String, String>): Mono<ResponseEntity<Unit>> {
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .doOnError {
-                log.error("Failed to load identification session with eIDSessionId: $eIDSessionId", it)
+                log.error("Failed to load identification session.", it)
             }
             .map {
                 val requestParams = allParams.map { entry -> "${entry.key}=${entry.value}" }.stream().collect(Collectors.joining("&"))

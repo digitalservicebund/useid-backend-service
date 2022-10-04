@@ -34,7 +34,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val applicationProperties: ApplicationProperties,
-    private val config: EidServiceConfiguration
+    private val eidServiceConfig: EidServiceConfiguration
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -42,24 +42,16 @@ class IdentificationSessionsController(
     fun createSession(
         serverHttpRequest: ServerHttpRequest,
         authentication: Authentication
-    ): Mono<ResponseEntity<CreateIdentitySessionResponse>> {
+    ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
-        return identificationSessionService
-            .create(
-                refreshAddress = apiKeyDetails.refreshAddress!!,
-                requestDataGroups = apiKeyDetails.requestDataGroups
-            ).doOnError { exception ->
-                log.error {
-                    "error occurred when creating identification session: ${exception.message}"
-                }
-            }
+        return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
             .map {
                 val tcTokenUrl =
-                    "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIDSessionId}/$TCTOKEN_PATH_SUFFIX"
+                    "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useidSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(CreateIdentitySessionResponse(tcTokenUrl = tcTokenUrl))
+                    .body(CreateIdentificationSessionResponse(tcTokenUrl))
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
@@ -78,11 +70,11 @@ class IdentificationSessionsController(
                     https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
                 */
                 Mono.fromCallable {
-                    val eidService = EidService(config, it.requestDataGroups)
+                    val eidService = EidService(eidServiceConfig, it.requestDataGroups)
                     eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
                 }.subscribeOn(Schedulers.boundedElastic())
             }
-            .doOnNext {
+            .zipWhen {
                 val eIDSessionId = UriComponentsBuilder
                     .fromHttpUrl(it.refreshAddress)
                     .encode().build()
@@ -93,11 +85,11 @@ class IdentificationSessionsController(
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_XML)
-                    .body(it)
+                    .body(it.t1)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
-                log.error("error occurred while getting tc token for useIDSessionId $useIDSessionId", exception)
+                log.error("Failed to get tc token for identification session. useidSessionId=$useIDSessionId", exception)
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
@@ -112,7 +104,7 @@ class IdentificationSessionsController(
         */
         val apiKeyDetails = authentication.details as ApiKeyDetails
         val getIdentityResult = Mono.fromCallable {
-            val eidService = EidService(config)
+            val eidService = EidService(eidServiceConfig)
             eidService.getEidInformation(eIDSessionId.toString())
         }
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
@@ -123,15 +115,19 @@ class IdentificationSessionsController(
             }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnError { exception ->
-                log.error { "error occurred while getting identity data for eIDSessionId $eIDSessionId;\n ${exception.message}" }
+                log.error("Failed to fetch identity data: ${exception.message}.")
             }
             .doOnNext {
+                val identificationSession: IdentificationSession = it.t1
+                val result = it.t2.result
                 // resultMajor for success can be found in TR 03130 Part 1 -> 3.6.2 Call of Function getResult
-                if (it.t2.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    identificationSessionService.delete(it.t1)
+                if (result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+                    identificationSessionService.delete(identificationSession)
+                        .doOnError { log.error("Failed to delete identification session. id=${identificationSession.id}") }
+                        .subscribe()
                 } else {
                     // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
-                    log.info { "resultMinor for eIDSessionId $eIDSessionId is ${it.t2.result.resultMinor}" }
+                    log.info("The resultMinor for identification session is ${result.resultMinor}. id=${identificationSession.id}")
                 }
             }
             .map {

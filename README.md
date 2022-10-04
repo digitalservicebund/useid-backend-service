@@ -32,8 +32,16 @@ This will replace placeholders in the application template and install a couple 
 
 ## Run locally
 
+To run the application locally, a local PostgreSQL database and some test certificates are required.
+
 Get the `testKeys` directory including the keystores for the demo system from LastPass under
 "Shared-UseId-Dev > D-Trust Demo Certificates" and place it in the `resources` directory of the application.
+
+**To spin up the database run:**
+
+```bash
+docker-compose up -d
+```
 
 **To start the application locally run:**
 

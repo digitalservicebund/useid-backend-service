@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.config
+package de.bund.digitalservice.useid.journey
 
 import de.bund.digitalservice.useid.yaml.YamlPropertySourceFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -8,10 +8,10 @@ import org.springframework.context.annotation.PropertySource
 /**
  * This configuration class is used to provide test configuration properties for test cases.
  */
-@EnableConfigurationProperties(TestApplicationProperties::class)
+@EnableConfigurationProperties(JourneyTestApplicationProperties::class)
 @PropertySource("classpath:application-journey-test.yaml", factory = YamlPropertySourceFactory::class)
 @ConfigurationProperties(prefix = "application")
-class TestApplicationProperties {
+class JourneyTestApplicationProperties {
     var staging: StagingProperties? = null
 
     class StagingProperties {

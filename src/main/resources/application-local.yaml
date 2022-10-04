@@ -26,3 +26,13 @@ eidservice:
     type: PKCS12
     alias: sign.localhost
     password: 2382
+
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/useid
+    username: root
+    password: secret
+  flyway:
+    url: jdbc:postgresql://localhost:5432/useid
+    user: root
+    password: secret
