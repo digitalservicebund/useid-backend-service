@@ -22,6 +22,8 @@ spring:
   jackson:
     serialization:
       indent_output: true
+  flyway:
+    baseline-on-migrate: true
 
 springdoc:
   api-docs:
