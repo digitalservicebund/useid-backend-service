@@ -53,6 +53,9 @@ dependencies {
     runtimeOnly("org.postgresql:r2dbc-postgresql")
     implementation("org.flywaydb:flyway-core:9.3.0")
 
+    /** Monitoring **/
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-25857

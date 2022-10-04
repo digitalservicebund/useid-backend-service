@@ -7,6 +7,7 @@ import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import io.micrometer.core.annotation.Timed
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -28,6 +29,7 @@ internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/s
 internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
+@Timed
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
@@ -44,7 +46,8 @@ class IdentificationSessionsController(
         val apiKeyDetails = authentication.details as ApiKeyDetails
         return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
             .map {
-                val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useidSessionId}/$TCTOKEN_PATH_SUFFIX"
+                val tcTokenUrl =
+                    "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useidSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
