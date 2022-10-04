@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid
 
-import de.bund.digitalservice.useid.config.TestApplicationProperties
-import de.bund.digitalservice.useid.config.TestConfig
+import de.bund.digitalservice.useid.journey.JourneyTestApplicationProperties
+import de.bund.digitalservice.useid.journey.JourneyTestConfig
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -12,16 +12,16 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @ExtendWith(SpringExtension::class)
 @Tag("journey")
-@Import(TestConfig::class)
+@Import(JourneyTestConfig::class)
 class ApplicationJourneyTest {
 
     @Autowired
-    private lateinit var testApplicationProperties: TestApplicationProperties
+    private lateinit var journeyTestApplicationProperties: JourneyTestApplicationProperties
 
     @Test
     fun `application health`() {
         WebTestClient.bindToServer()
-            .baseUrl(testApplicationProperties.staging!!.url)
+            .baseUrl(journeyTestApplicationProperties.staging!!.url)
             .build()
             .get()
             .uri("/actuator/health")

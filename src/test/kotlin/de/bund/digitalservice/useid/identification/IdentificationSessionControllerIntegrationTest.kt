@@ -8,19 +8,21 @@ import de.bund.bsi.eid230.TransactionAttestationResponseType
 import de.bund.bsi.eid230.VerificationResultType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import oasis.names.tc.dss._1_0.core.schema.Result
+import org.awaitility.Awaitility
+import org.awaitility.Awaitility.await
+import org.awaitility.Duration
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -35,8 +37,7 @@ private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
 private const val REFRESH_ADDRESS = "some-refresh-address"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
-class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
     val attributes = listOf("DG1", "DG2")
 
     @Autowired
@@ -48,6 +49,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
     @BeforeAll
     fun setup() {
         mockkConstructor(EidService::class)
+
+        Awaitility.setDefaultTimeout(Duration.ONE_SECOND)
     }
 
     @Test
@@ -60,13 +63,13 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        val session = retrieveIdentificationSession(useIdSessionId)
-        assertThat(session.eIDSessionId, nullValue())
-        assertThat(session.useIDSessionId, notNullValue())
+        val session = retrieveIdentificationSession(useIdSessionId)!!
+        assertThat(session.eidSessionId, nullValue())
+        assertThat(session.useidSessionId, notNullValue())
         assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIDSessionId}/tc-token"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useidSessionId}/tc-token"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
@@ -94,8 +97,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
             .expectBody().xpath("TCTokenType").exists()
 
         val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        val session = retrieveIdentificationSession(useIDSessionId)
-        assertEquals(eIdSessionId, session.eIDSessionId)
+        val session = retrieveIdentificationSession(useIDSessionId)!!
+        assertEquals(eIdSessionId, session.eidSessionId)
     }
 
     @Test
@@ -163,10 +166,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
                 assertEquals(it["givenNames"], personalData.givenNames)
             }
 
-        Assertions.assertThrows(NoSuchElementException::class.java) {
-            val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-            retrieveIdentificationSession(useIDSessionId) // should throw NoSuchElementException
-        }
+        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        await().until { retrieveIdentificationSession(useIDSessionId) == null }
     }
 
     @Test
@@ -209,9 +210,8 @@ class IdentificationSessionsControllerIntegrationTest(@Autowired val webTestClie
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
-    private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession {
+    private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession? {
         return identificationSessionService.findByUseIDSessionId(useIDSessionId).block()
-            ?: throw NoSuchElementException()
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {

@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.refresh
 
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
+import io.micrometer.core.annotation.Timed
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,6 +17,7 @@ import java.util.stream.Collectors
 internal const val REFRESH_PATH = "/refresh"
 
 @RestController
+@Timed
 @RequestMapping(REFRESH_PATH)
 class RefreshController(private val identificationSessionService: IdentificationSessionService) {
 
@@ -25,7 +27,7 @@ class RefreshController(private val identificationSessionService: Identification
     fun redirectToEServiceRefreshAddress(@RequestParam("sessionId") eIDSessionId: UUID, @RequestParam allParams: Map<String, String>): Mono<ResponseEntity<Unit>> {
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .doOnError {
-                log.error("Failed to load identification session with eIDSessionId: $eIDSessionId", it)
+                log.error("Failed to load identification session.", it)
             }
             .map {
                 val requestParams = allParams.map { entry -> "${entry.key}=${entry.value}" }.stream().collect(Collectors.joining("&"))

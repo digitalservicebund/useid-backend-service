@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.statics
 
-import org.junit.jupiter.api.Tag
+import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -8,8 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
-class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {

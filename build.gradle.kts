@@ -31,6 +31,7 @@ jacoco {
 testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
+    /** Spring Boot Starters **/
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -45,17 +46,33 @@ dependencies {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
     }
+
+    /** Persistence **/
+    implementation("org.springframework.data:spring-data-r2dbc")
+    runtimeOnly("org.postgresql:postgresql:42.4.1") // Pin version due to CVE-2022-31197
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
+    implementation("org.flywaydb:flyway-core:9.3.0")
+
+    /** Monitoring **/
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
+    /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-25857
     implementation("org.yaml:snakeyaml:1.33")
+
+    /** Kotlin specific **/
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
+
+    /** Docs **/
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
-    // Governikus Autent SDK
+
+    /** Governikus Autent SDK **/
     implementation("de.governikus.autent.sdk:eid-webservice-sdk:3.73.9")
     implementation("de.governikus.autent.utils:autent-key-utils:4.0.14")
     // => CVE-2015-7501, CVE-2015-6420
@@ -65,8 +82,10 @@ dependencies {
     // => CVE-2020-28052
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
 
+    /** Development **/
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+    /** Testing **/
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.mockito", "mockito-core")
         because("Use MockK instead of Mockito since it is better suited for Kotlin")
@@ -75,7 +94,14 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:0.23.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.3")
+    testImplementation("org.testcontainers:postgresql:1.17.3")
+    testImplementation("org.testcontainers:testcontainers:1.17.3")
+    testImplementation("org.testcontainers:r2dbc:1.17.3")
+    testImplementation("org.testcontainers:mysql:1.17.3")
+    testImplementation("org.awaitility:awaitility:3.0.0")
 
+    /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
 }
 
