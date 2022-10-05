@@ -22,7 +22,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint should deliver Content-Security-Policy with allowed host when the request URL is valid`() {
+    fun `widget endpoint returns Content-Security-Policy with allowed host when the request URL is valid`() {
         webTestClient
             .get()
             .uri("/widget?hostname=foo.bar")
@@ -37,10 +37,25 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint should deliver default Content-Security-Policy when the request URL is invalid`() {
+    fun `widget endpoint returns default Content-Security-Policy when the request URL is invalid`() {
         webTestClient
             .get()
             .uri("/widget?hostname=not-allowed.com")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self';"
+            )
+    }
+
+    @Test
+    fun `widget endpoint returns default Content-Security-Policy when query parameter is not set`() {
+        webTestClient
+            .get()
+            .uri("/widget")
             .exchange()
             .expectStatus()
             .isOk
