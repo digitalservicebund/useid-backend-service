@@ -43,3 +43,6 @@ wellknown:
 csp:
   defaultConfig: "some default value;"
   frameAncestors: "frame-ancestors 'self'"
+  allowedHosts:
+    - foo.bar
+    - bar.foo
