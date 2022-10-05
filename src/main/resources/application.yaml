@@ -58,3 +58,7 @@ wellknown:
     package-preview:
       name: "de.digitalService.useID.Preview"
       fingerprint: "15:7E:42:A7:92:6B:A5:CA:9E:B0:29:8E:88:EE:81:0D:C3:13:E9:B5:84:41:50:28:8A:88:17:B4:14:40:FB:42"
+
+csp:
+  defaultConfig: "default-src 'self';script-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self';"
+  frameAncestors: "frame-ancestors 'self'"

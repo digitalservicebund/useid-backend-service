@@ -36,3 +36,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/useid
     user: root
     password: secret
+
+csp:
+  allowedHosts:
+    - foo.bar
+    - bar.foo

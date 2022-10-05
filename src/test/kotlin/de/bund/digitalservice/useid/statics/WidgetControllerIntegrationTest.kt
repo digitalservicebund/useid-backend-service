@@ -10,7 +10,49 @@ import org.springframework.test.web.reactive.server.WebTestClient
 class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
 
     @Test
-    fun `should disable X-Frame-Options`() {
+    fun `widget endpoint should disable X-Frame-Options`() {
+        webTestClient
+            .get()
+            .uri("/widget?hostname=foo.bar")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .doesNotExist("X-Frame-Options")
+    }
+
+    @Test
+    fun `widget endpoint returns Content-Security-Policy with allowed host when the request URL is valid`() {
+        webTestClient
+            .get()
+            .uri("/widget?hostname=foo.bar")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self' foo.bar;"
+            )
+    }
+
+    @Test
+    fun `widget endpoint returns default Content-Security-Policy when the request URL is invalid`() {
+        webTestClient
+            .get()
+            .uri("/widget?hostname=not-allowed.com")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self';"
+            )
+    }
+
+    @Test
+    fun `widget endpoint returns default Content-Security-Policy when query parameter is not set`() {
         webTestClient
             .get()
             .uri("/widget")
@@ -18,6 +60,9 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
             .expectStatus()
             .isOk
             .expectHeader()
-            .doesNotExist("X-Frame-Options")
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self';"
+            )
     }
 }

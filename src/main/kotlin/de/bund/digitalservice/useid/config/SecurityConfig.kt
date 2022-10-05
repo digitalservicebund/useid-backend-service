@@ -13,31 +13,35 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig {
-
+class SecurityConfig(
+    private val authenticationManager: ReactiveAuthenticationManager,
+    private val authenticationConverter: ServerAuthenticationConverter,
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
+) {
     @Bean
-    fun springSecurityFilterChain(
-        http: ServerHttpSecurity,
-        authenticationManager: ReactiveAuthenticationManager,
-        authenticationConverter: ServerAuthenticationConverter
-    ): SecurityWebFilterChain {
+    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http.authorizeExchange()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
-            .headers().frameOptions().disable()
+            .headers()
+            .frameOptions().disable()
             .and().addFilterAfter(
-                authenticationFilter(authenticationManager, authenticationConverter),
+                authenticationFilter(),
                 SecurityWebFiltersOrder.REACTOR_CONTEXT
+            )
+            .addFilterAfter(
+                ContentSecurityPolicyFilter(contentSecurityPolicyProperties),
+                SecurityWebFiltersOrder.LAST
             )
             .build()
     }
 
     @Bean
-    fun authenticationFilter(manager: ReactiveAuthenticationManager, converter: ServerAuthenticationConverter): AuthenticationWebFilter? {
-        val filter = AuthenticationWebFilter(manager)
-        filter.setServerAuthenticationConverter(converter)
+    fun authenticationFilter(): AuthenticationWebFilter? {
+        val filter = AuthenticationWebFilter(authenticationManager)
+        filter.setServerAuthenticationConverter(authenticationConverter)
         return filter
     }
 }
