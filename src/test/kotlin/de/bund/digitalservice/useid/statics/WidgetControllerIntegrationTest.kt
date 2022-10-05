@@ -4,7 +4,6 @@ import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -14,7 +13,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     fun `widget endpoint should disable X-Frame-Options`() {
         webTestClient
             .get()
-            .uri("/widget")
+            .uri("/widget?hostname=foo.bar")
             .exchange()
             .expectStatus()
             .isOk
@@ -23,11 +22,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint should deliver correct Content-Security-Protocol when the request URL is valid`() {
+    fun `widget endpoint should deliver Content-Security-Policy with allowed host when the request URL is valid`() {
         webTestClient
             .get()
-            .uri("/widget")
-            .header(HttpHeaders.HOST, "foo.bar")
+            .uri("/widget?hostname=foo.bar")
             .exchange()
             .expectStatus()
             .isOk
@@ -39,11 +37,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint should deliver correct Content-Security-Protocol when the request URL is invalid`() {
+    fun `widget endpoint should deliver default Content-Security-Policy when the request URL is invalid`() {
         webTestClient
             .get()
-            .uri("/widget")
-            .header(HttpHeaders.HOST, "not-allowed.com")
+            .uri("/widget?hostname=not-allowed.com")
             .exchange()
             .expectStatus()
             .isOk

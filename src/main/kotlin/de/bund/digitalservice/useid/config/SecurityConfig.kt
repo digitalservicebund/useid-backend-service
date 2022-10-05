@@ -15,7 +15,8 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 @EnableWebFluxSecurity
 class SecurityConfig(
     private val authenticationManager: ReactiveAuthenticationManager,
-    private val authenticationConverter: ServerAuthenticationConverter
+    private val authenticationConverter: ServerAuthenticationConverter,
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
 ) {
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
@@ -29,6 +30,10 @@ class SecurityConfig(
             .and().addFilterAfter(
                 authenticationFilter(),
                 SecurityWebFiltersOrder.REACTOR_CONTEXT
+            )
+            .addFilterAfter(
+                ContentSecurityPolicyFilter(contentSecurityPolicyProperties),
+                SecurityWebFiltersOrder.LAST
             )
             .build()
     }
