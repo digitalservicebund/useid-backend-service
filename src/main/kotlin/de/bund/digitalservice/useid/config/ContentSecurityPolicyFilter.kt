@@ -27,21 +27,21 @@ class ContentSecurityPolicyFilter(
         val response: ServerHttpResponse = serverWebExchange.response
         val pathIsValidWidgetPages = listOfPages.any { it.matches(request.path.pathWithinApplication()) }
 
-        if (pathIsValidWidgetPages) {
-            val hostName = request.queryParams.getFirst("hostname")
-            val hostNameIsAllowed = hostName?.let { contentSecurityPolicyProperties.domainIsAllowed(it) }
+        if (!pathIsValidWidgetPages) return webFilterChain.filter(serverWebExchange)
 
-            if (hostNameIsAllowed == true) {
-                response.headers.set(
-                    "Content-Security-Policy",
-                    contentSecurityPolicyProperties.getCSPHeaderValue(hostName)
-                )
-            } else {
-                response.headers.set(
-                    "Content-Security-Policy",
-                    contentSecurityPolicyProperties.getDefaultCSPHeaderValue()
-                )
-            }
+        val hostName: String? = request.queryParams.getFirst("hostname")
+        val hostNameIsAllowed = hostName?.let { contentSecurityPolicyProperties.domainIsAllowed(it) }
+
+        if (hostNameIsAllowed == true) {
+            response.headers.set(
+                "Content-Security-Policy",
+                contentSecurityPolicyProperties.getCSPHeaderValue(hostName)
+            )
+        } else {
+            response.headers.set(
+                "Content-Security-Policy",
+                contentSecurityPolicyProperties.getDefaultCSPHeaderValue()
+            )
         }
 
         return webFilterChain.filter(serverWebExchange)
