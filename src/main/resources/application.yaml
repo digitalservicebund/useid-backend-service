@@ -22,6 +22,11 @@ spring:
   jackson:
     serialization:
       indent_output: true
+  r2dbc:
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 20
 
 springdoc:
   api-docs:
