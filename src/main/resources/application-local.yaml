@@ -38,6 +38,6 @@ spring:
     password: secret
 
 csp:
-  allowedHosts:
+  allowed-hosts:
     - foo.bar
     - bar.foo

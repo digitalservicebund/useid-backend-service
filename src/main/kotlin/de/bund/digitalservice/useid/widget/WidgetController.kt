@@ -10,9 +10,9 @@ internal const val INCOMPATIBLE_PAGE_PATH = "/incompatible"
 
 @Controller
 @Timed
-class WidgetController {
-    @GetMapping(WIDGET_PAGE_PATH)
-    fun widget(): Mono<String> = Mono.just("widget")
+class WidgetController(
+    private val applicationProperties: ApplicationProperties,
+    private val widgetProperties: WidgetProperties
 
     @GetMapping(INCOMPATIBLE_PAGE_PATH)
     fun noSupport(): Mono<String> = Mono.just("incompatible")
