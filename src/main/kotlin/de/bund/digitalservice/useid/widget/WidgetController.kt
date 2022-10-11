@@ -24,27 +24,27 @@ class WidgetController(
 
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(model: Model): Rendering {
-        val widgetViewHeaderConfig = mapOf(
+        val widgetViewConfig = mapOf(
             "localization" to widgetProperties.mainView.localization,
             "mobileUrl" to widgetProperties.mainView.mobileUrl
         )
 
         return Rendering
             .view(WIDGET_PAGE)
-            .model(defaultViewHeaderConfig + widgetViewHeaderConfig)
+            .model(defaultViewHeaderConfig + widgetViewConfig)
             .status(HttpStatus.OK)
             .build()
     }
 
     @GetMapping("/$INCOMPATIBLE_PAGE")
     fun getIncompatiblePage(model: Model): Rendering {
-        val incompatibleViewHeaderConfig = mapOf(
+        val incompatibleViewConfig = mapOf(
             "localization" to widgetProperties.errorView.incompatible.localization
         )
 
         return Rendering
             .view(INCOMPATIBLE_PAGE)
-            .model(defaultViewHeaderConfig + incompatibleViewHeaderConfig)
+            .model(defaultViewHeaderConfig + incompatibleViewConfig)
             .status(HttpStatus.OK)
             .build()
     }
