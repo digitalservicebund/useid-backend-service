@@ -1,19 +1,51 @@
 package de.bund.digitalservice.useid.widget
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import io.micrometer.core.annotation.Timed
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import reactor.core.publisher.Mono
+import org.springframework.web.reactive.result.view.Rendering
 
-internal const val WIDGET_PAGE_PATH = "/widget"
-internal const val INCOMPATIBLE_PAGE_PATH = "/incompatible"
+internal const val WIDGET_PAGE = "widget"
+internal const val INCOMPATIBLE_PAGE = "incompatible"
 
 @Controller
 @Timed
-class WidgetController {
-    @GetMapping(WIDGET_PAGE_PATH)
-    fun widget(): Mono<String> = Mono.just("widget")
+class WidgetController(
+    private val applicationProperties: ApplicationProperties,
+    private val widgetProperties: WidgetProperties
+) {
+    private val defaultViewHeaderConfig = mapOf(
+        "baseUrl" to applicationProperties.baseUrl,
+        "metaTag" to widgetProperties.metaTag
+    )
 
-    @GetMapping(INCOMPATIBLE_PAGE_PATH)
-    fun noSupport(): Mono<String> = Mono.just("incompatible")
+    @GetMapping("/$WIDGET_PAGE")
+    fun getWidgetPage(model: Model): Rendering {
+        val widgetViewConfig = mapOf(
+            "localization" to widgetProperties.mainView.localization,
+            "mobileUrl" to widgetProperties.mainView.mobileUrl
+        )
+
+        return Rendering
+            .view(WIDGET_PAGE)
+            .model(defaultViewHeaderConfig + widgetViewConfig)
+            .status(HttpStatus.OK)
+            .build()
+    }
+
+    @GetMapping("/$INCOMPATIBLE_PAGE")
+    fun getIncompatiblePage(model: Model): Rendering {
+        val incompatibleViewConfig = mapOf(
+            "localization" to widgetProperties.errorView.incompatible.localization
+        )
+
+        return Rendering
+            .view(INCOMPATIBLE_PAGE)
+            .model(defaultViewHeaderConfig + incompatibleViewConfig)
+            .status(HttpStatus.OK)
+            .build()
+    }
 }

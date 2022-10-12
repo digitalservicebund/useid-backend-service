@@ -1,5 +1,5 @@
 const eidClientButton = document.getElementById("eid-client-button");
-eidClientButton.setAttribute(
-  "href",
-  "eid://127.0.0.1:24727/eID-Client?" + window.location.hash.replace("#", "")
-);
+const eidClientBaseUrl = `${
+  eidClientButton.baseURI
+}eID-Client?${window.location.hash.replace("#", "")}`;
+eidClientButton.setAttribute("href", eidClientBaseUrl);
