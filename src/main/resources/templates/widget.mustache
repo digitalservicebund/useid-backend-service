@@ -1,36 +1,24 @@
-<!DOCTYPE html>
-
-<html lang="de">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DigitalService GmbH des Bundes</title>
-    <link rel="stylesheet" href="css/sanitize.css" />
-    <link rel="stylesheet" href="css/fonts.css" />
-    <link rel="stylesheet" href="css/widget.css" />
-    <link rel="icon" type="image/png" sizes="any" href="images/favicon.png">
-</head>
-<body>
+{{>layout/header}}
     <div class="container widget">
         <div class="cards">
-           <img class="img-responsive" src="images/id-1x.png" alt="Drei deutsche Dokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums." srcset="images/id-2x.png 2x" />
+           <img class="img-responsive" src="images/id-1x.png" alt={{localization.headlineImageAlt}} srcset="images/id-2x.png 2x" />
            <img class="app-icon" src="images/app-icon.svg"  alt />
         </div>
         <div class="headline">
-            <h1>Mit BundesIdent <br> online ausweisen</h1>
+            <h1>{{localization.headlineTitleTop}} <br> {{localization.headlineTitleBottom}}</h1>
         </div>
         <div class="app-stores">
             <div class="connector-inside"></div>
             <div class="app-stores__wrapper">
                 <img class="icon-list" src="images/list-1.svg" alt />
                 <div class="app-stores__content">
-                    <h2>BundesIdent herunterladen</h2>
+                    <h2>{{localization.downloadTitle}}</h2>
                     <div class="app-stores__content__images">
-                        <a href="#play-store">
-                            <img class="play-store" loading="lazy"src="images/play-store.svg" alt="Google Play Store Button" />
+                        <a href={{mobileUrl.playStoreUrl}}>
+                            <img class="play-store" loading="lazy" src="images/play-store.svg" alt={{localization.playStoreAlt}} />
                         </a>
-                        <a href="#app-store">
-                            <img class="app-store" loading="lazy" src="images/app-store.svg" alt="Apple App Store Button" />
+                        <a href={{mobileUrl.appStoreUrl}}>
+                            <img class="app-store" loading="lazy" src="images/app-store.svg" alt={{localization.appStoreAlt}} />
                         </a>
                     </div>
                 </div>
@@ -39,9 +27,8 @@
         <div class="connector-outside"></div>
         <a id="eid-client-button" href="#" target="_blank" class="identify">
             <img class="icon-list" src="images/list-2.svg" alt />
-            <h2>Mit BundesIdent ausweisen</h2>
+            <h2>{{localization.identificationButton}}</h2>
         </a>
     </div>
     <script type="text/javascript" src="js/identifyHandler.js"></script>
-</body>
-</html>
+{{>layout/footer}}
