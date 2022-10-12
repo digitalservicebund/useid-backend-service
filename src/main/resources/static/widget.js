@@ -31,7 +31,7 @@ widgetContainer.appendChild(
     const iframe = document.createElement("iframe");
     iframe.setAttribute(
       "src",
-      `${useIdUrl}/widget?hostname=${location.hostname}#tcTokenURL=${tcTokenURL}`
+      `${useIdUrl}/widget?hostname=${location.host}#tcTokenURL=${tcTokenURL}`
     );
     iframe.style.width = "100%";
     iframe.style.minHeight = "600px"; // TODO: Adjust to design? Discuss with design team.
