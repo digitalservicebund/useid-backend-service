@@ -32,6 +32,8 @@ spring:
     url: r2dbc:postgresql://localhost:5432/useid
     username: root
     password: secret
+    properties:
+      sslMode: disable
   flyway:
     url: jdbc:postgresql://localhost:5432/useid
     user: root
