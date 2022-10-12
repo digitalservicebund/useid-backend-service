@@ -157,7 +157,7 @@ We are using Spring's built-in support for producing an optimized container imag
 
 ```bash
 ./gradlew bootBuildImage
-docker run -p8080:8080 ghcr.io/digitalservicebund/useid-backend-service
+docker run --name useid-backend-service -e "SPRING_PROFILES_ACTIVE=local" --network="host" -d ghcr.io/digitalservicebund/useid-backend-service
 ```
 
 Container images in the registry are [signed with keyless signatures](https://github.com/sigstore/cosign/blob/main/KEYLESS.md).
