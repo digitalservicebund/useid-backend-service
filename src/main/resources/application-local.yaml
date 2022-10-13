@@ -41,3 +41,4 @@ csp:
   allowed-hosts:
     - foo.bar
     - bar.foo
+    - localhost
