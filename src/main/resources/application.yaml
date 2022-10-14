@@ -27,6 +27,8 @@ spring:
       enabled: true
       initial-size: 10
       max-size: 20
+    properties:
+      sslMode: require
 
 springdoc:
   api-docs:
