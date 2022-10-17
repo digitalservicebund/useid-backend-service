@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.junit.jupiter.api.Test
@@ -64,5 +64,25 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
                 "Content-Security-Policy",
                 "some default value;frame-ancestors 'self';"
             )
+    }
+
+    @Test
+    fun `widget endpoint INCOMPATIBLE_PAGE should return 200`() {
+        webTestClient
+            .get()
+            .uri("/$INCOMPATIBLE_PAGE")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+    }
+
+    @Test
+    fun `widget endpoint FALLBACK_PAGE should return 200`() {
+        webTestClient
+            .get()
+            .uri("/$FALLBACK_PAGE")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
     }
 }
