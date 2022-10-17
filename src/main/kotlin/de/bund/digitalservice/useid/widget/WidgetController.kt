@@ -64,6 +64,7 @@ class WidgetController(
 
         val widgetViewConfig = mapOf(
             "localization" to widgetProperties.mainView.localization,
+            "localizationError" to widgetProperties.errorView.fallback.localization,
             "mobileUrl" to widgetProperties.mainView.mobileUrl,
             "eidClientURL" to url,
             "isFallback" to true
