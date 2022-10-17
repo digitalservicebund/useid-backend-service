@@ -27,9 +27,9 @@ class WidgetController(
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(model: Model): Rendering {
         val widgetViewConfig = mapOf(
-            "localization" to widgetProperties.mainView.localization,
-            "mobileUrl" to widgetProperties.mainView.mobileUrl,
-            "eidClientURL" to "#",
+            setMainViewLocalization(),
+            setMainViewMobileURL(),
+            setEiDClientURL("#"),
             "isWidget" to true
         )
 
@@ -63,10 +63,10 @@ class WidgetController(
         val url = "eid://127.0.0.1:24727/eID-Client?${serverHttpRequest.uri.rawQuery}"
 
         val widgetViewConfig = mapOf(
-            "localization" to widgetProperties.mainView.localization,
+            setMainViewLocalization(),
+            setMainViewMobileURL(),
+            setEiDClientURL(url),
             "localizationError" to widgetProperties.errorView.fallback.localization,
-            "mobileUrl" to widgetProperties.mainView.mobileUrl,
-            "eidClientURL" to url,
             "isFallback" to true
         )
 
@@ -75,5 +75,16 @@ class WidgetController(
             .model(defaultViewHeaderConfig + widgetViewConfig)
             .status(HttpStatus.OK)
             .build()
+    }
+
+    private fun setMainViewLocalization(): Pair<String, WidgetProperties.MainView.Localization> {
+        return "localization" to widgetProperties.mainView.localization
+    }
+    private fun setMainViewMobileURL(): Pair<String, WidgetProperties.MainView.MobileUrl> {
+        return "mobileUrl" to widgetProperties.mainView.mobileUrl
+    }
+
+    private fun setEiDClientURL(url: String): Pair<String, String> {
+        return "eidClientURL" to url
     }
 }
