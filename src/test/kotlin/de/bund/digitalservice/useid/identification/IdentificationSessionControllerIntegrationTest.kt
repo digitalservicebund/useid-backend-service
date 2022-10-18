@@ -16,7 +16,7 @@ import io.mockk.mockkConstructor
 import oasis.names.tc.dss._1_0.core.schema.Result
 import org.awaitility.Awaitility
 import org.awaitility.Awaitility.await
-import org.awaitility.Duration
+import org.awaitility.Durations.ONE_SECOND
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
@@ -50,7 +50,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     fun setup() {
         mockkConstructor(EidService::class)
 
-        Awaitility.setDefaultTimeout(Duration.ONE_SECOND)
+        Awaitility.setDefaultTimeout(ONE_SECOND)
     }
 
     @Test
