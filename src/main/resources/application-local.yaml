@@ -11,21 +11,21 @@ api:
       dataGroups: [DG1,DG2, DG3]
 
 eidservice:
-  wsdl-url: https://demo.governikus-eid.de/eID-Server-230/eID?wsdl
-  url: https://demo.governikus-eid.de:8444/eID-Server-230/eID
-  tls-cert: classpath:eid-server-certificates/local/demo-governikus-eid-tls.cer
-  sig-cert: classpath:eid-server-certificates/local/demo-governikus-eid-sig.cer
+  wsdl-url: https://test.governikus-eid.de/eID-Server-230/eID?wsdl
+  url: https://test.governikus-eid.de:8444/eID-Server-230/eID
+  tls-cert: classpath:eid-server-certificates/local/test.governikus-eid.de.cer
+  sig-cert: classpath:eid-server-certificates/local/test-wssign.governikus-eid.de.cer
   truststore-password: 123456
   soap-tls-keystore:
-    keystore: classpath:testKeys/auth.localhost_9846.p12
+    keystore: classpath:soap-certificates/local/Digital_Service_Webservice_Authentication_123456.p12
     type: PKCS12
-    alias: auth.localhost
-    password: 9846
+    alias: "webservice authentication"
+    password: 123456
   soap-sig-keystore:
-    keystore: classpath:testKeys/sign.localhost_2382.p12
+    keystore: classpath:soap-certificates/local/Digital_Service_Webservice_Signature_123456.p12
     type: PKCS12
-    alias: sign.localhost
-    password: 2382
+    alias: "webservice signature"
+    password: 123456
 
 spring:
   r2dbc:
