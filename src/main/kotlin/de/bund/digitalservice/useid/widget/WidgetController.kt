@@ -66,8 +66,7 @@ class WidgetController(
             setMainViewLocalization(),
             setMainViewMobileURL(),
             setEiDClientURL(url),
-            "localizationError" to widgetProperties.errorView.fallback.localization,
-            "isFallback" to true
+            "localizationError" to widgetProperties.errorView.fallback.localization
         )
 
         return Rendering

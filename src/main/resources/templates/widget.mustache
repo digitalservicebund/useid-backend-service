@@ -1,8 +1,8 @@
 {{>layout/header}}
     <div class="container widget">
-        {{#isFallback}}
+        {{#localizationError}}
             {{>components/errorNotification}}
-        {{/isFallback}}
+        {{/localizationError}}
         <div class="cards">
            <img class="img-responsive" src="images/id-1x.png" alt={{localization.headlineImageAlt}} srcset="images/id-2x.png 2x" />
            <img class="app-icon" src="images/app-icon.svg"  alt />
