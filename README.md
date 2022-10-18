@@ -81,6 +81,20 @@ Furthermore, there is another type of test worth mentioning. We're
 using [ArchUnit](https://www.archunit.org/getting-started)
 for ensuring certain architectural characteristics, for instance making sure that there are no cyclic dependencies.
 
+## Contributing
+
+Everyone is welcome to contribute the development of this project. You can contribute by opening pull request,
+providing documentation or answering questions or giving feedback. Please always follow the guidelines and our
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Contributing code
+
+Open a pull request with your changes and it will be reviewed by someone from the team. When you submit a pull request,
+you declare that you have the right to license your contribution to the DigitalService and the community.
+By submitting the patch, you agree that your contributions are licensed under the EUPL license.
+
+Please make sure that your changes have been tested before submitting a pull request.
+
 ## Formatting & Linting
 
 For linting and formatting Kotlin code [ktlint](https://ktlint.github.io) is used.
