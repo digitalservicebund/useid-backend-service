@@ -33,7 +33,7 @@ widgetContainer.appendChild(
       `${useIdUrl}/widget?hostname=${location.host}#tcTokenURL=${tcTokenURL}`
     );
     iframe.style.width = "100%";
-    iframe.style.minHeight = "600px";
+    iframe.style.height = "100%";
     return iframe;
   })()
 );
