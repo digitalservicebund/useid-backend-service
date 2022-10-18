@@ -12,7 +12,6 @@ import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.session.SessionAuthenticationException
 import org.springframework.web.bind.annotation.GetMapping
@@ -40,7 +39,6 @@ class IdentificationSessionsController(
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
-        serverHttpRequest: ServerHttpRequest,
         authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails

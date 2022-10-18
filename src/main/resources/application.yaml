@@ -96,3 +96,7 @@ widget:
         android-requirement: Android 9 »Pie« und ein NFC-Sensor.
         iphone-title: iPhone
         iphone-requirement: iOS 15 & iPhone 7.
+    fallback:
+      localization:
+        error-title: Es ist ein Fehler aufgetreten.
+        error-text: Stellen Sie sicher, dass die BundesIdent App installiert ist und versuchen Sie es erneut.

@@ -67,6 +67,9 @@ class WidgetProperties {
         @Valid
         var incompatible: Incompatible = Incompatible()
 
+        @Valid
+        var fallback: Fallback = Fallback()
+
         class Incompatible {
             @Valid
             var localization: Localization = Localization()
@@ -90,6 +93,19 @@ class WidgetProperties {
 
             @NotBlank
             lateinit var iphoneRequirement: String
+        }
+
+        class Fallback {
+            @Valid
+            var localization: LocalizationFallback = LocalizationFallback()
+        }
+
+        class LocalizationFallback {
+            @NotBlank
+            lateinit var errorTitle: String
+
+            @NotBlank
+            lateinit var errorText: String
         }
     }
 }

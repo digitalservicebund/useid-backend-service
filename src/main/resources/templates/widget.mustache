@@ -1,5 +1,8 @@
 {{>layout/header}}
     <div class="container widget">
+        {{#localizationError}}
+            {{>components/errorNotification}}
+        {{/localizationError}}
         <div class="cards">
            <img class="img-responsive" src="images/id-1x.png" alt={{localization.headlineImageAlt}} srcset="images/id-2x.png 2x" />
            <img class="app-icon" src="images/app-icon.svg"  alt />
@@ -25,10 +28,12 @@
             </div>
         </div>
         <div class="connector-outside"></div>
-        <a id="eid-client-button" href="#" target="_blank" class="identify">
+        <a id="eid-client-button" href={{eidClientURL}} target="_blank" class="identify">
             <img class="icon-list" src="images/list-2.svg" alt />
             <h2>{{localization.identificationButton}}</h2>
         </a>
     </div>
-    <script type="text/javascript" src="js/identifyHandler.js"></script>
+    {{#isWidget}}
+        <script type="text/javascript" src="js/identifyHandler.js"></script>
+    {{/isWidget}}
 {{>layout/footer}}
