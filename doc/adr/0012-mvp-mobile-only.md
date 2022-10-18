@@ -6,7 +6,7 @@ Date: 2022-10-18
 
 Accepted
 
-Supercedes:
+Supersedes:
 
 - [6. URL format in QR code](0006-url-format-in-qr-code.md)
 - [7. Generate QR Code on the client instead of on the backend](0007-generate-qr-code-on-client.md)
