@@ -6,6 +6,8 @@ Date: 2022-10-18
 
 Accepted
 
+Supersedes [6. URL format in QR code](0006-url-format-in-qr-code.md)
+
 ## Context
 
 The widget needs to link to the eID-Client URL, including the `tcTokenURL`,

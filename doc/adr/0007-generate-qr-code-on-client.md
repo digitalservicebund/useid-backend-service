@@ -6,6 +6,8 @@ Date: 2022-06-30
 
 Accepted
 
+Superseded by [12. MVP mobile only](0012-mvp-mobile-only.md)
+
 ## Context
 
 A QR code is embedded in the eService page via iFrame widget, and it enables user to start identification process via camera app on a mobile device. (For details see [ADR 0006](LINK TO 0006).)

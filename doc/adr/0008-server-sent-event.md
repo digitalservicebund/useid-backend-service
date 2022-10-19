@@ -6,6 +6,8 @@ Date: 2022-07-05
 
 Accepted
 
+Superseded by [12. MVP mobile only](0012-mvp-mobile-only.md)
+
 ## Context
 
 After a successful identification via mobile app, we need to inform the widget where the user initially scanned the QR Code to proceed with the identification flow. We want to ensure a unidirectional connection from our backend to the widget (e.g. no websocket connection) and avoid polling by the widget to minimize network traffic.
