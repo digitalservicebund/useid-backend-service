@@ -10,8 +10,6 @@ Accepted
 
 The web widget for communication with the eID mobile client is embedded as iframe.
 
-From inside the widget, the refresh address is communicated to the parent via cross-document messaging.
-
 Pages embedding the widget need to register at UseId before they're allowed to use the service.
 
 ## Decision
