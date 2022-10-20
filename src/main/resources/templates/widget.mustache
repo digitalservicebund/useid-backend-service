@@ -5,7 +5,7 @@
         {{/localizationError}}
         <div class="cards">
            <img class="img-responsive" src="images/id-1x.png" alt={{localization.headlineImageAlt}} srcset="images/id-2x.png 2x" />
-           <img class="app-icon" src="images/app-icon.svg"  alt />
+           <img class="app-icon" src="images/app-icon.svg" />
         </div>
         <div class="headline">
             <h1>{{localization.headlineTitleTop}} <br> {{localization.headlineTitleBottom}}</h1>
@@ -13,7 +13,7 @@
         <div class="app-stores">
             <div class="connector-inside"></div>
             <div class="app-stores__wrapper">
-                <img class="icon-list" src="images/list-1.svg" alt />
+                <img class="icon-list" src="images/list-1.svg" />
                 <div class="app-stores__content">
                     <h2>{{localization.downloadTitle}}</h2>
                     <div class="app-stores__content__images">
@@ -32,6 +32,11 @@
             <img class="icon-list" src="images/list-2.svg" alt />
             <h2>{{localization.identificationButton}}</h2>
         </a>
+        <div class="data-privacy-wrapper">
+            <a id="eid-client-button" href={{mobileUrl.dataPrivacy}} target="_blank" class="data-privacy-button">
+                {{localization.dataPrivacyButton}} ↗
+            </a>
+        </div>
     </div>
     {{#isWidget}}
         <script type="text/javascript" src="js/identifyHandler.js"></script>
