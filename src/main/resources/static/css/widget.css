@@ -134,6 +134,32 @@ h2 {
 .identify h2 {
     margin: 0;
 }
+.data-privacy-wrapper {
+    display: flex;
+    margin-top: 8px;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.data-privacy-button {
+    margin-right: -6px;
+    padding: 2px 6px;
+    color: #666;
+    font-size: .9rem;
+    text-decoration: none;
+}
+.data-privacy-button:hover {
+    color: #333;
+    text-decoration: underline;
+}
+.data-privacy-button:hover, .data-privacy-button:active {
+    outline: 0;
+}
+.data-privacy-button:active {
+    color: #666;
+}
+.data-privacy-button:focus-visible {
+    outline-offset: 1px;
+}
 .widget {
     max-width: 400px;
 }

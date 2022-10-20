@@ -37,6 +37,9 @@ class WidgetProperties {
 
             @NotBlank
             lateinit var playStoreUrl: String
+
+            @NotBlank
+            lateinit var dataPrivacy: String
         }
 
         class Localization {
@@ -60,6 +63,9 @@ class WidgetProperties {
 
             @NotBlank
             lateinit var identificationButton: String
+
+            @NotBlank
+            lateinit var dataPrivacyButton: String
         }
     }
 

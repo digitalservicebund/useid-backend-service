@@ -82,10 +82,12 @@ widget:
       app-store-alt: Google Play Store Button
       play-store-alt: Apple App Store Button
       identification-button: Mit BundesIdent ausweisen
+      data-privacy-button: Datenschutzerklärung
 
     mobile-url:
       app-store-url: https://apps.apple.com/de/app/bundesident/id1635758944
       play-store-url: https://play.google.com/store/apps/details?id=de.digitalService.useID
+      data-privacy: https://digitalservice.bund.de/datenschutzerklaerung-bundesident
 
   error-view:
     incompatible:
