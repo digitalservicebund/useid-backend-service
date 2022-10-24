@@ -12,7 +12,6 @@ import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.session.SessionAuthenticationException
 import org.springframework.web.bind.annotation.GetMapping
@@ -40,7 +39,6 @@ class IdentificationSessionsController(
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
-        serverHttpRequest: ServerHttpRequest,
         authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
@@ -120,7 +118,7 @@ class IdentificationSessionsController(
             .doOnNext {
                 val identificationSession: IdentificationSession = it.t1
                 val result = it.t2.result
-                // resultMajor for success can be found in TR 03130 Part 1 -> 3.6.2 Call of Function getResult
+                // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
                 if (result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
                     identificationSessionService.delete(identificationSession)
                         .doOnError { log.error("Failed to delete identification session. id=${identificationSession.id}") }

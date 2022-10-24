@@ -37,6 +37,9 @@ class WidgetProperties {
 
             @NotBlank
             lateinit var playStoreUrl: String
+
+            @NotBlank
+            lateinit var dataPrivacy: String
         }
 
         class Localization {
@@ -60,12 +63,18 @@ class WidgetProperties {
 
             @NotBlank
             lateinit var identificationButton: String
+
+            @NotBlank
+            lateinit var dataPrivacyButton: String
         }
     }
 
     class ErrorView {
         @Valid
         var incompatible: Incompatible = Incompatible()
+
+        @Valid
+        var fallback: Fallback = Fallback()
 
         class Incompatible {
             @Valid
@@ -90,6 +99,19 @@ class WidgetProperties {
 
             @NotBlank
             lateinit var iphoneRequirement: String
+        }
+
+        class Fallback {
+            @Valid
+            var localization: LocalizationFallback = LocalizationFallback()
+        }
+
+        class LocalizationFallback {
+            @NotBlank
+            lateinit var errorTitle: String
+
+            @NotBlank
+            lateinit var errorText: String
         }
     }
 }

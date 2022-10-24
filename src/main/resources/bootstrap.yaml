@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    kubernetes:
+      secrets:
+        # Enabled secret volume mounts as property source
+        enabled: true
+        fail-fast: true
+        paths: /etc/secrets
+      config:
+        # Disabled config maps as property source
+        enabled: false

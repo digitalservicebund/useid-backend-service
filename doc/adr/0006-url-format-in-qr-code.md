@@ -4,7 +4,7 @@ Date: 2022-06-24
 
 ## Status
 
-Accepted
+Superseded by [12. MVP mobile only](0012-mvp-mobile-only.md) and [13. Format of the eID-Client URL](0013-format-of-eid-client-url.md)
 
 ## Context
 

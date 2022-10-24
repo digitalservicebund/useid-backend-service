@@ -9,7 +9,6 @@ const widgetContainer =
     document.write(container.outerHTML);
     return container;
   })();
-// TODO: Default styling for container? Discuss with design team.
 
 widgetContainer.appendChild(
   (() => {
@@ -34,13 +33,7 @@ widgetContainer.appendChild(
       `${useIdUrl}/widget?hostname=${location.host}#tcTokenURL=${tcTokenURL}`
     );
     iframe.style.width = "100%";
-    iframe.style.minHeight = "600px"; // TODO: Adjust to design? Discuss with design team.
+    iframe.style.height = "100%";
     return iframe;
   })()
 );
-
-window.addEventListener("message", (e) => {
-  if (e.origin === useIdUrl) {
-    location.href = e.data;
-  }
-});

@@ -32,10 +32,7 @@ This will replace placeholders in the application template and install a couple 
 
 ## Run locally
 
-To run the application locally, a local PostgreSQL database and some test certificates are required.
-
-Get the `testKeys` directory including the keystores for the demo system from LastPass under
-"Shared-UseId-Dev > D-Trust Demo Certificates" and place it in the `resources` directory of the application.
+To run the application locally, a local PostgreSQL database is required.
 
 **To spin up the database run:**
 
@@ -80,6 +77,20 @@ Denoting an integration test is accomplished by using a JUnit 5 tag annotation: 
 Furthermore, there is another type of test worth mentioning. We're
 using [ArchUnit](https://www.archunit.org/getting-started)
 for ensuring certain architectural characteristics, for instance making sure that there are no cyclic dependencies.
+
+## Contributing
+
+Everyone is welcome to contribute the development of this project. You can contribute by opening pull request,
+providing documentation or answering questions or giving feedback. Please always follow the guidelines and our
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Contributing code
+
+Open a pull request with your changes and it will be reviewed by someone from the team. When you submit a pull request,
+you declare that you have the right to license your contribution to the DigitalService and the community.
+By submitting the patch, you agree that your contributions are licensed under the EUPL license.
+
+Please make sure that your changes have been tested before submitting a pull request.
 
 ## Formatting & Linting
 

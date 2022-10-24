@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "2.7.0"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.0"
     kotlin("plugin.spring") version "1.7.0"
     id("com.diffplug.spotless") version "6.11.0"
@@ -51,7 +51,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
     runtimeOnly("org.postgresql:r2dbc-postgresql")
-    implementation("org.flywaydb:flyway-core:9.3.0")
+    implementation("org.flywaydb:flyway-core:9.4.0")
 
     /** Monitoring **/
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -104,7 +104,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.17.3")
     testImplementation("org.testcontainers:r2dbc:1.17.3")
     testImplementation("org.testcontainers:mysql:1.17.3")
-    testImplementation("org.awaitility:awaitility:3.0.0")
+    testImplementation("org.awaitility:awaitility:4.2.0")
 
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
