@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    kubernetes:
+      config:
+        namespace: useid-production
+#        sources:
+#          - name: tracking-config

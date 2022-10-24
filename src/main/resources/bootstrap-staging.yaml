@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    kubernetes:
+      config:
+        namespace: useid-staging
+        sources:
+          - name: tracking-config
