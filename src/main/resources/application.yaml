@@ -70,6 +70,10 @@ csp:
   default-config: "default-src 'self';script-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self';"
   frame-ancestors: "frame-ancestors 'self'"
 
+tracking:
+  matomo-site-id: # set via environment
+  matomo-domain: # set via environment
+
 widget:
   meta-tag:
     header-title: DigitalService GmbH des Bundes
