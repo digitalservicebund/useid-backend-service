@@ -113,7 +113,6 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
     @Test
     fun `widget endpoint APP_OPENED should return 200`() {
-
         webTestClient
             .post()
             .uri("/$APP_OPENED")
