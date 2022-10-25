@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.tracking
+package de.bund.digitalservice.useid.widget
 
 import org.springframework.stereotype.Component
 

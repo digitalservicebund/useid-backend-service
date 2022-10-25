@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
 import com.ninjasquad.springmockk.MockkBean
-import de.bund.digitalservice.useid.tracking.TrackingService
+import de.bund.digitalservice.useid.tracking.TrackingServiceInterface
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import io.mockk.every
 import org.hamcrest.CoreMatchers.containsString
@@ -19,7 +19,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     private lateinit var widgetProperties: WidgetProperties
 
     @MockkBean
-    private lateinit var trackingService: TrackingService
+    private lateinit var trackingService: TrackingServiceInterface
 
     @BeforeEach
     fun setup() {

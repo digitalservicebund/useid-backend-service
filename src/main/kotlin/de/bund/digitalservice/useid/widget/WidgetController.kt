@@ -1,8 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.tracking.TrackingService
-import de.bund.digitalservice.useid.tracking.WidgetTracking
+import de.bund.digitalservice.useid.tracking.TrackingServiceInterface
 import io.micrometer.core.annotation.Timed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,22 +22,13 @@ internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 class WidgetController(
     private val applicationProperties: ApplicationProperties,
     private val widgetProperties: WidgetProperties,
-    private val trackingService: TrackingService,
+    private val trackingService: TrackingServiceInterface,
     private val widgetTracking: WidgetTracking
 ) {
     private val defaultViewHeaderConfig = mapOf(
         "baseUrl" to applicationProperties.baseUrl,
         "metaTag" to widgetProperties.metaTag
     )
-
-    // ASYNC WITH GLOBAL SCOPE
-    // GlobalScope.async {
-    //     trackingService.sendMatomoEvent(
-    //         widgetTracking.categories.widget,
-    //         widgetTracking.actions.buttonPressed,
-    //         widgetTracking.names.startIdent
-    //     )
-    // }
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleAppOpened(): ResponseEntity<String> {
