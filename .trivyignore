@@ -1,2 +1,4 @@
 # org.apache.velocity:velocity (velocity-1.7.jar)
+# We are not affected: "This applies to applications that allow untrusted users to upload/modify velocity templates running Apache Velocity Engine"
+# See here: https://velocity.apache.org/news.html#CVE-2020-13936
 CVE-2020-13936
