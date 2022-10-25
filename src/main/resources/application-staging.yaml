@@ -6,3 +6,6 @@ eidservice:
   url: https://eid-ref1.eid-service.de:9443/eID-Server-230/eID
   tls-cert: classpath:eid-server-certificates/dev/dev-dtrust-eid-tls.cer
   sig-cert: classpath:eid-server-certificates/dev/dev-dtrust-eid-sig.cer
+
+sentry:
+  environment: staging
