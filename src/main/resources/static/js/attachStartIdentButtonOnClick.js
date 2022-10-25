@@ -1,7 +1,7 @@
 document
   .getElementById("eid-client-button")
   .addEventListener("click", async function () {
-    await fetch("/app-opened", {
+    await fetch("/start-ident-button-clicked", {
       cache: "no-store",
       method: "POST",
       keepalive: true,

@@ -16,7 +16,7 @@ import org.springframework.web.reactive.result.view.Rendering
 internal const val WIDGET_PAGE = "widget"
 internal const val INCOMPATIBLE_PAGE = "incompatible"
 internal const val FALLBACK_PAGE = "eID-Client"
-internal const val APP_OPENED = "app-opened"
+internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 
 @Controller
 @Timed
@@ -31,7 +31,16 @@ class WidgetController(
         "metaTag" to widgetProperties.metaTag
     )
 
-    @PostMapping("/$APP_OPENED")
+    // ASYNC WITH GLOBAL SCOPE
+    // GlobalScope.async {
+    //     trackingService.sendMatomoEvent(
+    //         widgetTracking.categories.widget,
+    //         widgetTracking.actions.buttonPressed,
+    //         widgetTracking.names.startIdent
+    //     )
+    // }
+
+    @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleAppOpened(): ResponseEntity<String> {
         trackingService.sendMatomoEvent(
             widgetTracking.categories.widget,

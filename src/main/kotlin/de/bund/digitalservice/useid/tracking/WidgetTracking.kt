@@ -19,7 +19,7 @@ class WidgetTracking {
         val widget = "widget"
         val startIdent = "startIdent"
         val incompatible = "incompatible"
-        val unsupported_os = "unsupported_os"
+        val unsupportedOS = "unsupportedOS"
         val fallback = "fallback"
     }
 
