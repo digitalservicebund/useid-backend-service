@@ -56,6 +56,9 @@ dependencies {
     /** Monitoring **/
     implementation("io.micrometer:micrometer-registry-prometheus")
 
+    /** Exception tracking **/
+    implementation("io.sentry:sentry-spring-boot-starter:6.6.0")
+
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-42003, CVE-2022-42004
