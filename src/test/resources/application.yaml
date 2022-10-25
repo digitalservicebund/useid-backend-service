@@ -47,6 +47,10 @@ csp:
     - foo.bar
     - bar.foo
 
+tracking:
+  matomo-site-id: "1"
+  matomo-domain: "https://matomo-server/matomo.php"
+
 widget:
   meta-tag:
     header-title: DigitalService GmbH des Bundes

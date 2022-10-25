@@ -1,8 +1,12 @@
 package de.bund.digitalservice.useid.widget
 
+import com.ninjasquad.springmockk.MockkBean
+import de.bund.digitalservice.useid.tracking.TrackingService
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
+import io.mockk.every
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,6 +17,14 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
     @Autowired
     private lateinit var widgetProperties: WidgetProperties
+
+    @MockkBean
+    private lateinit var trackingService: TrackingService
+
+    @BeforeEach
+    fun setup() {
+        every { trackingService.sendMatomoEvent(any(), any(), any()) } returns Unit
+    }
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
@@ -72,7 +84,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint INCOMPATIBLE_PAGE should return 200`() {
+    fun `widget endpoint INCOMPATIBLE_PAGE should return 200 and should contain headlineTitle`() {
         val result = webTestClient
             .get()
             .uri("/$INCOMPATIBLE_PAGE")
@@ -86,7 +98,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint FALLBACK_PAGE should return 200`() {
+    fun `widget endpoint FALLBACK_PAGE should return 200 and should contain errorTitle`() {
         val result = webTestClient
             .get()
             .uri("/$FALLBACK_PAGE")
@@ -97,5 +109,14 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
         val body = String(result.responseBody!!)
         assertThat(body, containsString(widgetProperties.errorView.fallback.localization.errorTitle))
+    }
+
+    @Test
+    fun `widget endpoint APP_OPENED should return 200`() {
+        webTestClient
+            .post()
+            .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
+            .exchange()
+            .expectStatus().isOk
     }
 }
