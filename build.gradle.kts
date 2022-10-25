@@ -57,7 +57,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     /** Exception tracking **/
-    implementation("io.sentry:sentry-spring-boot-starter:6.4.3")
+    implementation("io.sentry:sentry-spring-boot-starter:6.6.0")
 
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
