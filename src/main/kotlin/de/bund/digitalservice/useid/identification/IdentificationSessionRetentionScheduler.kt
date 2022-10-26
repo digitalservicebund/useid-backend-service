@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime.now
@@ -12,6 +13,7 @@ class IdentificationSessionRetentionScheduler(val identificationSessionRepositor
     private val log = KotlinLogging.logger {}
 
     @Scheduled(cron = "0 0 0 * * *") // every day at midnight
+    @SchedulerLock(name = "identificationSessionRetentionCleanup")
     fun cleanupExpiredIdentificationSessionFromDatabase() {
         log.info("Cleanup identification sessions older than $RETENTION_IN_DAYS days.")
         identificationSessionRepository.deleteAllByCreatedAtBefore(now().minusDays(RETENTION_IN_DAYS))
