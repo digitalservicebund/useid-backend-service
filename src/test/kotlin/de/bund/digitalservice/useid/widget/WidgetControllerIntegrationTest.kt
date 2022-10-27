@@ -1,12 +1,8 @@
 package de.bund.digitalservice.useid.widget
 
-import com.ninjasquad.springmockk.MockkBean
-import de.bund.digitalservice.useid.tracking.TrackingServiceInterface
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
-import io.mockk.every
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,14 +13,6 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
     @Autowired
     private lateinit var widgetProperties: WidgetProperties
-
-    @MockkBean
-    private lateinit var trackingService: TrackingServiceInterface
-
-    @BeforeEach
-    fun setup() {
-        every { trackingService.sendMatomoEvent(any(), any(), any()) } returns Unit
-    }
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
