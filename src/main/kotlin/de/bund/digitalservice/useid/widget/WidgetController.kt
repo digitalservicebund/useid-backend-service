@@ -1,8 +1,9 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.tracking.TrackingServiceInterface
+import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.server.reactive.ServerHttpRequest
@@ -22,8 +23,8 @@ internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 class WidgetController(
     private val applicationProperties: ApplicationProperties,
     private val widgetProperties: WidgetProperties,
-    private val trackingService: TrackingServiceInterface,
-    private val widgetTracking: WidgetTracking
+    private val widgetTracking: WidgetTracking,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
     private val defaultViewHeaderConfig = mapOf(
         "baseUrl" to applicationProperties.baseUrl,
@@ -32,7 +33,7 @@ class WidgetController(
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleAppOpened(): ResponseEntity<String> {
-        trackingService.sendMatomoEvent(
+        publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent
@@ -42,7 +43,7 @@ class WidgetController(
 
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(model: Model): Rendering {
-        trackingService.sendMatomoEvent(
+        publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.widget
@@ -64,7 +65,7 @@ class WidgetController(
 
     @GetMapping("/$INCOMPATIBLE_PAGE")
     fun getIncompatiblePage(model: Model): Rendering {
-        trackingService.sendMatomoEvent(
+        publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.incompatible
@@ -83,7 +84,7 @@ class WidgetController(
 
     @GetMapping("/$FALLBACK_PAGE")
     fun getUniversalLinkFallbackPage(model: Model, serverHttpRequest: ServerHttpRequest): Rendering {
-        trackingService.sendMatomoEvent(
+        publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback
@@ -95,7 +96,7 @@ class WidgetController(
          */
         val url = "eid://127.0.0.1:24727/eID-Client?${serverHttpRequest.uri.rawQuery}"
 
-        val widgetViewConfig = mapOf(
+        val widgetViewFallbackConfig = mapOf(
             setMainViewLocalization(),
             setMainViewMobileURL(),
             setEiDClientURL(url),
@@ -104,9 +105,14 @@ class WidgetController(
 
         return Rendering
             .view(WIDGET_PAGE)
-            .model(defaultViewHeaderConfig + widgetViewConfig)
+            .model(defaultViewHeaderConfig + widgetViewFallbackConfig)
             .status(HttpStatus.OK)
             .build()
+    }
+
+    private fun publishMatomoEvent(category: String, action: String, name: String) {
+        val matomoEvent = MatomoEvent(this, category, action, name)
+        applicationEventPublisher.publishEvent(matomoEvent)
     }
 
     private fun setMainViewLocalization(): Pair<String, WidgetProperties.MainView.Localization> {
