@@ -32,17 +32,19 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
         return url
     }
 
-    override fun onApplicationEvent(e: MatomoEvent) {
+    private fun sendEvent(e: MatomoEvent) {
         Mono.fromCallable {
             constructEventURL(e)
-        }.flatMap {
+        }.zipWhen {
             webRequests.POST(it)
         }.map {
-            if (it == HttpStatus.OK) {
-                log.info("$it, successfully tracked: $url")
+            if (it.t2.statusCode == HttpStatus.OK) {
+                log.info("$it, successfully tracked: ${it.t1}")
             } else {
-                log.error("$it, tracking failed for: $url")
+                log.error("$it, tracking failed for: ${it.t1}")
             }
         }
     }
+
+    override fun onApplicationEvent(e: MatomoEvent) = sendEvent(e)
 }

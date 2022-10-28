@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.tracking
 
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -11,18 +12,15 @@ import java.net.URI
 class WebRequests {
 
     private val log = KotlinLogging.logger {}
-    fun POST(url: String): Mono<HttpStatus> {
-        val client = WebClient.create()
-
+    private val client = WebClient.create()
+    fun POST(url: String): Mono<ResponseEntity<Void>> {
         return client.post()
             .uri(URI(url))
             .retrieve()
             .toBodilessEntity()
-            .map {
-                if (it.statusCode != HttpStatus.OK) {
-                    log.error { "post request failed: $it" }
-                }
-                it.statusCode
-            }
+            .onErrorReturn(
+                // everything but 200 will be caught and responded with 500
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
+            )
     }
 }
