@@ -20,9 +20,11 @@ class TrackingWebRequests {
 
         val response = httpClient.send(request, responseHandler)
         val status = response.statusCode()
-        if (status != 200) {
+        if (status == 200) {
+            log.info("$status, successfully tracked: $url")
+        }
+        else {
             log.error("$status, tracking failed for: $url")
         }
-        log.info("$status, successfully tracked: $url")
     }
 }
