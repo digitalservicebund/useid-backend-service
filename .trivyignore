@@ -6,4 +6,4 @@ CVE-2020-13936
 # com.fasterxml.woodstox:woodstox-core:6.2.6
 # Ignore to fix the pipline until we found a solution. It is already deployed so ignoring won't make it worse.
 # TODO: Remove from ignore list
-CVE-2020-28052
+CVE-2022-40153
