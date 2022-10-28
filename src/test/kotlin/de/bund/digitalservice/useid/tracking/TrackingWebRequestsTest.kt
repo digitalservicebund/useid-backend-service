@@ -19,14 +19,14 @@ class TrackingWebRequestsTest : PostgresTestcontainerIntegrationTest() {
     private lateinit var trackingWebRequests: TrackingWebRequests
 
     @Test
-    fun `GET method should print 200 when given a valid url`(output: CapturedOutput) {
-        trackingWebRequests.GET("https://example.com")
+    fun `POST method should print 200 when given an url that returns 200 as status code`(output: CapturedOutput) {
+        trackingWebRequests.POST("https://httpstat.us/200")
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString("200"))
     }
 
     @Test
-    fun `GET method should print 404 when given an url that returns 404 as response`(output: CapturedOutput) {
-        trackingWebRequests.GET("https://httpstat.us/404")
+    fun `POST method should print 404 when given an url that returns 404 as status code`(output: CapturedOutput) {
+        trackingWebRequests.POST("https://httpstat.us/404")
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString("404"))
     }
 }

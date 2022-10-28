@@ -12,10 +12,12 @@ class TrackingWebRequests {
     private val log = KotlinLogging.logger {}
     private val httpClient: HttpClient = HttpClient.newBuilder().build()
     private val responseHandler: HttpResponse.BodyHandler<String> = HttpResponse.BodyHandlers.ofString()
+    private val emptyBody = HttpRequest.BodyPublishers.ofString("")
 
-    fun GET(url: String) {
+    fun POST(url: String) {
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
+            .POST(emptyBody)
             .build()
 
         val response = httpClient.send(request, responseHandler)

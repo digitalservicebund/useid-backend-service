@@ -20,7 +20,7 @@ class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
     private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
     @Test
-    fun `matomo tracking service should log event category, action and name`(output: CapturedOutput) {
+    fun `matomo tracking service should trigger web request and log event category, action and name and code 200`(output: CapturedOutput) {
         val log1 = "logged"
         val log2 = "printed"
         val log3 = "output"
@@ -31,5 +31,6 @@ class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString(log1))
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString(log2))
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString(log3))
+        MatcherAssert.assertThat(output.all, CoreMatchers.containsString("200"))
     }
 }
