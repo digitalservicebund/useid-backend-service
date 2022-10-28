@@ -22,8 +22,7 @@ class TrackingWebRequests {
         val status = response.statusCode()
         if (status == 200) {
             log.info("$status, successfully tracked: $url")
-        }
-        else {
+        } else {
             log.error("$status, tracking failed for: $url")
         }
     }
