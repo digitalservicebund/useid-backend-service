@@ -1,9 +1,10 @@
 /* WIDGET */
 body {
     font-family: "BundesSansWeb", sans-serif;
-    padding: 3rem 0 3rem 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    padding: 0;
 }
 img.icon-list {
     align-self: start;
@@ -93,8 +94,6 @@ h2 {
 .container {
     margin-right: auto;
     margin-left: auto;
-    padding-right: 0.75rem;
-    padding-left: 0.75rem;
     width: 100%;
 }
 .headline {
