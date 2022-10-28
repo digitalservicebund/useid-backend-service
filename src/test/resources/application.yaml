@@ -50,7 +50,7 @@ csp:
 tracking:
   matomo:
     site-id: "1"
-    domain: "https://example.com"
+    domain: "https://httpstat.us/200"
 
 widget:
   meta-tag:
