@@ -11,6 +11,7 @@ plugins {
     id("org.sonarqube") version "3.5.0.2730"
     id("com.github.jk1.dependency-license-report") version "2.1"
     id("com.adarshr.test-logger") version "3.2.0"
+    id("com.gorylenko.gradle-git-properties") version "2.4.0"
 }
 
 group = "de.bund.digitalservice"
@@ -259,4 +260,8 @@ licenseReport {
         // https://github.com/jk1/Gradle-License-Report/blob/7cf695c38126b63ef9e907345adab84dfa92ea0e/src/main/resources/default-license-normalizer-bundle.json
         LicenseBundleNormalizer(null, true)
     )
+}
+
+springBoot {
+    buildInfo()
 }
