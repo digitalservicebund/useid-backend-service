@@ -13,20 +13,20 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TrackingWebRequestsTest : PostgresTestcontainerIntegrationTest() {
+class WebRequestsTest : PostgresTestcontainerIntegrationTest() {
 
     @Autowired
-    private lateinit var trackingWebRequests: TrackingWebRequests
+    private lateinit var webRequests: WebRequests
 
     @Test
     fun `POST method should print 200 when given an url that returns 200 as status code`(output: CapturedOutput) {
-        trackingWebRequests.POST("https://httpstat.us/200")
+        webRequests.POST("https://httpstat.us/200")
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString("200"))
     }
 
     @Test
     fun `POST method should print 404 when given an url that returns 404 as status code`(output: CapturedOutput) {
-        trackingWebRequests.POST("https://httpstat.us/404")
+        webRequests.POST("https://httpstat.us/404")
         MatcherAssert.assertThat(output.all, CoreMatchers.containsString("404"))
     }
 }

@@ -1,11 +1,12 @@
 package de.bund.digitalservice.useid.tracking.matomo
 
 import de.bund.digitalservice.useid.tracking.TrackingProperties
-import de.bund.digitalservice.useid.tracking.TrackingWebRequests
+import de.bund.digitalservice.useid.tracking.WebRequests
 import mu.KotlinLogging
 import org.springframework.context.ApplicationListener
-import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 
 /**
  * Service for sending tracking events to the matomo server.
@@ -17,9 +18,9 @@ import org.springframework.stereotype.Service
  * Documentation about matomo events
  * https://matomo.org/guide/reports/event-tracking/
  */
-@Profile("!local")
+// @Profile("!local")
 @Service
-class MatomoTrackingService(trackingProperties: TrackingProperties, private val trackingWebRequests: TrackingWebRequests) : ApplicationListener<MatomoEvent> {
+class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) : ApplicationListener<MatomoEvent> {
 
     private val log = KotlinLogging.logger {}
     private val siteId = trackingProperties.matomo.siteId
@@ -32,8 +33,16 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
     }
 
     override fun onApplicationEvent(e: MatomoEvent) {
-        log.debug("Received MatomoEvent: e_c=${e.category}&e_a=${e.action}&e_n=${e.name}")
-        val url = constructEventURL(e)
-        trackingWebRequests.POST(url)
+        Mono.fromCallable {
+            constructEventURL(e)
+        }.flatMap {
+            webRequests.POST(it)
+        }.map {
+            if (it == HttpStatus.OK) {
+                log.info("$it, successfully tracked: $url")
+            } else {
+                log.error("$it, tracking failed for: $url")
+            }
+        }
     }
 }
