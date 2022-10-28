@@ -32,7 +32,7 @@ h2 {
 .app-stores {
     background-color: #dce8ef;
     border-radius: 10px;
-    color: #004b76;
+    color: #0B0C0C;
     padding: 12px;
     position: relative;
 }
@@ -98,7 +98,7 @@ h2 {
 }
 .headline {
     align-items: center;
-    color: #004b76;
+    color: #0B0C0C;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -123,7 +123,7 @@ h2 {
 }
 .identify:active {
     background-color: #b3c9d6;
-    color: #004b76;
+    color: #0B0C0C;
 }
 .identify:focus-visible {
     -moz-box-shadow:    0 0 0 4px #fff, 0 0 0 8px #004b76;
