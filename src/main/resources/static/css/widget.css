@@ -206,7 +206,3 @@ h2 {
 .incompatible-notification__wrapper li p:first-child {
     font-weight: 700;
 }
-
-.widget.incompatible {
-    padding: 48px 0 48px 0;
-}
