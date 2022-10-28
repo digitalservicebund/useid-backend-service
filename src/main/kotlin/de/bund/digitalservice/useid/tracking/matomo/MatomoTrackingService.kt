@@ -4,9 +4,10 @@ import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.TrackingWebRequests
 import mu.KotlinLogging
 import org.springframework.context.ApplicationListener
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
-// @Profile("!local")
+@Profile("!local")
 /**
  * Service for sending tracking events to the matomo server.
  * The service implements an ApplicationListener for a custom MatomoEvent object/event.
