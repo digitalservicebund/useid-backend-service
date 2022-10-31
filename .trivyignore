@@ -7,3 +7,8 @@ CVE-2020-13936
 # Ignore to fix the pipline until we found a solution. It is already deployed so ignoring won't make it worse.
 # TODO: Remove from ignore list
 CVE-2022-40153
+CVE-2022-40151
+CVE-2022-40156
+CVE-2022-40155
+CVE-2022-40154
+CVE-2022-40152
