@@ -8,9 +8,10 @@ plugins {
     kotlin("plugin.spring") version "1.7.0"
     id("com.diffplug.spotless") version "6.11.0"
     id("jacoco")
-    id("org.sonarqube") version "3.4.0.2513"
+    id("org.sonarqube") version "3.5.0.2730"
     id("com.github.jk1.dependency-license-report") version "2.1"
     id("com.adarshr.test-logger") version "3.2.0"
+    id("com.gorylenko.gradle-git-properties") version "2.4.0"
 }
 
 group = "de.bund.digitalservice"
@@ -86,6 +87,8 @@ dependencies {
     implementation("org.apache.santuario:xmlsec:3.0.0")
     // => CVE-2020-28052
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
+    // => CVE-2022-40153
+    implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
 
     /** Development **/
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -108,6 +111,10 @@ dependencies {
 
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
+
+    /** Scheduling **/
+    implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-r2dbc:4.42.0")
 }
 
 tasks {
@@ -257,4 +264,8 @@ licenseReport {
         // https://github.com/jk1/Gradle-License-Report/blob/7cf695c38126b63ef9e907345adab84dfa92ea0e/src/main/resources/default-license-normalizer-bundle.json
         LicenseBundleNormalizer(null, true)
     )
+}
+
+springBoot {
+    buildInfo()
 }

@@ -2,7 +2,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,prometheus"
+        include: "health,prometheus,info"
+      discovery:
+        enabled: false
   endpoint:
     health:
       probes:
@@ -11,6 +13,9 @@ management:
         enabled: true
       readinessState:
         enabled: true
+  info:
+    kubernetes:
+      enabled: false
 
 server:
   shutdown: graceful
