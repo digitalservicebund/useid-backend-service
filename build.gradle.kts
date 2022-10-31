@@ -86,6 +86,8 @@ dependencies {
     implementation("org.apache.santuario:xmlsec:3.0.0")
     // => CVE-2020-28052
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
+    // => CVE-2022-40153
+    implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
 
     /** Development **/
     developmentOnly("org.springframework.boot:spring-boot-devtools")
