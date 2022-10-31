@@ -64,7 +64,7 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
     }
 
     @Test
-    fun `delete all identification sessions created before a specific date removes entities successfully`() {
+    fun `deleteAllByCreatedAtBefore removes expired entities successfully`() {
         // Given
         val now = now()
         val deleteBefore = now.minusDays(7)
