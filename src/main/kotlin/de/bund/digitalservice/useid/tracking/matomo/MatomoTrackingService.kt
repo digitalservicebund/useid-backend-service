@@ -4,6 +4,7 @@ import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.WebRequests
 import mu.KotlinLogging
 import org.springframework.context.ApplicationListener
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono
  * Documentation about matomo events
  * https://matomo.org/guide/reports/event-tracking/
  */
-// @Profile("!local")
+@Profile("!local")
 @Service
 class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) : ApplicationListener<MatomoEvent> {
 
@@ -38,12 +39,13 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
         }.zipWhen {
             webRequests.POST(it)
         }.map {
-            if (it.t2.statusCode == HttpStatus.OK) {
-                log.info("$it, successfully tracked: ${it.t1}")
+            val status = it.t2.statusCode
+            if (status == HttpStatus.OK) {
+                log.info("$status, successfully tracked: ${it.t1}")
             } else {
-                log.error("$it, tracking failed for: ${it.t1}")
+                log.error("$status, tracking failed for: ${it.t1}")
             }
-        }
+        }.subscribe()
     }
 
     override fun onApplicationEvent(e: MatomoEvent) = sendEvent(e)
