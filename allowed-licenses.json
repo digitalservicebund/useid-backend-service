@@ -52,10 +52,14 @@
       "moduleLicense": "CDDL+GPL"
     },
     {
-      "moduleLicense": "Dual license consisting of the CDDL v1.1 and GPL v2"
+      "moduleLicense": "\n                Dual license consisting of the CDDL v1.1 and GPL v2\n            "
     },
     {
       "moduleLicense": "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1"
+    },
+    {
+      "moduleLicense": null,
+      "moduleName": "org.glassfish.ha:ha-api"
     },
     {
       "moduleLicense": null,
