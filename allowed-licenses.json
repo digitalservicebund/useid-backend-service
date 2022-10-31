@@ -46,6 +46,18 @@
       "moduleLicense": "CDDL + GPLv2 with classpath exception"
     },
     {
+      "moduleLicense": "Dual License: CDDL 1.0 and GPL V2 with Classpath Exception"
+    },
+    {
+      "moduleLicense": "CDDL+GPL"
+    },
+    {
+      "moduleLicense": "Dual license consisting of the CDDL v1.1 and GPL v2"
+    },
+    {
+      "moduleLicense": "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1"
+    },
+    {
       "moduleLicense": null,
       "moduleName": "com.fasterxml.jackson:jackson-bom"
     },
