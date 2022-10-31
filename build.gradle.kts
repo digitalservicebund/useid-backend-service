@@ -110,6 +110,10 @@ dependencies {
 
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
+
+    /** Scheduling **/
+    implementation("net.javacrumbs.shedlock:shedlock-spring:4.42.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-r2dbc:4.42.0")
 }
 
 tasks {
