@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tracking
 
-import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -11,10 +10,10 @@ import java.net.URI
 @Service
 class WebRequests {
 
-    private val log = KotlinLogging.logger {}
     private val client = WebClient.create()
     fun POST(url: String): Mono<ResponseEntity<Void>> {
-        return client.post()
+        return client
+            .post()
             .uri(URI(url))
             .retrieve()
             .toBodilessEntity()

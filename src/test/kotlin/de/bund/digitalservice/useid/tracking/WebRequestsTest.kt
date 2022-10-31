@@ -1,44 +1,27 @@
 package de.bund.digitalservice.useid.tracking
 
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.system.CapturedOutput
-import org.springframework.boot.test.system.OutputCaptureExtension
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.http.HttpStatus
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.http.ResponseEntity
+import reactor.core.publisher.Mono
 
-@ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class WebRequestsTest : PostgresTestcontainerIntegrationTest() {
+@Tag("test")
+@WebFluxTest(controllers = [WebRequests::class])
+class WebRequestsTest {
 
-    @Autowired
+    @MockkBean
     private lateinit var webRequests: WebRequests
 
     @Test
-    fun `POST method should return 200 when given an url that returns 200 as status code`(output: CapturedOutput) {
-        val response = webRequests
-            .POST("https://httpstat.us/200")
-            .block()
+    fun `POST request should return status code`() {
+        every { webRequests.POST(any()) } returns Mono.just(ResponseEntity.status(200).build())
+
+        val response = webRequests.POST("_").block()
         assertEquals(HttpStatus.OK, response?.statusCode)
-    }
-
-    @Test
-    fun `POST method should return 500 when given an url that returns 404 as status code`(output: CapturedOutput) {
-        val response = webRequests
-            .POST("https://httpstat.us/404")
-            .block()
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response?.statusCode)
-    }
-
-    @Test
-    fun `POST method should return 500 when given an url that returns 401 as status code`(output: CapturedOutput) {
-        val response = webRequests
-            .POST("https://httpstat.us/401")
-            .block()
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response?.statusCode)
     }
 }
