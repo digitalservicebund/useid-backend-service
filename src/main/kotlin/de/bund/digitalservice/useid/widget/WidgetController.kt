@@ -89,11 +89,11 @@ class WidgetController(
             widgetTracking.names.fallback
         )
         /*
-            Documentation about the link syntax can be found in
-            Technical Guideline TR-03124-1 – eID-Client, Part 1: Specifications Version 1.4 8. October 2021
-            Chapter 2.2 Full eID-Client
+            Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
+            Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
+            Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
          */
-        val url = "eid://127.0.0.1:24727/eID-Client?${serverHttpRequest.uri.rawQuery}"
+        val url = "bundesident://127.0.0.1:24727/eID-Client?${serverHttpRequest.uri.rawQuery}"
 
         val widgetViewConfig = mapOf(
             setMainViewLocalization(),
