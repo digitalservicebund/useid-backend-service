@@ -8,9 +8,8 @@ import reactor.core.publisher.Mono
 import java.net.URI
 
 @Service
-class WebRequests {
+class WebRequests(private val client: WebClient) {
 
-    private val client = WebClient.create()
     fun POST(url: String): Mono<ResponseEntity<Void>> {
         return client
             .post()
