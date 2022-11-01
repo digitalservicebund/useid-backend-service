@@ -52,7 +52,8 @@ class WidgetController(
             setMainViewLocalization(),
             setMainViewMobileURL(),
             setEiDClientURL("#"),
-            "isWidget" to true
+            "isWidget" to true,
+            "additionalClass" to ""
         )
 
         return Rendering
@@ -99,7 +100,8 @@ class WidgetController(
             setMainViewLocalization(),
             setMainViewMobileURL(),
             setEiDClientURL(url),
-            "localizationError" to widgetProperties.errorView.fallback.localization
+            "localizationError" to widgetProperties.errorView.fallback.localization,
+            "additionalClass" to "fallback"
         )
 
         return Rendering
