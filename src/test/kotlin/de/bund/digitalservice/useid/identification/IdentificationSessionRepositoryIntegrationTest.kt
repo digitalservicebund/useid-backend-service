@@ -16,6 +16,8 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.dialect.PostgresDialect
 import org.springframework.r2dbc.core.DatabaseClient
 import reactor.test.StepVerifier
+import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 import java.util.UUID
 
 @DataR2dbcTest
@@ -59,6 +61,57 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
         identificationSessionRepository.findByEidSessionId(EID_SESSION_ID).`as`(StepVerifier::create)
             .assertNext { validateIdentificationSession(it) }
             .verifyComplete()
+    }
+
+    @Test
+    fun `deleteAllByCreatedAtBefore removes expired entities successfully`() {
+        // Given
+        val now = now()
+        val deleteBefore = now.minusDays(7)
+
+        // To be deleted
+        val createdLongBeforeExpiry = insertNewIdentificationSession(now.minusDays(100))
+        val createdDayBeforeExpiry = insertNewIdentificationSession(now.minusDays(8))
+        val createdRightBeforeExpiry = insertNewIdentificationSession(now.minusDays(7).minusSeconds(1))
+
+        // To be kept
+        val createdExactlyOnExpiry = insertNewIdentificationSession(now.minusDays(7))
+        val createdDayAfterExpiry = insertNewIdentificationSession(now.minusDays(6))
+        val createdLongAfterExpiry = insertNewIdentificationSession(now.minusDays(1))
+        val createdNow = insertNewIdentificationSession(now)
+
+        // When
+        identificationSessionRepository.deleteAllByCreatedAtBefore(deleteBefore).`as`(StepVerifier::create).verifyComplete()
+
+        // Then
+        verifyIdentificationSessionWasDeleted(createdLongBeforeExpiry)
+        verifyIdentificationSessionWasDeleted(createdDayBeforeExpiry)
+        verifyIdentificationSessionWasDeleted(createdRightBeforeExpiry)
+
+        verifyIdentificationSessionExists(createdExactlyOnExpiry)
+        verifyIdentificationSessionExists(createdDayAfterExpiry)
+        verifyIdentificationSessionExists(createdLongAfterExpiry)
+        verifyIdentificationSessionExists(createdNow)
+    }
+
+    private fun verifyIdentificationSessionWasDeleted(session: IdentificationSession) {
+        identificationSessionRepository.findById(session.id!!).`as`(StepVerifier::create)
+            .expectNextCount(0)
+            .verifyComplete()
+    }
+
+    private fun verifyIdentificationSessionExists(session: IdentificationSession) {
+        identificationSessionRepository.findById(session.id!!).`as`(StepVerifier::create)
+            .assertNext { assertThat(it, notNullValue()) }
+            .verifyComplete()
+    }
+
+    private fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
+        val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS)
+        identificationSession.createdAt = createdAt
+
+        template.insert(identificationSession).then().`as`(StepVerifier::create).verifyComplete()
+        return identificationSession
     }
 
     private fun validateIdentificationSession(identificationSession: IdentificationSession) {

@@ -97,6 +97,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
         val body = String(result.responseBody!!)
         assertThat(body, containsString(widgetProperties.errorView.fallback.localization.errorTitle))
+        assertThat(body, containsString("class=\"container widget fallback\""))
     }
 
     @Test
