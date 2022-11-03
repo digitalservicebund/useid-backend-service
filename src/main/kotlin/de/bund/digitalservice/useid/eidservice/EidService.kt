@@ -1,10 +1,13 @@
 package de.bund.digitalservice.useid.eidservice
 
 import de.bund.bsi.eid230.AttributeRequestType
+import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.bsi.eid230.OperationsRequestorType
 import de.bund.bsi.eid230.UseIDRequestType
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.eidservices.EidService230
+import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import io.micrometer.core.annotation.Timed
 
 /*
     ("Why do we need to override getWebserviceRequest")
@@ -59,5 +62,14 @@ class EidService constructor(config: EidServiceConfiguration, private val dataGr
 
         request.useOperations = selector
         return request
+    }
+
+    @Timed(value = "eid_service.get_tc_token")
+    public override fun getTcToken(refreshUrl: String?): TCTokenType {
+        return super.getTcToken(refreshUrl)
+    }
+    @Timed(value = "eid_service.get_eid_infirmation")
+    public override fun getEidInformation(sessionId: String?): GetResultResponseType {
+        return super.getEidInformation(sessionId)
     }
 }
