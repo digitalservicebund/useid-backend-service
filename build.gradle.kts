@@ -89,8 +89,16 @@ dependencies {
     implementation("org.apache.santuario:xmlsec:3.0.0")
     // => CVE-2020-28052
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
-    // => CVE-2022-40153
+
+    // webservices-rt:2.6.7 includes woodstox-core:6.2.6 which has several known vulnerabilities
+    // --> updating webservices-rt to latest version
+    implementation("org.glassfish.metro:webservices-rt:4.0.1")
+    implementation("org.glassfish.metro:webservices-api:4.0.1")
+    // --> override version of woodstox-core to patch vulnerabilities
     implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
+    // --> include required packages to satisfy direct dependencies to old versions in code
+    implementation("javax.xml.ws:jaxws-api:2.3.1") // To obtain javax.xml.ws.BindingProvider
+    implementation("com.sun.xml.ws:rt:2.3.1")
 
     /** Development **/
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -195,7 +203,7 @@ tasks {
         val containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
 
         imageName = "$containerRegistry/$containerImageName:$containerImageVersion"
-        builder = "paketobuildpacks/builder@sha256:0e0cdb719946ed6accc63da32f58e9853575b7b7e1b2110b08406d01809423ee" // pin to version 0.1.260-tiny
+        builder = "paketobuildpacks/builder:tiny"
         isPublish = false
 
         docker {
