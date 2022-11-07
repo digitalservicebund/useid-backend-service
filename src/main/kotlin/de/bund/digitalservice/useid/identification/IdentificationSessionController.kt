@@ -82,7 +82,7 @@ class IdentificationSessionsController(
                 identificationSessionService.updateEIDSessionId(useIDSessionId, UUID.fromString(eIDSessionId))
             }
             .map {
-                metricRegistry.counter("eid_service.requests.get_tc_token","method", "get_tc_token", "status", "200").increment()
+                metricRegistry.counter("eid_service.requests.get_tc_token", "method", "get_tc_token", "status", "200").increment()
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_XML)
@@ -117,7 +117,7 @@ class IdentificationSessionsController(
             }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnError { exception ->
-                metricRegistry.counter("eid_service.requests.get_tc_token","method", "get_eid_information", "status", "500").increment()
+                metricRegistry.counter("eid_service.requests.get_tc_token", "method", "get_eid_information", "status", "500").increment()
                 log.error("Failed to fetch identity data: ${exception.message}.")
             }
             .doOnNext {
@@ -125,7 +125,7 @@ class IdentificationSessionsController(
                 val result = it.t2.result
                 // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
                 if (result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    metricRegistry.counter("eid_service.requests","method", "get_eid_information", "status", "200").increment()
+                    metricRegistry.counter("eid_service.requests", "method", "get_eid_information", "status", "200").increment()
                     identificationSessionService.delete(identificationSession)
                         .doOnError { log.error("Failed to delete identification session. id=${identificationSession.id}") }
                         .subscribe()

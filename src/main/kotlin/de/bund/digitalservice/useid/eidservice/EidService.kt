@@ -68,6 +68,7 @@ class EidService constructor(config: EidServiceConfiguration, private val dataGr
     public override fun getTcToken(refreshUrl: String?): TCTokenType {
         return super.getTcToken(refreshUrl)
     }
+
     @Timed(value = "eid_service.get_eid_infirmation")
     public override fun getEidInformation(sessionId: String?): GetResultResponseType {
         return super.getEidInformation(sessionId)
