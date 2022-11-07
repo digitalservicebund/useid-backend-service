@@ -162,6 +162,9 @@ h2 {
 .widget {
     max-width: 400px;
 }
+.widget.fallback {
+    padding: 4vw;
+}
 
 /*INCOMPATIBLE PAGE*/
 .incompatible-notification__wrapper {
