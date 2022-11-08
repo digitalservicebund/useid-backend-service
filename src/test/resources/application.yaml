@@ -48,8 +48,9 @@ csp:
     - bar.foo
 
 tracking:
-  matomo-site-id: "1"
-  matomo-domain: "https://matomo-server/matomo.php"
+  matomo:
+    site-id: "1"
+    domain: "https://example.com"
 
 widget:
   meta-tag:
