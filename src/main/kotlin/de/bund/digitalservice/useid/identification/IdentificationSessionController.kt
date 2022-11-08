@@ -42,7 +42,7 @@ class IdentificationSessionsController(
         Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "200")
     private val tcTokenCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "500")
     private val getEidInformationCallsSuccessfulCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "200")
+    private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
