@@ -54,7 +54,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
     runtimeOnly("org.postgresql:r2dbc-postgresql")
-    implementation("org.flywaydb:flyway-core:9.7.0")
+    implementation("org.flywaydb:flyway-core:9.8.0")
 
     /** Monitoring **/
     implementation("io.micrometer:micrometer-registry-prometheus")
