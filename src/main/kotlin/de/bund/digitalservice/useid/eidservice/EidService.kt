@@ -4,10 +4,12 @@ import de.bund.bsi.eid230.AttributeRequestType
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.bsi.eid230.OperationsRequestorType
 import de.bund.bsi.eid230.UseIDRequestType
+import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.eidservices.EidService230
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
-import io.micrometer.core.annotation.Timed
+import io.micrometer.core.instrument.Metrics
+import io.micrometer.core.instrument.Timer
 
 /*
     ("Why do we need to override getWebserviceRequest")
@@ -29,6 +31,9 @@ import io.micrometer.core.annotation.Timed
  */
 
 class EidService constructor(config: EidServiceConfiguration, private val dataGroups: List<String> = emptyList()) : EidService230(config) {
+    private val tcTokenCallsTimer: Timer = Metrics.timer(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token")
+    private val getEidInformationTimer: Timer = Metrics.timer(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information")
+
     public override fun getWebserviceRequest(): UseIDRequestType {
         val request = UseIDRequestType()
         val selector = OperationsRequestorType()
@@ -64,13 +69,15 @@ class EidService constructor(config: EidServiceConfiguration, private val dataGr
         return request
     }
 
-    @Timed(value = "eid_service.get_tc_token")
-    public override fun getTcToken(refreshUrl: String?): TCTokenType {
-        return super.getTcToken(refreshUrl)
+    override fun getTcToken(refreshUrl: String?): TCTokenType {
+        var tcToken: TCTokenType? = null
+        tcTokenCallsTimer.record { tcToken = super.getTcToken(refreshUrl) }
+        return tcToken!!
     }
 
-    @Timed(value = "eid_service.get_eid_information")
-    public override fun getEidInformation(sessionId: String?): GetResultResponseType {
-        return super.getEidInformation(sessionId)
+    override fun getEidInformation(sessionId: String?): GetResultResponseType {
+        var eidInformation: GetResultResponseType? = null
+        getEidInformationTimer.record { eidInformation = super.getEidInformation(sessionId) }
+        return eidInformation!!
     }
 }

@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid.identification
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
@@ -36,10 +37,10 @@ class IdentificationSessionsController(
     private val eidServiceConfig: EidServiceConfiguration
 ) {
     private val log = KotlinLogging.logger {}
-    private val tcTokenCallsSuccessfulCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "200")
-    private val tcTokenCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "500")
-    private val getEidInformationCallsSuccessfulCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "500")
+    private val tcTokenCallsSuccessfulCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "200")
+    private val tcTokenCallsWithErrorsCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "500")
+    private val getEidInformationCallsSuccessfulCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
+    private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createSession(
