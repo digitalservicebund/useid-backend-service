@@ -4,11 +4,11 @@
 CVE-2020-13936
 
 # com.fasterxml.woodstox:woodstox-core:6.2.6
-# Ignore to fix the pipline until we found a solution. It is already deployed so ignoring won't make it worse.
-# TODO: Remove from ignore list
-CVE-2022-40153
+# Not affected since we do not parse / handle user input.
+# See more information here: https://digitalservicebund.atlassian.net/wiki/spaces/UseID/pages/561316592/Autent+SDK+Vulnerabilities
 CVE-2022-40151
-CVE-2022-40156
-CVE-2022-40155
-CVE-2022-40154
 CVE-2022-40152
+CVE-2022-40153
+CVE-2022-40154
+CVE-2022-40155
+CVE-2022-40156
