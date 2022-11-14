@@ -7,7 +7,6 @@ import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
-import io.micrometer.core.annotation.Timed
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import mu.KotlinLogging
@@ -30,7 +29,6 @@ internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/s
 internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
-@Timed
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
@@ -38,8 +36,7 @@ class IdentificationSessionsController(
     private val eidServiceConfig: EidServiceConfiguration
 ) {
     private val log = KotlinLogging.logger {}
-    private val tcTokenCallsSuccessfulCounter: Counter =
-        Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "200")
+    private val tcTokenCallsSuccessfulCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "200")
     private val tcTokenCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_tc_token", "status", "500")
     private val getEidInformationCallsSuccessfulCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "200")
     private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter("eid_service.requests", "method", "get_eid_information", "status", "500")
