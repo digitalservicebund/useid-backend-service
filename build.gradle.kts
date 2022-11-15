@@ -58,6 +58,7 @@ dependencies {
 
     /** Monitoring **/
     implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
 
     /** Exception tracking **/
     implementation("io.sentry:sentry-spring-boot-starter:6.7.0")
