@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.net.URI
+import java.net.URLEncoder
 import java.util.UUID
 import java.util.stream.Collectors
+import kotlin.text.Charsets.UTF_8
 
 internal const val REFRESH_PATH = "/refresh"
 
@@ -24,16 +26,19 @@ class RefreshController(private val identificationSessionService: Identification
     private val log = KotlinLogging.logger {}
 
     @GetMapping
-    fun redirectToEServiceRefreshAddress(@RequestParam("sessionId") eIDSessionId: UUID, @RequestParam allParams: Map<String, String>): Mono<ResponseEntity<Unit>> {
+    fun redirectToEServiceRefreshAddress(
+        @RequestParam("sessionId") eIDSessionId: UUID,
+        @RequestParam requestQueryParams: Map<String, String>
+    ): Mono<ResponseEntity<Unit>> {
         return identificationSessionService.findByEIDSessionId(eIDSessionId)
             .doOnError {
                 log.error("Failed to load identification session.", it)
             }
             .map {
-                val requestParams = allParams.map { entry -> "${entry.key}=${entry.value}" }.stream().collect(Collectors.joining("&"))
+                val responseQueryParams = buildEncodedQueryParameterString(requestQueryParams)
                 ResponseEntity
                     .status(HttpStatus.SEE_OTHER)
-                    .location(URI.create("${it.refreshAddress}?$requestParams"))
+                    .location(URI.create("${it.refreshAddress}?$responseQueryParams"))
                     .build<Unit>()
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build())
@@ -41,4 +46,10 @@ class RefreshController(private val identificationSessionService: Identification
                 ResponseEntity.internalServerError().build()
             )
     }
+
+    private fun buildEncodedQueryParameterString(parameters: Map<String, String>) =
+        parameters.map { entry -> "${encode(entry.key)}=${encode(entry.value)}" }
+            .stream().collect(Collectors.joining("&"))
+
+    private fun encode(string: String): String = URLEncoder.encode(string, UTF_8)
 }
