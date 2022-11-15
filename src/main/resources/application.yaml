@@ -82,8 +82,8 @@ widget:
     localization:
       headline-title-top: Mit BundesIdent
       headline-title-bottom: online ausweisen
-      headline-image-alt: "Drei deutsche Dokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums."
-      download-title: BundesIdent herunterladen
+      headline-image-alt: "Drei Ausweisdokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums."
+      download-title: BundesIdent installieren
       app-store-alt: Google Play Store Button
       play-store-alt: Apple App Store Button
       identification-button: Mit BundesIdent ausweisen
@@ -97,7 +97,7 @@ widget:
   error-view:
     incompatible:
       localization:
-        headline-title: Ihr Smartphone ist nicht mit der BundesIdent App kompatibel.
+        headline-title: Ihr Smartphone erfüllt leider nicht die Voraussetzungen der BundesIdent App.
         requirement-title: "Mindestvoraussetzungen:"
         android-title: Android
         android-requirement: Android 9 »Pie« und ein NFC-Sensor.
