@@ -15,17 +15,20 @@ export let options = {
       timeUnit: "1s",
       duration: "1m",
       preAllocatedVUs: 6,
-      maxVUs: 20,
+      maxVUs: 100,
     },
   },
   thresholds: {
     errors: ["rate<=0"], // no errors
-    session_duration: ["p(95)<1000"], // 95% of all sessions should take max 1s
+    eid_server_duration: ["p(95)<2000"], // 95% of all eid requests should take max 2s
   },
 };
 
-const baseUrl = "http://localhost:8080";
-const apiKey = "foobar";
+const envBaseUrl = __ENV.USEID_BASEURL;
+const envApiKey = __ENV.USEID_APIKEY;
+
+const baseUrl = envBaseUrl !== undefined ? envBaseUrl : "http://localhost:8080";
+const apiKey = envApiKey !== undefined ? envApiKey : "foobar";
 
 function abort(msg) {
   errorRate.add(1);
