@@ -1,5 +1,6 @@
 {{>layout/header}}
-    <div class="container widget {{additionalClass}}">
+<div class="container {{additionalClass}}">
+    <div class="widget">
         {{#localizationError}}
             {{>components/errorNotification}}
         {{/localizationError}}
@@ -42,4 +43,5 @@
     {{#isWidget}}
         <script type="text/javascript" src="js/identifyHandler.js"></script>
     {{/isWidget}}
+</div>
 {{>layout/footer}}

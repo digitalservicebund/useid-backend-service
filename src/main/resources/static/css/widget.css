@@ -92,9 +92,10 @@ h2 {
     width: 2px;
 }
 .container {
-    margin-right: auto;
-    margin-left: auto;
     width: 100%;
+}
+.container.fallback {
+    padding: 4vw;
 }
 .headline {
     align-items: center;
@@ -161,9 +162,8 @@ h2 {
 }
 .widget {
     max-width: 400px;
-}
-.widget.fallback {
-    padding: 4vw;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 /*INCOMPATIBLE PAGE*/
