@@ -9,3 +9,4 @@ eidservice:
 
 sentry:
   environment: production
+  traces-sample-rate: 0.3

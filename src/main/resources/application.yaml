@@ -107,5 +107,3 @@ widget:
       localization:
         error-title: Es ist ein Fehler aufgetreten.
         error-text: Stellen Sie sicher, dass die BundesIdent App installiert ist und versuchen Sie es erneut.
-sentry:
-  traces-sample-rate: 0.3
