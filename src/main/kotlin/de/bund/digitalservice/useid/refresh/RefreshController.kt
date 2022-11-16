@@ -35,7 +35,7 @@ class RefreshController(private val identificationSessionService: Identification
                 log.error("Failed to load identification session.", it)
             }
             .map {
-                val responseQueryParams = buildEncodedQueryParameterString(requestQueryParams)
+                val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
                 ResponseEntity
                     .status(HttpStatus.SEE_OTHER)
                     .location(URI.create("${it.refreshAddress}?$responseQueryParams"))
@@ -47,7 +47,7 @@ class RefreshController(private val identificationSessionService: Identification
             )
     }
 
-    private fun buildEncodedQueryParameterString(parameters: Map<String, String>) =
+    private fun buildEncodedQueryParameters(parameters: Map<String, String>): String =
         parameters.map { entry -> "${encode(entry.key)}=${encode(entry.value)}" }
             .stream().collect(Collectors.joining("&"))
 
