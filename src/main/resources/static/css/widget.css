@@ -167,6 +167,9 @@ h2 {
 }
 
 /*INCOMPATIBLE PAGE*/
+.incompatible {
+    margin-top: 65px;
+}
 .incompatible-notification__wrapper {
     background-color: #f2f6f8;
     color: #333;
