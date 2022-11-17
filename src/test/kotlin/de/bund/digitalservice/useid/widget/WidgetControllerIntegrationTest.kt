@@ -72,6 +72,54 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
+    fun `widget endpoint renders page correctly when the devices are supported`() {
+        val compatibleAndroidUserAgent = "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
+        val compatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15E148 Safari/604.1"
+
+        webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", compatibleAndroidUserAgent)
+            .exchange()
+            .expectStatus()
+            .isOk
+
+        webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", compatibleIOSUserAgent)
+            .exchange()
+            .expectStatus()
+            .isOk
+    }
+
+    @Test
+    fun `widget endpoint redirects to INCOMPATIBLE_PAGE when the devices are unsupported`() {
+        val incompatibleAndroidUserAgent = "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
+        val incompatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
+
+        webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", incompatibleAndroidUserAgent)
+            .exchange()
+            .expectHeader()
+            .location("/incompatible")
+            .expectStatus()
+            .is3xxRedirection
+
+        webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", incompatibleIOSUserAgent)
+            .exchange()
+            .expectHeader()
+            .location("/incompatible")
+            .expectStatus()
+            .is3xxRedirection
+    }
+
+    @Test
     fun `widget endpoint INCOMPATIBLE_PAGE should return 200 and should contain headlineTitle`() {
         val result = webTestClient
             .get()

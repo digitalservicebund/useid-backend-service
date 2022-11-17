@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.reactive.result.view.Rendering
+import ua_parser.Parser
 
 internal const val WIDGET_PAGE = "widget"
 internal const val INCOMPATIBLE_PAGE = "incompatible"
@@ -42,7 +44,10 @@ class WidgetController(
     }
 
     @GetMapping("/$WIDGET_PAGE")
-    fun getWidgetPage(model: Model): Rendering {
+    fun getWidgetPage(
+        @RequestHeader("User-Agent") userAgent: String,
+        model: Model
+    ): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
@@ -56,6 +61,16 @@ class WidgetController(
             "isWidget" to true,
             "additionalClass" to ""
         )
+
+        val parsedUserAgent = Parser().parse(userAgent)
+        val incompatibleIOSVersion = parsedUserAgent.os.family == "iOS" && safelyGetMajorOSVersion(parsedUserAgent.os.major) <= 14
+        val incompatibleAndroidVersion = parsedUserAgent.os.family == "Android" && safelyGetMajorOSVersion(parsedUserAgent.os.major) <= 8
+
+        if (incompatibleIOSVersion || incompatibleAndroidVersion) {
+            return Rendering
+                .redirectTo("/$INCOMPATIBLE_PAGE")
+                .build()
+        }
 
         return Rendering
             .view(WIDGET_PAGE)
@@ -126,5 +141,21 @@ class WidgetController(
 
     private fun setEiDClientURL(url: String): Pair<String, String> {
         return "eidClientURL" to url
+    }
+
+    /*
+       Since user agent will return version in String, we need to properly convert the string to integer,
+       otherwise we cannot perform logical operations such as <= or >=
+       If major version returns empty or somehow the user agent parser cannot parse the version properly,
+       we will show to users the widget
+    */
+    private fun safelyGetMajorOSVersion(majorVersion: String?): Int {
+        val defaultOSVersion = 20
+
+        return try {
+            Integer.parseInt(majorVersion)
+        } catch (exception: NumberFormatException) {
+            defaultOSVersion
+        }
     }
 }
