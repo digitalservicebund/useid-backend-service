@@ -94,6 +94,26 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
+    fun `widget endpoint renders widget page correctly when the user agents do not have proper OS version`() {
+        val malformedAndroidUserAgent = "Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
+        val malformedIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Safari/604.1"
+
+        webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", malformedAndroidUserAgent)
+            .exchange()
+            .expectStatus()
+            .isOk
+
+        webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", malformedIOSUserAgent)
+            .exchange()
+            .expectStatus()
+            .isOk
+    }
     fun `widget endpoint redirects to INCOMPATIBLE_PAGE when the devices are unsupported`() {
         val incompatibleAndroidUserAgent = "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
         val incompatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
