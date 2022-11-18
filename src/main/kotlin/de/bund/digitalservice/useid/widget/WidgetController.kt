@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.reactive.result.view.Rendering
+import ua_parser.Client
 import ua_parser.Parser
 
 internal const val WIDGET_PAGE = "widget"
@@ -63,8 +64,8 @@ class WidgetController(
         )
 
         val parsedUserAgent = Parser().parse(userAgent)
-        val incompatibleIOSVersion = parsedUserAgent.os.family == "iOS" && safelyGetMajorOSVersion(parsedUserAgent.os.major) <= 14
-        val incompatibleAndroidVersion = parsedUserAgent.os.family == "Android" && safelyGetMajorOSVersion(parsedUserAgent.os.major) <= 8
+        val incompatibleIOSVersion = hasSupportedMajorOSVersion(parsedUserAgent, "iOS", 14)
+        val incompatibleAndroidVersion = hasSupportedMajorOSVersion(parsedUserAgent, "Android", 8)
 
         if (incompatibleIOSVersion || incompatibleAndroidVersion) {
             return Rendering
@@ -149,13 +150,17 @@ class WidgetController(
        If major version returns empty or somehow the user agent parser cannot parse the version properly,
        we will show to users the widget
     */
-    private fun safelyGetMajorOSVersion(majorVersion: String?): Int {
-        val fallbackOSVersion = 20
-
+    private fun safelyGetMajorOSVersion(majorVersion: String?): Int? {
         return try {
             Integer.parseInt(majorVersion)
         } catch (exception: NumberFormatException) {
-            fallbackOSVersion
+            null
         }
+    }
+
+    private fun hasSupportedMajorOSVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
+        return parsedUserAgent.os.family == osFamily &&
+            parsedUserAgent.os.major != null &&
+            safelyGetMajorOSVersion(parsedUserAgent.os.major)!! <= supportedMajorVersion
     }
 }
