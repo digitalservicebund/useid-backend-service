@@ -150,12 +150,12 @@ class WidgetController(
        we will show to users the widget
     */
     private fun safelyGetMajorOSVersion(majorVersion: String?): Int {
-        val defaultOSVersion = 20
+        val fallbackOSVersion = 20
 
         return try {
             Integer.parseInt(majorVersion)
         } catch (exception: NumberFormatException) {
-            defaultOSVersion
+            fallbackOSVersion
         }
     }
 }
