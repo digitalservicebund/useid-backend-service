@@ -151,17 +151,10 @@ class WidgetController(
        If major version returns empty or somehow the user agent parser cannot parse the version properly,
        we will show to users the widget
     */
-    private fun safelyGetMajorOSVersion(majorVersion: String?): Int? {
-        return try {
-            Integer.parseInt(majorVersion)
-        } catch (exception: NumberFormatException) {
-            null
-        }
-    }
 
     private fun hasIncompatibleMajorVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
         return parsedUserAgent.os.family == osFamily &&
-            parsedUserAgent.os.major != null &&
-            safelyGetMajorOSVersion(parsedUserAgent.os.major)!! <= supportedMajorVersion
+            !parsedUserAgent.os.major.isNullOrEmpty() &&
+            Integer.parseInt(parsedUserAgent.os.major) <= supportedMajorVersion
     }
 }
