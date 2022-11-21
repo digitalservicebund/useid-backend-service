@@ -64,8 +64,8 @@ class WidgetController(
         )
 
         val parsedUserAgent = Parser().parse(userAgent)
-        val incompatibleIOSVersion = hasSupportedMajorOSVersion(parsedUserAgent, "iOS", 14)
-        val incompatibleAndroidVersion = hasSupportedMajorOSVersion(parsedUserAgent, "Android", 8)
+        val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 14)
+        val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 8)
 
         if (incompatibleIOSVersion || incompatibleAndroidVersion) {
             return Rendering
@@ -158,7 +158,7 @@ class WidgetController(
         }
     }
 
-    private fun hasSupportedMajorOSVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
+    private fun hasIncompatibleMajorVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
         return parsedUserAgent.os.family == osFamily &&
             parsedUserAgent.os.major != null &&
             safelyGetMajorOSVersion(parsedUserAgent.os.major)!! <= supportedMajorVersion
