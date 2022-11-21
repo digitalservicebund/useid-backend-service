@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
@@ -76,21 +77,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val compatibleAndroidUserAgent = "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
         val compatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15E148 Safari/604.1"
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", compatibleAndroidUserAgent)
-            .exchange()
-            .expectStatus()
-            .isOk
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(compatibleAndroidUserAgent, compatibleIOSUserAgent)
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", compatibleIOSUserAgent)
-            .exchange()
-            .expectStatus()
-            .isOk
+        iosResponse.expectStatus().isOk
+        androidResponse.expectStatus().isOk
     }
 
     @Test
@@ -98,21 +88,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val malformedAndroidUserAgent = "Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
         val malformedIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Safari/604.1"
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", malformedAndroidUserAgent)
-            .exchange()
-            .expectStatus()
-            .isOk
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(malformedAndroidUserAgent, malformedIOSUserAgent)
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", malformedIOSUserAgent)
-            .exchange()
-            .expectStatus()
-            .isOk
+        iosResponse.expectStatus().isOk
+        androidResponse.expectStatus().isOk
     }
 
     @Test
@@ -120,21 +99,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val malformedAndroidUserAgent = "Android Foo Bar"
         val malformedIOSUserAgent = "iPhone Foo Bar"
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", malformedAndroidUserAgent)
-            .exchange()
-            .expectStatus()
-            .isOk
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(malformedAndroidUserAgent, malformedIOSUserAgent)
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", malformedIOSUserAgent)
-            .exchange()
-            .expectStatus()
-            .isOk
+        iosResponse.expectStatus().isOk
+        androidResponse.expectStatus().isOk
     }
 
     @Test
@@ -142,25 +110,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val incompatibleAndroidUserAgent = "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30"
         val incompatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", incompatibleAndroidUserAgent)
-            .exchange()
-            .expectHeader()
-            .location("/incompatible")
-            .expectStatus()
-            .is3xxRedirection
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(incompatibleAndroidUserAgent, incompatibleIOSUserAgent)
 
-        webTestClient
-            .get()
-            .uri("/widget")
-            .header("User-Agent", incompatibleIOSUserAgent)
-            .exchange()
-            .expectHeader()
-            .location("/incompatible")
-            .expectStatus()
-            .is3xxRedirection
+        iosResponse.expectStatus().is3xxRedirection
+        androidResponse.expectStatus().is3xxRedirection
     }
 
     @Test
@@ -199,5 +152,24 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
             .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
             .exchange()
             .expectStatus().isOk
+    }
+
+    private fun fetchWidgetPageWithMobileDevices(
+        androidUserAgent: String,
+        iosUserAgent: String
+    ): Pair<ResponseSpec, ResponseSpec> {
+        val iOSResponse: ResponseSpec = webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", androidUserAgent)
+            .exchange()
+
+        val androidResponse: ResponseSpec = webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", iosUserAgent)
+            .exchange()
+
+        return Pair(iOSResponse, androidResponse)
     }
 }
