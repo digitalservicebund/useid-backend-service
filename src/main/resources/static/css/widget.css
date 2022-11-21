@@ -94,7 +94,7 @@ h2 {
 .container {
     width: 100%;
 }
-.container.fallback {
+.container.fallback, .container.incompatible {
     padding: 4vw;
 }
 .headline {
@@ -167,7 +167,7 @@ h2 {
 }
 
 /*INCOMPATIBLE PAGE*/
-.incompatible {
+.incompatible > .widget {
     margin-top: 65px;
 }
 .incompatible-notification__wrapper {
