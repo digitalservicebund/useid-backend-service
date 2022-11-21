@@ -66,8 +66,9 @@ class WidgetController(
         val parsedUserAgent = Parser().parse(userAgent)
         val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 14)
         val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 8)
+        val isIncompatibleOSVersion = incompatibleIOSVersion || incompatibleAndroidVersion
 
-        if (incompatibleIOSVersion || incompatibleAndroidVersion) {
+        if (isIncompatibleOSVersion) {
             return Rendering
                 .redirectTo("/$INCOMPATIBLE_PAGE")
                 .build()
