@@ -63,14 +63,15 @@ class WidgetController(
             "additionalClass" to ""
         )
 
-        val parsedUserAgent = Parser().parse(userAgent)
-        val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 14)
-        val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 8)
-        val isIncompatibleOSVersion = incompatibleIOSVersion || incompatibleAndroidVersion
-
-        if (isIncompatibleOSVersion) {
+        try {
+            if (isIncompatibleOSVersion(userAgent)) {
+                return Rendering.redirectTo("/$INCOMPATIBLE_PAGE").build()
+            }
+        } catch (exception: Exception) {
             return Rendering
-                .redirectTo("/$INCOMPATIBLE_PAGE")
+                .view(WIDGET_PAGE)
+                .model(defaultViewHeaderConfig + widgetViewConfig)
+                .status(HttpStatus.OK)
                 .build()
         }
 
@@ -151,6 +152,14 @@ class WidgetController(
        If major version returns empty or somehow the user agent parser cannot parse the version properly,
        we will show to users the widget
     */
+
+    private fun isIncompatibleOSVersion(userAgent: String): Boolean {
+        val parsedUserAgent = Parser().parse(userAgent)
+        val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 14)
+        val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 8)
+
+        return incompatibleIOSVersion || incompatibleAndroidVersion
+    }
 
     private fun hasIncompatibleMajorVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
         return parsedUserAgent.os.family == osFamily &&
