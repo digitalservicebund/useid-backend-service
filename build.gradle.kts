@@ -38,7 +38,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     // => CVE-2022-31692
-    implementation("org.springframework.security:spring-security-core:5.7.5")
+    implementation("org.springframework.security:spring-security-core:6.0.0")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-webflux") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
