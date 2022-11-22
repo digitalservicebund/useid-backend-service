@@ -146,12 +146,6 @@ class WidgetController(
         return "eidClientURL" to url
     }
 
-    /*
-       Since user agent will return version in String, we need to properly convert the string to integer,
-       otherwise we cannot perform logical operations such as <= or >=
-       If major version returns empty or somehow the user agent parser cannot parse the version properly,
-       we will show to users the widget
-    */
 
     private fun isIncompatibleOSVersion(userAgent: String): Boolean {
         val parsedUserAgent = Parser().parse(userAgent)
