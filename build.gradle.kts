@@ -93,6 +93,9 @@ dependencies {
     // => CVE-2022-40153
     implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
 
+    /** Helpers **/
+    implementation("com.github.ua-parser:uap-java:1.5.3")
+
     /** Development **/
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 

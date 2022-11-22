@@ -11,7 +11,10 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.reactive.result.view.Rendering
+import ua_parser.Client
+import ua_parser.Parser
 
 internal const val WIDGET_PAGE = "widget"
 internal const val INCOMPATIBLE_PAGE = "incompatible"
@@ -42,7 +45,10 @@ class WidgetController(
     }
 
     @GetMapping("/$WIDGET_PAGE")
-    fun getWidgetPage(model: Model): Rendering {
+    fun getWidgetPage(
+        @RequestHeader("User-Agent") userAgent: String,
+        model: Model
+    ): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
@@ -56,6 +62,10 @@ class WidgetController(
             "isWidget" to true,
             "additionalClass" to ""
         )
+
+        if (isIncompatibleOSVersion(userAgent)) {
+            return Rendering.redirectTo("/$INCOMPATIBLE_PAGE").build()
+        }
 
         return Rendering
             .view(WIDGET_PAGE)
@@ -126,5 +136,23 @@ class WidgetController(
 
     private fun setEiDClientURL(url: String): Pair<String, String> {
         return "eidClientURL" to url
+    }
+
+    private fun isIncompatibleOSVersion(userAgent: String): Boolean {
+        return try {
+            val parsedUserAgent = Parser().parse(userAgent)
+            val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 15)
+            val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 9)
+
+            incompatibleIOSVersion || incompatibleAndroidVersion
+        } catch (exception: Exception) {
+            false
+        }
+    }
+
+    private fun hasIncompatibleMajorVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
+        return parsedUserAgent.os.family == osFamily &&
+            !parsedUserAgent.os.major.isNullOrEmpty() &&
+            Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 }

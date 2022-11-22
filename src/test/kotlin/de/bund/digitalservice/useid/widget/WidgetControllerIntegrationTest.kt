@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
@@ -72,6 +73,50 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
+    fun `widget endpoint renders page correctly when the devices are supported`() {
+        val compatibleAndroidUserAgent = "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
+        val compatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15E148 Safari/604.1"
+
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(compatibleAndroidUserAgent, compatibleIOSUserAgent)
+
+        iosResponse.expectStatus().isOk
+        androidResponse.expectStatus().isOk
+    }
+
+    @Test
+    fun `widget endpoint renders widget page correctly when the user agents do not have proper OS version`() {
+        val malformedAndroidUserAgent = "Mozilla/5.0 (Linux; Android) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
+        val malformedIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Safari/604.1"
+
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(malformedAndroidUserAgent, malformedIOSUserAgent)
+
+        iosResponse.expectStatus().isOk
+        androidResponse.expectStatus().isOk
+    }
+
+    @Test
+    fun `widget endpoint renders widget page correctly when the user agents are malformed`() {
+        val malformedAndroidUserAgent = "Android Foo Bar"
+        val malformedIOSUserAgent = "iPhone Foo Bar"
+
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(malformedAndroidUserAgent, malformedIOSUserAgent)
+
+        iosResponse.expectStatus().isOk
+        androidResponse.expectStatus().isOk
+    }
+
+    @Test
+    fun `widget endpoint redirects to INCOMPATIBLE_PAGE when the devices are unsupported`() {
+        val incompatibleAndroidUserAgent = "Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36"
+        val incompatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
+
+        val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(incompatibleAndroidUserAgent, incompatibleIOSUserAgent)
+
+        iosResponse.expectStatus().is3xxRedirection
+        androidResponse.expectStatus().is3xxRedirection
+    }
+
+    @Test
     fun `widget endpoint INCOMPATIBLE_PAGE should return 200 and should contain headlineTitle`() {
         val result = webTestClient
             .get()
@@ -107,5 +152,24 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
             .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
             .exchange()
             .expectStatus().isOk
+    }
+
+    private fun fetchWidgetPageWithMobileDevices(
+        androidUserAgent: String,
+        iosUserAgent: String
+    ): Pair<ResponseSpec, ResponseSpec> {
+        val iOSResponse: ResponseSpec = webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", androidUserAgent)
+            .exchange()
+
+        val androidResponse: ResponseSpec = webTestClient
+            .get()
+            .uri("/widget")
+            .header("User-Agent", iosUserAgent)
+            .exchange()
+
+        return Pair(iOSResponse, androidResponse)
     }
 }
