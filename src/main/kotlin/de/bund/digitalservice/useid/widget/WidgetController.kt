@@ -63,16 +63,8 @@ class WidgetController(
             "additionalClass" to ""
         )
 
-        try {
-            if (isIncompatibleOSVersion(userAgent)) {
-                return Rendering.redirectTo("/$INCOMPATIBLE_PAGE").build()
-            }
-        } catch (exception: Exception) {
-            return Rendering
-                .view(WIDGET_PAGE)
-                .model(defaultViewHeaderConfig + widgetViewConfig)
-                .status(HttpStatus.OK)
-                .build()
+        if (isIncompatibleOSVersion(userAgent)) {
+            return Rendering.redirectTo("/$INCOMPATIBLE_PAGE").build()
         }
 
         return Rendering
@@ -146,13 +138,16 @@ class WidgetController(
         return "eidClientURL" to url
     }
 
-
     private fun isIncompatibleOSVersion(userAgent: String): Boolean {
-        val parsedUserAgent = Parser().parse(userAgent)
-        val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 15)
-        val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 9)
+        return try {
+            val parsedUserAgent = Parser().parse(userAgent)
+            val incompatibleIOSVersion = hasIncompatibleMajorVersion(parsedUserAgent, "iOS", 15)
+            val incompatibleAndroidVersion = hasIncompatibleMajorVersion(parsedUserAgent, "Android", 9)
 
-        return incompatibleIOSVersion || incompatibleAndroidVersion
+            incompatibleIOSVersion || incompatibleAndroidVersion
+        } catch (exception: Exception) {
+            false
+        }
     }
 
     private fun hasIncompatibleMajorVersion(parsedUserAgent: Client, osFamily: String, supportedMajorVersion: Int): Boolean {
