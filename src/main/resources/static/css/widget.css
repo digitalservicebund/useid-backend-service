@@ -3,7 +3,6 @@ body {
     font-family: "BundesSansWeb", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
     padding: 0;
 }
 img.icon-list {
