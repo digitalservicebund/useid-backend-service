@@ -77,7 +77,7 @@ csp:
 
 widget:
   meta-tag:
-    header-title: DigitalService GmbH des Bundes
+    header-title: Mit BundesIdent online ausweisen
   main-view:
     localization:
       headline-title-top: Mit BundesIdent
