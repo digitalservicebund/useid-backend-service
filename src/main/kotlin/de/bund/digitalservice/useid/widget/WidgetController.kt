@@ -6,7 +6,6 @@ import io.micrometer.core.annotation.Timed
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -36,25 +35,28 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleAppOpened(): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.buttonPressed,
-            widgetTracking.names.startIdent
+            widgetTracking.names.startIdent,
+            sessionHash
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
 
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(
+        model: Model,
         @RequestHeader("User-Agent") userAgent: String,
         @RequestParam() hostname: String,
-        model: Model
+        @RequestParam(required = false, name = "hash") sessionHash: String?
     ): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
-            widgetTracking.names.widget
+            widgetTracking.names.widget,
+            sessionHash
         )
 
         val widgetViewConfig = mapOf(
@@ -66,7 +68,7 @@ class WidgetController(
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return Rendering.redirectTo("/$INCOMPATIBLE_PAGE?hostname=$hostname").build()
+            return Rendering.redirectTo("/$INCOMPATIBLE_PAGE?hostname=$hostname&hash=$sessionHash").build()
         }
 
         return Rendering
@@ -77,11 +79,12 @@ class WidgetController(
     }
 
     @GetMapping("/$INCOMPATIBLE_PAGE")
-    fun getIncompatiblePage(model: Model): Rendering {
+    fun getIncompatiblePage(model: Model, @RequestParam(required = false, name = "hash") sessionHash: String?): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
-            widgetTracking.names.incompatible
+            widgetTracking.names.incompatible,
+            sessionHash
         )
 
         val incompatibleViewConfig = mapOf(
@@ -96,18 +99,19 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, serverHttpRequest: ServerHttpRequest): Rendering {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam() tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
-            widgetTracking.names.fallback
+            widgetTracking.names.fallback,
+            sessionHash
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
             Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
             Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
          */
-        val url = "bundesident://127.0.0.1:24727/eID-Client?${serverHttpRequest.uri.rawQuery}"
+        val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=$tcTokenURL"
 
         val widgetViewFallbackConfig = mapOf(
             setMainViewLocalization(),
@@ -124,8 +128,8 @@ class WidgetController(
             .build()
     }
 
-    private fun publishMatomoEvent(category: String, action: String, name: String) {
-        val matomoEvent = MatomoEvent(this, category, action, name)
+    private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?) {
+        val matomoEvent = MatomoEvent(this, category, action, name, sessionId)
         applicationEventPublisher.publishEvent(matomoEvent)
     }
 

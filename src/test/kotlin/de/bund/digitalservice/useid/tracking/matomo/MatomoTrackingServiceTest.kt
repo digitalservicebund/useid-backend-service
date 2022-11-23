@@ -35,7 +35,18 @@ class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
 
     @Test
     fun `constructEventURL should return correct URL with query parameters`(output: CapturedOutput) {
-        val e = MatomoEvent(this, "category", "action", "name")
+        val e = MatomoEvent(this, "category", "action", "name", "sessionId")
+        val url = matomoTrackingService.constructEventURL(e)
+
+        val siteId = trackingProperties.matomo.siteId
+        val domain = trackingProperties.matomo.domain
+        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}"
+        assertEquals(expectedURL, url)
+    }
+
+    @Test
+    fun `constructEventURL should return correct URL without sessionId`(output: CapturedOutput) {
+        val e = MatomoEvent(this, "category", "action", "name", null)
         val url = matomoTrackingService.constructEventURL(e)
 
         val siteId = trackingProperties.matomo.siteId
@@ -46,7 +57,7 @@ class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
 
     @Test
     fun `matomo tracking service should trigger web request and log event category, action and name and code 200`(output: CapturedOutput) {
-        val matomoEvent = MatomoEvent(this, "log1", "log2", "log3")
+        val matomoEvent = MatomoEvent(this, "log1", "log2", "log3", "log4")
         applicationEventPublisher.publishEvent(matomoEvent)
         every { webRequests.POST(any()) } returns Mono.empty()
         verify { webRequests.POST(any()) }
