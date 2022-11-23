@@ -32,6 +32,7 @@ widgetContainer.appendChild(
       "src",
       `${useIdUrl}/widget?hostname=${location.host}#tcTokenURL=${tcTokenURL}`
     );
+    iframe.name = "Mit BundesIdent online ausweisen";
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     return iframe;
