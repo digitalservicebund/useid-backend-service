@@ -47,6 +47,15 @@ class WidgetProperties {
             lateinit var headlineImageAlt: String
 
             @NotBlank
+            lateinit var appIconImageAlt: String
+
+            @NotBlank
+            lateinit var stepOneAlt: String
+
+            @NotBlank
+            lateinit var stepTwoAlt: String
+
+            @NotBlank
             lateinit var headlineTitleTop: String
 
             @NotBlank
