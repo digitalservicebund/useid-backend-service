@@ -101,6 +101,9 @@ class WidgetProperties {
             lateinit var headlineTitle: String
 
             @NotBlank
+            lateinit var headlineImageAlt: String
+
+            @NotBlank
             lateinit var requirementTitle: String
 
             @NotBlank
