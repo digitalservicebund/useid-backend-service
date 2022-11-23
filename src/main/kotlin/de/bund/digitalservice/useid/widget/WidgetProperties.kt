@@ -74,7 +74,13 @@ class WidgetProperties {
             lateinit var identificationButton: String
 
             @NotBlank
+            lateinit var identificationButtonAriaLabel: String
+
+            @NotBlank
             lateinit var dataPrivacyButton: String
+
+            @NotBlank
+            lateinit var openInNewTab: String
         }
     }
 
