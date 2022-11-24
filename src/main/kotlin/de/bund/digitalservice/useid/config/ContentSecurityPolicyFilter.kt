@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.config
 
-import de.bund.digitalservice.useid.widget.INCOMPATIBLE_PAGE
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.http.server.reactive.ServerHttpResponse
@@ -16,8 +15,7 @@ class ContentSecurityPolicyFilter(
 ) : WebFilter {
 
     private val widgetPagePath: PathPattern = PathPatternParser().parse("/$WIDGET_PAGE")
-    private val incompatiblePagePath: PathPattern = PathPatternParser().parse("/$INCOMPATIBLE_PAGE")
-    private val listOfPages = listOf(widgetPagePath, incompatiblePagePath)
+    private val listOfPages = listOf(widgetPagePath)
 
     override fun filter(
         serverWebExchange: ServerWebExchange,
