@@ -12,6 +12,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.result.view.Rendering
 import ua_parser.Client
 import ua_parser.Parser
@@ -47,6 +48,7 @@ class WidgetController(
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(
         @RequestHeader("User-Agent") userAgent: String,
+        @RequestParam() hostname: String,
         model: Model
     ): Rendering {
         publishMatomoEvent(
