@@ -76,25 +76,6 @@ class WidgetController(
             .build()
     }
 
-    @GetMapping("/$INCOMPATIBLE_PAGE")
-    fun getIncompatiblePage(model: Model): Rendering {
-        publishMatomoEvent(
-            widgetTracking.categories.widget,
-            widgetTracking.actions.loaded,
-            widgetTracking.names.incompatible
-        )
-
-        val incompatibleViewConfig = mapOf(
-            "localization" to widgetProperties.errorView.incompatible.localization
-        )
-
-        return Rendering
-            .view(INCOMPATIBLE_PAGE)
-            .model(defaultViewHeaderConfig + incompatibleViewConfig)
-            .status(HttpStatus.OK)
-            .build()
-    }
-
     @GetMapping("/$FALLBACK_PAGE")
     fun getUniversalLinkFallbackPage(model: Model, serverHttpRequest: ServerHttpRequest): Rendering {
         publishMatomoEvent(
