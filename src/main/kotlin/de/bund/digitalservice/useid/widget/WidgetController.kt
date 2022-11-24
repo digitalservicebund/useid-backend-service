@@ -12,7 +12,6 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.result.view.Rendering
 import ua_parser.Client
 import ua_parser.Parser
@@ -48,7 +47,6 @@ class WidgetController(
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(
         @RequestHeader("User-Agent") userAgent: String,
-        @RequestParam() hostname: String,
         model: Model
     ): Rendering {
         publishMatomoEvent(
@@ -66,7 +64,7 @@ class WidgetController(
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return Rendering.redirectTo("/$INCOMPATIBLE_PAGE?hostname=$hostname").build()
+            return handleRequestWithIncompatibleOSVersion()
         }
 
         return Rendering
@@ -137,5 +135,23 @@ class WidgetController(
         return parsedUserAgent.os.family == osFamily &&
             !parsedUserAgent.os.major.isNullOrEmpty() &&
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
+    }
+
+    private fun handleRequestWithIncompatibleOSVersion(): Rendering {
+        publishMatomoEvent(
+            widgetTracking.categories.widget,
+            widgetTracking.actions.loaded,
+            widgetTracking.names.incompatible
+        )
+
+        val incompatibleViewConfig = mapOf(
+            "localization" to widgetProperties.errorView.incompatible.localization
+        )
+
+        return Rendering
+            .view(INCOMPATIBLE_PAGE)
+            .model(defaultViewHeaderConfig + incompatibleViewConfig)
+            .status(HttpStatus.OK)
+            .build()
     }
 }
