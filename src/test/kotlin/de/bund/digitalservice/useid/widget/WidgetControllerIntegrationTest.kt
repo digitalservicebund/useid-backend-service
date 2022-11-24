@@ -58,13 +58,13 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint returns default Content-Security-Policy when query parameter is not set`() {
+    fun `widget endpoint returns default Content-Security-Policy when query parameter is not set with error`() {
         webTestClient
             .get()
             .uri("/widget")
             .exchange()
             .expectStatus()
-            .isOk
+            .isBadRequest
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
@@ -160,13 +160,13 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     ): Pair<ResponseSpec, ResponseSpec> {
         val iOSResponse: ResponseSpec = webTestClient
             .get()
-            .uri("/widget")
+            .uri("/widget?hostname=foo.bar")
             .header("User-Agent", androidUserAgent)
             .exchange()
 
         val androidResponse: ResponseSpec = webTestClient
             .get()
-            .uri("/widget")
+            .uri("/widget?hostname=foo.bar")
             .header("User-Agent", iosUserAgent)
             .exchange()
 
