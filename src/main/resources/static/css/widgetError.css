@@ -6,9 +6,13 @@
 }
 
 .error_wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     margin-bottom: 28px;
     padding: 16px 14px 13px 16px;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
     align-items: flex-start;
     grid-column-gap: 8px;
     grid-row-gap: 8px;
