@@ -47,6 +47,15 @@ class WidgetProperties {
             lateinit var headlineImageAlt: String
 
             @NotBlank
+            lateinit var appIconImageAlt: String
+
+            @NotBlank
+            lateinit var stepOneAlt: String
+
+            @NotBlank
+            lateinit var stepTwoAlt: String
+
+            @NotBlank
             lateinit var headlineTitleTop: String
 
             @NotBlank
@@ -65,7 +74,13 @@ class WidgetProperties {
             lateinit var identificationButton: String
 
             @NotBlank
+            lateinit var identificationButtonAriaLabel: String
+
+            @NotBlank
             lateinit var dataPrivacyButton: String
+
+            @NotBlank
+            lateinit var openInNewTab: String
         }
     }
 
@@ -84,6 +99,9 @@ class WidgetProperties {
         class Localization {
             @NotBlank
             lateinit var headlineTitle: String
+
+            @NotBlank
+            lateinit var headlineImageAlt: String
 
             @NotBlank
             lateinit var requirementTitle: String

@@ -54,27 +54,33 @@ tracking:
 
 widget:
   meta-tag:
-    header-title: DigitalService GmbH des Bundes
+    header-title: Mit BundesIdent online ausweisen
   main-view:
     localization:
       headline-title-top: Mit BundesIdent
       headline-title-bottom: online ausweisen
-      headline-image-alt: "Drei deutsche Dokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums."
-      download-title: BundesIdent herunterladen
-      app-store-alt: Google Play Store Button
-      play-store-alt: Apple App Store Button
+      headline-image-alt: "Drei Ausweisdokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums"
+      app-icon-image-alt: App-Symbol mit weißem Bundesadler auf blauem Grund
+      step-one-alt: Schritt eins
+      step-two-alt: Schritt zwei
+      download-title: BundesIdent installieren
+      app-store-alt: Aus dem Apple App Store laden
+      play-store-alt: Aus dem Google Play Store laden
       identification-button: Mit BundesIdent ausweisen
+      identification-button-aria-label: Öffnet die BundesIdent App zum Ausweisen
       data-privacy-button: Datenschutzerklärung
+      open-in-new-tab: Öffnet in einem neuen Fenster
 
     mobile-url:
       app-store-url: https://apps.apple.com/de/app/bundesident/id1635758944
       play-store-url: https://play.google.com/store/apps/details?id=de.digitalService.useID
-      data-privacy: foobar
+      data-privacy: https://digitalservice.bund.de/datenschutzerklaerung-bundesident
 
   error-view:
     incompatible:
       localization:
-        headline-title: Ihr Smartphone ist nicht mit der BundesIdent App kompatibel.
+        headline-title: Ihr Smartphone erfüllt leider nicht die Voraussetzungen der BundesIdent App.
+        headline-image-alt: Zeichnung eines Smartphones mit traurigem Gesicht und App-Symbol mit weißem Bundesadler auf blauem Grund
         requirement-title: "Mindestvoraussetzungen:"
         android-title: Android
         android-requirement: Android 9 »Pie« und ein NFC-Sensor.

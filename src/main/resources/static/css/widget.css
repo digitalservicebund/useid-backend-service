@@ -4,6 +4,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     padding: 0;
+    overflow-x: hidden;
 }
 img.icon-list {
     align-self: start;
