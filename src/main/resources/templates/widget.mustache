@@ -18,10 +18,10 @@
                 <div class="app-stores__content">
                     <h2>{{localization.downloadTitle}}</h2>
                     <div class="app-stores__content__images">
-                        <a href={{mobileUrl.playStoreUrl}} target="_blank" aria-label="{{localization.openInNewTab}}">
+                        <a href={{mobileUrl.playStoreUrl}} target="_blank">
                             <img class="play-store" loading="lazy" src="images/play-store.svg" alt="{{localization.playStoreAlt}}" />
                         </a>
-                        <a href={{mobileUrl.appStoreUrl}} target="_blank" aria-label="{{localization.openInNewTab}}">
+                        <a href={{mobileUrl.appStoreUrl}} target="_blank">
                             <img class="app-store" loading="lazy" src="images/app-store.svg" alt="{{localization.appStoreAlt}}" />
                         </a>
                     </div>
@@ -29,12 +29,12 @@
             </div>
         </div>
         <div class="connector-outside"></div>
-        <a id="eid-client-button" href={{eidClientURL}} target="_blank" class="identify" aria-label="{{localization.identificationButtonAriaLabel}}">
+        <a id="eid-client-button" href={{eidClientURL}} target="_blank" class="identify" title="{{localization.identificationButtonTitle}}">
             <img class="icon-list" src="images/list-2.svg" alt="{{localization.stepTwoAlt}}"/>
             <h2>{{localization.identificationButton}}</h2>
         </a>
         <div class="data-privacy-wrapper">
-            <a id="eid-client-button" href={{mobileUrl.dataPrivacy}} target="_blank" class="data-privacy-button" aria-label="{{localization.openInNewTab}}">
+            <a id="eid-client-button" href={{mobileUrl.dataPrivacy}} target="_blank" class="data-privacy-button">
                 {{localization.dataPrivacyButton}} ↗
             </a>
         </div>

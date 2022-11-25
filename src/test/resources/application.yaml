@@ -67,9 +67,8 @@ widget:
       app-store-alt: Aus dem Apple App Store laden
       play-store-alt: Aus dem Google Play Store laden
       identification-button: Mit BundesIdent ausweisen
-      identification-button-aria-label: Öffnet die BundesIdent App zum Ausweisen
+      identification-button-title: BundesIdent App zum online Ausweisen öffnen
       data-privacy-button: Datenschutzerklärung
-      open-in-new-tab: Öffnet in einem neuen Fenster
 
     mobile-url:
       app-store-url: https://apps.apple.com/de/app/bundesident/id1635758944
