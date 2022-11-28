@@ -123,7 +123,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     fun `widget endpoint FALLBACK_PAGE should return 200 and should contain errorTitle`() {
         val result = webTestClient
             .get()
-            .uri("/$FALLBACK_PAGE")
+            .uri("/$FALLBACK_PAGE?tcTokenURL=foobar")
             .exchange()
             .expectStatus().isOk
             .expectBody()

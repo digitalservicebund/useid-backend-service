@@ -28,7 +28,8 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
     private val domain = trackingProperties.matomo.domain
 
     fun constructEventURL(e: MatomoEvent): String {
-        val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}"
+        val session = e.sessionId?.let { "&uid=$it" } ?: ""
+        val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}$session"
         log.debug { url }
         return url
     }

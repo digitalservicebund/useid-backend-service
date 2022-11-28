@@ -77,16 +77,20 @@ csp:
 
 widget:
   meta-tag:
-    header-title: DigitalService GmbH des Bundes
+    header-title: Mit BundesIdent online ausweisen
   main-view:
     localization:
       headline-title-top: Mit BundesIdent
       headline-title-bottom: online ausweisen
-      headline-image-alt: "Drei Ausweisdokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums."
+      headline-image-alt: "Drei Ausweisdokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger der Europäischen Union und des Europäischen Wirtschaftsraums"
+      app-icon-image-alt: App-Symbol mit weißem Bundes-Adler auf blauem Grund
+      step-one-alt: Schritt eins
+      step-two-alt: Schritt zwei
       download-title: BundesIdent installieren
-      app-store-alt: Apple App Store Button
-      play-store-alt: Google Play Store Button
+      app-store-alt: Aus dem Apple App Store herunterladen
+      play-store-alt: Aus dem Google Play Store herunterladen
       identification-button: Mit BundesIdent ausweisen
+      identification-button-title: BundesIdent App zum online Ausweisen öffnen
       data-privacy-button: Datenschutzerklärung
 
     mobile-url:
@@ -98,6 +102,7 @@ widget:
     incompatible:
       localization:
         headline-title: Ihr Smartphone erfüllt leider nicht die Voraussetzungen der BundesIdent App.
+        headline-image-alt: Zeichnung eines Smartphones mit traurigem Gesicht und App-Symbol mit weißem Bundes-Adler auf blauem Grund
         requirement-title: "Mindestvoraussetzungen:"
         android-title: Android
         android-requirement: Android 9 »Pie« und ein NFC-Sensor.

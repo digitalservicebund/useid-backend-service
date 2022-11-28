@@ -6,7 +6,7 @@
         {{/localizationError}}
         <div class="cards">
            <img class="img-responsive" src="images/id-1x.png" alt="{{localization.headlineImageAlt}}" srcset="images/id-2x.png 2x" />
-           <img class="app-icon" src="images/app-icon.svg" />
+           <img class="app-icon" src="images/app-icon.svg" alt="{{localization.appIconImageAlt}}" />
         </div>
         <div class="headline">
             <h1>{{localization.headlineTitleTop}} <br> {{localization.headlineTitleBottom}}</h1>
@@ -14,7 +14,7 @@
         <div class="app-stores">
             <div class="connector-inside"></div>
             <div class="app-stores__wrapper">
-                <img class="icon-list" src="images/list-1.svg" />
+                <img class="icon-list" src="images/list-1.svg" alt="{{localization.stepOneAlt}}"/>
                 <div class="app-stores__content">
                     <h2>{{localization.downloadTitle}}</h2>
                     <div class="app-stores__content__images">
@@ -29,19 +29,19 @@
             </div>
         </div>
         <div class="connector-outside"></div>
-        <a id="eid-client-button" href={{eidClientURL}} target="_blank" class="identify">
-            <img class="icon-list" src="images/list-2.svg" alt />
+        <a id="eid-client-button" href={{eidClientURL}} target="_blank" class="identify" title="{{localization.identificationButtonTitle}}">
+            <img class="icon-list" src="images/list-2.svg" alt="{{localization.stepTwoAlt}}"/>
             <h2>{{localization.identificationButton}}</h2>
         </a>
         <div class="data-privacy-wrapper">
-            <a id="eid-client-button" href={{mobileUrl.dataPrivacy}} target="_blank" class="data-privacy-button">
+            <a href={{mobileUrl.dataPrivacy}} target="_blank" class="data-privacy-button">
                 {{localization.dataPrivacyButton}} ↗
             </a>
         </div>
     </div>
     <script type="text/javascript" src="js/attachStartIdentButtonOnClick.js"></script>
     {{#isWidget}}
-        <script type="text/javascript" src="js/identifyHandler.js"></script>
+        <script type="text/javascript" src="js/setEIDClientURL.js"></script>
     {{/isWidget}}
 </div>
 {{>layout/footer}}
