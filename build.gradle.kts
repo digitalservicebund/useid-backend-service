@@ -59,7 +59,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
     /** Exception tracking **/
-    implementation("io.sentry:sentry-spring-boot-starter:6.7.0")
+    implementation("io.sentry:sentry-spring-boot-starter:6.8.0")
 
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
