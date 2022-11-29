@@ -5,6 +5,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     padding: 0;
     overflow-x: hidden;
+    word-break: break-word;
 }
 img.icon-list {
     -ms-flex-item-align: start;
