@@ -106,28 +106,17 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `widget endpoint redirects to INCOMPATIBLE_PAGE when the devices are unsupported`() {
+    fun `widget endpoint renders INCOMPATIBLE_PAGE when the devices are unsupported`() {
         val incompatibleAndroidUserAgent = "Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36"
         val incompatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
 
         val (iosResponse, androidResponse) = fetchWidgetPageWithMobileDevices(incompatibleAndroidUserAgent, incompatibleIOSUserAgent)
 
-        iosResponse.expectStatus().is3xxRedirection
-        androidResponse.expectStatus().is3xxRedirection
-    }
+        val iOSResponseBody = iosResponse.expectBody().returnResult().responseBody?.decodeToString()
+        val androidResponseBody = androidResponse.expectBody().returnResult().responseBody?.decodeToString()
 
-    @Test
-    fun `widget endpoint INCOMPATIBLE_PAGE should return 200 and should contain headlineTitle`() {
-        val result = webTestClient
-            .get()
-            .uri("/$INCOMPATIBLE_PAGE?hostname=foo.bar")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .returnResult()
-
-        val body = String(result.responseBody!!)
-        assertThat(body, containsString(widgetProperties.errorView.incompatible.localization.headlineTitle))
+        assertThat(iOSResponseBody, containsString(widgetProperties.errorView.incompatible.localization.headlineTitle))
+        assertThat(androidResponseBody, containsString(widgetProperties.errorView.incompatible.localization.headlineTitle))
     }
 
     @Test
@@ -140,7 +129,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
             .expectBody()
             .returnResult()
 
-        val body = String(result.responseBody!!)
+        val body = result.responseBody?.decodeToString()
         assertThat(body, containsString(widgetProperties.errorView.fallback.localization.errorTitle))
         assertThat(body, containsString("class=\"container fallback\""))
     }

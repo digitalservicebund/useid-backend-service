@@ -68,32 +68,12 @@ class WidgetController(
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return Rendering.redirectTo("/$INCOMPATIBLE_PAGE?hostname=$hostname&hash=$sessionHash").build()
+            return handleRequestWithIncompatibleOSVersion(sessionHash)
         }
 
         return Rendering
             .view(WIDGET_PAGE)
             .model(defaultViewHeaderConfig + widgetViewConfig)
-            .status(HttpStatus.OK)
-            .build()
-    }
-
-    @GetMapping("/$INCOMPATIBLE_PAGE")
-    fun getIncompatiblePage(model: Model, @RequestParam(required = false, name = "hash") sessionHash: String?): Rendering {
-        publishMatomoEvent(
-            widgetTracking.categories.widget,
-            widgetTracking.actions.loaded,
-            widgetTracking.names.incompatible,
-            sessionHash
-        )
-
-        val incompatibleViewConfig = mapOf(
-            "localization" to widgetProperties.errorView.incompatible.localization
-        )
-
-        return Rendering
-            .view(INCOMPATIBLE_PAGE)
-            .model(defaultViewHeaderConfig + incompatibleViewConfig)
             .status(HttpStatus.OK)
             .build()
     }
@@ -160,5 +140,24 @@ class WidgetController(
         return parsedUserAgent.os.family == osFamily &&
             !parsedUserAgent.os.major.isNullOrEmpty() &&
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
+    }
+
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?): Rendering {
+        publishMatomoEvent(
+            widgetTracking.categories.widget,
+            widgetTracking.actions.loaded,
+            widgetTracking.names.incompatible,
+            sessionHash
+        )
+
+        val incompatibleViewConfig = mapOf(
+            "localization" to widgetProperties.errorView.incompatible.localization
+        )
+
+        return Rendering
+            .view(INCOMPATIBLE_PAGE)
+            .model(defaultViewHeaderConfig + incompatibleViewConfig)
+            .status(HttpStatus.OK)
+            .build()
     }
 }
