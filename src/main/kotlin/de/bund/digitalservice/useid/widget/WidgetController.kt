@@ -68,7 +68,7 @@ class WidgetController(
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return handleRequestWithIncompatibleOSVersion()
+            return handleRequestWithIncompatibleOSVersion(sessionHash)
         }
 
         return Rendering
@@ -142,11 +142,12 @@ class WidgetController(
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 
-    private fun handleRequestWithIncompatibleOSVersion(): Rendering {
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
-            widgetTracking.names.incompatible
+            widgetTracking.names.incompatible,
+            sessionHash
         )
 
         val incompatibleViewConfig = mapOf(
