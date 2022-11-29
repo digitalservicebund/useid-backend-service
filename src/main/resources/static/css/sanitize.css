@@ -11,6 +11,7 @@
 *,
 ::before,
 ::after {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box; /* 1 */
   background-repeat: no-repeat; /* 2 */
 }
@@ -40,6 +41,7 @@
   line-height: 1.5; /* 2 */
   overflow-wrap: break-word; /* 3 */
   -moz-tab-size: 4; /* 4 */
+  -o-tab-size: 4;
   tab-size: 4; /* 4 */
   -webkit-tap-highlight-color: transparent; /* 5 */
   -webkit-text-size-adjust: 100%; /* 6 */
@@ -126,7 +128,7 @@
 
 :where(abbr[title]) {
   text-decoration: underline;
-  text-decoration: underline dotted;
+  -webkit-text-decoration: underline dotted;
 }
 
 /**
@@ -300,6 +302,7 @@
   border: solid;
   color: black;
   height: -moz-fit-content;
+  height: -webkit-fit-content;
   height: fit-content;
   left: 0;
   margin: auto;
@@ -307,6 +310,7 @@
   position: absolute;
   right: 0;
   width: -moz-fit-content;
+  width: -webkit-fit-content;
   width: fit-content;
 }
 

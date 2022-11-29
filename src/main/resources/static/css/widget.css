@@ -7,6 +7,7 @@ body {
     overflow-x: hidden;
 }
 img.icon-list {
+    -ms-flex-item-align: start;
     align-self: start;
     z-index: 1;
 }
@@ -41,17 +42,30 @@ h2 {
     margin-bottom: 0.5rem;
 }
 .app-stores__wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     grid-column-gap: 9px;
     grid-row-gap: 9px;
 }
 .app-stores__content {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
     justify-content: start;
 }
 .app-stores__content__images {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     grid-column-gap: 12px;
     grid-row-gap: 10px;
@@ -65,14 +79,22 @@ h2 {
 }
 .app-stores__content__images a:focus-visible {
     border-radius: 10px;
-    -moz-box-shadow:    0 0 0 4px #fff, 0 0 0 8px #004b76;
     -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
-    box-shadow:         0 0 0 4px #fff, 0 0 0 8px #004b76;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
 }
 .cards {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 .connector-inside {
@@ -98,19 +120,35 @@ h2 {
     padding: 4vw;
 }
 .headline {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     color: #0B0C0C;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     margin: 10px 0 16px 0;
 }
 .identify {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     background-color: #004B76;
     border-radius: 10px;
     color: white;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
     grid-column-gap: 9px;
     grid-row-gap: 9px;
@@ -127,17 +165,23 @@ h2 {
     color: #0B0C0C;
 }
 .identify:focus-visible {
-    -moz-box-shadow:    0 0 0 4px #fff, 0 0 0 8px #004b76;
     -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
-    box-shadow:         0 0 0 4px #fff, 0 0 0 8px #004b76;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
 }
 .identify h2 {
     margin: 0;
 }
 .data-privacy-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     margin-top: 8px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
     align-items: flex-end;
 }
 .data-privacy-button {
@@ -174,11 +218,17 @@ h2 {
     background-color: #f2f6f8;
     color: #333;
     border-radius: 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     padding: 16px;
 }
 .incompatible-notification__wrapper img {
+    -ms-flex-item-align: center;
     align-self: center;
     max-width: 180px;
     margin-top: -80px;
@@ -198,7 +248,12 @@ h2 {
 }
 .incompatible-notification__wrapper ul {
     color: #666;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     grid-column-gap: 4px;
     grid-row-gap: 4px;
