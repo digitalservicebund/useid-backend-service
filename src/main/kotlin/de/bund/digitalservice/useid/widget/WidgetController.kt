@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.result.view.Rendering
 import ua_parser.Client
 import ua_parser.Parser
+import java.net.URLEncoder
 
 internal const val WIDGET_PAGE = "widget"
 internal const val INCOMPATIBLE_PAGE = "incompatible"
@@ -91,7 +92,7 @@ class WidgetController(
             Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
             Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
          */
-        val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=$tcTokenURL"
+        val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, Charsets.UTF_8)}"
 
         val widgetViewFallbackConfig = mapOf(
             setMainViewLocalization(),

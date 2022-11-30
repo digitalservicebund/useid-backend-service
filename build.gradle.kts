@@ -112,6 +112,7 @@ dependencies {
     testImplementation("org.testcontainers:r2dbc:1.17.3")
     testImplementation("org.testcontainers:mysql:1.17.3")
     testImplementation("org.awaitility:awaitility:4.2.0")
+    testImplementation("org.jsoup:jsoup:1.15.3")
 
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
