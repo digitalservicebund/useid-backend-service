@@ -146,10 +146,10 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
     @Test
     fun `fallback page should encode tcTokenURL param for identification button when the query param is passed`() {
-        val encodedTcTokenUrl = "https%3A%2F%2Fwww.foo.bar"
+        val tcTokenUrl = "https://www.foo.bar"
         val result = webTestClient
             .get()
-            .uri("/$FALLBACK_PAGE?tcTokenURL=$encodedTcTokenUrl")
+            .uri("/$FALLBACK_PAGE?tcTokenURL=$tcTokenUrl") // tcTokenURL is automatically encoded by webTestClient
             .exchange()
             .expectStatus().isOk
             .expectBody()
