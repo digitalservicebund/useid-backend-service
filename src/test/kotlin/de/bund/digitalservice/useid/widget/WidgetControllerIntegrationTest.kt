@@ -165,26 +165,6 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
     }
 
     @Test
-    fun `fallback page should encode tcTokenURL param for identification button when the query param is not encoded`() {
-        val decodedTcTokenUrl = "https://www.foo.bar"
-        val result = webTestClient
-            .get()
-            .uri("/$FALLBACK_PAGE?tcTokenURL=$decodedTcTokenUrl")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .returnResult()
-
-        val responseBody: String? = result.responseBody?.decodeToString()
-        val parsedResponseBody = Jsoup.parse(responseBody!!)
-
-        val eidClientButton = parsedResponseBody.getElementById("eid-client-button")?.attr("href")
-        val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
-
-        assertThat(eidClientButton, hasCorrectUrl)
-    }
-
-    @Test
     fun `widget endpoint APP_OPENED should return 200`() {
         webTestClient
             .post()
