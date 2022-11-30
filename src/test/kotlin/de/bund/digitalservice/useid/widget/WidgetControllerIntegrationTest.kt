@@ -159,7 +159,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
         val eidClientButton = parsedResponseBody.getElementById("eid-client-button")?.attr("href")
-        val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%253A%252F%252Fwww.foo.bar")
+        val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
 
         assertThat(eidClientButton, hasCorrectUrl)
     }
@@ -179,7 +179,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
         val eidClientButton = parsedResponseBody.getElementById("eid-client-button")?.attr("href")
-        val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%253A%252F%252Fwww.foo.bar")
+        val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
 
         assertThat(eidClientButton, hasCorrectUrl)
     }
