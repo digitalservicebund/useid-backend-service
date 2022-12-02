@@ -32,12 +32,7 @@ jacoco {
 testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
-    /** Spring Boot Starters **/
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-mustache")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
+    /** Webservice **/
     implementation("org.springframework.boot:spring-boot-starter-webflux") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
@@ -47,6 +42,13 @@ dependencies {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
     }
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    /** Security **/
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    /** UI **/
+    implementation("org.springframework.boot:spring-boot-starter-mustache")
 
     /** Persistence **/
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
@@ -55,10 +57,9 @@ dependencies {
     implementation("org.flywaydb:flyway-core:9.8.0")
 
     /** Monitoring **/
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-
-    /** Exception tracking **/
     implementation("io.sentry:sentry-spring-boot-starter:6.9.0")
 
     /** Data processing **/
@@ -95,6 +96,7 @@ dependencies {
     implementation("com.github.ua-parser:uap-java:1.5.3")
 
     /** Development **/
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     /** Testing **/
