@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid.widget
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
+import org.jsoup.Jsoup
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -129,9 +130,38 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
             .expectBody()
             .returnResult()
 
-        val body = result.responseBody?.decodeToString()
-        assertThat(body, containsString(widgetProperties.errorView.fallback.localization.errorTitle))
-        assertThat(body, containsString("class=\"container fallback\""))
+        val responseBody: String? = result.responseBody?.decodeToString()
+        val parsedResponseBody = Jsoup.parse(responseBody!!)
+
+        val containerFallback = parsedResponseBody.body().firstElementChild()?.className()
+        val hasValidFallbackClassName = containsString("container fallback")
+
+        assertThat(containerFallback, hasValidFallbackClassName)
+
+        val errorTitle = parsedResponseBody.getElementsByClass("error_title").text()
+        val hasValidErrorTitle = containsString(widgetProperties.errorView.fallback.localization.errorTitle)
+
+        assertThat(errorTitle, hasValidErrorTitle)
+    }
+
+    @Test
+    fun `fallback page should encode tcTokenURL param for identification button when the query param is passed`() {
+        val tcTokenUrl = "https://www.foo.bar"
+        val result = webTestClient
+            .get()
+            .uri("/$FALLBACK_PAGE?tcTokenURL=$tcTokenUrl") // tcTokenURL is automatically encoded by webTestClient
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .returnResult()
+
+        val responseBody: String? = result.responseBody?.decodeToString()
+        val parsedResponseBody = Jsoup.parse(responseBody!!)
+
+        val eidClientButton = parsedResponseBody.getElementById("eid-client-button")?.attr("href")
+        val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
+
+        assertThat(eidClientButton, hasCorrectUrl)
     }
 
     @Test
