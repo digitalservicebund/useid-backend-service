@@ -90,3 +90,24 @@ widget:
         error-title: Es ist ein Fehler aufgetreten.
         error-text: Stellen Sie sicher, dass die BundesIdent App installiert ist und versuchen Sie es erneut.
 
+global-static:
+  error-view:
+    localization:
+      error-title: Es ist ein Fehler aufgetreten.
+      error-description: "Bitte starten Sie die Identifizierung erneut. Sollte erneut ein Fehler auftreten, freuen wir uns über eine kurze Rückmeldung an:"
+      error-report-email: hilfe@bundesident.de
+      error-report-subject: Fehlermeldung
+      error-report-body: |
+        Liebes BundesIdent-Team,
+
+        ich habe erneut eine Fehlermeldung erhalten.
+
+        Ich wollte mich bei folgendem Diensteanbieter identifizieren: 
+        Der Fehler trat auf, nachdem ich: 
+        Ich benutze folgendes Gerät: 
+        Das Betriebssystem meines Gerätes: 
+        Ich benutze folgenden Browser: 
+        Die Version von meinem Browser: 
+
+        Mit freundlichen Grüßen
+        
