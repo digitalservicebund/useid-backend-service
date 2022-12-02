@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="css/sanitize.css" />
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/widget.css" />
-    <link rel="stylesheet" href="css/widgetError.css" />
+    <link rel="stylesheet" href="css/errorNotification.css" />
+    {{#error}}
+    <link rel="stylesheet" href="css/globalError.css" />
+    {{/error}}
     <link rel="icon" type="image/png" sizes="any" href="images/favicon.png">
     <base href={{baseUrl}}>
 </head>
