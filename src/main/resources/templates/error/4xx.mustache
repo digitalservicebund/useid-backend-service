@@ -1,17 +1,3 @@
 {{>layout/header}}
-<div class="container">
-    <div class="default-error">
-        <div class="error_wrapper">
-            <img src="images/icon-error.svg" loading="lazy" alt="" class="error_icon">
-            <div>
-                <h1 class="error_title">{{errorTitle}}</h1>
-                <p>{{errorDescription}}
-                    <a href="{{errorReportEmailLink}}">
-                        {{errorReportEmail}}
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
+    {{>components/errorNotification}}
 {{>layout/footer}}

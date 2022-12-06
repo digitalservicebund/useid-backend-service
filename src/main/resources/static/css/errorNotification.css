@@ -9,6 +9,9 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    max-width: 400px;
+    margin-right: auto;
+    margin-left: auto;
     margin-bottom: 28px;
     padding: 16px 14px 13px 16px;
     -webkit-box-align: start;
@@ -21,4 +24,14 @@
     border-radius: 10px;
     background-color: #f9e5ec;
     line-height: 1.2;
+}
+
+.error_wrapper a {
+    color: #004b76;
+    text-decoration: underline;
+}
+
+.error_wrapper p {
+    line-height: 22px;
+    margin: 0;
 }
