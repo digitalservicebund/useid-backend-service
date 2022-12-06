@@ -38,6 +38,7 @@ class GlobalStaticError(
             URLEncoder.encode() will encode whitespace to "+" instead of %20 which will not work for email link,
             it would replace whitespace with "+" sign in the e-mail body. UriUtils.encode() from Spring encodes
             whitespace to "%20"
+            RFC Document: https://www.rfc-editor.org/rfc/rfc6068#section-5
          */
         val encodedEmailSubject = UriUtils.encode("$errorReportSubject $statusCode", UTF_8)
         val encodedBody = UriUtils.encode(errorReportBody, UTF_8)
