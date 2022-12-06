@@ -32,7 +32,6 @@ class GlobalStaticErrorIntegrationTest(
         val responseBody = client.expectBody().returnResult().responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        assertTrue(parsedResponseBody.getElementsByClass("default-error").isNotEmpty())
         assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
         assertThat(parsedResponseBody.select("a").attr("href"), containsString("mailto:hilfe@bundesident.de"))
     }
@@ -66,7 +65,6 @@ class GlobalStaticErrorIntegrationTest(
         val responseBody = client.expectBody().returnResult().responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        assertTrue(parsedResponseBody.getElementsByClass("default-error").isNotEmpty())
         assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
         assertThat(parsedResponseBody.select("a").attr("href"), containsString("mailto:hilfe@bundesident.de"))
     }
@@ -84,7 +82,6 @@ class GlobalStaticErrorIntegrationTest(
         val responseBody = client.expectBody().returnResult().responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        assertTrue(parsedResponseBody.getElementsByClass("default-error").isNotEmpty())
         assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
         assertThat(parsedResponseBody.select("a").attr("href"), containsString("mailto:hilfe@bundesident.de"))
     }

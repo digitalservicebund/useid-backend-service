@@ -59,7 +59,7 @@ widget:
     localization:
       headline-title-top: Mit BundesIdent
       headline-title-bottom: online ausweisen
-      headline-image-alt: "Drei Ausweisdokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger:innen:innen der Europäischen Union und des Europäischen Wirtschaftsraums"
+      headline-image-alt: "Drei Ausweisdokumente: Personalausweis, elektronischer Aufenthaltstitel und die eID-Karte für Bürgerinnen und Bürger der Europäischen Union und des Europäischen Wirtschaftsraums"
       app-icon-image-alt: App-Symbol mit weißem Bundes-Adler auf blauem Grund
       step-one-alt: Schritt eins
       step-two-alt: Schritt zwei
@@ -87,14 +87,16 @@ widget:
         iphone-requirement: iOS 15 & iPhone 7.
     fallback:
       localization:
+        icon-alt: Ausrufezeichen auf rotem Grund
         error-title: Es ist ein Fehler aufgetreten.
         error-text: Stellen Sie sicher, dass die BundesIdent App installiert ist und versuchen Sie es erneut.
 
 global-static:
   error-view:
     localization:
+      icon-alt: Ausrufezeichen auf rotem Grund
       error-title: Es ist ein Fehler aufgetreten.
-      error-description: "Bitte starten Sie die Identifizierung erneut. Sollte erneut ein Fehler auftreten, freuen wir uns über eine kurze Rückmeldung an:"
+      error-text: "Bitte starten Sie die Identifizierung erneut. Sollte erneut ein Fehler auftreten, freuen wir uns über eine kurze Rückmeldung an:"
       error-report-email: hilfe@bundesident.de
       error-report-subject: Fehlermeldung
       error-report-body: |
