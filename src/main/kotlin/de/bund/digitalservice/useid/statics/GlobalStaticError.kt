@@ -20,9 +20,7 @@ class GlobalStaticError(
         val statusCode = errorAttributes["status"] as Int
 
         val customGlobalErrorAttributes = mapOf(
-            "errorTitle" to globalStaticProperties.errorView.localization.errorTitle,
-            "errorDescription" to globalStaticProperties.errorView.localization.errorDescription,
-            "errorReportEmail" to globalStaticProperties.errorView.localization.errorReportEmail,
+            "localizationError" to globalStaticProperties.errorView.localization,
             "errorReportEmailLink" to createEmailReportLink(statusCode),
             "baseUrl" to applicationProperties.baseUrl,
             "metaTag" to widgetProperties.metaTag
