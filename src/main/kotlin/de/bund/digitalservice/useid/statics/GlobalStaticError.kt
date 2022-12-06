@@ -1,4 +1,5 @@
 package de.bund.digitalservice.useid.statics
+
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.widget.WidgetProperties
 import org.springframework.boot.web.error.ErrorAttributeOptions
