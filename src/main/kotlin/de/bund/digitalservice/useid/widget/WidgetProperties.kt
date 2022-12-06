@@ -123,6 +123,9 @@ class WidgetProperties {
 
         class LocalizationFallback {
             @NotBlank
+            lateinit var iconAlt: String
+
+            @NotBlank
             lateinit var errorTitle: String
 
             @NotBlank

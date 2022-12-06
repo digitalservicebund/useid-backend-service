@@ -110,14 +110,16 @@ widget:
         iphone-requirement: iOS 15 & iPhone 7.
     fallback:
       localization:
+        icon-alt: Ausrufezeichen auf rotem Grund
         error-title: Es ist ein Fehler aufgetreten.
         error-text: Stellen Sie sicher, dass die BundesIdent App installiert ist und versuchen Sie es erneut.
 
 global-static:
   error-view:
     localization:
+      icon-alt: Ausrufezeichen auf rotem Grund
       error-title: Es ist ein Fehler aufgetreten.
-      error-description: "Bitte starten Sie die Identifizierung erneut. Sollte erneut ein Fehler auftreten, freuen wir uns über eine kurze Rückmeldung an:"
+      error-text: "Bitte starten Sie die Identifizierung erneut. Sollte erneut ein Fehler auftreten, freuen wir uns über eine kurze Rückmeldung an:"
       error-report-email: hilfe@bundesident.de
       error-report-subject: Fehlermeldung
       error-report-body: |

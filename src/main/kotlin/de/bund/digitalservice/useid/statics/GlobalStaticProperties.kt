@@ -20,10 +20,13 @@ class GlobalStaticProperties {
 
         class Localization {
             @NotBlank
+            lateinit var iconAlt: String
+
+            @NotBlank
             lateinit var errorTitle: String
 
             @NotBlank
-            lateinit var errorDescription: String
+            lateinit var errorText: String
 
             @NotBlank
             lateinit var errorReportEmail: String
