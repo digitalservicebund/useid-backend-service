@@ -48,7 +48,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
 
     /** UI **/
-    implementation("org.springframework.boot:spring-boot-starter-mustache")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 
     /** Persistence **/
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
