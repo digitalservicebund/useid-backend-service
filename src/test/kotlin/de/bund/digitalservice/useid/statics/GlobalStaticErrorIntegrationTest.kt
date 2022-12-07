@@ -51,7 +51,6 @@ class GlobalStaticErrorIntegrationTest(
             .jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         val tcTokenUrlPathParam = URIBuilder(tcTokenURL).path
-        println(tcTokenUrlPathParam)
 
         val client = webTestClient.get()
             .uri(tcTokenUrlPathParam)
