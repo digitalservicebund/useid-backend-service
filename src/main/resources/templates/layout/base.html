@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html
+  lang="de"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[[${metaTag.headerTitle}]]</title>
+    <link rel="stylesheet" href="css/sanitize.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/widget.css" />
+    <link rel="stylesheet" href="css/errorNotification.css" />
+    <link rel="icon" type="image/png" sizes="any" href="images/favicon.png" />
+    <base th:href="${baseUrl}" />
+  </head>
+  <body>
+    <div layout:fragment="content"></div>
+  </body>
+</html>

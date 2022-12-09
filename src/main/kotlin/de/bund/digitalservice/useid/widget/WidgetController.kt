@@ -81,7 +81,7 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam() tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?): Rendering {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,

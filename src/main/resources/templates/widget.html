@@ -1,0 +1,98 @@
+<div
+  layout:decorate="~{layout/base}"
+  layout:fragment="content"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+  <div class="container" th:classappend="${additionalClass}">
+    <div class="widget">
+      <div
+        th:if="${localizationError}"
+        th:insert="fragments/error :: notification"
+      ></div>
+      <div class="cards">
+        <img
+          class="img-responsive"
+          src="images/id-1x.png"
+          th:alt="${localization.headlineImageAlt}"
+          srcset="images/id-2x.png 2x"
+        />
+        <img
+          class="app-icon"
+          src="images/app-icon.svg"
+          th:alt="${localization.appIconImageAlt}"
+        />
+      </div>
+      <div class="headline">
+        <h1>
+          [[${localization.headlineTitleTop}]] <br />
+          [[${localization.headlineTitleBottom}]]
+        </h1>
+      </div>
+      <div class="app-stores">
+        <div class="connector-inside"></div>
+        <div class="app-stores__wrapper">
+          <img
+            class="icon-list"
+            src="images/list-1.svg"
+            th:alt="${localization.stepOneAlt}"
+          />
+          <div class="app-stores__content">
+            <h2>[[${localization.downloadTitle}]]</h2>
+            <div class="app-stores__content__images">
+              <a th:href="${mobileUrl.playStoreUrl}" target="_blank">
+                <img
+                  class="play-store"
+                  loading="lazy"
+                  src="images/play-store.svg"
+                  th:alt="${localization.playStoreAlt}"
+                />
+              </a>
+              <a th:href="${mobileUrl.appStoreUrl}" target="_blank">
+                <img
+                  class="app-store"
+                  loading="lazy"
+                  src="images/app-store.svg"
+                  th:alt="${localization.appStoreAlt}"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="connector-outside"></div>
+      <a
+        id="eid-client-button"
+        th:href="${eidClientURL}"
+        target="_blank"
+        class="identify"
+        th:title="${localization.identificationButtonTitle}"
+      >
+        <img
+          class="icon-list"
+          src="images/list-2.svg"
+          th:alt="${localization.stepTwoAlt}"
+        />
+        <h2>[[${localization.identificationButton}]]</h2>
+      </a>
+      <div class="data-privacy-wrapper">
+        <a
+          th:href="${mobileUrl.dataPrivacy}"
+          target="_blank"
+          class="data-privacy-button"
+        >
+          [[${localization.dataPrivacyButton}]] &#8599;
+        </a>
+      </div>
+    </div>
+    <script
+      type="text/javascript"
+      src="js/attachStartIdentButtonOnClick.js"
+    ></script>
+    <script
+      th:if="${isWidget}"
+      type="text/javascript"
+      src="js/setEIDClientURL.js"
+    ></script>
+  </div>
+</div>

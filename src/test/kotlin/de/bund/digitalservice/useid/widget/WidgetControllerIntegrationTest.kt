@@ -133,8 +133,8 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val responseBody: String? = result.responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        val containerFallback = parsedResponseBody.body().firstElementChild()?.className()
-        val hasValidFallbackClassName = containsString("container fallback")
+        val containerFallback = parsedResponseBody.getElementsByClass("container").attr("class")
+        val hasValidFallbackClassName = containsString("fallback")
 
         assertThat(containerFallback, hasValidFallbackClassName)
 
