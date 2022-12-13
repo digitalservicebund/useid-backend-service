@@ -1,17 +1,19 @@
-<div class="error_wrapper" th:fragment="notification">
+<div class="error_wrapper" th:fragment="notification(text)">
   <img
     src="images/icon-error.svg"
     loading="lazy"
-    th:alt="${localizationError.iconAlt}"
+    th:alt="#{error.default.icon-alt}"
     class="error_icon"
   />
   <div>
-    <div class="error_title">[[${localizationError.errorTitle}]]</div>
+    <div class="error_title" th:text="#{error.default.title}"></div>
     <p>
-      [[${localizationError.errorText}]]
-      <a th:if="${error}" th:href="${errorReportEmailLink}">
-        [[${localizationError.errorReportEmail}]]
-      </a>
+      <span th:text="${text}"></span>
+      <a
+        th:if="${showReportEmail}"
+        th:href="${errorReportEmailLink}"
+        th:text="#{error.default.report-email}"
+      ></a>
     </p>
   </div>
 </div>

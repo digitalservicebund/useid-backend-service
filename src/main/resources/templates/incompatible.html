@@ -9,18 +9,18 @@
       <div class="incompatible-notification__wrapper">
         <img
           src="images/widget-incompatible.svg"
-          th:alt="${localization.headlineImageAlt}"
+          th:alt="#{widget.incompatible.headline-image-alt}"
         />
-        <h1>[[${localization.headlineTitle}]]</h1>
-        <p>[[${localization.requirementTitle}]]</p>
+        <h1 th:text="#{widget.incompatible.headline-title}"></h1>
+        <p th:text="#{widget.incompatible.requirement-title}"></p>
         <ul role="list">
           <li>
-            <p>[[${localization.androidTitle}]]</p>
-            <p>[[${localization.androidRequirement}]]</p>
+            <p th:text="#{widget.incompatible.android-title}"></p>
+            <p th:text="#{widget.incompatible.android-requirement}"></p>
           </li>
           <li>
-            <p>[[${localization.iphoneTitle}]]</p>
-            <p>[[${localization.iphoneRequirement}]]</p>
+            <p th:text="#{widget.incompatible.iphone-title}"></p>
+            <p th:text="#{widget.incompatible.iphone-requirement}"></p>
           </li>
         </ul>
       </div>

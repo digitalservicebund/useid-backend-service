@@ -27,13 +27,11 @@ internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 @Timed
 class WidgetController(
     private val applicationProperties: ApplicationProperties,
-    private val widgetProperties: WidgetProperties,
     private val widgetTracking: WidgetTracking,
     private val applicationEventPublisher: ApplicationEventPublisher
 ) {
     private val defaultViewHeaderConfig = mapOf(
-        "baseUrl" to applicationProperties.baseUrl,
-        "metaTag" to widgetProperties.metaTag
+        "baseUrl" to applicationProperties.baseUrl
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
@@ -61,17 +59,15 @@ class WidgetController(
             sessionHash
         )
 
+        if (isIncompatibleOSVersion(userAgent)) {
+            return handleRequestWithIncompatibleOSVersion(sessionHash)
+        }
+
         val widgetViewConfig = mapOf(
-            setMainViewLocalization(),
-            setMainViewMobileURL(),
             setEiDClientURL("#"),
             "isWidget" to true,
             "additionalClass" to ""
         )
-
-        if (isIncompatibleOSVersion(userAgent)) {
-            return handleRequestWithIncompatibleOSVersion(sessionHash)
-        }
 
         return Rendering
             .view(WIDGET_PAGE)
@@ -96,10 +92,8 @@ class WidgetController(
         val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}"
 
         val widgetViewFallbackConfig = mapOf(
-            setMainViewLocalization(),
-            setMainViewMobileURL(),
             setEiDClientURL(url),
-            "localizationError" to widgetProperties.errorView.fallback.localization,
+            "isFallback" to true,
             "additionalClass" to "fallback"
         )
 
@@ -113,13 +107,6 @@ class WidgetController(
     private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?) {
         val matomoEvent = MatomoEvent(this, category, action, name, sessionId)
         applicationEventPublisher.publishEvent(matomoEvent)
-    }
-
-    private fun setMainViewLocalization(): Pair<String, WidgetProperties.MainView.Localization> {
-        return "localization" to widgetProperties.mainView.localization
-    }
-    private fun setMainViewMobileURL(): Pair<String, WidgetProperties.MainView.MobileUrl> {
-        return "mobileUrl" to widgetProperties.mainView.mobileUrl
     }
 
     private fun setEiDClientURL(url: String): Pair<String, String> {
@@ -152,13 +139,9 @@ class WidgetController(
             sessionHash
         )
 
-        val incompatibleViewConfig = mapOf(
-            "localization" to widgetProperties.errorView.incompatible.localization
-        )
-
         return Rendering
             .view(INCOMPATIBLE_PAGE)
-            .model(defaultViewHeaderConfig + incompatibleViewConfig)
+            .model(defaultViewHeaderConfig)
             .status(HttpStatus.OK)
             .build()
     }
