@@ -7,11 +7,16 @@ import org.jsoup.Jsoup
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.MessageSource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
+import java.util.Locale
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
+class WidgetControllerIntegrationTest(
+    @Autowired val webTestClient: WebTestClient,
+    @Autowired val messageSource: MessageSource
+) : PostgresTestcontainerIntegrationTest() {
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
@@ -113,7 +118,7 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
         val iOSResponseBody = iosResponse.expectBody().returnResult().responseBody?.decodeToString()
         val androidResponseBody = androidResponse.expectBody().returnResult().responseBody?.decodeToString()
 
-        val errorTitle = "Ihr Smartphone erfüllt leider nicht die Voraussetzungen der BundesIdent App."
+        val errorTitle = messageSource.getMessage("widget.incompatible.headline-title", null, Locale.GERMAN)
         assertThat(iOSResponseBody, containsString(errorTitle))
         assertThat(androidResponseBody, containsString(errorTitle))
     }
@@ -136,8 +141,9 @@ class WidgetControllerIntegrationTest(@Autowired val webTestClient: WebTestClien
 
         assertThat(containerFallback, hasValidFallbackClassName)
 
-        val errorTitle = parsedResponseBody.getElementsByClass("error_title").text()
-        assertThat(errorTitle, containsString("Es ist ein Fehler aufgetreten."))
+        val actualErrorTitle = parsedResponseBody.getElementsByClass("error_title").text()
+        val expectedErrorTitle = messageSource.getMessage("error.default.title", null, Locale.GERMAN)
+        assertThat(actualErrorTitle, containsString(expectedErrorTitle))
     }
 
     @Test
