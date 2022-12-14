@@ -30,9 +30,10 @@ class GlobalStaticError(
     }
 
     private fun createEmailReportLink(statusCode: Int): String {
-        val emailAddress = messageSource.getMessage("error.default.report-email", null, LocaleContextHolder.getLocale())
-        val errorReportSubject = messageSource.getMessage("error.default.report-subject", arrayOf(statusCode), LocaleContextHolder.getLocale())
-        val errorReportBody = messageSource.getMessage("error.default.report-body", arrayOf(statusCode), LocaleContextHolder.getLocale())
+        val locale = LocaleContextHolder.getLocale()
+        val emailAddress = messageSource.getMessage("error.default.report-email", null, locale)
+        val errorReportSubject = messageSource.getMessage("error.default.report-subject", arrayOf(statusCode), locale)
+        val errorReportBody = messageSource.getMessage("error.default.report-body", arrayOf(statusCode), locale)
 
         /*
             URLEncoder.encode() will encode whitespace to "+" instead of %20 which will not work for email link,
