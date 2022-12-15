@@ -1,0 +1,110 @@
+<div
+  layout:decorate="~{layout/base}"
+  layout:fragment="content"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+  <div class="container" th:classappend="${additionalClass}">
+    <div class="widget">
+      <div
+        th:if="${localizationError}"
+        th:insert="fragments/error :: notification"
+      ></div>
+      <div class="cards">
+        <img
+          class="img-responsive"
+          src="images/id-1x.png"
+          th:alt="${localization.headlineImageAlt}"
+          srcset="images/id-2x.png 2x"
+        />
+        <img
+          class="app-icon"
+          src="images/app-icon.svg"
+          th:alt="${localization.appIconImageAlt}"
+        />
+      </div>
+      <div class="headline">
+        <h1>
+          [[${localization.headlineTitleTop}]] <br />
+          [[${localization.headlineTitleBottom}]]
+        </h1>
+      </div>
+      <div class="app-stores">
+        <div class="connector-inside"></div>
+        <div class="app-stores__wrapper">
+          <img
+            class="icon-list"
+            src="images/list-1.svg"
+            th:alt="${localization.stepOneAlt}"
+          />
+          <div class="app-stores__content">
+            <h2>[[${localization.downloadTitle}]]</h2>
+            <div class="app-stores__content__images">
+              <a th:href="${mobileUrl.playStoreUrl}" target="_blank">
+                <img
+                  class="play-store"
+                  loading="lazy"
+                  src="images/play-store.svg"
+                  th:alt="${localization.playStoreAlt}"
+                />
+              </a>
+              <a th:href="${mobileUrl.appStoreUrl}" target="_blank">
+                <img
+                  class="app-store"
+                  loading="lazy"
+                  src="images/app-store.svg"
+                  th:alt="${localization.appStoreAlt}"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="connector-outside"></div>
+      <div
+        class="qrcode"
+        style="
+          background-color: #004b76;
+          border-radius: 10px;
+          padding: 12px;
+          color: white;
+          display: flex;
+          grid-column-gap: 9px;
+          grid-row-gap: 9px;
+        "
+      >
+        <img
+          class="icon-list"
+          src="images/list-2.svg"
+          th:alt="${localization.stepTwoAlt}"
+        />
+        <div class="app-stores__content">
+          <h2 style="margin-top: 0; margin-bottom: 0.5rem">QR-Code scannen</h2>
+          <div id="qrcode" style="background: white; padding: 0.4rem"></div>
+        </div>
+      </div>
+      <div class="data-privacy-wrapper">
+        <a
+          th:href="${mobileUrl.dataPrivacy}"
+          target="_blank"
+          class="data-privacy-button"
+        >
+          [[${localization.dataPrivacyButton}]] &#8599;
+        </a>
+      </div>
+    </div>
+    <script src="js/qrcode.min.js"></script>
+    <script type="text/javascript">
+      window.addEventListener("load", () => {
+        const hash = new URL(window.location).searchParams.get("hash");
+        const tcTokenURLParam = window.location.hash.replace("#", "");
+        const text = `desktopident://127.0.0.1:24727/eID-Client?${tcTokenURLParam}&hash=${hash}`;
+        new QRCode(document.getElementById("qrcode"), {
+          text,
+          colorDark: "#004b76",
+        });
+      });
+    </script>
+    <script type="text/javascript" src="js/eventSource.js"></script>
+  </div>
+</div>

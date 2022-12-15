@@ -19,6 +19,7 @@ import java.net.URLEncoder
 import kotlin.text.Charsets.UTF_8
 
 internal const val WIDGET_PAGE = "widget"
+internal const val QRCODE_WIDGET_PAGE = "qrcode-widget"
 internal const val INCOMPATIBLE_PAGE = "incompatible"
 internal const val FALLBACK_PAGE = "eID-Client"
 internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
@@ -71,6 +72,35 @@ class WidgetController(
 
         return Rendering
             .view(WIDGET_PAGE)
+            .model(defaultViewHeaderConfig + widgetViewConfig)
+            .status(HttpStatus.OK)
+            .build()
+    }
+
+    @GetMapping("/$QRCODE_WIDGET_PAGE")
+    fun getQRCodeWidgetPage(
+        model: Model,
+        @RequestParam() hostname: String,
+        @RequestParam(required = false, name = "hash") sessionHash: String?
+    ): Rendering {
+        // no tracking for desktop solution while prototyping
+        // publishMatomoEvent(
+        //     widgetTracking.categories.widget,
+        //     widgetTracking.actions.loaded,
+        //     widgetTracking.names.widget,
+        //     sessionHash
+        // )
+
+        val widgetViewConfig = mapOf(
+            setMainViewLocalization(),
+            setMainViewMobileURL(),
+            setEiDClientURL("#"),
+            "isWidget" to true,
+            "additionalClass" to ""
+        )
+
+        return Rendering
+            .view(QRCODE_WIDGET_PAGE)
             .model(defaultViewHeaderConfig + widgetViewConfig)
             .status(HttpStatus.OK)
             .build()
