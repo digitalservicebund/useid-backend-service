@@ -7,26 +7,27 @@
   <div class="container" th:classappend="${additionalClass}">
     <div class="widget">
       <div
-        th:if="${localizationError}"
-        th:insert="fragments/error :: notification"
+        th:if="${isFallback}"
+        th:insert="fragments/error :: notification(text=#{widget.fallback.error.text})"
       ></div>
       <div class="cards">
         <img
           class="img-responsive"
           src="images/id-1x.png"
-          th:alt="${localization.headlineImageAlt}"
+          th:alt="#{widget.headline-image-alt}"
           srcset="images/id-2x.png 2x"
         />
         <img
           class="app-icon"
           src="images/app-icon.svg"
-          th:alt="${localization.appIconImageAlt}"
+          th:alt="#{widget.app-icon-image-alt}"
         />
       </div>
       <div class="headline">
         <h1>
-          [[${localization.headlineTitleTop}]] <br />
-          [[${localization.headlineTitleBottom}]]
+          <span th:text="#{widget.headline-title-top}"></span>
+          <br />
+          <span th:text="#{widget.headline-title-bottom}"></span>
         </h1>
       </div>
       <div class="app-stores">
@@ -35,25 +36,25 @@
           <img
             class="icon-list"
             src="images/list-1.svg"
-            th:alt="${localization.stepOneAlt}"
+            th:alt="#{widget.step-one-alt}"
           />
           <div class="app-stores__content">
-            <h2>[[${localization.downloadTitle}]]</h2>
+            <h2 th:text="#{widget.download-title}"></h2>
             <div class="app-stores__content__images">
-              <a th:href="${mobileUrl.playStoreUrl}" target="_blank">
+              <a th:href="#{widget.play-store-url}" target="_blank">
                 <img
                   class="play-store"
                   loading="lazy"
                   src="images/play-store.svg"
-                  th:alt="${localization.playStoreAlt}"
+                  th:alt="#{widget.play-store-alt}"
                 />
               </a>
-              <a th:href="${mobileUrl.appStoreUrl}" target="_blank">
+              <a th:href="#{widget.app-store-url}" target="_blank">
                 <img
                   class="app-store"
                   loading="lazy"
                   src="images/app-store.svg"
-                  th:alt="${localization.appStoreAlt}"
+                  th:alt="#{widget.app-store-alt}"
                 />
               </a>
             </div>
@@ -66,22 +67,22 @@
         th:href="${eidClientURL}"
         target="_blank"
         class="identify"
-        th:title="${localization.identificationButtonTitle}"
+        th:title="#{widget.identification-button-title}"
       >
         <img
           class="icon-list"
           src="images/list-2.svg"
-          th:alt="${localization.stepTwoAlt}"
+          th:alt="#{widget.step-two-alt}"
         />
-        <h2>[[${localization.identificationButton}]]</h2>
+        <h2 th:text="#{widget.identification-button}"></h2>
       </a>
       <div class="data-privacy-wrapper">
         <a
-          th:href="${mobileUrl.dataPrivacy}"
+          th:href="#{widget.data-privacy-url}"
           target="_blank"
           class="data-privacy-button"
+          th:text="#{widget.data-privacy-button} + ' &#8599;'"
         >
-          [[${localization.dataPrivacyButton}]] &#8599;
         </a>
       </div>
     </div>
