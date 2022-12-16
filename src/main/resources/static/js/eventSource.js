@@ -26,4 +26,5 @@ function uuidv4() {
   );
 }
 
-subscribe(uuidv4());
+let widgetSessionId = uuidv4();
+subscribe(widgetSessionId);
