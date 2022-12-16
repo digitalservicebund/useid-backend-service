@@ -34,7 +34,10 @@ const widgetContainer =
   tcTokenURL = encodeURIComponent(tcTokenURL);
 
   const iframe = document.createElement("iframe");
-  const path = window.location.hash.length > 0 ? `${window.location.hash.substring(1)}-widget` : 'widget';
+  const path =
+    window.location.hash.length > 0
+      ? `${window.location.hash.substring(1)}-widget`
+      : "widget";
   iframe.setAttribute(
     "src",
     `${useIdUrl}/${path}?hostname=${location.host}&hash=${hashString}#tcTokenURL=${tcTokenURL}`
