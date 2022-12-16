@@ -1,16 +1,29 @@
-function subscribe(consumer) {
-  const eventSource = new EventSource("/api/v1/events/" + consumer);
+function subscribe(widgetSessionId) {
+  console.log("Subscribe on events for " + widgetSessionId);
+  const eventSource = new EventSource("/api/v1/events/" + widgetSessionId);
   eventSource.addEventListener("success", function (event) {
-    console.log("Received success event for " + consumer + ": " + event.data);
+    console.log(
+      "Received success event for " + widgetSessionId + ": " + event.data
+    );
     console.log(event);
     // TODO do stuff
   });
 
   eventSource.addEventListener("close", (event) => {
-    console.log("Received close event for " + consumer + ": " + event.data);
+    console.log(
+      "Received close event for " + widgetSessionId + ": " + event.data
+    );
     eventSource.close();
   });
 }
 
-subscribe("00000000-0000-0000-0000-000000000001");
-subscribe("00000000-0000-0000-0000-000000000002");
+function uuidv4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
+}
+
+subscribe(uuidv4());
