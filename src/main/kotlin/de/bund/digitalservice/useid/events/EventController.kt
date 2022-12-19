@@ -1,5 +1,7 @@
 package de.bund.digitalservice.useid.events
 
+import io.micrometer.core.annotation.Timed
+import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
@@ -21,6 +23,8 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/api/v1")
+@Timed
+@Tag(name = "Events", description = "Each widget subscribes to events and thereby gets informed about progress of the identification flow by the eID-Client.")
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class EventController(eventService: EventService) {
     private val log = KotlinLogging.logger {}
