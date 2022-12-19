@@ -80,7 +80,7 @@ class WidgetController(
     @GetMapping("/$QRCODE_WIDGET_PAGE")
     fun getQRCodeWidgetPage(
         model: Model,
-        @RequestParam() hostname: String,
+        @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
     ): Rendering {
         // no tracking for desktop solution while prototyping
@@ -92,8 +92,6 @@ class WidgetController(
         // )
 
         val widgetViewConfig = mapOf(
-            setMainViewLocalization(),
-            setMainViewMobileURL(),
             setEiDClientURL("#"),
             "isWidget" to true,
             "additionalClass" to ""
