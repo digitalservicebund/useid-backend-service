@@ -51,3 +51,6 @@ tracking:
   matomo:
     site-id: "1"
     domain: "https://example.com"
+
+features:
+  desktop-solution-enabled: true
