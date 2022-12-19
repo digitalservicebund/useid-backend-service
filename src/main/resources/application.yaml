@@ -74,3 +74,6 @@ wellknown:
 csp:
   default-config: "default-src 'self';script-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self';"
   frame-ancestors: "frame-ancestors 'self'"
+
+features:
+  desktop-solution-enabled: false

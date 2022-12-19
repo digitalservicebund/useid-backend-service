@@ -1,11 +1,13 @@
 package de.bund.digitalservice.useid.events
 
 import mu.KotlinLogging
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import java.util.UUID
 import java.util.function.Consumer
 
 @Service
+@ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class EventService {
     private val log = KotlinLogging.logger {}
 

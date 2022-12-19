@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.events
 
 import mu.KotlinLogging
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -20,6 +21,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/api/v1")
+@ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class EventController(eventService: EventService) {
     private val log = KotlinLogging.logger {}
 

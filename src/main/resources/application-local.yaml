@@ -44,3 +44,6 @@ csp:
     - foo.bar
     - bar.foo
     - localhost:8081
+
+features:
+  desktop-solution-enabled: true
