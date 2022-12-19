@@ -47,3 +47,9 @@ const widgetContainer =
   iframe.style.height = "100%";
   return iframe;
 })().then((child) => widgetContainer.appendChild(child));
+
+window.addEventListener("message", (e) => {
+  if (e.origin === useIdUrl) {
+    location.href = e.data;
+  }
+});

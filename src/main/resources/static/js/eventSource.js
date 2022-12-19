@@ -5,8 +5,8 @@ function subscribe(widgetSessionId) {
     console.log(
       "Received success event for " + widgetSessionId + ": " + event.data
     );
-    console.log(event);
-    // TODO do stuff
+    // TODO: Specify targetOrigin properly
+    window.parent.postMessage(JSON.parse(event.data).refreshAddress, "*");
   });
 
   eventSource.addEventListener("close", (event) => {
