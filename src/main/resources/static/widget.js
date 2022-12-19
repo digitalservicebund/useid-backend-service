@@ -34,12 +34,22 @@ const widgetContainer =
   tcTokenURL = encodeURIComponent(tcTokenURL);
 
   const iframe = document.createElement("iframe");
+  const path =
+    window.location.hash.length > 0
+      ? `${window.location.hash.substring(1)}-widget`
+      : "widget";
   iframe.setAttribute(
     "src",
-    `${useIdUrl}/widget?hostname=${location.host}&hash=${hashString}#tcTokenURL=${tcTokenURL}`
+    `${useIdUrl}/${path}?hostname=${location.host}&hash=${hashString}#tcTokenURL=${tcTokenURL}`
   );
   iframe.name = "Mit BundesIdent online ausweisen";
   iframe.style.width = "100%";
   iframe.style.height = "100%";
   return iframe;
 })().then((child) => widgetContainer.appendChild(child));
+
+window.addEventListener("message", (e) => {
+  if (e.origin === useIdUrl) {
+    location.href = e.data;
+  }
+});

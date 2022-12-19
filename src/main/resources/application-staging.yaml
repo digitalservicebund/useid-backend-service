@@ -10,3 +10,6 @@ eidservice:
 sentry:
   environment: staging
   traces-sample-rate: 1.0
+
+features:
+  desktop-solution-enabled: true

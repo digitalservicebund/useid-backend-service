@@ -10,6 +10,7 @@ import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
+import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -31,6 +32,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
+@Tag(name = "Identification Sessions", description = "An identification session represent an ongoing identification flow of a user and stores the required information.")
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val applicationProperties: ApplicationProperties,
