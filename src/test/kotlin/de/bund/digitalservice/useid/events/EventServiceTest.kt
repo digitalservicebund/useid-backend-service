@@ -20,7 +20,7 @@ internal class EventServiceTest {
     @Test
     fun `subscribe and publish happy path`() {
         // Given
-        val event = event(WIDGET_SESSION_ID)
+        val event = event()
         every { consumer.accept(any()) } returns Unit
 
         // When
@@ -30,7 +30,7 @@ internal class EventServiceTest {
         assertEquals(1, eventService.numberConsumers())
 
         // When
-        eventService.publish(event)
+        eventService.publish(event, WIDGET_SESSION_ID)
 
         // Then
         verify { consumer.accept(event) }
@@ -40,7 +40,7 @@ internal class EventServiceTest {
     fun `publish throws exception if customer is unkown`() {
         // Given
         val unknownId = UUID.randomUUID()
-        val event = event(unknownId)
+        val event = event()
         every { consumer.accept(any()) } returns Unit
 
         // When
@@ -50,11 +50,17 @@ internal class EventServiceTest {
         assertEquals(1, eventService.numberConsumers())
         val exception = assertThrows<ConsumerNotFoundException> {
             // When
-            eventService.publish(event)
+            eventService.publish(event, unknownId)
         }
         assertEquals("No consumer found for widget session with id $unknownId.", exception.message)
         verify(exactly = 0) { consumer.accept(event) }
     }
 
-    private fun event(widgetSessionId: UUID) = Event(widgetSessionId, "some-refresh-address")
+    private fun event(success: Boolean = true): Event {
+        return if (success) {
+            SuccessEvent("some-refresh-address")
+        } else {
+            ErrorEvent("some error happened")
+        }
+    }
 }
