@@ -36,20 +36,30 @@ class EventController(eventService: EventService) {
     }
 
     /**
-     * This endpoint receives events from the eID client (i.e. Ident-App) and publishes them to the respective consumer.
+     * These endpoints receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
      */
-    @PostMapping("/events")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    fun send(@RequestBody event: Event): Mono<ResponseEntity<Nothing>> {
-        log.info { "Received event for consumer: ${event.widgetSessionId}" }
-
-        return Mono.fromCallable { eventService.publish(event) }
+    fun publishEvent(event: Event, widgetSessionId: UUID): Mono<ResponseEntity<Nothing?>> {
+        return Mono.fromCallable { eventService.publish(event, widgetSessionId) }
             .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(null) }
             .doOnError { log.error(it.message) }
             .onErrorReturn(
                 ConsumerNotFoundException::class.java,
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
             )
+    }
+
+    @PostMapping("/events/{widgetSessionId}/success")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun sendSuccess(@PathVariable widgetSessionId: UUID, @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "don't send success property") @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing?>> {
+        log.info { "Received success event for consumer: $widgetSessionId" }
+        return publishEvent(event, widgetSessionId)
+    }
+
+    @PostMapping("/events/{widgetSessionId}/error")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun sendError(@PathVariable widgetSessionId: UUID, @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "don't send success property") @RequestBody event: ErrorEvent): Mono<ResponseEntity<Nothing?>> {
+        log.info { "Received event for consumer: $widgetSessionId" }
+        return publishEvent(event, widgetSessionId)
     }
 
     /**

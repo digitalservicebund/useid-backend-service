@@ -24,8 +24,7 @@ class EventService {
     /**
      * This method publishes the given event to the according consumer. The consumer id is specified in the event.
      */
-    fun publish(event: Event) {
-        val widgetSessionId = event.widgetSessionId
+    fun publish(event: Event, widgetSessionId: UUID) {
         log.info { "Publish event to consumer $widgetSessionId" }
         val consumer = consumers[widgetSessionId] ?: throw ConsumerNotFoundException(widgetSessionId)
         consumer.accept(event)
