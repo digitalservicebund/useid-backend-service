@@ -133,6 +133,21 @@ internal class EventControllerIntegrationTest(
             .expectStatus().isBadRequest
     }
 
+    @Test
+    fun `publish event returns 400 if the event id is not a valid UUID `() {
+        // Given
+        val malformedEventId = "some-id-string"
+
+        // When
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/events/${malformedEventId}/success"))
+            .bodyValue(event())
+            .exchange()
+            // Then
+            .expectStatus().isBadRequest
+    }
+
     private fun publishEvent(event: Event, widgetSessionId: UUID) {
         webClient.post().uri("/events/$widgetSessionId/${if (event.success) "success" else "error"}")
             .contentType(APPLICATION_JSON)
