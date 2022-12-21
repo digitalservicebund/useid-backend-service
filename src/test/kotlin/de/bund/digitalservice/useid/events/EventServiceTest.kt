@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.http.codec.ServerSentEvent
 import java.util.UUID
 import java.util.function.Consumer
 
@@ -15,12 +16,12 @@ private val WIDGET_SESSION_ID = UUID.randomUUID()
 @Tag("test")
 internal class EventServiceTest {
     private val eventService: EventService = EventService()
-    private val consumer = mockk<Consumer<Event>>()
+    private val consumer = mockk<Consumer<ServerSentEvent<Any>>>()
 
     @Test
     fun `subscribe and publish happy path`() {
         // Given
-        val event = event(WIDGET_SESSION_ID)
+        val event = event()
         every { consumer.accept(any()) } returns Unit
 
         // When
@@ -30,7 +31,7 @@ internal class EventServiceTest {
         assertEquals(1, eventService.numberConsumers())
 
         // When
-        eventService.publish(event)
+        eventService.publish(event, WIDGET_SESSION_ID)
 
         // Then
         verify { consumer.accept(event) }
@@ -40,7 +41,7 @@ internal class EventServiceTest {
     fun `publish throws exception if customer is unkown`() {
         // Given
         val unknownId = UUID.randomUUID()
-        val event = event(unknownId)
+        val event = event()
         every { consumer.accept(any()) } returns Unit
 
         // When
@@ -50,11 +51,16 @@ internal class EventServiceTest {
         assertEquals(1, eventService.numberConsumers())
         val exception = assertThrows<ConsumerNotFoundException> {
             // When
-            eventService.publish(event)
+            eventService.publish(event, unknownId)
         }
         assertEquals("No consumer found for widget session with id $unknownId.", exception.message)
         verify(exactly = 0) { consumer.accept(event) }
     }
 
-    private fun event(widgetSessionId: UUID) = Event(widgetSessionId, "some-refresh-address")
+    private fun event(): ServerSentEvent<Any> {
+        return ServerSentEvent.builder<Any>()
+            .data(SuccessEvent("some-refresh-address"))
+            .event(EventType.SUCCESS.eventName)
+            .build()
+    }
 }

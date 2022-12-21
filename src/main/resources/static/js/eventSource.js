@@ -9,6 +9,12 @@ function subscribe(widgetSessionId) {
     window.parent.postMessage(JSON.parse(event.data).refreshAddress, "*");
   });
 
+  eventSource.addEventListener("error", function (event) {
+    console.log(
+      "Received error event for " + widgetSessionId + ": " + event.data
+    );
+  });
+
   eventSource.addEventListener("close", (event) => {
     console.log(
       "Received close event for " + widgetSessionId + ": " + event.data

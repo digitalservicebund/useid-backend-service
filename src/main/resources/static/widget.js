@@ -50,6 +50,7 @@ const widgetContainer =
 
 window.addEventListener("message", (e) => {
   if (e.origin === useIdUrl) {
+    // TODO: Check URL has correct prefix (useIdUrl)
     location.href = e.data;
   }
 });
