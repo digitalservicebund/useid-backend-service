@@ -2,17 +2,17 @@ function subscribe(widgetSessionId) {
   console.log("Subscribe on events for " + widgetSessionId);
   const eventSource = new EventSource("/api/v1/events/" + widgetSessionId);
   eventSource.addEventListener("success", function (event) {
-    console.log("Received event for " + widgetSessionId + ": " + event.data);
+    console.log(
+      "Received success event for " + widgetSessionId + ": " + event.data
+    );
+    // TODO: Specify targetOrigin properly
+    window.parent.postMessage(JSON.parse(event.data).refreshAddress, "*");
+  });
 
-    const eventData = JSON.parse(event.data);
-    if (eventData.success !== undefined) {
-      if (eventData.success) {
-        // TODO: Specify targetOrigin properly
-        window.parent.postMessage(eventData.refreshAddress, "*");
-      } else {
-        console.error("Error event received: ", eventData.message);
-      }
-    }
+  eventSource.addEventListener("error", function (event) {
+    console.log(
+      "Received error event for " + widgetSessionId + ": " + event.data
+    );
   });
 
   eventSource.addEventListener("close", (event) => {

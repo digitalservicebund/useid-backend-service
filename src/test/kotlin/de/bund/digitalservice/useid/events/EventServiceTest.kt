@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.http.codec.ServerSentEvent
 import java.util.UUID
 import java.util.function.Consumer
 
@@ -15,7 +16,7 @@ private val WIDGET_SESSION_ID = UUID.randomUUID()
 @Tag("test")
 internal class EventServiceTest {
     private val eventService: EventService = EventService()
-    private val consumer = mockk<Consumer<Event>>()
+    private val consumer = mockk<Consumer<ServerSentEvent<Any>>>()
 
     @Test
     fun `subscribe and publish happy path`() {
@@ -56,11 +57,10 @@ internal class EventServiceTest {
         verify(exactly = 0) { consumer.accept(event) }
     }
 
-    private fun event(success: Boolean = true): Event {
-        return if (success) {
-            SuccessEvent("some-refresh-address")
-        } else {
-            ErrorEvent("some error happened")
-        }
+    private fun event(): ServerSentEvent<Any> {
+        return ServerSentEvent.builder<Any>()
+            .data(SuccessEvent("some-refresh-address"))
+            .event(EventType.SUCCESS.eventName)
+            .build()
     }
 }

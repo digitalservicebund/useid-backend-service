@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.events
 
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,20 +43,19 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    fun `publish and receive event happy case`() {
+    fun `publish and receive success event happy case`() {
         // Given
-        val event = event()
+        val event = successEvent()
 
         val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
             .accept(TEXT_EVENT_STREAM)
             .retrieve()
-            .bodyToFlux(Event::class.java)
+            .bodyToFlux(SuccessEvent::class.java)
             .log()
             .`as` { StepVerifier.create(it) }
             .consumeNextWith {
                 // Then
-                // TODO:
-                // assertEquals(event.success, it.success)
+                assertEquals(event, it)
             }
             .thenCancel()
             .verifyLater()
@@ -67,12 +67,36 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    fun `published event is not consumed if sent to different consumer `() {
+    fun `publish and receive error event happy case`() {
+        // Given
+        val event = errorEvent()
+
+        val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
+            .accept(TEXT_EVENT_STREAM)
+            .retrieve()
+            .bodyToFlux(ErrorEvent::class.java)
+            .log()
+            .`as` { StepVerifier.create(it) }
+            .consumeNextWith {
+                // Then
+                assertEquals(event, it)
+            }
+            .thenCancel()
+            .verifyLater()
+
+        // When
+        publishEvent(event, WIDGET_SESSION_ID, false)
+
+        verifier.verify()
+    }
+
+    @Test
+    fun `published success event is not consumed if sent to different consumer `() {
         // Given
         val verifier = webClient.get().uri("/events/$WIDGET_SESSION_ID")
             .accept(TEXT_EVENT_STREAM)
             .retrieve()
-            .bodyToFlux(Event::class.java)
+            .bodyToFlux(SuccessEvent::class.java)
             .log()
             .`as` { StepVerifier.create(it) }
             .expectNextCount(0)
@@ -80,17 +104,17 @@ internal class EventControllerIntegrationTest(
             .verifyLater()
 
         // When
-        publishEvent(event(), UUID.randomUUID())
+        publishEvent(successEvent(), UUID.randomUUID())
 
         // Then
         verifier.verify(ofSeconds(1))
     }
 
     @Test
-    fun `publish event returns 404 if session id is unknown `() {
+    fun `publish success event returns 404 if session id is unknown `() {
         // Given
         val unknownId = UUID.randomUUID()
-        val event = event()
+        val event = successEvent()
 
         // When
         webTestClient
@@ -104,7 +128,7 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    fun `publish event returns 415 if the request body doesn't contain json `() {
+    fun `publish success event returns 415 if the request body doesn't contain json `() {
         // Given
         val event = "some-malformed-event"
 
@@ -119,7 +143,7 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    fun `publish event returns 400 if the event is malformed `() {
+    fun `publish success event returns 400 if the event is malformed `() {
         // Given
         val event = MalformedEventWithWrongAttributes("some-string")
 
@@ -134,22 +158,22 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    fun `publish event returns 400 if the event id is not a valid UUID `() {
+    fun `publish success event returns 400 if the event id is not a valid UUID `() {
         // Given
         val malformedEventId = "some-id-string"
 
         // When
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/${malformedEventId}/success"))
-            .bodyValue(event())
+            .uri(URI.create("http://localhost:$port/api/v1/events/$malformedEventId/success"))
+            .bodyValue(successEvent())
             .exchange()
             // Then
             .expectStatus().isBadRequest
     }
 
-    private fun publishEvent(event: Event, widgetSessionId: UUID) {
-        webClient.post().uri("/events/$widgetSessionId/${if (event.success) "success" else "error"}")
+    private fun publishEvent(event: Any, widgetSessionId: UUID, success: Boolean = true) {
+        webClient.post().uri("/events/$widgetSessionId/${if (success) "success" else "error"}")
             .contentType(APPLICATION_JSON)
             .bodyValue(event)
             .retrieve()
@@ -157,12 +181,12 @@ internal class EventControllerIntegrationTest(
             .subscribe()
     }
 
-    private fun event(success: Boolean = true): Event {
-        return if (success) {
-            SuccessEvent("some-refresh-address")
-        } else {
-            ErrorEvent("some error happened")
-        }
+    private fun successEvent(): SuccessEvent {
+        return SuccessEvent("some-refresh-address")
+    }
+
+    private fun errorEvent(): ErrorEvent {
+        return ErrorEvent("some error happened")
     }
 
     data class MalformedEventWithWrongAttributes(val something: String)
