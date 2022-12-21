@@ -85,7 +85,7 @@ internal class EventControllerIntegrationTest(
             .verifyLater()
 
         // When
-        publishEvent(event, WIDGET_SESSION_ID, false)
+        publishEvent(event, WIDGET_SESSION_ID)
 
         verifier.verify()
     }
@@ -172,8 +172,8 @@ internal class EventControllerIntegrationTest(
             .expectStatus().isBadRequest
     }
 
-    private fun publishEvent(event: Any, widgetSessionId: UUID, success: Boolean = true) {
-        webClient.post().uri("/events/$widgetSessionId/${if (success) "success" else "error"}")
+    private fun publishEvent(event: Any, widgetSessionId: UUID) {
+        webClient.post().uri("/events/$widgetSessionId/${if (event is SuccessEvent) "success" else "error"}")
             .contentType(APPLICATION_JSON)
             .bodyValue(event)
             .retrieve()
