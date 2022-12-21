@@ -7,6 +7,8 @@ function subscribe(widgetSessionId) {
     );
     // TODO: Specify targetOrigin properly
     window.parent.postMessage(JSON.parse(event.data).refreshAddress, "*");
+    eventSource.close();
+    console.log("Unsubscribe on events for " + widgetSessionId);
   });
 
   eventSource.addEventListener("error", function (event) {
@@ -15,12 +17,12 @@ function subscribe(widgetSessionId) {
     );
   });
 
-  eventSource.addEventListener("close", (event) => {
-    console.log(
-      "Received close event for " + widgetSessionId + ": " + event.data
+  eventSource.onerror = async (err) => {
+    console.error(
+      "Error occurred while listening on events for " + widgetSessionId + ": ",
+      err
     );
-    eventSource.close();
-  });
+  };
 }
 
 function uuidv4() {

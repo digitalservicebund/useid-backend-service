@@ -111,7 +111,7 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    fun `publish success event returns 404 if session id is unknown `() {
+    fun `publish success event returns 404 if session id is unknown`() {
         // Given
         val unknownId = UUID.randomUUID()
         val event = successEvent()
@@ -123,6 +123,30 @@ internal class EventControllerIntegrationTest(
             .bodyValue(event)
             .exchange()
             // Then
+            .expectStatus().isNotFound
+            .expectBody().isEmpty
+    }
+
+    @Test
+    fun `publish success event returns 404 if client disconnected`() {
+        // Given
+        val event = successEvent()
+
+        val bodyToFlux = webClient.get().uri("/events/$WIDGET_SESSION_ID")
+            .accept(TEXT_EVENT_STREAM)
+            .retrieve()
+            .bodyToFlux(SuccessEvent::class.java)
+            .subscribe()
+
+        // When
+        bodyToFlux.dispose()
+
+        // Then
+        webTestClient
+            .post()
+            .uri(URI.create("http://localhost:$port/api/v1/events/$WIDGET_SESSION_ID/success"))
+            .bodyValue(event)
+            .exchange()
             .expectStatus().isNotFound
             .expectBody().isEmpty
     }
