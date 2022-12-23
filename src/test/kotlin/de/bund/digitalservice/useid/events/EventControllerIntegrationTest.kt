@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.events
 
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,6 +34,8 @@ internal class EventControllerIntegrationTest(
 
     @BeforeEach
     fun setup() {
+        // StepVerifier.setDefaultTimeout(ofSeconds(1))
+
         webClient = WebClient.builder()
             .clientConnector(ReactorClientHttpConnector())
             .codecs { it.defaultCodecs() }
@@ -64,7 +65,7 @@ internal class EventControllerIntegrationTest(
         // When
         publishEvent(event, WIDGET_SESSION_ID)
 
-        verifier.verify()
+        verifier.verify(ofSeconds(10))
     }
 
     @Test
@@ -88,7 +89,7 @@ internal class EventControllerIntegrationTest(
         // When
         publishEvent(event, WIDGET_SESSION_ID)
 
-        verifier.verify()
+        verifier.verify(ofSeconds(10))
     }
 
     @Test
@@ -129,7 +130,6 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    @Ignore
     fun `publish success event returns 404 if client disconnected`() {
         // Given
         val event = successEvent()
