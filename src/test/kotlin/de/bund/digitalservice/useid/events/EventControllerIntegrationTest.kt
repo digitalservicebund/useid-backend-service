@@ -1,9 +1,9 @@
 package de.bund.digitalservice.useid.events
 
 import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -44,7 +44,7 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    @Ignore("Failing due to race condition.")
+    @Disabled("Failing due to race condition.")
     fun `publish and receive success event happy case`() {
         // Given
         val event = successEvent()
@@ -69,7 +69,7 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    @Ignore("Failing due to race condition.")
+    @Disabled("Failing due to race condition.")
     fun `publish and receive error event happy case`() {
         // Given
         val event = errorEvent()
@@ -131,7 +131,6 @@ internal class EventControllerIntegrationTest(
     }
 
     @Test
-    @Ignore("Failing due to race condition.")
     fun `publish success event returns 404 if client disconnected`() {
         // Given
         val event = successEvent()
