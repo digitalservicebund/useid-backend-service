@@ -36,9 +36,9 @@ class EventController(eventService: EventService) {
     }
 
     /**
-     * These endpoints receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
+     * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
      */
-    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): Mono<ResponseEntity<Nothing?>> {
+    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): Mono<ResponseEntity<Nothing>> {
         return Mono.fromCallable { eventService.publish(event, widgetSessionId) }
             .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(null) }
             .doOnError { log.error(it.message) }
@@ -50,26 +50,27 @@ class EventController(eventService: EventService) {
 
     @PostMapping("/events/{widgetSessionId}/success")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing?>> {
+    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing>> {
         log.info { "Received success event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
     }
 
     @PostMapping("/events/{widgetSessionId}/error")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): Mono<ResponseEntity<Nothing?>> {
+    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): Mono<ResponseEntity<Nothing>> {
         log.info { "Received event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
     }
 
     /**
-     * At this endpoint, consumers can open an SSE channel to consume events.
+     * At this endpoint consumers can open an SSE channel to consume events.
      */
     @CrossOrigin
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun consumer(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>>? {
+    fun subscribe(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>> {
         return Flux.create { sink: FluxSink<ServerSentEvent<Any>> ->
             eventService.subscribeConsumer(widgetSessionId) { event: ServerSentEvent<Any> -> sink.next(event) }
+            sink.onDispose { eventService.unsubscribeConsumer(widgetSessionId) }
         }
     }
 

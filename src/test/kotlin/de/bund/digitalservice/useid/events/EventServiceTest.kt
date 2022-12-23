@@ -19,7 +19,7 @@ internal class EventServiceTest {
     private val consumer = mockk<Consumer<ServerSentEvent<Any>>>()
 
     @Test
-    fun `subscribe and publish happy path`() {
+    fun `subscribe, publish and unsubscribe happy path`() {
         // Given
         val event = event()
         every { consumer.accept(any()) } returns Unit
@@ -35,10 +35,16 @@ internal class EventServiceTest {
 
         // Then
         verify { consumer.accept(event) }
+
+        // When
+        eventService.unsubscribeConsumer(WIDGET_SESSION_ID)
+
+        // Then
+        assertEquals(0, eventService.numberConsumers())
     }
 
     @Test
-    fun `publish throws exception if customer is unkown`() {
+    fun `publish throws exception if customer is unknown`() {
         // Given
         val unknownId = UUID.randomUUID()
         val event = event()

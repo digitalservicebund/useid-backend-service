@@ -23,6 +23,14 @@ class EventService {
     }
 
     /**
+     * This method unsubscribes a consumer.
+     */
+    fun unsubscribeConsumer(widgetSessionId: UUID) {
+        consumers.remove(widgetSessionId)
+        log.info { "Consumer with id $widgetSessionId removed, total consumers: ${consumers.size}" }
+    }
+
+    /**
      * This method publishes the given event to the according consumer. The consumer id is specified in the event.
      */
     fun publish(event: ServerSentEvent<Any>, widgetSessionId: UUID) {
