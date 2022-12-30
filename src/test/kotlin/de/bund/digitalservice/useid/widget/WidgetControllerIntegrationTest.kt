@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.MessageSource
+import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import java.util.Locale
@@ -43,6 +44,11 @@ class WidgetControllerIntegrationTest(
                 "Content-Security-Policy",
                 "some default value;frame-ancestors 'self' foo.bar;"
             )
+            .expectHeader()
+            .valueEquals(
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+                "foo.bar"
+            )
     }
 
     @Test
@@ -58,6 +64,8 @@ class WidgetControllerIntegrationTest(
                 "Content-Security-Policy",
                 "some default value;frame-ancestors 'self';"
             )
+            .expectHeader()
+            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
     }
 
     @Test
@@ -73,6 +81,8 @@ class WidgetControllerIntegrationTest(
                 "Content-Security-Policy",
                 "some default value;frame-ancestors 'self';"
             )
+            .expectHeader()
+            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
     }
 
     @Test

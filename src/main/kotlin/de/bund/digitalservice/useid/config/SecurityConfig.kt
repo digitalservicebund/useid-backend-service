@@ -32,7 +32,7 @@ class SecurityConfig(
                 SecurityWebFiltersOrder.REACTOR_CONTEXT
             )
             .addFilterAfter(
-                ContentSecurityPolicyFilter(contentSecurityPolicyProperties),
+                SecurityHeadersFilter(contentSecurityPolicyProperties),
                 SecurityWebFiltersOrder.LAST
             )
             .build()
