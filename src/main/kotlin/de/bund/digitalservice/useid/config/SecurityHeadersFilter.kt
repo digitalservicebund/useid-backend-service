@@ -34,7 +34,8 @@ class SecurityHeadersFilter(
         if (hostNameIsAllowed == true) {
             val securityHeaders = mapOf(
                 "Content-Security-Policy" to contentSecurityPolicyProperties.getCSPHeaderValue(hostName),
-                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN to hostName
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN to hostName,
+                HttpHeaders.VARY to HttpHeaders.ORIGIN
             )
 
             response.headers.setAll(securityHeaders)
