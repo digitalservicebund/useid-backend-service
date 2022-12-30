@@ -49,6 +49,8 @@ class WidgetControllerIntegrationTest(
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
                 "foo.bar"
             )
+            .expectHeader()
+            .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
     }
 
     @Test
