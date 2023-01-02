@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
+import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.web.server.ServerWebExchange
@@ -10,7 +11,7 @@ import org.springframework.web.util.pattern.PathPattern
 import org.springframework.web.util.pattern.PathPatternParser
 import reactor.core.publisher.Mono
 
-class ContentSecurityPolicyFilter(
+class SecurityHeadersFilter(
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
 ) : WebFilter {
 
@@ -31,10 +32,13 @@ class ContentSecurityPolicyFilter(
         val hostNameIsAllowed = hostName?.let { contentSecurityPolicyProperties.domainIsAllowed(it) }
 
         if (hostNameIsAllowed == true) {
-            response.headers.set(
-                "Content-Security-Policy",
-                contentSecurityPolicyProperties.getCSPHeaderValue(hostName)
+            val securityHeaders = mapOf(
+                "Content-Security-Policy" to contentSecurityPolicyProperties.getCSPHeaderValue(hostName),
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN to hostName,
+                HttpHeaders.VARY to HttpHeaders.ORIGIN
             )
+
+            response.headers.setAll(securityHeaders)
         } else {
             response.headers.set(
                 "Content-Security-Policy",
