@@ -61,7 +61,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("io.sentry:sentry-spring-boot-starter:6.10.0")
+    implementation("io.sentry:sentry-spring-boot-starter:6.11.0")
 
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
