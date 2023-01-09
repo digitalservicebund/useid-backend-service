@@ -12,6 +12,8 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
+import org.springframework.core.env.Environment
+import org.springframework.core.env.Profiles
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -36,7 +38,8 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val applicationProperties: ApplicationProperties,
-    private val eidServiceConfig: EidServiceConfiguration
+    private val eidServiceConfig: EidServiceConfiguration,
+    private val environment: Environment
 ) {
     private val log = KotlinLogging.logger {}
     private val tcTokenCallsSuccessfulCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "200")
@@ -76,6 +79,7 @@ class IdentificationSessionsController(
                 */
                 Mono.fromCallable {
                     val eidService = EidService(eidServiceConfig, it.requestDataGroups)
+                    eidService.includeTransactionInfo = environment.acceptsProfiles(Profiles.of("local", "staging"))
                     eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
                 }.subscribeOn(Schedulers.boundedElastic())
             }
