@@ -10,10 +10,6 @@ import de.governikus.autent.sdk.eidservice.eidservices.EidService230
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Timer
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlType
 
 /*
     ("Why do we need to override getWebserviceRequest")
@@ -37,16 +33,9 @@ import javax.xml.bind.annotation.XmlType
 class EidService constructor(config: EidServiceConfiguration, private val dataGroups: List<String> = emptyList()) : EidService230(config) {
     private val tcTokenCallsTimer: Timer = Metrics.timer(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token")
     private val getEidInformationTimer: Timer = Metrics.timer(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information")
-    var includeTransactionInfo: Boolean = false
 
     public override fun getWebserviceRequest(): UseIDRequestType {
-        var request = UseIDRequestType()
-
-        if (includeTransactionInfo) {
-            request = RequestWithTransactionInfo()
-            request.transactionInfo = "DigitalService GmbH des Bundes"
-        }
-
+        val request = UseIDRequestType()
         val selector = OperationsRequestorType()
 
         // Data groups are only one function of the eID
@@ -91,14 +80,4 @@ class EidService constructor(config: EidServiceConfiguration, private val dataGr
         getEidInformationTimer.record { eidInformation = super.getEidInformation(sessionId) }
         return eidInformation!!
     }
-}
-
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(
-    name = "useIDRequestType",
-    propOrder = ["useOperations", "ageVerificationRequest", "placeVerificationRequest", "transactionAttestationRequest", "levelOfAssuranceRequest", "psk", "transactionInfo"]
-)
-class RequestWithTransactionInfo : UseIDRequestType() {
-    @XmlElement(name = "TransactionInfo", required = true)
-    var transactionInfo: String? = null
 }
