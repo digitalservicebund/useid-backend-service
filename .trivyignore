@@ -17,3 +17,8 @@ CVE-2022-40156
 # Not affected. Waiting for patch
 # See more: https://bitbucket.org/snakeyaml/snakeyaml/issues/561/cve-2022-1471-vulnerability-in#comment-64581479
 CVE-2022-1471
+
+# org.springframework:spring-web:5.3.24
+# Not affected, since we do not deserialize untrusted data
+# See more: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-1000027
+CVE-2016-1000027
