@@ -123,7 +123,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:3.21.9")
 
     /** Scheduling **/
-    implementation("net.javacrumbs.shedlock:shedlock-spring:5.0.1")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
     implementation("net.javacrumbs.shedlock:shedlock-provider-r2dbc:4.42.0")
 }
 
