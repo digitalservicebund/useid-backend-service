@@ -10,8 +10,10 @@ class TransactionInfoService(private val transactionInfoRepository: TransactionI
 
     private val log = KotlinLogging.logger {}
 
-    fun create(useIDSessionId: UUID, providerName: String, providerURL: String, additionalInformation: String): Mono<TransactionInfo> {
-        return transactionInfoRepository.save(TransactionInfo(useIDSessionId, providerName, providerURL, additionalInformation))
+    fun createOrUpdate(useIDSessionId: UUID, providerName: String, providerURL: String, additionalInformation: String): Mono<TransactionInfo> {
+        return transactionInfoRepository.findByUseidSessionId(useIDSessionId)
+            .defaultIfEmpty(TransactionInfo(useIDSessionId, providerName, providerURL, additionalInformation))
+            .flatMap { transactionInfoRepository.save(it) }
             .doOnNext {
                 log.info("Created new identification session. useIDSessionId=${it.useidSessionId}")
             }.doOnError {

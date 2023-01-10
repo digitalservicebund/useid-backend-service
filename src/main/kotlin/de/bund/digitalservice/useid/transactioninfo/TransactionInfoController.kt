@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.util.UUID
@@ -22,7 +22,7 @@ class TransactionInfoController(
 ) {
     private val log = KotlinLogging.logger {}
 
-    @PostMapping(
+    @PutMapping(
         path = ["/api/v1/identification/sessions/{useIDSessionId}/$TRANSACTION_INFO_SUFFIX"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -30,7 +30,7 @@ class TransactionInfoController(
         @PathVariable useIDSessionId: UUID,
         authentication: Authentication
     ): Mono<ResponseEntity<TransactionInfo>> {
-        return transactionInfoService.create(useIDSessionId, "Spaßkasse", "https://www.sparkasse.de/", "Login bei der Spaßkasse")
+        return transactionInfoService.createOrUpdate(useIDSessionId, "Spaßkasse", "https://www.sparkasse.de/", "Login bei der Spaßkasse")
             .map {
                 ResponseEntity
                     .status(HttpStatus.CREATED)
