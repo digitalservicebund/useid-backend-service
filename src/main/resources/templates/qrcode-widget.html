@@ -97,14 +97,31 @@
     <script src="js/qrcode.min.js"></script>
     <script type="text/javascript" src="js/eventSource.js"></script>
     <script type="text/javascript">
+      let qrCode, tcToken, hash, useIdSessionId;
+      const baseUrl = "desktopident://127.0.0.1:24727/eID-Client";
+
+      function refreshTimeBasedToken() {
+        fetch(`/api/v1/identification/sessions/${useIdSessionId}/tokens`, {
+          method: "POST",
+        })
+          .then((r) => r.json())
+          .then((jsonResponse) => {
+            const url = `${baseUrl}?${tcToken}&${hash}&widgetSessionId=${widgetSessionId}&tokenId=${jsonResponse.tokenId}`;
+            qrCode.makeCode(url);
+            setTimeout(refreshTimeBasedToken, 50000);
+          });
+      }
+
       window.addEventListener("load", () => {
-        const hash = new URL(window.location).searchParams.get("hash");
-        const tcTokenURLParam = window.location.hash.replace("#", "");
-        const text = `desktopident://127.0.0.1:24727/eID-Client?${tcTokenURLParam}&hash=${hash}&widgetSessionId=${widgetSessionId}`;
-        new QRCode(document.getElementById("qrcode"), {
-          text,
+        hash = `hash=${new URL(window.location).searchParams.get("hash")}`;
+        tcToken = window.location.hash.replace("#", "");
+        useIdSessionId = decodeURIComponent(tcToken).match(
+          /sessions\/([a-f\d\-]*)\/tc-token/i
+        )[1];
+        qrCode = new QRCode(document.getElementById("qrcode"), {
           colorDark: "#004b76",
         });
+        refreshTimeBasedToken();
       });
     </script>
   </div>
