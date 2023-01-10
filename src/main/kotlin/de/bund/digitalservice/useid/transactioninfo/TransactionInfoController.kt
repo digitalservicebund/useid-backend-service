@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.transactioninfo
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,7 @@ internal const val TRANSACTION_INFO_SUFFIX = "transaction-info"
 
 @RestController
 @Tag(name = "Transaction Info", description = "Additional information regarding the identification which will be displayed in the eID-Client.")
+@ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class TransactionInfoController(
     private val transactionInfoService: TransactionInfoService
 ) {

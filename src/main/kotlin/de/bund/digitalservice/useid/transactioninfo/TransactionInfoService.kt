@@ -1,11 +1,13 @@
 package de.bund.digitalservice.useid.transactioninfo
 
 import mu.KotlinLogging
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.util.UUID
 
 @Service
+@ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class TransactionInfoService(private val transactionInfoRepository: TransactionInfoRepository) {
 
     private val log = KotlinLogging.logger {}
