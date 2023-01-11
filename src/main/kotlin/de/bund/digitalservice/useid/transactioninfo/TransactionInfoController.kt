@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.util.UUID
@@ -24,15 +25,17 @@ class TransactionInfoController(
 ) {
     private val log = KotlinLogging.logger {}
 
-    @PutMapping(
+    @PostMapping(
         path = ["/api/v1/identification/sessions/{useIDSessionId}/$TRANSACTION_INFO_SUFFIX"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun createTransactionInfo(
         @PathVariable useIDSessionId: UUID,
+        @RequestBody transactionInfo: TransactionInfo,
         authentication: Authentication
     ): Mono<ResponseEntity<TransactionInfo>> {
-        return transactionInfoService.createOrUpdate(useIDSessionId, "Spaßkasse", "https://www.sparkasse.de/", "Login bei der Spaßkasse")
+        return transactionInfoService.create(useIDSessionId, transactionInfo)
+            .map { TransactionInfo.fromDto(it) }
             .map {
                 ResponseEntity
                     .status(HttpStatus.CREATED)
@@ -50,6 +53,7 @@ class TransactionInfoController(
     )
     fun getTransactionInfo(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TransactionInfo>> {
         return transactionInfoService.findByUseIDSessionId(useIDSessionId)
+            .map { TransactionInfo.fromDto(it) }
             .map {
                 ResponseEntity
                     .status(HttpStatus.OK)
@@ -57,9 +61,6 @@ class TransactionInfoController(
                     .body(it)
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
-            .doOnError { exception ->
-                log.error("Failed to get tc token for identification session. useidSessionId=$useIDSessionId", exception)
-            }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
