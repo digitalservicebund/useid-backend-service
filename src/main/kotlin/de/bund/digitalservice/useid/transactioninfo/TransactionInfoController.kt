@@ -49,7 +49,7 @@ class TransactionInfoController(
 
     @GetMapping(
         path = ["/api/v1/identification/sessions/{useIDSessionId}/$TRANSACTION_INFO_SUFFIX"],
-        produces = [MediaType.APPLICATION_XML_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun getTransactionInfo(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TransactionInfo>> {
         return transactionInfoService.findByUseIDSessionId(useIDSessionId)
