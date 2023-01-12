@@ -16,42 +16,42 @@ class TransactionInfoService(
 
     private val log = KotlinLogging.logger {}
 
-    fun create(useidSessionId: UUID, transactionInfo: TransactionInfo): Mono<TransactionInfoDto> {
-        return transactionInfoRepository.save(TransactionInfoDto(useidSessionId, transactionInfo.providerName, transactionInfo.providerURL))
+    fun create(useIdSessionId: UUID, transactionInfo: TransactionInfo): Mono<TransactionInfoDto> {
+        return transactionInfoRepository.save(TransactionInfoDto(useIdSessionId, transactionInfo.providerName, transactionInfo.providerURL))
             .flatMap { transactionInfoDto ->
-                createAdditionalInfo(transactionInfo.additionalInfo, useidSessionId)
+                createAdditionalInfo(transactionInfo.additionalInfo, useIdSessionId)
                     .collectList()
                     .doOnNext { additionalInfoDto -> transactionInfoDto.additionalInfo = additionalInfoDto }
                     .then(Mono.just(transactionInfoDto))
             }
             .doOnNext {
-                log.info("Created new transaction info. useidSessionId=${it.useidSessionId}, transactionInfoId=${it.id}")
+                log.info("Created new transaction info. useIdSessionId=${it.useIdSessionId}, transactionInfoId=${it.id}")
             }.doOnError {
                 log.error("Failed to create transaction info: ${it.message}", it)
             }
     }
 
-    private fun createAdditionalInfo(additionalInformation: List<AdditionalInfo>, useidSessionId: UUID): Flux<AdditionalInfoDto> {
+    private fun createAdditionalInfo(additionalInformation: List<AdditionalInfo>, useIdSessionId: UUID): Flux<AdditionalInfoDto> {
         val additionalInfos = additionalInformation.map {
-            AdditionalInfoDto(useidSessionId, it.key, it.value)
+            AdditionalInfoDto(useIdSessionId, it.key, it.value)
         }.toList()
         return additionalInfoRepository.saveAll(additionalInfos).doOnNext {
-            log.info("Created additional infos for transaction info. useidSessionId=$useidSessionId")
+            log.info("Created additional infos for transaction info. useIdSessionId=$useIdSessionId")
         }.doOnError {
-            log.error("Failed to create additional info for transaction info: ${it.message}. useidSessionId=$useidSessionId", it)
+            log.error("Failed to create additional info for transaction info: ${it.message}. useIdSessionId=$useIdSessionId", it)
         }
     }
 
-    fun findByUseIDSessionId(useidSessionId: UUID): Mono<TransactionInfoDto> {
-        return transactionInfoRepository.findByUseidSessionId(useidSessionId)
+    fun findByUseIdSessionId(useIdSessionId: UUID): Mono<TransactionInfoDto> {
+        return transactionInfoRepository.findByUseIdSessionId(useIdSessionId)
             .flatMap { transactionInfoDto ->
-                additionalInfoRepository.findAllByUseidSessionId(useidSessionId)
+                additionalInfoRepository.findAllByUseIdSessionId(useIdSessionId)
                     .collectList()
                     .doOnNext { additionalInfo -> transactionInfoDto.additionalInfo = additionalInfo }
                     .then(Mono.just(transactionInfoDto))
             }
             .doOnError {
-                log.error("Could not find transaction info: ${it.message}. useidSessionId=$useidSessionId", it)
+                log.error("Could not find transaction info: ${it.message}. useIdSessionId=$useIdSessionId", it)
             }
     }
 }

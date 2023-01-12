@@ -25,14 +25,14 @@ class TransactionInfoController(
     private val log = KotlinLogging.logger {}
 
     @PostMapping(
-        path = ["/api/v1/identification/sessions/{useIDSessionId}/$TRANSACTION_INFO_SUFFIX"],
+        path = ["/api/v1/identification/sessions/{useIdSessionId}/$TRANSACTION_INFO_SUFFIX"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun createTransactionInfo(
-        @PathVariable useIDSessionId: UUID,
+        @PathVariable useIdSessionId: UUID,
         @RequestBody transactionInfo: TransactionInfo
     ): Mono<ResponseEntity<TransactionInfo>> {
-        return transactionInfoService.create(useIDSessionId, transactionInfo)
+        return transactionInfoService.create(useIdSessionId, transactionInfo)
             .map { TransactionInfo.fromDto(it) }
             .map {
                 ResponseEntity
@@ -46,11 +46,11 @@ class TransactionInfoController(
     }
 
     @GetMapping(
-        path = ["/api/v1/identification/sessions/{useIDSessionId}/$TRANSACTION_INFO_SUFFIX"],
+        path = ["/api/v1/identification/sessions/{useIdSessionId}/$TRANSACTION_INFO_SUFFIX"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun getTransactionInfo(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TransactionInfo>> {
-        return transactionInfoService.findByUseIDSessionId(useIDSessionId)
+    fun getTransactionInfo(@PathVariable useIdSessionId: UUID): Mono<ResponseEntity<TransactionInfo>> {
+        return transactionInfoService.findByUseIdSessionId(useIdSessionId)
             .map { TransactionInfo.fromDto(it) }
             .map {
                 ResponseEntity

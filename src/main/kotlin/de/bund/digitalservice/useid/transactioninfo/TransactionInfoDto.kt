@@ -12,7 +12,7 @@ import java.util.UUID
 @Table("transaction_info")
 data class TransactionInfoDto(
     @Column("useid_session_id")
-    val useidSessionId: UUID,
+    val useIdSessionId: UUID,
 
     @Column("provider_name")
     val providerName: String,

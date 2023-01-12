@@ -11,7 +11,7 @@ import java.util.UUID
 @Table("additional_info")
 data class AdditionalInfoDto(
     @Column("useid_session_id")
-    val useidSessionId: UUID,
+    val useIdSessionId: UUID,
 
     @Column("key")
     val key: String,

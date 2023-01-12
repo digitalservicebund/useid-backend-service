@@ -7,5 +7,5 @@ import java.util.UUID
 
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 interface AdditionalInfoRepository : ReactiveCrudRepository<AdditionalInfoDto, UUID> {
-    fun findAllByUseidSessionId(useidSessionId: UUID): Flux<AdditionalInfoDto>
+    fun findAllByUseIdSessionId(useIdSessionId: UUID): Flux<AdditionalInfoDto>
 }

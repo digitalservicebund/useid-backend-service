@@ -7,5 +7,5 @@ import java.util.UUID
 
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 interface TransactionInfoRepository : ReactiveCrudRepository<TransactionInfoDto, UUID> {
-    fun findByUseidSessionId(useIDSessionId: UUID): Mono<TransactionInfoDto>
+    fun findByUseIdSessionId(useIdSessionId: UUID): Mono<TransactionInfoDto>
 }
