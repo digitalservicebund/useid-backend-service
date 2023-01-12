@@ -46,19 +46,19 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
     }
 
     @Test
-    fun `find identification by useidSessionId and eidSessionId returns the inserted entity`() {
+    fun `find identification by useIdSessionId and eIdSessionId returns the inserted entity`() {
         // Given
         val identificationSession = IdentificationSession(USEID_SESSION_ID, REFRESH_ADDRESS, DATA_GROUPS)
-        identificationSession.eidSessionId = EID_SESSION_ID
+        identificationSession.eIdSessionId = EID_SESSION_ID
 
         // When
         template.insert(identificationSession).then().`as`(StepVerifier::create).verifyComplete()
 
         // Then
-        identificationSessionRepository.findByUseidSessionId(USEID_SESSION_ID).`as`(StepVerifier::create)
+        identificationSessionRepository.findByUseIdSessionId(USEID_SESSION_ID).`as`(StepVerifier::create)
             .assertNext { validateIdentificationSession(it) }
             .verifyComplete()
-        identificationSessionRepository.findByEidSessionId(EID_SESSION_ID).`as`(StepVerifier::create)
+        identificationSessionRepository.findByEIdSessionId(EID_SESSION_ID).`as`(StepVerifier::create)
             .assertNext { validateIdentificationSession(it) }
             .verifyComplete()
     }
@@ -116,8 +116,8 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
 
     private fun validateIdentificationSession(identificationSession: IdentificationSession) {
         assertThat(identificationSession.id, notNullValue())
-        assertThat(identificationSession.eidSessionId, equalTo(EID_SESSION_ID))
-        assertThat(identificationSession.useidSessionId, equalTo(USEID_SESSION_ID))
+        assertThat(identificationSession.eIdSessionId, equalTo(EID_SESSION_ID))
+        assertThat(identificationSession.useIdSessionId, equalTo(USEID_SESSION_ID))
         assertThat(identificationSession.refreshAddress, equalTo(REFRESH_ADDRESS))
         assertThat(identificationSession.requestDataGroups, hasItems(DG1))
         assertThat(identificationSession.requestDataGroups, hasItems(DG2))
