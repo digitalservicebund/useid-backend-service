@@ -50,10 +50,8 @@ class TransactionInfoService(
                     .doOnNext { additionalInfo -> transactionInfoDto.additionalInfo = additionalInfo }
                     .then(Mono.just(transactionInfoDto))
             }
-            .doOnNext {
-                log.info("Created new transaction info. useidSessionId=${it.useidSessionId}")
-            }.doOnError {
-                log.error("Failed to create transaction info: ${it.message}. useidSessionId=$useidSessionId", it)
+            .doOnError {
+                log.error("Could not find transaction info: ${it.message}. useidSessionId=$useidSessionId", it)
             }
     }
 }
