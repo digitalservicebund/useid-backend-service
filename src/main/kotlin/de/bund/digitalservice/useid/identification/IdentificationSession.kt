@@ -11,7 +11,7 @@ import java.util.UUID
 @Table("identification_session")
 data class IdentificationSession(
     @Column("useid_session_id")
-    val useidSessionId: UUID,
+    val useIdSessionId: UUID,
 
     @Column("refresh_address")
     val refreshAddress: String,
@@ -23,7 +23,7 @@ data class IdentificationSession(
     var id: Long? = null
 
     @Column("eid_session_id")
-    var eidSessionId: UUID? = null
+    var eIdSessionId: UUID? = null
 
     @Column("created_at")
     @CreatedDate

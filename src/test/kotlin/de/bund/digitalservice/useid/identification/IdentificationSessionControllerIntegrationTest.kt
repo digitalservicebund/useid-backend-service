@@ -64,12 +64,12 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
         val session = retrieveIdentificationSession(useIdSessionId)!!
-        assertThat(session.eidSessionId, nullValue())
-        assertThat(session.useidSessionId, notNullValue())
+        assertThat(session.eIdSessionId, nullValue())
+        assertThat(session.useIdSessionId, notNullValue())
         assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useidSessionId}/tc-token"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIdSessionId}/tc-token"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
@@ -96,9 +96,9 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectHeader().contentType(MediaType.APPLICATION_XML)
             .expectBody().xpath("TCTokenType").exists()
 
-        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        val session = retrieveIdentificationSession(useIDSessionId)!!
-        assertEquals(eIdSessionId, session.eidSessionId)
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        val session = retrieveIdentificationSession(useIdSessionId)!!
+        assertEquals(eIdSessionId, session.eIdSessionId)
     }
 
     @Test
@@ -166,8 +166,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
                 assertEquals(it["givenNames"], personalData.givenNames)
             }
 
-        val useIDSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        await().until { retrieveIdentificationSession(useIDSessionId) == null }
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        await().until { retrieveIdentificationSession(useIdSessionId) == null }
     }
 
     @Test
@@ -210,8 +210,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
-    private fun retrieveIdentificationSession(useIDSessionId: UUID): IdentificationSession? {
-        return identificationSessionService.findByUseIDSessionId(useIDSessionId).block()
+    private fun retrieveIdentificationSession(useIdSessionId: UUID): IdentificationSession? {
+        return identificationSessionService.findByUseIdSessionId(useIdSessionId).block()
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {

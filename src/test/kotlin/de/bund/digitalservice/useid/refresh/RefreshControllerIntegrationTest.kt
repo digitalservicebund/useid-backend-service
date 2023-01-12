@@ -33,7 +33,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     }
 
     @Test
-    fun `refresh endpoint redirects client to correct refresh address when eidSessionId is valid`() {
+    fun `refresh endpoint redirects client to correct refresh address when eIdSessionId is valid`() {
         var tcTokenURL = ""
         val eIdSessionId = UUID.randomUUID()
         val mockTCToken = mockk<TCTokenType>()
@@ -66,7 +66,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     }
 
     @Test
-    fun `refresh endpoint responds with status code 404 when eidSessionId is invalid`() {
+    fun `refresh endpoint responds with status code 404 when eIdSessionId is invalid`() {
         webTestClient
             .get()
             .uri("/refresh?sessionId=${UUID.randomUUID()}")

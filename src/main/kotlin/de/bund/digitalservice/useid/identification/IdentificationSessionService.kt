@@ -13,37 +13,37 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     fun create(refreshAddress: String, requestDataGroups: List<String>): Mono<IdentificationSession> {
         return identificationSessionRepository.save(IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups))
             .doOnNext {
-                log.info("Created new identification session. useIDSessionId=${it.useidSessionId}")
+                log.info("Created new identification session. useIdSessionId=${it.useIdSessionId}")
             }.doOnError {
                 log.error("Failed to create identification session: ${it.message}")
             }
     }
 
-    fun findByEIDSessionId(eIDSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findByEidSessionId(eIDSessionId)
+    fun findByEIDSessionId(eIdSessionId: UUID): Mono<IdentificationSession> {
+        return identificationSessionRepository.findByEIdSessionId(eIdSessionId)
     }
 
-    fun findByUseIDSessionId(useIDSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findByUseidSessionId(useIDSessionId)
+    fun findByUseIdSessionId(useIdSessionId: UUID): Mono<IdentificationSession> {
+        return identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
     }
 
-    fun updateEIDSessionId(useIDSessionId: UUID, eIDSessionId: UUID): Mono<IdentificationSession> {
-        return findByUseIDSessionId(useIDSessionId).flatMap {
-            it.eidSessionId = eIDSessionId
+    fun updateEIDSessionId(useIdSessionId: UUID, eIdSessionId: UUID): Mono<IdentificationSession> {
+        return findByUseIdSessionId(useIdSessionId).flatMap {
+            it.eIdSessionId = eIdSessionId
             identificationSessionRepository.save(it)
         }.doOnNext {
-            log.info("Updated eIDSessionId of identification session. useIDSessionId=${it.useidSessionId}")
+            log.info("Updated eIdSessionId of identification session. useIdSessionId=${it.useIdSessionId}")
         }.doOnError {
-            log.error("Failed to update identification session. useIDSessionId=$useIDSessionId", it)
+            log.error("Failed to update identification session. useIdSessionId=$useIdSessionId", it)
         }
     }
 
     fun delete(identificationSession: IdentificationSession): Mono<Void> {
         return identificationSessionRepository.delete(identificationSession)
             .doOnNext {
-                log.info("Deleted identification session. useIDSessionId=${identificationSession.useidSessionId}")
+                log.info("Deleted identification session. useIdSessionId=${identificationSession.useIdSessionId}")
             }.doOnError {
-                log.error("Failed to delete identification session. useIDSessionId=${identificationSession.useidSessionId}", it)
+                log.error("Failed to delete identification session. useIdSessionId=${identificationSession.useIdSessionId}", it)
             }
     }
 }

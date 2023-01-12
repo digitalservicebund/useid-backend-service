@@ -32,8 +32,8 @@ internal class IdentificationSessionRetentionSchedulerIntegrationTest : Postgres
     @Test
     fun `Cleanup successfully removes expired identification sessions from database`() {
         // Given
-        val useidSessionId = UUID.randomUUID()
-        val identificationSession = IdentificationSession(useidSessionId, "some-refresh-address", emptyList())
+        val useIdSessionId = UUID.randomUUID()
+        val identificationSession = IdentificationSession(useIdSessionId, "some-refresh-address", emptyList())
         identificationSession.createdAt = now().minusDays(RETENTION_IN_DAYS).minusDays(1)
         template.insert(identificationSession).then().`as`(StepVerifier::create).verifyComplete()
 
@@ -41,7 +41,7 @@ internal class IdentificationSessionRetentionSchedulerIntegrationTest : Postgres
         scheduler.cleanupExpiredIdentificationSessionFromDatabase()
 
         // Then
-        repository.findByUseidSessionId(useidSessionId)
+        repository.findByUseIdSessionId(useIdSessionId)
             .`as`(StepVerifier::create)
             .expectNextCount(0)
             .verifyComplete()

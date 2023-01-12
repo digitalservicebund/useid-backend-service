@@ -52,7 +52,7 @@ class IdentificationSessionsController(
         return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
             .map {
                 val tcTokenUrl =
-                    "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useidSessionId}/$TCTOKEN_PATH_SUFFIX"
+                    "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -64,11 +64,11 @@ class IdentificationSessionsController(
     }
 
     @GetMapping(
-        path = ["/{useIDSessionId}/$TCTOKEN_PATH_SUFFIX"],
+        path = ["/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
-    fun getTCToken(@PathVariable useIDSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
-        return identificationSessionService.findByUseIDSessionId(useIDSessionId)
+    fun getTCToken(@PathVariable useIdSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
+        return identificationSessionService.findByUseIdSessionId(useIdSessionId)
             .flatMap {
                 /*
                     Wrapping blocking call to the SDK into Mono.fromCallable
@@ -80,11 +80,11 @@ class IdentificationSessionsController(
                 }.subscribeOn(Schedulers.boundedElastic())
             }
             .zipWhen {
-                val eIDSessionId = UriComponentsBuilder
+                val eIdSessionId = UriComponentsBuilder
                     .fromHttpUrl(it.refreshAddress)
                     .encode().build()
                     .queryParams.getFirst("sessionId")
-                identificationSessionService.updateEIDSessionId(useIDSessionId, UUID.fromString(eIDSessionId))
+                identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
             }
             .map {
                 tcTokenCallsSuccessfulCounter.increment()
@@ -96,15 +96,15 @@ class IdentificationSessionsController(
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
                 tcTokenCallsWithErrorsCounter.increment()
-                log.error("Failed to get tc token for identification session. useidSessionId=$useIDSessionId", exception)
+                log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", exception)
             }
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
     }
 
-    @GetMapping("/{eIDSessionId}")
-    fun getIdentity(@PathVariable eIDSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
+    @GetMapping("/{eIdSessionId}")
+    fun getIdentity(@PathVariable eIdSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
         /*
             Wrapping blocking call to the SDK into Mono.fromCallable
             https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
@@ -112,9 +112,9 @@ class IdentificationSessionsController(
         val apiKeyDetails = authentication.details as ApiKeyDetails
         val getIdentityResult = Mono.fromCallable {
             val eidService = EidService(eidServiceConfig)
-            eidService.getEidInformation(eIDSessionId.toString())
+            eidService.getEidInformation(eIdSessionId.toString())
         }
-        return identificationSessionService.findByEIDSessionId(eIDSessionId)
+        return identificationSessionService.findByEIDSessionId(eIdSessionId)
             .doOnNext {
                 if (apiKeyDetails.refreshAddress != it.refreshAddress) {
                     throw SessionAuthenticationException("API key differs from the API key used to start the identification session.")
