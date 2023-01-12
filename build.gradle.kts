@@ -124,7 +124,7 @@ dependencies {
 
     /** Scheduling **/
     implementation("net.javacrumbs.shedlock:shedlock-spring:5.0.1")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-r2dbc:4.42.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-r2dbc:5.1.0")
 }
 
 tasks {
