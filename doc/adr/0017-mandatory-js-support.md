@@ -1,4 +1,4 @@
-# 17. Mandatory JavaScript Support
+# 17. Integration through JavaScript files
 
 Date: 2023-01-11
 
@@ -8,9 +8,21 @@ Accepted
 
 ## Context
 
-For eServices to embed our widget logic correctly, they need to execute a JavaScript file. In terms of scaling and availability of our widget,
-we need a decision on whether we can ship the widget without having the need for enabled JavaScript on the client-side. There are ways in which we
-can provide our widget without JavaScript (e.g. NoScript), but they would require us to alter our server side logic as well as the storage of session-information like the TCTokenURL.
+All eServices should be able to integrate our service seamlessly. There are several ways for this.
+Most of the options come down to the decision between using JavaScript or not using JavaScript.
+
+Pros of having a solution without javascript:
+
+- Smaller attack surface
+- Easier to debug and test, because we could test against static html and wouldn't need a js runtime
+- Potentially support for more browsers
+
+Cons of having a solution without javascript:
+
+- We'd need to store more information on the server
+- No event tracking
+
+Our overarching goal
 
 ## Decision
 
