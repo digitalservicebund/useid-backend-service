@@ -38,10 +38,12 @@ dependencies {
         because("CVE-2021-43797, not using Tomcat")
     }
     // => CVE-2021-37136, CVE-2021-37137, CVE-2021-43797
-    implementation("io.netty:netty-all:4.1.87.Final") {
+    implementation("io.netty:netty-all:4.1.86.Final") {
         exclude(group = "io.netty", module = "netty-tcnative-classes")
         because("CVE-2021-43797, not using Tomcat")
     }
+    // => CVE-2022-41881
+    implementation("io.netty:netty-codec-haproxy:4.1.86.Final")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     /** Security **/
