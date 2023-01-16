@@ -32,7 +32,7 @@ h2 {
     margin-top: -24px;
 }
 .app-stores {
-    background-color: #dce8ef;
+    background-color: #e0f1fb;
     border-radius: 10px;
     color: #0B0C0C;
     padding: 12px;
@@ -168,6 +168,19 @@ h2 {
 .identify:focus-visible {
     -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
     box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
+}
+.identify-variation1 {
+    margin-top: 10px;
+    background-color: #e0f1fb;
+    color: #0b0c0c;
+}
+.identify-variation1:hover {
+    background-color: #dce8ef;
+    color: #0b0c0c;
+}
+.identify-variation1:active {
+    background-color: #336f91;
+    color: #fff;
 }
 .identify h2 {
     margin: 0;
