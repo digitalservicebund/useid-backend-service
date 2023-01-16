@@ -1,0 +1,95 @@
+<div
+  layout:decorate="~{layout/base}"
+  layout:fragment="content"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+  <div class="container" th:classappend="${additionalClass}">
+    <div class="widget">
+      <div
+        th:if="${isFallback}"
+        th:insert="fragments/error :: notification(text=#{widget.fallback.error.text})"
+      ></div>
+      <div class="cards">
+        <img
+          class="img-responsive"
+          src="images/id-1x.png"
+          th:alt="#{widget.headline-image-alt}"
+          srcset="images/id-2x.png 2x"
+        />
+        <img
+          class="app-icon"
+          src="images/app-icon.svg"
+          th:alt="#{widget.app-icon-image-alt}"
+        />
+      </div>
+      <div class="headline">
+        <h1>BundesIdent</h1>
+      </div>
+      <div class="app-stores" style="background-color: #e0f1fb">
+        <div class="connector-inside" style="display: none"></div>
+        <div class="app-stores__wrapper">
+          <img
+            class="icon-list"
+            src="images/list-1.svg"
+            th:alt="#{widget.step-one-alt}"
+          />
+          <div class="app-stores__content">
+            <h2>Installieren</h2>
+            <div class="app-stores__content__images">
+              <a th:href="#{widget.play-store-url}" target="_blank">
+                <img
+                  class="play-store"
+                  loading="lazy"
+                  src="images/play-store.svg"
+                  th:alt="#{widget.play-store-alt}"
+                />
+              </a>
+              <a th:href="#{widget.app-store-url}" target="_blank">
+                <img
+                  class="app-store"
+                  loading="lazy"
+                  src="images/app-store.svg"
+                  th:alt="#{widget.app-store-alt}"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="connector-outside" style="background-color: #fff"></div>
+      <a
+        id="eid-client-button"
+        th:href="${eidClientURL}"
+        target="_blank"
+        class="identify identify-variation1"
+        th:title="#{widget.identification-button-title}"
+      >
+        <img
+          class="icon-list"
+          src="images/list-2-inverted.svg"
+          th:alt="#{widget.step-two-alt}"
+        />
+        <h2>Ausweisen</h2>
+      </a>
+      <div class="data-privacy-wrapper">
+        <a
+          th:href="#{widget.data-privacy-url}"
+          target="_blank"
+          class="data-privacy-button"
+          th:text="#{widget.data-privacy-button} + ' &#8599;'"
+        >
+        </a>
+      </div>
+    </div>
+    <script
+      type="text/javascript"
+      src="js/attachStartIdentButtonOnClick.js"
+    ></script>
+    <script
+      th:if="${isWidget}"
+      type="text/javascript"
+      src="js/setEIDClientURL.js"
+    ></script>
+  </div>
+</div>

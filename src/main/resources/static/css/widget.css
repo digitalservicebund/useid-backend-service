@@ -169,6 +169,18 @@ h2 {
     -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
     box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
 }
+.identify-variation1 {
+    color: #0b0c0c;
+    background-color: #e0f1fb;
+}
+.identify-variation1:hover {
+    background-color: #dce8ef;
+    color: #0b0c0c;
+}
+.identify-variation1:active {
+    background-color: #336f91;
+    color: #fff;
+}
 .identify h2 {
     margin: 0;
 }
