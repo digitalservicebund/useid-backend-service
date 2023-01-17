@@ -17,7 +17,7 @@ Due to the lack of team experience with the framework and paradigm, a significan
 The team has to navigate a complex project context:
 
 - Complex political stakeholder landscape → short planning horizons, frequently shifting vision and goals.
-- Developers need to do participate in frequent product discovery work, incl. understanding where we fit into the existing landscape of technology & service providers.
+- Developers need to participate in frequent product discovery work, incl. understanding where we fit into the existing landscape of technology & service providers.
 - Direct engagement of developers with sophisticated technical stakeholders: BSI, CCC, D-Trust, Adesso, etc.
 - Complex landscape of domain-specific technical requirements: eID Technische Richtlinien, EIDAS, NKB, etc.
 - Limited team experience with the hosting platform: ArgoCD, Terraform, Kubernetes.
