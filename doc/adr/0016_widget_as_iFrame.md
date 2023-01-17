@@ -22,7 +22,6 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - difficult to integrate into legacy frontend stacks (likely to face in our governmental context)
      - high maintenance / development effort from our side
      - might over-complex a simple case
-       <br><br>
 
 2. bundle code into an iFrame and ship through a JavaScript <script> tag
 
@@ -38,7 +37,6 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - not responsive by design
      - customers could have a no-iFrame-policy
      - iFrame and main page are using the same connection pool, might block the onLoad event.
-       <br><br>
 
 3. prepare HTML and CSS files and ship through a JavaScript <script> tag
 
@@ -50,7 +48,6 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - main page's CSS will apply for the widget, customers will need to take styling and layout in their own hands
      - users of multiple eServices might see different layouts at each eService
      - testing is difficult, because every eService has different HTML trees and a certain set of CSS rules
-       <br><br>
 
 ## Decision
 
