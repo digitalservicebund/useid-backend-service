@@ -22,6 +22,8 @@ class SecurityConfig(
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http.authorizeExchange()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
+            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
+            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
