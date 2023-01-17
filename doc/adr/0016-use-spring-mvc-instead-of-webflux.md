@@ -60,7 +60,7 @@ Scalability: The project is still in an early MVP phase, where iteration speed i
 
 Fitness for microservice architectures: The project does not use nor plan to use a microservices architecture.
 
-More readable code: The way the team has written code, it has not ended up more readable.
+More readable code: The way the team has written code has not ended up in more readable code.
 
 ### Alternatives considered
 
