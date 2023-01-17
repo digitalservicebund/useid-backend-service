@@ -30,7 +30,7 @@ class TimeBasedTokenService(private val mockDatasource: TBTMockDatasource, priva
 
     fun isTokenValid(useIdSessionId: UUID, tokenId: UUID): Mono<Boolean> {
         return mockDatasource.findByUseIdSessionIdAndTokenId(useIdSessionId, tokenId)
-            .mapNotNull { it?.let { it.createdAt != null && it.createdAt!!.plusSeconds(60) > LocalDateTime.now() } }
+            .mapNotNull { it.createdAt?.let { it.plusSeconds(60) > LocalDateTime.now() } }
             .defaultIfEmpty(false)
     }
 }

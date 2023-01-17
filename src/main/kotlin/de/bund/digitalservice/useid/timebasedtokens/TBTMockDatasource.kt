@@ -22,7 +22,7 @@ class TBTMockDatasource {
         return Mono.empty()
     }
 
-    fun findByUseIdSessionIdAndTokenId(useIdSessionId: UUID, tokenId: UUID): Mono<TimeBasedToken?> {
+    fun findByUseIdSessionIdAndTokenId(useIdSessionId: UUID, tokenId: UUID): Mono<TimeBasedToken> {
         return Mono.justOrEmpty(timeBasedTokens.find { it.useIdSessionId == useIdSessionId && it.tokenId == tokenId })
     }
 }
