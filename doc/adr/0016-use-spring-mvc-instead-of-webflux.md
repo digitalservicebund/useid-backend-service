@@ -12,9 +12,10 @@ The team continues to struggle with getting comfortable & confident with WebFlux
 
 ### Cognitive (over-)load
 
-Due to the lack of team experience with the framework and paradigm, a significant learning effort is required. Learning reactive programming and the WebFlux APIs contributes to team already high cognitive load.
+Due to the lack of team experience with the framework and paradigm, a significant learning effort is required. Learning reactive programming and the WebFlux APIs increases an already high team cognitive load.
 
 The team has to navigate a complex project context:
+
 - Complex political stakeholder landscape → short planning horizons, frequently shifting vision and goals.
 - Developers need to do participate in frequent product discovery work, incl. understanding where we fit into the existing landscape of technology & service providers.
 - Direct engagement of developers with sophisticated technical stakeholders: BSI, CCC, D-Trust, Adesso, etc.
@@ -23,6 +24,7 @@ The team has to navigate a complex project context:
 - Limited team experience with the application stack: Kotlin, Spring, WebFlux.
 
 High load means:
+
 - little time for the team to learn their stack together leads to…
 - low levels of familiarity & confidence, which leads to…
 - perceived productivity issues,
@@ -34,6 +36,7 @@ Many aspects of this are outside the team’s control, but the application stack
 ### How a switch to Spring MVC can help
 
 WebFlux and reactive programming are perceived by the team to…
+
 - …add a layer of complexity to an already unfamiliar stack.
   - Developers need to learn and juggle Spring Framework (mostly imperative) and WebFlux (reactive).
   - Documentation, tutorials, and examples are abundant for Spring MVC, but less so for WebFlux.
@@ -48,7 +51,7 @@ Issues the team encountered which would not warrant a switch on their own:
 
 - Lack of library support.
 - Limited library choice → having to choose less popular libraries with fewer tutorials and less documentation.
-- eID-specific libraries (e.g. Autent SDK, probably also Panstar SDK) are not reactive.
+- eID-specific libraries are not reactive.
 - The project seeks open-source contributions. Spring MVC remains the more common framework, which makes contributing more accessible.
 
 ### WebFlux's benefits do not match project needs
@@ -62,7 +65,7 @@ More readable code: The way the team has written code, it has not ended up more 
 ### Alternatives considered
 
 - Switch to an entirely different application stack that the team already has experience with, such as NodeJS/Express. -> Rejected as too radical.
-- Mix paradigms and use both Spring MVC and WebFlux according to their strengths. -> Rejected because it increases the learning space even further.
+- Mix paradigms and use both Spring MVC and WebFlux according to their strengths. -> Rejected because it is not an intended design by Spring and increases complexity and learning space even further.
 
 ## Decision
 
