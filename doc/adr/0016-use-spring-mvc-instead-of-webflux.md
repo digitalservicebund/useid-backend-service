@@ -20,7 +20,7 @@ The team has to navigate a complex project context:
 - Developers need to do participate in frequent product discovery work, incl. understanding where we fit into the existing landscape of technology & service providers.
 - Direct engagement of developers with sophisticated technical stakeholders: BSI, CCC, D-Trust, Adesso, etc.
 - Complex landscape of domain-specific technical requirements: eID Technische Richtlinien, EIDAS, NKB, etc.
-- Limited team experience with hosting platform: ArgoCD, Terraform, Kubernetes.
+- Limited team experience with the hosting platform: ArgoCD, Terraform, Kubernetes.
 - Limited team experience with the application stack: Kotlin, Spring, WebFlux.
 
 High load means:
