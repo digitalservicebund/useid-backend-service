@@ -2,6 +2,9 @@ package de.bund.digitalservice.useid.refresh
 
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.micrometer.core.annotation.Timed
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -28,6 +31,9 @@ class RefreshController(private val identificationSessionService: Identification
     private val log = KotlinLogging.logger {}
 
     @GetMapping
+    @Operation(summary = "Redirect user to eService (after successful identification)")
+    @ApiResponse(responseCode = "303", content = [Content()])
+    @ApiResponse(responseCode = "404", description = "There is no corresponding session found for the provided eIdSessionId", content = [Content()])
     fun redirectToEServiceRefreshAddress(
         @RequestParam("sessionId") eIdSessionId: UUID,
         @RequestParam requestQueryParams: Map<String, String>

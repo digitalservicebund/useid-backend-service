@@ -10,6 +10,9 @@ import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -45,6 +48,7 @@ class IdentificationSessionsController(
     private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Create session as eService")
     fun createSession(
         authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
@@ -67,6 +71,9 @@ class IdentificationSessionsController(
         path = ["/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
         produces = [MediaType.APPLICATION_XML_VALUE]
     )
+    @Operation(summary = "Get TC token for this session")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "404", description = "No corresponding session found for that useIdSessionId", content = [Content()])
     fun getTCToken(@PathVariable useIdSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
         return identificationSessionService.findByUseIdSessionId(useIdSessionId)
             .flatMap {
@@ -103,7 +110,11 @@ class IdentificationSessionsController(
             )
     }
 
-    @GetMapping("/{eIdSessionId}")
+    @GetMapping("/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Fetch data as eService after identification was successful")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "404", description = "No corresponding session found for that eIdSessionId", content = [Content()])
+    @ApiResponse(responseCode = "401", description = "Authentication failed (missing or wrong api key)", content = [Content()])
     fun getIdentity(@PathVariable eIdSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
         /*
             Wrapping blocking call to the SDK into Mono.fromCallable

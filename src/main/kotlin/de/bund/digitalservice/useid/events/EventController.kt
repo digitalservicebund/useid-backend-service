@@ -1,6 +1,9 @@
 package de.bund.digitalservice.useid.events
 
 import io.micrometer.core.annotation.Timed
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -50,6 +53,9 @@ class EventController(eventService: EventService) {
 
     @PostMapping("/events/{widgetSessionId}/success")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "Push SSE to corresponding widget having an success value")
+    @ApiResponse(responseCode = "202", content = [Content()])
+    @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
     fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing>> {
         log.info { "Received success event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
@@ -57,6 +63,9 @@ class EventController(eventService: EventService) {
 
     @PostMapping("/events/{widgetSessionId}/error")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(summary = "Push SSE to corresponding widget having an error value")
+    @ApiResponse(responseCode = "202", content = [Content()])
+    @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
     fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): Mono<ResponseEntity<Nothing>> {
         log.info { "Received event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
@@ -67,6 +76,8 @@ class EventController(eventService: EventService) {
      */
     @CrossOrigin
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @Operation(summary = "Subscribe for receiving SSE for the provided widgetSessionId")
+    @ApiResponse(responseCode = "200", content = [Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)])
     fun subscribe(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>> {
         return Flux.create { sink: FluxSink<ServerSentEvent<Any>> ->
             eventService.subscribeConsumer(widgetSessionId) { event: ServerSentEvent<Any> -> sink.next(event) }
