@@ -33,7 +33,7 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - JavaScript's communication to main page is possible
    - costs
      - customers have to provide width and height values. Otherwise, the browser is rendering nothing
-     - clickjacking with iframes is possible, though can be reduced with X-FRAME-OPTIONS
+     - clickjacking with iframes is possible, though can be reduced with Content-Security-Policy (in our case frame-ancestor)
      - not responsive by design
      - customers could have a no-iFrame-policy
      - iFrame and main page are using the same connection pool, might block the onLoad event.
