@@ -6,11 +6,11 @@ fileignoreconfig:
   - filename: build.gradle.kts
     checksum: 57f8910c7014228e5f6edaaea0f0c916f8b8438530840980183e74d754f9fa52
   - filename: .github/workflows/pipeline.yml
-    checksum: f242a73bc358484ef9386d3b6bd56fdb6c1f34862fd9f889f1bd82a4db5b5f15
   - filename: .github/workflows/secrets-check.yml
     checksum: 335f81e88f030498a8c4480c0be3fccc7347ae9ce2808d8580f656b80d982774
+    checksum: 9b4f9ca465f4a14ee5bb82d0e3b89d0719dd1385183827bb81bccab22211a977
   - filename: .github/workflows/scan.yml
-    checksum: d6e1cf4ed69b40c90c9dfe76d520033b367f6e64144dd7e266d88240cfd0e557
+    checksum: 40a11dac519b30a34c68f1f0c74182f694c531cbe59da5a443492e5d31489692
   - filename: "*.woff*"
     checksum: 06af891e663221f6014dff8f7b49cfa0a578680f44ba1ec2dd3b44bd8d3b1f05
     ignore_detectors: [filecontent]
