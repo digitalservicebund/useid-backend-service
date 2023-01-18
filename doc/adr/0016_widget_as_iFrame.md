@@ -36,7 +36,8 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - clickjacking with iframes is possible, though can be reduced with Content-Security-Policy (in our case frame-ancestor)
      - not responsive by design
      - customers could have a no-iFrame-policy
-     - iFrame and main page are using the same connection pool, might block the onLoad event.
+     - customers with front-end frameworks like react or vue might face extra work due to the script interfering with the virtual DOM
+     - iFrame and main page are using the same connection pool, might block the onLoad event
 
 3. prepare HTML and CSS files and ship through a JavaScript <script> tag
 
