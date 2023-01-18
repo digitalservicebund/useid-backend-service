@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid.config
 import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
@@ -24,6 +25,7 @@ class SecurityConfig(
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
+            .pathMatchers(HttpMethod.GET, "$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info").permitAll()
             .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
             .anyExchange().permitAll()
             .and().csrf().disable()
