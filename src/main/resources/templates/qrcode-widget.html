@@ -118,6 +118,7 @@
         useIdSessionId = decodeURIComponent(tcToken).match(
           /sessions\/([a-f\d\-]*)\/tc-token/i
         )[1];
+        console.log("useIdSessionId: " + useIdSessionId);
         qrCode = new QRCode(document.getElementById("qrcode"), {
           colorDark: "#004b76",
         });
