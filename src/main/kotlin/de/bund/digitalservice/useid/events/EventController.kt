@@ -53,7 +53,7 @@ class EventController(eventService: EventService) {
 
     @PostMapping("/events/{widgetSessionId}/success")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(summary = "Push SSE to corresponding widget having an success value")
+    @Operation(summary = "Push SSE to corresponding widget having a success value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
     fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing>> {

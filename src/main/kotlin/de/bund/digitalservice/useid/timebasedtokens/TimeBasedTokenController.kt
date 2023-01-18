@@ -25,7 +25,7 @@ import java.util.UUID
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class TimeBasedTokenController(private val timeBasedTokenService: TimeBasedTokenService) {
     @PostMapping("/{useIdSessionId}/tokens", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Create (and return) time-based token for this session")
+    @Operation(summary = "Create time-based token for this session")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Invalid useIdSessionId (session not found)", content = [Content()])
     fun getTimeBasedToken(@PathVariable useIdSessionId: UUID): Mono<ResponseEntity<TimeBasedToken>> {

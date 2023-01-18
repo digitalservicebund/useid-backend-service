@@ -31,7 +31,7 @@ class RefreshController(private val identificationSessionService: Identification
     private val log = KotlinLogging.logger {}
 
     @GetMapping
-    @Operation(summary = "Redirect user to eService (after successful identification)")
+    @Operation(summary = "Redirect user to eService (after identification)")
     @ApiResponse(responseCode = "303", content = [Content()])
     @ApiResponse(responseCode = "404", description = "There is no corresponding session found for the provided eIdSessionId", content = [Content()])
     fun redirectToEServiceRefreshAddress(
