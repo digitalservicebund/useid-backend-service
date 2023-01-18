@@ -1,4 +1,4 @@
-# 17. Integration through JavaScript files
+# 17. Mandatory client-side JavaScript support
 
 Date: 2023-01-11
 
@@ -8,26 +8,40 @@ Accepted
 
 ## Context
 
-All eServices should be able to integrate our service seamlessly. There are several ways for this.
-Most of the options come down to the decision between using JavaScript or not using JavaScript.
+All eServices should be able to integrate our service seamlessly.
+ADR 0016 determines this integration by specifying the usage of a JavaScript file that creates an iFrame for displaying the widget.
+However, the widget needs to execute / fetch logic, everytime it is loaded, to work correctly.
+We need to decide whether we want to have a server-side or client-side approach to prepare the widget.
+Most of the reasons and implications come down to the decision between using client-side JavaScript or not, because a client side approach would require the user to have JavaScript enabled.
 
-Pros of having a solution without javascript:
+Client-side approach (JavaScript enabled):
 
-- Smaller attack surface
-- Easier to debug and test, because we could test against static html and wouldn't need a js runtime
-- Potentially support for more browsers
+- benefits:
+  - client side event tracking is possible
+  - frugal use of data on the server (no need to store the constructed TCTokenURL on the server)
+  - additional room for client-side adjustments / use-cases
+- costs:
+  - potentially fewer users because we cannot enforce to enable JavaScript
+  - setting up a test environment requires more effort
+  - potential security vectors
 
-Cons of having a solution without javascript:
+Server-side approach (JavaScript disabled):
 
-- We'd need to store more information on the server
-- No event tracking
-
-Our overarching goal
+- benefits:
+  - smaller attack surface
+  - easier to debug and test, because we could test against static html and wouldn't need a JavaScript runtime
+  - potentially more users because we do not rely on enabled JavaScript
+- costs:
+  - storage of unnecessary data on the server
+  - difficult client-side event tracking
+  - might limit our client-side widget use cases in the future
 
 ## Decision
 
-We don't want the TCTokenURL to be stored within our server. The TCTokenURL is therefore part of the widget and no further calls to our backend are necessary in order to start the eID-flow at the eService.
+Our decision is driven by two major factors: We want to avoid storing unnecessary data on the server, and we want to properly track the client-side user-journey.
+Especially the improvements based on the client-side user tracking are a key feature of our product. Therefore, we choose to rely on client-side JavaScript and vote against a server-side approach.
 
 ## Consequences
 
-Services that want to integrate with our solution need to support JavaScript and clients that are browsing with disabled JavaScript will not be able to use our solution.
+We might face fewer user numbers and setting up a testing infrastructure will come with more effort.
+However, we will be able to reason our product and user-experience decision based on client-side data.
