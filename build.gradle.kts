@@ -226,7 +226,8 @@ tasks {
             property("sonar.host.url", "https://sonarcloud.io")
             property(
                 "sonar.coverage.exclusions",
-                "**/config/**"
+                // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
+                "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/events/**/*"
             )
         }
     }
