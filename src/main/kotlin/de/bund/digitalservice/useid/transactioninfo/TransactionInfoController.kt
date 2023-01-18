@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.transactioninfo
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -22,8 +21,6 @@ internal const val TRANSACTION_INFO_SUFFIX = "transaction-info"
 class TransactionInfoController(
     private val transactionInfoService: TransactionInfoService
 ) {
-    private val log = KotlinLogging.logger {}
-
     @PostMapping(
         path = ["/api/v1/identification/sessions/{useIdSessionId}/$TRANSACTION_INFO_SUFFIX"],
         produces = [MediaType.APPLICATION_JSON_VALUE]
