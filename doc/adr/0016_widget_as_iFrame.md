@@ -20,7 +20,7 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - highly reliable with expected behaviour within the framework
    - costs
      - difficult to integrate into legacy frontend stacks (likely to face in our governmental context)
-     - high maintenance / development effort from our side
+     - high maintenance / development effort from our side (deal with CSS and javascript namespace interference)
      - might over-complex a simple case
 
 2. bundle code into an iFrame and ship through a JavaScript <script> tag
@@ -37,7 +37,6 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - not responsive by design
      - customers could have a no-iFrame-policy
      - customers with front-end frameworks like react or vue might face extra work due to the script interfering with the virtual DOM
-     - iFrame and main page are using the same connection pool, might block the onLoad event
 
 3. prepare HTML and CSS files and ship through a JavaScript <script> tag
 
@@ -49,6 +48,7 @@ will benefit our customers. To achieve this, there are multiple options. We cons
      - main page's CSS will apply for the widget, customers will need to take styling and layout in their own hands
      - users of multiple eServices might see different layouts at each eService
      - testing is difficult, because every eService has different HTML trees and a certain set of CSS rules
+     - deploying new versions requires additional work (version in path, file name and/or caching headers)
 
 ## Decision
 
