@@ -49,8 +49,7 @@ const widgetContainer =
 })().then((child) => widgetContainer.appendChild(child));
 
 window.addEventListener("message", (e) => {
-  if (e.origin === useIdUrl) {
-    // TODO: Check URL has correct prefix (useIdUrl)
+  if (e.origin === useIdUrl && e.data.type !== "shortCuts") {
     location.href = e.data;
   }
 });

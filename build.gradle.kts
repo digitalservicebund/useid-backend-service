@@ -63,7 +63,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("io.sentry:sentry-spring-boot-starter:6.11.0")
+    implementation("io.sentry:sentry-spring-boot-starter:6.12.1")
 
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -93,7 +93,7 @@ dependencies {
     // => CVE-2020-28052
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
     // => CVE-2022-40153
-    implementation("com.fasterxml.woodstox:woodstox-core:6.4.0")
+    implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
 
     /** Helpers **/
     implementation("com.github.ua-parser:uap-java:1.5.3")

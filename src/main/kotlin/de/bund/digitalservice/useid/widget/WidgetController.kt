@@ -17,7 +17,6 @@ import org.springframework.web.reactive.result.view.Rendering
 import ua_parser.Client
 import ua_parser.Parser
 import java.net.URLEncoder
-import kotlin.random.Random
 import kotlin.text.Charsets.UTF_8
 
 internal const val WIDGET_PAGE = "widget"
@@ -63,15 +62,6 @@ class WidgetController(
             userAgent
         )
 
-        val abtestIsOriginal = Random.nextBoolean()
-        publishMatomoEvent(
-            widgetTracking.categories.abtesting,
-            widgetTracking.actions.abtest,
-            if (abtestIsOriginal) widgetTracking.names.abtestOriginal else widgetTracking.names.abtestVariation1,
-            sessionHash,
-            userAgent
-        )
-
         if (isIncompatibleOSVersion(userAgent)) {
             return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent)
         }
@@ -83,7 +73,7 @@ class WidgetController(
         )
 
         return Rendering
-            .view(if (abtestIsOriginal) WIDGET_PAGE else WIDGET_PAGE + "_variation1")
+            .view(WIDGET_PAGE)
             .model(defaultViewHeaderConfig + widgetViewConfig)
             .status(HttpStatus.OK)
             .build()
