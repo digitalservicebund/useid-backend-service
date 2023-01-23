@@ -7,14 +7,12 @@ class WidgetTracking {
 
     class Categories {
         val widget = "Widget"
-        val abtesting = "abtesting"
     }
 
     class Actions {
         val loaded = "loaded"
         val buttonPressed = "buttonPressed"
         val error = "error"
-        val abtest = "MitigateFallback"
     }
 
     class Names {
@@ -22,8 +20,6 @@ class WidgetTracking {
         val startIdent = "startIdent"
         val incompatible = "unsupportedOS"
         val fallback = "fallback"
-        val abtestOriginal = "original"
-        val abtestVariation1 = "Variation1"
     }
 
     val categories = Categories()
