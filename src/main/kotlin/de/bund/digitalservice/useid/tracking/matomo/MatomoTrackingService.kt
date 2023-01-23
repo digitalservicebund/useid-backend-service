@@ -7,7 +7,9 @@ import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.util.UriUtils
 import reactor.core.publisher.Mono
+import kotlin.text.Charsets.UTF_8
 
 /**
  * Service for sending tracking events to the matomo server.
@@ -29,7 +31,8 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
 
     fun constructEventURL(e: MatomoEvent): String {
         val session = e.sessionId?.let { "&uid=$it" } ?: ""
-        val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}$session"
+        val userAgent = e.userAgent?.let { "&ua=${UriUtils.encode(e.userAgent, UTF_8)}" } ?: ""
+        val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}$session$userAgent"
         log.debug { url }
         return url
     }

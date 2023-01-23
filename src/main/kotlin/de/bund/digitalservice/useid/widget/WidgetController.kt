@@ -4,6 +4,7 @@ import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -36,12 +37,13 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
-            sessionHash
+            sessionHash,
+            userAgent
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
@@ -49,7 +51,7 @@ class WidgetController(
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(
         model: Model,
-        @RequestHeader("User-Agent") userAgent: String,
+        @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String,
         @RequestParam() hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
     ): Rendering {
@@ -57,7 +59,8 @@ class WidgetController(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.widget,
-            sessionHash
+            sessionHash,
+            userAgent
         )
 
         val abtestIsOriginal = Random.nextBoolean()
@@ -65,11 +68,12 @@ class WidgetController(
             widgetTracking.categories.abtesting,
             widgetTracking.actions.abtest,
             if (abtestIsOriginal) widgetTracking.names.abtestOriginal else widgetTracking.names.abtestVariation1,
-            sessionHash
+            sessionHash,
+            userAgent
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return handleRequestWithIncompatibleOSVersion(sessionHash)
+            return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent)
         }
 
         val widgetViewConfig = mapOf(
@@ -86,12 +90,13 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?): Rendering {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
-            sessionHash
+            sessionHash,
+            userAgent
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
@@ -113,8 +118,8 @@ class WidgetController(
             .build()
     }
 
-    private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?) {
-        val matomoEvent = MatomoEvent(this, category, action, name, sessionId)
+    private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?, userAgent: String?) {
+        val matomoEvent = MatomoEvent(this, category, action, name, sessionId, userAgent)
         applicationEventPublisher.publishEvent(matomoEvent)
     }
 
@@ -140,12 +145,13 @@ class WidgetController(
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 
-    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?): Rendering {
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.incompatible,
-            sessionHash
+            sessionHash,
+            userAgent
         )
 
         return Rendering
