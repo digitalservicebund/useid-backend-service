@@ -141,9 +141,9 @@ h2 {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    background-color: #004B76;
+    background-color: #e0f1fb;
     border-radius: 10px;
-    color: white;
+    color: #0b0c0c;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -155,32 +155,20 @@ h2 {
     grid-row-gap: 9px;
     padding: 12px;
     text-decoration: none;
+    margin-top: 10px;
 }
 /*Hover should on top of mouse/tap event, otherwise e.g. active state won't work*/
 .identify:hover {
-    background-color: #336f91;
-    color: white;
+    background-color: #dce8ef;
+    color: #0b0c0c;
 }
 .identify:active {
-    background-color: #b3c9d6;
-    color: #0B0C0C;
+    background-color: #336f91;
+    color: #fff;
 }
 .identify:focus-visible {
     -webkit-box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
     box-shadow: 0 0 0 4px #fff, 0 0 0 8px #004b76;
-}
-.identify-variation1 {
-    margin-top: 10px;
-    background-color: #e0f1fb;
-    color: #0b0c0c;
-}
-.identify-variation1:hover {
-    background-color: #dce8ef;
-    color: #0b0c0c;
-}
-.identify-variation1:active {
-    background-color: #336f91;
-    color: #fff;
 }
 .identify h2 {
     margin: 0;
