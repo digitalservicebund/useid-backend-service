@@ -36,7 +36,7 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String?): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.buttonPressed,
@@ -50,7 +50,7 @@ class WidgetController(
     @GetMapping("/$WIDGET_PAGE")
     fun getWidgetPage(
         model: Model,
-        @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String?,
+        @RequestHeader(HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam() hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
     ): Rendering {
@@ -80,7 +80,7 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT) userAgent: String?): Rendering {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(HttpHeaders.USER_AGENT, required = false) userAgent: String?): Rendering {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
