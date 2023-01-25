@@ -267,6 +267,6 @@ with the name `SLACK_WEBHOOK_URL`, containing a url for [Incoming Webhooks](http
 
 How to access the page:
 
-1. [Production](https://useid.prod.ds4g.net/swagger/docs.html)
+1. [Production](https://eid.digitalservicebund.de/swagger/docs.html)
 2. [Staging](https://useid.dev.ds4g.net/swagger/docs.html)
 3. [Local](http://localhost:8080/swagger/docs.html)
