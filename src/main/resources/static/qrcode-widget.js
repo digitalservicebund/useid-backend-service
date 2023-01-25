@@ -36,10 +36,16 @@ const widgetContainer =
   const iframe = document.createElement("iframe");
   iframe.setAttribute(
     "src",
-    `${useIdUrl}/widget?hostname=${location.host}&hash=${hashString}#tcTokenURL=${tcTokenURL}`
+    `${useIdUrl}/qrcode-widget?hostname=${location.host}&hash=${hashString}#tcTokenURL=${tcTokenURL}`
   );
   iframe.name = "Mit BundesIdent online ausweisen";
   iframe.style.width = "100%";
   iframe.style.height = "100%";
   return iframe;
 })().then((child) => widgetContainer.appendChild(child));
+
+window.addEventListener("message", (e) => {
+  if (e.origin === useIdUrl && e.data.type !== "shortCuts") {
+    location.href = e.data;
+  }
+});
