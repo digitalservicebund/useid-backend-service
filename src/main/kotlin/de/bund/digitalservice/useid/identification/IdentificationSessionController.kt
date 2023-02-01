@@ -47,10 +47,6 @@ class IdentificationSessionsController(
     private val eidServiceConfig: EidServiceConfiguration
 ) {
     private val log = KotlinLogging.logger {}
-    private val tcTokenCallsSuccessfulCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "200")
-    private val tcTokenCallsWithErrorsCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "500")
-    private val getEidInformationCallsSuccessfulCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create session as eService")
@@ -102,7 +98,7 @@ class IdentificationSessionsController(
                 identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
             }
             .map {
-                tcTokenCallsSuccessfulCounter.increment()
+                createCounter("get_tc_token", "200").increment()
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_XML)
@@ -110,7 +106,8 @@ class IdentificationSessionsController(
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
-                tcTokenCallsWithErrorsCounter.increment()
+                createCounter("get_tc_token", "500").increment()
+
                 log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", exception)
             }
             .onErrorReturn(
@@ -142,7 +139,7 @@ class IdentificationSessionsController(
             }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnError { exception ->
-                getEidInformationCallsWithErrorsCounter.increment()
+                createCounter("get_eid_information", "500").increment()
                 log.error("Failed to fetch identity data: ${exception.message}.")
             }
             .doOnNext {
@@ -150,7 +147,7 @@ class IdentificationSessionsController(
                 val result = it.t2.result
                 // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
                 if (result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    getEidInformationCallsSuccessfulCounter.increment()
+                    createCounter("get_eid_information", "200").increment()
                     identificationSessionService.delete(identificationSession)
                         .doOnError { log.error("Failed to delete identification session. id=${identificationSession.id}") }
                         .subscribe()
@@ -170,5 +167,8 @@ class IdentificationSessionsController(
             .onErrorReturn(
                 ResponseEntity.internalServerError().body(null)
             )
+    }
+    protected fun createCounter(method: String, status: String, tenantID: String = "unknown"): Counter {
+        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, "tenant_id", tenantID)
     }
 }
