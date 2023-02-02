@@ -48,6 +48,9 @@ csp:
 features:
   desktop-solution-enabled: true
 
-sentry:
-  environment: staging
-  traces-sample-rate: 1.0
+# Uncomment this section if you would like to validate that
+#the exception will get sent to Sentry.
+#
+#sentry:
+#  environment: staging
+#  traces-sample-rate: 1.0
