@@ -17,6 +17,9 @@ class ApiProperties {
         @NotBlank
         lateinit var keyValue: String
 
+        // @NotBlank
+        // lateinit var tenant: String
+
         @NotBlank
         lateinit var refreshAddress: String
 
