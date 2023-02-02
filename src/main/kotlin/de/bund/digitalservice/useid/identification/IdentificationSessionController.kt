@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -54,7 +55,8 @@ class IdentificationSessionsController(
     @ApiResponse(responseCode = "401", description = "Authentication failed (missing or wrong api key)", content = [Content()])
     @SecurityRequirement(name = "apiKey")
     fun createSession(
-        authentication: Authentication
+        authentication: Authentication,
+        @RequestAttribute tenantId: String
     ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
         return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)

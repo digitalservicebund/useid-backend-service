@@ -36,6 +36,10 @@ class SecurityConfig(
                 SecurityWebFiltersOrder.REACTOR_CONTEXT
             )
             .addFilterAfter(
+                TenantIdFilter(),
+                SecurityWebFiltersOrder.LAST
+            )
+            .addFilterAfter(
                 SecurityHeadersFilter(contentSecurityPolicyProperties),
                 SecurityWebFiltersOrder.LAST
             )
