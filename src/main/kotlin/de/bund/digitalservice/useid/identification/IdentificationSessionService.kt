@@ -36,11 +36,8 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     }
 
     fun delete(identificationSession: IdentificationSession): Mono<Void> {
-        return identificationSessionRepository.delete(identificationSession)
-            .doOnNext {
-                log.info("Deleted identification session. useIdSessionId=${identificationSession.useIdSessionId}")
-            }.doOnError {
-                log.error("Failed to delete identification session. useIdSessionId=${identificationSession.useIdSessionId}", it)
-            }
+        identificationSessionRepository.delete(identificationSession)
+        log.info("Deleted identification session. useIdSessionId=${identificationSession.useIdSessionId}")
+        return Mono.empty()
     }
 }
