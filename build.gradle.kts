@@ -57,6 +57,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
     implementation("org.flywaydb:flyway-core:9.11.0")
+    implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
 
     /** Monitoring **/
     implementation("org.springframework.boot:spring-boot-starter-actuator")

@@ -8,7 +8,6 @@ import java.util.UUID
 interface IdentificationSessionRepository : JpaRepository<IdentificationSession, UUID> {
     fun findById(id: Long): IdentificationSession?
 
-    // @Query("SELECT f FROM Foo f WHERE LOWER(f.name) = LOWER(:name)")
     @Query("SELECT session FROM IdentificationSession session WHERE session.eIdSessionId = :eIdSessionId")
     fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession?
     fun findByUseIdSessionId(useIdSessionId: UUID): IdentificationSession?

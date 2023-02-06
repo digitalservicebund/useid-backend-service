@@ -11,7 +11,7 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     private val log = KotlinLogging.logger {}
 
     fun create(refreshAddress: String, requestDataGroups: List<String>): Mono<IdentificationSession> {
-        return identificationSessionRepository.save(IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups))
+        return Mono.just(IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups))
             .doOnNext {
                 log.info("Created new identification session. useIdSessionId=${it.useIdSessionId}")
             }.doOnError {
@@ -20,22 +20,19 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     }
 
     fun findByEIDSessionId(eIdSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findByEIdSessionId(eIdSessionId)
+        return Mono.justOrEmpty(identificationSessionRepository.findByEIdSessionId(eIdSessionId))
     }
 
     fun findByUseIdSessionId(useIdSessionId: UUID): Mono<IdentificationSession> {
-        return identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+        return Mono.justOrEmpty(identificationSessionRepository.findByUseIdSessionId(useIdSessionId))
     }
 
     fun updateEIDSessionId(useIdSessionId: UUID, eIdSessionId: UUID): Mono<IdentificationSession> {
-        return findByUseIdSessionId(useIdSessionId).flatMap {
-            it.eIdSessionId = eIdSessionId
-            identificationSessionRepository.save(it)
-        }.doOnNext {
-            log.info("Updated eIdSessionId of identification session. useIdSessionId=${it.useIdSessionId}")
-        }.doOnError {
-            log.error("Failed to update identification session. useIdSessionId=$useIdSessionId", it)
-        }
+        val session = findByUseIdSessionId(useIdSessionId).block()!!
+        session.eIdSessionId = eIdSessionId
+        identificationSessionRepository.save(session)
+        log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
+        return Mono.just(session)
     }
 
     fun delete(identificationSession: IdentificationSession): Mono<Void> {

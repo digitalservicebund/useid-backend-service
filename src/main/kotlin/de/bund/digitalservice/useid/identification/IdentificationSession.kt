@@ -1,36 +1,42 @@
 package de.bund.digitalservice.useid.identification
 
+import org.hibernate.annotations.Type
 import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
 import java.util.UUID
+import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 import javax.persistence.Table
 
-@Entity
 @Table(name = "identification_session")
+@Entity
 data class IdentificationSession(
-    @Column("useid_session_id")
-    val useIdSessionId: UUID,
+    @Column(name = "useid_session_id")
+    var useIdSessionId: UUID? = null,
 
-    @Column("refresh_address")
-    val refreshAddress: String,
+    @Column(name = "refresh_address")
+    var refreshAddress: String? = null,
 
-    @Column("request_data_groups")
-    val requestDataGroups: List<String>
+    @Column(name = "request_data_groups")
+    @Type(type = "list-array")
+    var requestDataGroups: List<String> = emptyList()
 ) {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
-    @Column("eid_session_id")
+    @Column(name = "eid_session_id")
     var eIdSessionId: UUID? = null
 
-    @Column("created_at")
+    @Column(name = "created_at")
     @CreatedDate
     var createdAt: LocalDateTime? = null
 
-    @Column("updated_at")
+    @Column(name = "updated_at")
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null
 }
