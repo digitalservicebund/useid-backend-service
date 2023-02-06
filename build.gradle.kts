@@ -54,9 +54,9 @@ dependencies {
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 
     /** Persistence **/
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
-    runtimeOnly("org.postgresql:r2dbc-postgresql")
+    runtimeOnly("org.postgresql:jdbc-postgresql")
     implementation("org.flywaydb:flyway-core:9.11.0")
 
     /** Monitoring **/

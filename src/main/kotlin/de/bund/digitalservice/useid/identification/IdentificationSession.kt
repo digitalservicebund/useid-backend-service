@@ -3,12 +3,13 @@ package de.bund.digitalservice.useid.identification
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.UUID
+import javax.persistence.Entity
+import javax.persistence.Table
 
-@Table("identification_session")
+@Entity
+@Table(name= "identification_session")
 data class IdentificationSession(
     @Column("useid_session_id")
     val useIdSessionId: UUID,
