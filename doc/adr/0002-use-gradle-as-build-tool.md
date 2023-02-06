@@ -29,4 +29,4 @@ can be accomplished out of the box.
 In order for using the Gradle DSL effectively, at least a basic understanding of Groovy is required (switching
 to a Kotlin based DSL would be possible if this may reduce overhead).
 
-We might loose out on certain Maven-based functionality/integrations.
+We might lose out on certain Maven-based functionality/integrations.
