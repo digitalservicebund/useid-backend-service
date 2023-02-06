@@ -32,15 +32,15 @@ open class PostgresTestcontainerIntegrationTest {
         @DynamicPropertySource
         fun postgresqlProperties(registry: DynamicPropertyRegistry) {
             val r2dbcUrl = String.format(
-                "r2dbc:postgresql://%s:%s/%s",
+                "jdbc:postgresql://%s:%s/%s",
                 postgresql.host,
                 postgresql.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT),
                 postgresql.databaseName
             )
 
-            registry.add("spring.r2dbc.url") { r2dbcUrl }
-            registry.add("spring.r2dbc.username") { postgresql.username }
-            registry.add("spring.r2dbc.password") { postgresql.password }
+            registry.add("spring.datasource.url") { r2dbcUrl }
+            registry.add("spring.datasource.username") { postgresql.username }
+            registry.add("spring.datasource.password") { postgresql.password }
             registry.add("spring.flyway.url") { postgresql.jdbcUrl }
             registry.add("spring.flyway.user") { postgresql.username }
             registry.add("spring.flyway.password") { postgresql.password }
