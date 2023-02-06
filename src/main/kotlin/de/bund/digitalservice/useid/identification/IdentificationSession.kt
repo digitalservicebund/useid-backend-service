@@ -9,7 +9,7 @@ import javax.persistence.Entity
 import javax.persistence.Table
 
 @Entity
-@Table(name= "identification_session")
+@Table(name = "identification_session")
 data class IdentificationSession(
     @Column("useid_session_id")
     val useIdSessionId: UUID,
