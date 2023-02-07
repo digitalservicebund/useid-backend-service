@@ -1,6 +1,9 @@
 package de.bund.digitalservice.useid.identification
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
+import org.hibernate.annotations.TypeDefs
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
@@ -12,6 +15,11 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
+@TypeDefs(
+    value = [
+        TypeDef(name = "list-array", typeClass = ListArrayType::class)
+    ]
+)
 @Table(name = "identification_session")
 @Entity
 data class IdentificationSession(

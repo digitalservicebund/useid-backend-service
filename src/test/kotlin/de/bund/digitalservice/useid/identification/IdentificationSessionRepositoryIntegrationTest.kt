@@ -1,7 +1,5 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.persistence.FlywayConfig
-import de.bund.digitalservice.useid.persistence.FlywayProperties
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItems
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import java.util.UUID
 import javax.sql.DataSource
@@ -21,7 +18,6 @@ import javax.sql.DataSource
 // @AutoConfigureTestDatabase
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("integration")
-@Import(FlywayConfig::class, FlywayProperties::class)
 class IdentificationSessionRepositoryIntegrationTest {
     companion object {
         private const val REFRESH_ADDRESS: String = "some-refresh-address"
@@ -53,8 +49,7 @@ class IdentificationSessionRepositoryIntegrationTest {
         identificationSession.eIdSessionId = EID_SESSION_ID
 
         // When
-        // template.update("INSERT INTO useid.identification_session (useid_session_id, refresh_address, request_data_groups, eid_session_id) VALUES (:identificationSession.useIdSessionId,:identificationSession.refreshAddress, :identificationSession.requestDataGroups, :identificationSession.eidSessionId)")
-        template.update("SELECT * FROM identification_session")
+        identificationSessionRepository.save(identificationSession)
 
         // Then
         validateIdentificationSession(identificationSessionRepository.findByUseIdSessionId(USEID_SESSION_ID))

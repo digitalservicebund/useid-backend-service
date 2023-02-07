@@ -58,7 +58,5 @@ features:
 spring:
   datasource:
     url: jdbc:tc:postgresql:12.12-alpine:///integration-tests-db
-  flyway:
-    url: jdbc:tc:postgresql:12.12-alpine:///integration-tests-db
-    user: root
+    username: root
     password: secret

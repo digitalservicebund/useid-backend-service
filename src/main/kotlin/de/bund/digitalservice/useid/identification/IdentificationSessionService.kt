@@ -11,7 +11,7 @@ class IdentificationSessionService(private val identificationSessionRepository: 
     private val log = KotlinLogging.logger {}
 
     fun create(refreshAddress: String, requestDataGroups: List<String>): Mono<IdentificationSession> {
-        return Mono.just(IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups))
+        return Mono.just(identificationSessionRepository.save(IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups)))
             .doOnNext {
                 log.info("Created new identification session. useIdSessionId=${it.useIdSessionId}")
             }.doOnError {
