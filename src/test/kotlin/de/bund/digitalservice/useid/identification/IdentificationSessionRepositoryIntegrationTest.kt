@@ -4,18 +4,16 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.notNullValue
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.jdbc.core.JdbcTemplate
+import java.time.LocalDateTime
 import java.util.UUID
-import javax.sql.DataSource
 
 @DataJpaTest
-// @AutoConfigureTestDatabase
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Tag("integration")
 class IdentificationSessionRepositoryIntegrationTest {
@@ -31,17 +29,6 @@ class IdentificationSessionRepositoryIntegrationTest {
     @Autowired
     private lateinit var identificationSessionRepository: IdentificationSessionRepository
 
-    @Autowired
-    private lateinit var template: JdbcTemplate
-
-    @Autowired
-    private lateinit var dataSource: DataSource
-
-    @BeforeAll
-    fun setup() {
-        template = JdbcTemplate(dataSource)
-    }
-
     @Test
     fun `find identification session by useIdSessionId and eIdSessionId returns the inserted entity`() {
         // Given
@@ -54,6 +41,55 @@ class IdentificationSessionRepositoryIntegrationTest {
         // Then
         validateIdentificationSession(identificationSessionRepository.findByUseIdSessionId(USEID_SESSION_ID))
         validateIdentificationSession(identificationSessionRepository.findByEIdSessionId(EID_SESSION_ID))
+    }
+
+    @Test
+    fun `deleteAllByCreatedAtBefore removes expired entities successfully`() {
+        // Given
+        val now = LocalDateTime.now()
+        val deleteBefore = now.minusDays(7)
+
+        // To be deleted
+        val createdLongBeforeExpiry = insertNewIdentificationSession(now.minusDays(100))
+        val createdDayBeforeExpiry = insertNewIdentificationSession(now.minusDays(8))
+        val createdRightBeforeExpiry = insertNewIdentificationSession(now.minusDays(7).minusSeconds(1))
+
+        // To be kept
+        val createdExactlyOnExpiry = insertNewIdentificationSession(now.minusDays(7))
+        val createdDayAfterExpiry = insertNewIdentificationSession(now.minusDays(6))
+        val createdLongAfterExpiry = insertNewIdentificationSession(now.minusDays(1))
+        val createdNow = insertNewIdentificationSession(now)
+
+        // When
+        identificationSessionRepository.deleteAllByCreatedAtBefore(deleteBefore)
+
+        // Then
+        verifyIdentificationSessionWasDeleted(createdLongBeforeExpiry)
+        verifyIdentificationSessionWasDeleted(createdDayBeforeExpiry)
+        verifyIdentificationSessionWasDeleted(createdRightBeforeExpiry)
+
+        verifyIdentificationSessionExists(createdExactlyOnExpiry)
+        verifyIdentificationSessionExists(createdDayAfterExpiry)
+        verifyIdentificationSessionExists(createdLongAfterExpiry)
+        verifyIdentificationSessionExists(createdNow)
+    }
+
+    private fun verifyIdentificationSessionWasDeleted(session: IdentificationSession) {
+        val result = identificationSessionRepository.findById(session.id!!)
+        assertEquals(null, result)
+    }
+
+    private fun verifyIdentificationSessionExists(session: IdentificationSession) {
+        val result = identificationSessionRepository.findById(session.id!!)
+        assertEquals(session.id, result?.id)
+    }
+
+    private fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
+        val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS)
+        identificationSession.createdAt = createdAt
+
+        identificationSessionRepository.save(identificationSession)
+        return identificationSession
     }
 
     private fun validateIdentificationSession(identificationSession: IdentificationSession?) {

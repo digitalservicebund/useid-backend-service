@@ -11,5 +11,5 @@ interface IdentificationSessionRepository : JpaRepository<IdentificationSession,
     @Query("SELECT session FROM IdentificationSession session WHERE session.eIdSessionId = :eIdSessionId")
     fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession?
     fun findByUseIdSessionId(useIdSessionId: UUID): IdentificationSession?
-    fun deleteAllByCreatedAtBefore(before: LocalDateTime): Void
+    fun deleteAllByCreatedAtBefore(before: LocalDateTime): Int
 }
