@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -80,40 +78,27 @@ class IdentificationSessionsController(
     @Operation(summary = "Get TC token for this session")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "No corresponding session found for that useIdSessionId", content = [Content()])
-    fun getTCToken(@PathVariable useIdSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
-        return identificationSessionService.findByUseIdSessionId(useIdSessionId)
-            .flatMap {
-                /*
-                    Wrapping blocking call to the SDK into Mono.fromCallable
-                    https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
-                */
-                Mono.fromCallable {
-                    val eidService = EidService(eidServiceConfig, it.requestDataGroups)
-                    eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
-                }.subscribeOn(Schedulers.boundedElastic())
-            }
-            .zipWhen {
-                val eIdSessionId = UriComponentsBuilder
-                    .fromHttpUrl(it.refreshAddress)
-                    .encode().build()
-                    .queryParams.getFirst("sessionId")
-                identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
-            }
-            .map {
-                tcTokenCallsSuccessfulCounter.increment()
-                ResponseEntity
-                    .status(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_XML)
-                    .body(it.t1)
-            }
-            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
-            .doOnError { exception ->
-                tcTokenCallsWithErrorsCounter.increment()
-                log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", exception)
-            }
-            .onErrorReturn(
-                ResponseEntity.internalServerError().body(null)
-            )
+    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<TCTokenType> {
+        return try {
+            val identificationSession = identificationSessionService.findByUseIdSessionId(useIdSessionId)
+                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+            val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
+            val tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
+            val eIdSessionId = UriComponentsBuilder
+                .fromHttpUrl(tcToken.refreshAddress)
+                .encode().build()
+                .queryParams.getFirst("sessionId")
+            identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
+            tcTokenCallsSuccessfulCounter.increment()
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_XML)
+                .body(tcToken)
+        } catch (e: Exception) {
+            tcTokenCallsWithErrorsCounter.increment()
+            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
+            ResponseEntity.internalServerError().build()
+        }
     }
 
     @GetMapping("/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -122,51 +107,46 @@ class IdentificationSessionsController(
     @ApiResponse(responseCode = "404", description = "No corresponding session found for that eIdSessionId", content = [Content()])
     @ApiResponse(responseCode = "401", description = "Authentication failed (missing or wrong api key)", content = [Content()])
     @SecurityRequirement(name = "apiKey")
-    fun getIdentity(@PathVariable eIdSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
-        /*
-            Wrapping blocking call to the SDK into Mono.fromCallable
-            https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
-        */
+    fun getIdentity(@PathVariable eIdSessionId: UUID, authentication: Authentication): ResponseEntity<GetResultResponseType> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
-        val getIdentityResult = Mono.fromCallable {
-            val eidService = EidService(eidServiceConfig)
-            eidService.getEidInformation(eIdSessionId.toString())
-        }
-        return identificationSessionService.findByEIDSessionId(eIdSessionId)
-            .doOnNext {
-                if (apiKeyDetails.refreshAddress != it.refreshAddress) {
+
+        return try {
+            var userData: GetResultResponseType? = null
+            var identificationSession: IdentificationSession? = null
+            try {
+                identificationSession = identificationSessionService.findByEIDSessionId(eIdSessionId)
+                    ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
                     throw SessionAuthenticationException("API key differs from the API key used to start the identification session.")
                 }
-            }
-            .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
-            .doOnError { exception ->
+                val eidService = EidService(eidServiceConfig)
+                userData = eidService.getEidInformation(eIdSessionId.toString())
+            } catch (e: Exception) {
                 getEidInformationCallsWithErrorsCounter.increment()
-                log.error("Failed to fetch identity data: ${exception.message}.")
+                log.error("Failed to fetch identity data: ${e.message}.")
+                throw e
             }
-            .doOnNext {
-                val identificationSession: IdentificationSession = it.t1
-                val result = it.t2.result
-                // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
-                if (result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    getEidInformationCallsSuccessfulCounter.increment()
+
+            // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
+            if (userData.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+                getEidInformationCallsSuccessfulCounter.increment()
+                try {
                     identificationSessionService.delete(identificationSession)
-                        .doOnError { log.error("Failed to delete identification session. id=${identificationSession.id}") }
-                        .subscribe()
-                } else {
-                    // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
-                    log.info("The resultMinor for identification session is ${result.resultMinor}. id=${identificationSession.id}")
+                } catch (e: Exception) {
+                    log.error("Failed to delete identification session. id=${identificationSession.id}")
                 }
+            } else {
+                // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
+                log.info("The resultMinor for identification session is ${userData.result.resultMinor}. id=${identificationSession.id}")
             }
-            .map {
-                ResponseEntity
-                    .status(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(it.t2)
-            }
-            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
-            .onErrorReturn({ e -> e is SessionAuthenticationException }, ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null))
-            .onErrorReturn(
-                ResponseEntity.internalServerError().body(null)
-            )
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userData)
+        } catch (e: SessionAuthenticationException) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)
+        } catch (e: Exception) {
+            ResponseEntity.internalServerError().body(null)
+        }
     }
 }
