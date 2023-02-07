@@ -58,17 +58,13 @@ class IdentificationSessionsController(
     fun createSession(
         authentication: Authentication
     ): ResponseEntity<CreateIdentificationSessionResponse> {
-        return try {
-            val apiKeyDetails = authentication.details as ApiKeyDetails
-            val session = identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
-            val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(CreateIdentificationSessionResponse(tcTokenUrl))
-        } catch (e: Exception) {
-            ResponseEntity.internalServerError().build()
-        }
+        val apiKeyDetails = authentication.details as ApiKeyDetails
+        val session = identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
+        val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
 
     @GetMapping(
@@ -97,7 +93,7 @@ class IdentificationSessionsController(
         } catch (e: Exception) {
             tcTokenCallsWithErrorsCounter.increment()
             log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
-            ResponseEntity.internalServerError().build()
+            throw e
         }
     }
 
@@ -111,8 +107,8 @@ class IdentificationSessionsController(
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
         return try {
-            var userData: GetResultResponseType? = null
-            var identificationSession: IdentificationSession? = null
+            val userData: GetResultResponseType?
+            val identificationSession: IdentificationSession?
             try {
                 identificationSession = identificationSessionService.findByEIDSessionId(eIdSessionId)
                     ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
