@@ -8,7 +8,7 @@ Superseded by [12. MVP mobile only](0012-mvp-mobile-only.md)
 
 ## Context
 
-A QR code is embedded in the eService page via iFrame widget, and it enables user to start identification process via camera app on a mobile device. (For details see [ADR 0006](LINK TO 0006).)
+A QR code is embedded in the eService page via iFrame widget, and it enables user to start identification process via camera app on a mobile device. (For details see [ADR 0006](0006-url-format-in-qr-code.md).)
 
 The current QR Code generation is handled on the server, the decision was not documented in an ADR, but it was a verbal decision with the assumptions that server-side rendering would reduce the render time and the data transfer between client and server would be secured with HTTPS.
 

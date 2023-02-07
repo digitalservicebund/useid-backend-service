@@ -36,7 +36,7 @@ The URL follows the Technical Guideline and is compatible to other eID clients.
 
 The URL contains all the needed data, including the `widgetSessionId` and the encryption key.
 
-This is an URL, which is never evaluated or opened in a browser. With regard to possible future changes, the encryption key is added as fragment id, so it won't ever be sent to any server.
+This is a URL, which is never evaluated or opened in a browser. With regard to possible future changes, the encryption key is added as fragment id, so it won't ever be sent to any server.
 
 The length will be around 295 characters:
 

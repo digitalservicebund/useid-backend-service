@@ -26,7 +26,7 @@ https://{{useidDomain}}/eID-Client?tcTokenURL={{tcTokenURL}}
 
 The `useidDomain` depends on the environment. The BundesIdent app registers this URL as
 [universal link (iOS)](https://developer.apple.com/ios/universal-links/) /
-[app link (iOS)](https://developer.android.com/training/app-links).
+[app link (Android)](https://developer.android.com/training/app-links).
 
 ## Consequences
 

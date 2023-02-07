@@ -45,4 +45,4 @@ Especially the improvements based on the client-side user tracking are a key fea
 
 We might face fewer user numbers and setting up a testing infrastructure will come with more effort.
 However, we will be able to reason our product and user-experience decision based on client-side data.
-We also need to provide a <noscript> tag to inform users that JavaScript is required for our solution.
+We also need to provide a `<noscript>` tag to inform users that JavaScript is required for our solution.

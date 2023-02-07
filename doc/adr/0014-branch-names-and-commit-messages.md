@@ -14,7 +14,7 @@ Developers tend to have their own way of writing git messages, so there is a ris
 
 ## Decision
 
-The project tasks are organized via tickets with an unique number.
+The project tasks are organized via tickets with a unique number.
 
 ### Branch names
 
