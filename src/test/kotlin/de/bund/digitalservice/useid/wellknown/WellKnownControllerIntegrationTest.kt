@@ -1,8 +1,8 @@
 package de.bund.digitalservice.useid.wellknown
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,7 +12,8 @@ import org.springframework.test.web.reactive.server.expectBody
 import java.nio.file.Files
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
+@Tag("integration")
+class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
     val jacksonMapper = jacksonObjectMapper()
 

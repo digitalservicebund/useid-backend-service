@@ -1,9 +1,9 @@
 package de.bund.digitalservice.useid.widget
 
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.jsoup.Jsoup
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,10 +14,11 @@ import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import java.util.Locale
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("integration")
 class WidgetControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
     @Autowired val messageSource: MessageSource
-) : PostgresTestcontainerIntegrationTest() {
+) {
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {

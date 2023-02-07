@@ -3,10 +3,10 @@ package de.bund.digitalservice.useid.tracking.matomo
 import com.ninjasquad.springmockk.MockkBean
 import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.WebRequests
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,8 @@ import reactor.core.publisher.Mono
 
 @ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
+@Tag("integration")
+class MatomoTrackingServiceTest {
 
     @Autowired
     private lateinit var matomoTrackingService: MatomoTrackingService

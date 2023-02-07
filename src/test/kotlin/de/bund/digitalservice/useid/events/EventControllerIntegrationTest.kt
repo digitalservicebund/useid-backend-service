@@ -1,9 +1,9 @@
 package de.bund.digitalservice.useid.events
 
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -24,12 +24,13 @@ import java.util.UUID
 private val WIDGET_SESSION_ID: UUID = UUID.randomUUID()
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("integration")
 internal class EventControllerIntegrationTest(
     @Autowired
     @Value("\${local.server.port}")
     val port: Int,
     @Autowired val webTestClient: WebTestClient
-) : PostgresTestcontainerIntegrationTest() {
+) {
 
     lateinit var webClient: WebClient
 
