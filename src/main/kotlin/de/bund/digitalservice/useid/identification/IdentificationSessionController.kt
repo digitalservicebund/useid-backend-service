@@ -59,20 +59,18 @@ class IdentificationSessionsController(
     @SecurityRequirement(name = "apiKey")
     fun createSession(
         authentication: Authentication
-    ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
-        val apiKeyDetails = authentication.details as ApiKeyDetails
-        return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
-            .map {
-                val tcTokenUrl =
-                    "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${it.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
-                ResponseEntity
-                    .status(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(CreateIdentificationSessionResponse(tcTokenUrl))
-            }
-            .onErrorReturn(
-                ResponseEntity.internalServerError().body(null)
-            )
+    ): ResponseEntity<CreateIdentificationSessionResponse> {
+        return try {
+            val apiKeyDetails = authentication.details as ApiKeyDetails
+            val session = identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
+            val tcTokenUrl = "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(CreateIdentificationSessionResponse(tcTokenUrl))
+        } catch (e: Exception) {
+            ResponseEntity.internalServerError().build()
+        }
     }
 
     @GetMapping(
