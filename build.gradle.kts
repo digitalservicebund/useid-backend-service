@@ -115,7 +115,6 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.17.3")
     testImplementation("org.testcontainers:testcontainers:1.17.3")
     testImplementation("org.testcontainers:jdbc:1.17.3")
-    testImplementation("org.testcontainers:mysql:1.17.3")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.jsoup:jsoup:1.15.3")
 

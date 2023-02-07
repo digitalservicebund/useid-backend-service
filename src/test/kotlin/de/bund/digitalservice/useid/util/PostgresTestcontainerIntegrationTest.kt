@@ -3,7 +3,6 @@ package de.bund.digitalservice.useid.util
 import org.junit.jupiter.api.Tag
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 
 /**
@@ -31,16 +30,10 @@ open class PostgresTestcontainerIntegrationTest {
         @JvmStatic
         @DynamicPropertySource
         fun postgresqlProperties(registry: DynamicPropertyRegistry) {
-            val jdbcUrl = String.format(
-                "jdbc:postgresql://%s:%s/%s",
-                postgresql.host,
-                postgresql.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT),
-                postgresql.databaseName
-            )
-
-            registry.add("spring.datasource.url") { jdbcUrl }
+            registry.add("spring.datasource.url") { postgresql.jdbcUrl }
             registry.add("spring.datasource.username") { postgresql.username }
             registry.add("spring.datasource.password") { postgresql.password }
+            registry.add("spring.datasource.driverClassName") { "org.postgresql.Driver" }
             registry.add("spring.flyway.url") { postgresql.jdbcUrl }
             registry.add("spring.flyway.user") { postgresql.username }
             registry.add("spring.flyway.password") { postgresql.password }

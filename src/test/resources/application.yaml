@@ -54,3 +54,11 @@ tracking:
 
 features:
   desktop-solution-enabled: true
+
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:12.12-alpine:///integration-tests-db
+  flyway:
+    url: jdbc:tc:postgresql:12.12-alpine:///integration-tests-db
+    user: root
+    password: secret
