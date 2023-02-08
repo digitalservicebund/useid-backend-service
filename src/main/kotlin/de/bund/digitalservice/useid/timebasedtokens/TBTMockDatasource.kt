@@ -11,18 +11,17 @@ import java.util.UUID
 class TBTMockDatasource {
     private val timeBasedTokens = mutableListOf<TimeBasedToken>()
 
-    fun save(timeBasedToken: TimeBasedToken): Mono<TimeBasedToken> {
+    fun save(timeBasedToken: TimeBasedToken): TimeBasedToken {
         timeBasedToken.createdAt = LocalDateTime.now()
         timeBasedTokens.add(timeBasedToken)
-        return Mono.just(timeBasedToken)
+        return timeBasedToken
     }
 
-    fun deleteAllByUseIdSessionId(useIdSessionId: UUID): Mono<Void> {
+    fun deleteAllByUseIdSessionId(useIdSessionId: UUID) {
         timeBasedTokens.removeAll { it.useIdSessionId == useIdSessionId }
-        return Mono.empty()
     }
 
-    fun findByUseIdSessionIdAndTokenId(useIdSessionId: UUID, tokenId: UUID): Mono<TimeBasedToken> {
-        return Mono.justOrEmpty(timeBasedTokens.find { it.useIdSessionId == useIdSessionId && it.tokenId == tokenId })
+    fun findByUseIdSessionIdAndTokenId(useIdSessionId: UUID, tokenId: UUID): TimeBasedToken? {
+        return timeBasedTokens.find { it.useIdSessionId == useIdSessionId && it.tokenId == tokenId }
     }
 }

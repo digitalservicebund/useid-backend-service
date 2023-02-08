@@ -16,21 +16,17 @@ class TimeBasedTokenService(private val mockDatasource: TBTMockDatasource, priva
     private val log = KotlinLogging.logger {}
 
     fun updateOrCreate(useIdSessionId: UUID): Mono<TimeBasedToken> {
-        return identificationSessionService.findByUseIdSessionId(useIdSessionId)
-            .switchIfEmpty(Mono.error(InvalidUseIdSessionIdException()))
-            .flatMap {
-                mockDatasource.deleteAllByUseIdSessionId(useIdSessionId)
-                    .onErrorResume {
-                        log.error("Error when deleting time based token", it)
-                        Mono.empty<Void>()
-                    }
-                    .then(mockDatasource.save(TimeBasedToken(useIdSessionId, UUID.randomUUID())))
-            }
+        identificationSessionService.findByUseIdSessionId(useIdSessionId) ?: throw InvalidUseIdSessionIdException()
+        try {
+            mockDatasource.deleteAllByUseIdSessionId(useIdSessionId)
+        } catch (e: Exception) {
+            log.error("Error when deleting time based token", e)
+        }
+        return Mono.just(mockDatasource.save(TimeBasedToken(useIdSessionId, UUID.randomUUID())))
     }
 
     fun isTokenValid(useIdSessionId: UUID, tokenId: UUID): Mono<Boolean> {
-        return mockDatasource.findByUseIdSessionIdAndTokenId(useIdSessionId, tokenId)
-            .mapNotNull { it.createdAt?.let { it.plusSeconds(60) > LocalDateTime.now() } }
-            .defaultIfEmpty(false)
+        val token = mockDatasource.findByUseIdSessionIdAndTokenId(useIdSessionId, tokenId)
+        return Mono.just(token?.createdAt?.let { it.plusSeconds(60) > LocalDateTime.now() } ?: false)
     }
 }

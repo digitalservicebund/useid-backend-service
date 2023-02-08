@@ -37,22 +37,16 @@ class RefreshController(private val identificationSessionService: Identification
     fun redirectToEServiceRefreshAddress(
         @RequestParam("sessionId") eIdSessionId: UUID,
         @RequestParam requestQueryParams: Map<String, String>
-    ): Mono<ResponseEntity<Unit>> {
-        return identificationSessionService.findByEIDSessionId(eIdSessionId)
-            .doOnError {
-                log.error("Failed to load identification session.", it)
-            }
-            .map {
-                val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
-                ResponseEntity
-                    .status(HttpStatus.SEE_OTHER)
-                    .location(URI.create("${it.refreshAddress}?$responseQueryParams"))
-                    .build<Unit>()
-            }
-            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build())
-            .onErrorReturn(
-                ResponseEntity.internalServerError().build()
-            )
+    ): ResponseEntity<Unit> {
+        val session = identificationSessionService.findByEIDSessionId(eIdSessionId) ?: run {
+            log.error("Failed to load identification session.")
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        }
+        val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
+        return ResponseEntity
+            .status(HttpStatus.SEE_OTHER)
+            .location(URI.create("${session.refreshAddress}?$responseQueryParams"))
+            .build()
     }
 
     private fun buildEncodedQueryParameters(parameters: Map<String, String>): String =
