@@ -2,7 +2,6 @@ package de.bund.digitalservice.useid.timebasedtokens
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.UUID
 

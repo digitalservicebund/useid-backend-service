@@ -24,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
-import reactor.core.publisher.Mono
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
@@ -74,7 +73,7 @@ class IdentificationSessionControllerTest(@Autowired val webTestClient: WebTestC
     private fun mockFindSession(refreshAddress: String) {
         val mockSession = mockk<IdentificationSession>()
         every { mockSession.refreshAddress } returns refreshAddress
-        every { identificationSessionService.findByEIDSessionId(any()) } returns Mono.just(mockSession)
+        every { identificationSessionService.findByEIDSessionId(any()) } returns mockSession
     }
 
     private fun mockApiKeyAuthentication() {

@@ -15,7 +15,6 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.DefaultUriBuilderFactory
-import reactor.core.publisher.Mono
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -36,7 +35,7 @@ internal class RefreshControllerTest(@Autowired val webTestClient: WebTestClient
         val eIdSessionId: UUID = UUID.randomUUID()
         val refreshAddress = "some-refresh-address"
         val identificationSession = IdentificationSession(UUID.randomUUID(), refreshAddress, emptyList())
-        every { identificationSessionService.findByEIDSessionId(any()) } returns Mono.just(identificationSession)
+        every { identificationSessionService.findByEIDSessionId(any()) } returns identificationSession
 
         // When
         client

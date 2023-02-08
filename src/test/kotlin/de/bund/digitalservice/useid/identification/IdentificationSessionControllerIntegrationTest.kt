@@ -212,7 +212,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         .exchange()
 
     private fun retrieveIdentificationSession(useIdSessionId: UUID): IdentificationSession? {
-        return identificationSessionService.findByUseIdSessionId(useIdSessionId).block()
+        return identificationSessionService.findByUseIdSessionId(useIdSessionId)
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {
