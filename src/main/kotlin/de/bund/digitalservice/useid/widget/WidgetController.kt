@@ -56,17 +56,13 @@ class WidgetController(
         @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
     ): Rendering {
-        Mono.fromCallable {
-            publishMatomoEvent(
-                widgetTracking.categories.widget,
-                widgetTracking.actions.loaded,
-                widgetTracking.names.widget,
-                sessionHash,
-                userAgent
-            )
-        }
-            .subscribeOn(Schedulers.boundedElastic())
-            .subscribe()
+        publishMatomoEvent(
+            widgetTracking.categories.widget,
+            widgetTracking.actions.loaded,
+            widgetTracking.names.widget,
+            sessionHash,
+            userAgent
+        )
 
         if (isIncompatibleOSVersion(userAgent)) {
             return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent)
@@ -116,7 +112,10 @@ class WidgetController(
 
     private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?, userAgent: String?) {
         val matomoEvent = MatomoEvent(this, category, action, name, sessionId, userAgent)
-        applicationEventPublisher.publishEvent(matomoEvent)
+        Mono.fromCallable {
+            applicationEventPublisher.publishEvent(matomoEvent)
+        }.subscribeOn(Schedulers.boundedElastic())
+            .subscribe()
     }
 
     private fun setEiDClientURL(url: String): Pair<String, String> {
