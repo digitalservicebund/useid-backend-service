@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -34,28 +33,28 @@ class WebRequestsTest {
     }
 
     @Test
-    fun `POST request should return 200 when request was successful`() {
+    fun `POST request should return true when request was successful`() {
         // GIVEN
         every { mockResponseSpec.toBodilessEntity() } returns Mono.just(ResponseEntity.status(200).build())
 
         // WHEN
-        val response = webRequests.POST(url).block()
+        val succeeded = webRequests.POST(url)
 
         // THEN
-        assertEquals(HttpStatus.OK, response?.statusCode)
+        assertEquals(true, succeeded)
         verifyPostFlow()
     }
 
     @Test
-    fun `POST request should return 500 when error occurred`() {
+    fun `POST request should return false when error occurred`() {
         // GIVEN
         every { mockResponseSpec.toBodilessEntity() } returns Mono.error(Error())
 
         // WHEN
-        val response = webRequests.POST(url).block()
+        val failed = webRequests.POST(url)
 
         // THEN
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response?.statusCode)
+        assertEquals(false, failed)
         verifyPostFlow()
     }
 

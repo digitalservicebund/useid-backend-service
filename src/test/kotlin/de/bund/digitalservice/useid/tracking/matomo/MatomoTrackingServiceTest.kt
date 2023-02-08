@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.system.OutputCaptureExtension
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import reactor.core.publisher.Mono
 
 @ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -61,10 +60,15 @@ class MatomoTrackingServiceTest {
     }
 
     @Test
-    fun `matomo tracking service should trigger web request and log event category, action and name and code 200`() {
+    fun `matomo tracking service should trigger web request`() {
+        // Given
         val matomoEvent = MatomoEvent(this, "log1", "log2", "log3", "log4", userAgent)
+        every { webRequests.POST(any()) } returns false
+
+        // When
         applicationEventPublisher.publishEvent(matomoEvent)
-        every { webRequests.POST(any()) } returns Mono.empty()
+
+        // Then
         verify { webRequests.POST(any()) }
     }
 }

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.reactive.result.view.Rendering
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import ua_parser.Client
 import ua_parser.Parser
 import java.net.URLEncoder
@@ -51,16 +53,20 @@ class WidgetController(
     fun getWidgetPage(
         model: Model,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
-        @RequestParam() hostname: String,
+        @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
     ): Rendering {
-        publishMatomoEvent(
-            widgetTracking.categories.widget,
-            widgetTracking.actions.loaded,
-            widgetTracking.names.widget,
-            sessionHash,
-            userAgent
-        )
+        Mono.fromCallable {
+            publishMatomoEvent(
+                widgetTracking.categories.widget,
+                widgetTracking.actions.loaded,
+                widgetTracking.names.widget,
+                sessionHash,
+                userAgent
+            )
+        }
+            .subscribeOn(Schedulers.boundedElastic())
+            .subscribe()
 
         if (isIncompatibleOSVersion(userAgent)) {
             return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent)
