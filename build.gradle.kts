@@ -72,14 +72,14 @@ dependencies {
     implementation("org.yaml:snakeyaml:1.33")
 
     /** Kotlin specific **/
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    // implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
 
     /** Docs **/
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
 
     /** Governikus Autent SDK **/
@@ -107,7 +107,7 @@ dependencies {
         because("Use MockK instead of Mockito since it is better suited for Kotlin")
     }
     testImplementation("com.ninja-squad:springmockk:4.0.0")
-    testImplementation("io.projectreactor:reactor-test")
+    // testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:1.0.0")
     testImplementation("org.testcontainers:junit-jupiter:1.17.3")
