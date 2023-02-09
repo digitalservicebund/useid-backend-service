@@ -8,20 +8,16 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder
-import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter
-import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
-import org.springframework.security.web.server.authentication.ServerAuthenticationConverter
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-        private val authenticationManager: AuthenticationManager,
-        private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
+    private val authenticationManager: AuthenticationManager,
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
 ) {
     @Bean
     fun springSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -38,11 +34,11 @@ class SecurityConfig(
             .and()
             .addFilterAfter(
                 SecurityHeadersFilter(contentSecurityPolicyProperties),
-                SecurityWebFiltersOrder.LAST
+                FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
             )
             .addFilterBefore(
                 ApiKeyAuthenticationFilter(authenticationManager),
-                AnonymousAuthenticationFilter.class
+                AnonymousAuthenticationFilter::class.java
             )
             .build()
     }
