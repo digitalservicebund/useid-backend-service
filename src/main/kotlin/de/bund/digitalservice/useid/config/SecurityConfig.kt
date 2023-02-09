@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter
-import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +19,7 @@ class SecurityConfig(
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
 ) {
     @Bean
-    fun springSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http.authorizeRequests()
             .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
             .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
@@ -37,16 +36,9 @@ class SecurityConfig(
                 FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
             )
             .addFilterBefore(
-                ApiKeyAuthenticationFilter(authenticationManager),
+                ApiKeyAuthenticationFilter(authenticationManager, "/**"),
                 AnonymousAuthenticationFilter::class.java
             )
             .build()
-    }
-
-    @Bean
-    fun authenticationFilter(): AuthenticationWebFilter? {
-        val filter = AuthenticationWebFilter(authenticationManager)
-        filter.setServerAuthenticationConverter(authenticationConverter)
-        return filter
     }
 }

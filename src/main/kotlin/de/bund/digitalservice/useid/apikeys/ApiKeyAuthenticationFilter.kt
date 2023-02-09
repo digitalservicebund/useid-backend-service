@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse
 
 private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
-class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager) :
-    AbstractAuthenticationProcessingFilter("/**") { // TODO
+class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager, pathPattern: String) :
+    AbstractAuthenticationProcessingFilter(pathPattern) {
 
     override fun attemptAuthentication(
         request: HttpServletRequest,
@@ -24,15 +24,4 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
         val token = authHeader.substring(AUTH_HEADER_VALUE_PREFIX.length)
         return authenticationManager.authenticate(ApiKeyAuthenticationToken(token))
     }
-
-    // @Throws(IOException::class, ServletException::class)
-    // override fun successfulAuthentication(
-    //     request: HttpServletRequest?,
-    //     response: HttpServletResponse?,
-    //     chain: FilterChain,
-    //     authResult: Authentication?
-    // ) {
-    //     SecurityContextHolder.getContext().authentication = authResult
-    //     chain.doFilter(request, response)
-    // }
 }

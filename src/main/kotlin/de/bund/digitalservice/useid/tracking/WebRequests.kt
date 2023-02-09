@@ -1,18 +1,22 @@
 package de.bund.digitalservice.useid.tracking
 
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClient
+import java.net.URI
 
 @Service
-class WebRequests() {
+class WebRequests(private val client: WebClient) {
 
     fun POST(url: String): Boolean {
-       /* val response = client
+        val response = client
             .post()
             .uri(URI(url))
             .retrieve()
             .toBodilessEntity()
             .onErrorReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null))
-            .block()*/
-        return false // response?.statusCode == HttpStatus.OK
+            .block()
+        return response?.statusCode == HttpStatus.OK
     }
 }
