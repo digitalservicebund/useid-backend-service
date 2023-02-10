@@ -12,11 +12,6 @@ class HomeControllerIntegrationTest(@Autowired val webTestClient: WebTestClient)
 
     @Test
     fun `should redirect to public facing website`() {
-        val res = webTestClient
-            .get()
-            .uri("/")
-            .exchange()
-
         webTestClient
             .get()
             .uri("/")

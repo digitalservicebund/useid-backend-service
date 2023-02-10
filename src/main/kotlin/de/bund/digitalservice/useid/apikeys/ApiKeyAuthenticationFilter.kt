@@ -6,8 +6,10 @@ import org.springframework.http.server.PathContainer
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.web.util.pattern.PathPatternParser
+import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -15,6 +17,15 @@ private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
 class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager, pathPattern: String) :
     AbstractAuthenticationProcessingFilter(pathPattern) {
+    override fun successfulAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        chain: FilterChain,
+        authResult: Authentication
+    ) {
+        SecurityContextHolder.getContext().authentication = authResult
+        chain.doFilter(request, response)
+    }
 
     override fun requiresAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Boolean {
         val listOfPages = listOf(
