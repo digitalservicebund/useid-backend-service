@@ -16,6 +16,24 @@ private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager, pathPattern: String) :
     AbstractAuthenticationProcessingFilter(pathPattern) {
 
+    override fun requiresAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Boolean {
+        val listOfPages = listOf(
+            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token"),
+            PathPatternParser().parse("/actuator/health"),
+            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*"),
+            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens"),
+            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info") // TODO: GET should not be authenticated, but POST should be
+        )
+        val permittedPath = listOfPages.any {
+            it.matches(PathContainer.parsePath(request!!.servletPath))
+        }
+
+        if (permittedPath) {
+            return false
+        }
+
+        return super.requiresAuthentication(request, response)
+    }
     override fun attemptAuthentication(
         request: HttpServletRequest,
         response: HttpServletResponse
