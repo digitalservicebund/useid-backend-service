@@ -22,7 +22,9 @@ class SecurityHeadersFilter(
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val httpRequest = request as HttpServletRequest
         val httpResponse = response as HttpServletResponse
-        val pathIsValidWidgetPages = listOfPages.any { it.matches(PathContainer.parsePath(httpRequest.pathInfo)) }
+        val pathIsValidWidgetPages = listOfPages.any {
+            it.matches(PathContainer.parsePath(httpRequest.servletPath))
+        }
 
         if (!pathIsValidWidgetPages) return chain.doFilter(request, response)
 
