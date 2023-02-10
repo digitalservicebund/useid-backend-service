@@ -30,7 +30,8 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
             it.matches(PathContainer.parsePath(request.servletPath))
         }
         if (pathShouldNotBeAuthenticated) {
-            return ApiKeyAuthenticationToken("", authenticated = true)
+            // throw BadCredentialsException("STUFF")
+            return ApiKeyAuthenticationToken("")
         }
         val authHeader: String? = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (authHeader == null || authHeader.trim().isEmpty() || !authHeader.trim().startsWith(AUTH_HEADER_VALUE_PREFIX)) {
