@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.reactive.result.view.Rendering
+import org.springframework.web.servlet.ModelAndView
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import ua_parser.Client
@@ -55,7 +55,7 @@ class WidgetController(
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
-    ): Rendering {
+    ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
@@ -74,15 +74,13 @@ class WidgetController(
             "additionalClass" to ""
         )
 
-        return Rendering
-            .view(WIDGET_PAGE)
-            .model(defaultViewHeaderConfig + widgetViewConfig)
-            .status(HttpStatus.OK)
-            .build()
+        val mav = ModelAndView(WIDGET_PAGE)
+        mav.addAllObjects(defaultViewHeaderConfig + widgetViewConfig)
+        return mav
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): Rendering {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
@@ -103,11 +101,9 @@ class WidgetController(
             "additionalClass" to "fallback"
         )
 
-        return Rendering
-            .view(WIDGET_PAGE)
-            .model(defaultViewHeaderConfig + widgetViewFallbackConfig)
-            .status(HttpStatus.OK)
-            .build()
+        val mav = ModelAndView(WIDGET_PAGE)
+        mav.addAllObjects(defaultViewHeaderConfig + widgetViewFallbackConfig)
+        return mav
     }
 
     private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?, userAgent: String?) {
@@ -140,7 +136,7 @@ class WidgetController(
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 
-    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?): Rendering {
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
@@ -148,11 +144,8 @@ class WidgetController(
             sessionHash,
             userAgent
         )
-
-        return Rendering
-            .view(INCOMPATIBLE_PAGE)
-            .model(defaultViewHeaderConfig)
-            .status(HttpStatus.OK)
-            .build()
+        val mav = ModelAndView(INCOMPATIBLE_PAGE)
+        mav.addAllObjects(defaultViewHeaderConfig)
+        return mav
     }
 }
