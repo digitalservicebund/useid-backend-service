@@ -47,24 +47,9 @@ class SecurityConfig(
             .and()
             .exceptionHandling()
             .and()
-            .formLogin().successHandler(authenticationSuccessHandler())
-            .and()
             .httpBasic().disable()
+            .formLogin().disable()
             .logout().disable()
             .build()
-    }
-
-    @Bean
-    fun authenticationSuccessHandler(): AppAuthenticationSuccessHandler {
-        return AppAuthenticationSuccessHandler()
-    }
-}
-
-class AppAuthenticationSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
-    override fun handle(
-        request: HttpServletRequest?,
-        response: HttpServletResponse?,
-        authentication: org.springframework.security.core.Authentication?
-    ) {
     }
 }
