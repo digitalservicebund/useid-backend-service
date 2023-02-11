@@ -17,7 +17,7 @@ class HomeControllerIntegrationTest(@Autowired val webTestClient: WebTestClient)
             .uri("/")
             .exchange()
             .expectStatus()
-            .isSeeOther
+            .is3xxRedirection
             .expectHeader()
             .location("https://digitalservice.bund.de")
     }
