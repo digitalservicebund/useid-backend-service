@@ -2,11 +2,11 @@ package de.bund.digitalservice.useid.statics
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import org.springframework.boot.web.error.ErrorAttributeOptions
-import org.springframework.boot.web.reactive.error.DefaultErrorAttributes
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.context.request.WebRequest
 import org.springframework.web.util.UriUtils
 import kotlin.text.Charsets.UTF_8
 
@@ -16,17 +16,18 @@ class GlobalStaticError(
     private val messageSource: MessageSource
 ) : DefaultErrorAttributes() {
 
-    override fun getErrorAttributes(request: ServerRequest, options: ErrorAttributeOptions): Map<String, Any> {
-        val errorAttributes = super.getErrorAttributes(request, options)
+    override fun getErrorAttributes(
+        webRequest: WebRequest?,
+        options: ErrorAttributeOptions?
+    ): MutableMap<String, Any>? {
+        val errorAttributes = super.getErrorAttributes(webRequest, options)
         val statusCode = errorAttributes["status"] as Int
 
-        val customGlobalErrorAttributes = mapOf(
-            "showReportEmail" to true,
-            "errorReportEmailLink" to createEmailReportLink(statusCode),
-            "baseUrl" to applicationProperties.baseUrl
-        )
+        errorAttributes["showReportEmail"] = true
+        errorAttributes["errorReportEmailLink"] = createEmailReportLink(statusCode)
+        errorAttributes["baseUrl"] = applicationProperties.baseUrl
 
-        return errorAttributes + customGlobalErrorAttributes
+        return errorAttributes
     }
 
     private fun createEmailReportLink(statusCode: Int): String {
