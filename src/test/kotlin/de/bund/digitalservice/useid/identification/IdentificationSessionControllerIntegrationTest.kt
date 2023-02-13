@@ -75,8 +75,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
-    fun `start session endpoint returns 401 when no authorization header was passed`() {
-        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isUnauthorized
+    fun `start session endpoint returns 403 when no authorization header was passed`() {
+        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -178,8 +178,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
-    fun `identity data endpoint returns 401 when no authorization header was passed`() {
-        sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isUnauthorized
+    fun `identity data endpoint returns 403 when no authorization header was passed`() {
+        sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
