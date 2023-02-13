@@ -12,6 +12,7 @@ private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
 class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager) :
     OncePerRequestFilter() {
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
