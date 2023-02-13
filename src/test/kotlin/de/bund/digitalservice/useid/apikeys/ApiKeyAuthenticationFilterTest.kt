@@ -35,6 +35,8 @@ internal class ApiKeyAuthenticationFilterTest {
     @BeforeEach
     fun beforeEach() {
         mockkStatic(SecurityContextHolder::class)
+        every { SecurityContextHolder.clearContext() } returns Unit
+        every { apiProperties.apiKeys } returns listOf(validApiKey)
     }
 
     @AfterEach
@@ -48,9 +50,8 @@ internal class ApiKeyAuthenticationFilterTest {
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validApiKey.keyValue}")
-        every { apiProperties.apiKeys } returns listOf(validApiKey)
         val context: SecurityContext = mockk(relaxed = true)
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validApiKey.keyValue}")
         every { SecurityContextHolder.getContext() } returns context
 
         // When
@@ -85,6 +86,7 @@ internal class ApiKeyAuthenticationFilterTest {
 
         // Then
         verify(exactly = 0) { SecurityContextHolder.getContext() }
+        verify { SecurityContextHolder.clearContext() }
         verify { filterChain.doFilter(request, response) }
     }
 
@@ -100,6 +102,7 @@ internal class ApiKeyAuthenticationFilterTest {
 
         // Then
         verify(exactly = 0) { SecurityContextHolder.getContext() }
+        verify { SecurityContextHolder.clearContext() }
         verify { filterChain.doFilter(request, response) }
     }
 
@@ -116,6 +119,7 @@ internal class ApiKeyAuthenticationFilterTest {
 
         // Then
         verify(exactly = 0) { SecurityContextHolder.getContext() }
+        verify { SecurityContextHolder.clearContext() }
         verify { filterChain.doFilter(request, response) }
     }
 
@@ -132,6 +136,7 @@ internal class ApiKeyAuthenticationFilterTest {
 
         // Then
         verify(exactly = 0) { SecurityContextHolder.getContext() }
+        verify { SecurityContextHolder.clearContext() }
         verify { filterChain.doFilter(request, response) }
     }
 }

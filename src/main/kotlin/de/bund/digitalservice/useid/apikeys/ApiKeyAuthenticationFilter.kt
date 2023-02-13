@@ -18,14 +18,11 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authHeader: String = extractAuthHeader(request) ?: run {
-            filterChain.doFilter(request, response)
-            return
-        }
-        val token = authHeader.substring(AUTH_HEADER_VALUE_PREFIX.length)
-        val authentication = authenticationManager.authenticate(ApiKeyAuthenticationToken(token))
+        val authHeader: String? = extractAuthHeader(request)
+        val token = authHeader?.substring(AUTH_HEADER_VALUE_PREFIX.length)
+        val authentication = token?.let { authenticationManager.authenticate(ApiKeyAuthenticationToken(token)) }
 
-        if (authentication.isAuthenticated) {
+        if (authentication?.isAuthenticated == true) {
             SecurityContextHolder.getContext().authentication = authentication
         } else {
             SecurityContextHolder.clearContext()
