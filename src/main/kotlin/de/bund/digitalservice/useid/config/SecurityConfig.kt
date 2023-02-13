@@ -37,7 +37,7 @@ class SecurityConfig(
                 FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
             )
             .addFilterBefore(
-                ApiKeyAuthenticationFilter(authenticationManager, "$IDENTIFICATION_SESSIONS_BASE_PATH/**"),
+                ApiKeyAuthenticationFilter(authenticationManager),
                 AnonymousAuthenticationFilter::class.java
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

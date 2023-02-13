@@ -3,7 +3,7 @@ package de.bund.digitalservice.useid.apikeys
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-class ApiKeyAuthenticationToken(
+open class ApiKeyAuthenticationToken(
     private val apiKey: String,
     private val refreshAddress: String? = null,
     private val requestDataGroups: List<String> = emptyList(),

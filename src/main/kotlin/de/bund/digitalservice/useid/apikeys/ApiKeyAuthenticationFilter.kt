@@ -1,72 +1,43 @@
 package de.bund.digitalservice.useid.apikeys
 
-import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
 import org.springframework.http.HttpHeaders
-import org.springframework.http.server.PathContainer
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
-import org.springframework.web.util.pattern.PathPatternParser
+import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
-class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager, pathPattern: String) :
-    AbstractAuthenticationProcessingFilter(pathPattern) {
-    override fun successfulAuthentication(
+class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager) :
+    OncePerRequestFilter() {
+    override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        chain: FilterChain,
-        authResult: Authentication
+        filterChain: FilterChain
     ) {
-        SecurityContextHolder.getContext().authentication = authResult
-        chain.doFilter(request, response)
-    }
-
-    override fun requiresAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Boolean {
-        val listOfPages = listOf(
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token"),
-            PathPatternParser().parse("/actuator/health"),
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*"),
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens"),
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info") // TODO: GET should not be authenticated, but POST should be
-        )
-        val permittedPath = listOfPages.any {
-            it.matches(PathContainer.parsePath(request!!.servletPath))
-        }
-
-        if (permittedPath) {
-            return false
-        }
-
-        return super.requiresAuthentication(request, response)
-    }
-    override fun attemptAuthentication(
-        request: HttpServletRequest,
-        response: HttpServletResponse
-    ): Authentication {
-        val listOfPages = listOf(
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token"),
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*"),
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens"),
-            PathPatternParser().parse("$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info") // TODO: GET should not be authenticated, but POST should be
-        )
-        val pathShouldNotBeAuthenticated = listOfPages.any {
-            it.matches(PathContainer.parsePath(request.servletPath))
-        }
-        if (pathShouldNotBeAuthenticated) {
-            // throw BadCredentialsException("STUFF")
-            return ApiKeyAuthenticationToken("")
-        }
-        val authHeader: String? = request.getHeader(HttpHeaders.AUTHORIZATION)
-        if (authHeader == null || authHeader.trim().isEmpty() || !authHeader.trim().startsWith(AUTH_HEADER_VALUE_PREFIX)) {
-            throw BadCredentialsException("API Key is missing.")
+        val authHeader: String = extractAuthHeader(request) ?: run {
+            filterChain.doFilter(request, response)
+            return
         }
         val token = authHeader.substring(AUTH_HEADER_VALUE_PREFIX.length)
-        return authenticationManager.authenticate(ApiKeyAuthenticationToken(token))
+        val authentication = authenticationManager.authenticate(ApiKeyAuthenticationToken(token))
+
+        if (authentication.isAuthenticated) {
+            SecurityContextHolder.getContext().authentication = authentication
+        } else {
+            SecurityContextHolder.clearContext()
+        }
+
+        filterChain.doFilter(request, response)
+    }
+
+    private fun extractAuthHeader(request: HttpServletRequest): String? {
+        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
+        if (authHeader == null || authHeader.trim().isEmpty() || !authHeader.trim().startsWith(AUTH_HEADER_VALUE_PREFIX)) {
+            return null
+        }
+        return authHeader
     }
 }
