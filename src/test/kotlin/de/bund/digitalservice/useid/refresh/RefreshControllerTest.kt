@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.refresh
 
 import com.ninjasquad.springmockk.MockkBean
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.identification.IdentificationSession
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.mockk.every
@@ -10,7 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -20,7 +22,8 @@ import java.util.stream.Stream
 
 @Tag("test")
 @ExtendWith(value = [SpringExtension::class])
-@WebFluxTest(controllers = [RefreshController::class])
+@WebMvcTest(controllers = [RefreshController::class])
+@Import(value = [ApplicationProperties::class])
 @WithMockUser
 internal class RefreshControllerTest(@Autowired val webTestClient: WebTestClient) {
     @MockkBean
