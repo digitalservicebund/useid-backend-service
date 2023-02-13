@@ -3,10 +3,13 @@ package de.bund.digitalservice.useid.apikeys
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
@@ -24,14 +27,58 @@ internal class ApiKeyAuthenticationFilterTest {
 
     private val manager = ApiKeyAuthenticationManager(apiProperties)
     private val filter = ApiKeyAuthenticationFilter(manager)
+    private val validApiKey = ApiProperties.ApiKey().apply {
+        keyValue = "valid-api-key"
+        refreshAddress = "some-refresh-address"
+    }
+
+    @BeforeEach
+    fun beforeEach() {
+        mockkStatic(SecurityContextHolder::class)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        unmockkStatic(SecurityContextHolder::class)
+    }
 
     @Test
-    fun `no auth`() {
+    fun `should pass request with authentication object if header contains valid api key`() {
         // Given
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
-        mockkStatic(SecurityContextHolder::class)
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validApiKey.keyValue}")
+        every { apiProperties.apiKeys } returns listOf(validApiKey)
+        val context: SecurityContext = mockk(relaxed = true)
+        every { SecurityContextHolder.getContext() } returns context
+
+        // When
+        filter.doFilter(request, response, filterChain)
+
+        // Then
+        verify {
+            context.authentication = withArg { authentication ->
+                assertEquals(validApiKey.keyValue, authentication.principal)
+                assertEquals(true, authentication.isAuthenticated)
+
+                val apiKeyDetails = authentication.details as ApiKeyDetails
+                assertEquals(validApiKey.keyValue, apiKeyDetails.keyValue)
+                assertEquals(validApiKey.refreshAddress, apiKeyDetails.refreshAddress)
+
+                assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(E_SERVICE_AUTHORITY)))
+            }
+        }
+        verify { filterChain.doFilter(request, response) }
+    }
+
+    @Test
+    fun `should pass request without authentication object if header contains invalid api key`() {
+        // Given
+        val request = MockHttpServletRequest()
+        val response: HttpServletResponse = mockk(relaxed = true)
+        val filterChain: FilterChain = mockk(relaxed = true)
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer iAmNotValid")
 
         // When
         filter.doFilter(request, response, filterChain)
@@ -42,39 +89,49 @@ internal class ApiKeyAuthenticationFilterTest {
     }
 
     @Test
-    fun `test`() {
+    fun `should pass request without authentication object if header is missing`() {
         // Given
         val request = MockHttpServletRequest()
-        val apiKeyValue = "valid-api-key"
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer $apiKeyValue")
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
-        mockkStatic(SecurityContextHolder::class)
-        val validApiKey = ApiProperties.ApiKey()
-        validApiKey.keyValue = apiKeyValue
-        val refreshAddress = "some-refresh-address"
-        validApiKey.refreshAddress = refreshAddress
-        every { apiProperties.apiKeys } returns listOf(validApiKey)
-        val context: SecurityContext = mockk(relaxed = true)
-        every { SecurityContextHolder.getContext() } returns context
-        every { context.authentication }
 
         // When
         filter.doFilter(request, response, filterChain)
 
         // Then
-        verify {
-            context.authentication = withArg { authentication ->
-                assertEquals(apiKeyValue, authentication.principal)
-                assertEquals(true, authentication.isAuthenticated)
+        verify(exactly = 0) { SecurityContextHolder.getContext() }
+        verify { filterChain.doFilter(request, response) }
+    }
 
-                val apiKeyDetails = authentication.details as ApiKeyDetails
-                assertEquals(apiKeyValue, apiKeyDetails.keyValue)
-                assertEquals(refreshAddress, apiKeyDetails.refreshAddress)
+    @Test
+    fun `should pass request without authentication object if header is malformed`() {
+        // Given
+        val request = MockHttpServletRequest()
+        val response: HttpServletResponse = mockk(relaxed = true)
+        val filterChain: FilterChain = mockk(relaxed = true)
+        request.addHeader(HttpHeaders.AUTHORIZATION, "BeaRinValid ${validApiKey.keyValue}")
 
-                assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(E_SERVICE_AUTHORITY)))
-            }
-        }
+        // When
+        filter.doFilter(request, response, filterChain)
+
+        // Then
+        verify(exactly = 0) { SecurityContextHolder.getContext() }
+        verify { filterChain.doFilter(request, response) }
+    }
+
+    @Test
+    fun `should pass request without authentication object if header contains an empty string`() {
+        // Given
+        val request = MockHttpServletRequest()
+        val response: HttpServletResponse = mockk(relaxed = true)
+        val filterChain: FilterChain = mockk(relaxed = true)
+        request.addHeader(HttpHeaders.AUTHORIZATION, "")
+
+        // When
+        filter.doFilter(request, response, filterChain)
+
+        // Then
+        verify(exactly = 0) { SecurityContextHolder.getContext() }
         verify { filterChain.doFilter(request, response) }
     }
 }
