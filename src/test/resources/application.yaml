@@ -60,3 +60,5 @@ spring:
     url: jdbc:tc:postgresql:12.12-alpine:///integration-tests-db
     username: root
     password: secret
+  profiles:
+    active: test
