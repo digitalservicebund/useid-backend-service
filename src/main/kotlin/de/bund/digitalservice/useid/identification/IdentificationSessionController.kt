@@ -55,8 +55,7 @@ class IdentificationSessionsController(
     @ApiResponse(responseCode = "401", description = "Authentication failed (missing or wrong api key)", content = [Content()])
     @SecurityRequirement(name = "apiKey")
     fun createSession(
-        authentication: Authentication,
-        @RequestAttribute tenantId: String
+        authentication: Authentication
     ): Mono<ResponseEntity<CreateIdentificationSessionResponse>> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
         return identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
@@ -80,7 +79,7 @@ class IdentificationSessionsController(
     @Operation(summary = "Get TC token for this session")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "No corresponding session found for that useIdSessionId", content = [Content()])
-    fun getTCToken(@PathVariable useIdSessionId: UUID): Mono<ResponseEntity<TCTokenType>> {
+    fun getTCToken(@PathVariable useIdSessionId: UUID, @RequestAttribute tenantId: String): Mono<ResponseEntity<TCTokenType>> {
         return identificationSessionService.findByUseIdSessionId(useIdSessionId)
             .flatMap {
                 /*
@@ -100,7 +99,7 @@ class IdentificationSessionsController(
                 identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
             }
             .map {
-                createCounter("get_tc_token", "200").increment()
+                createCounter("get_tc_token", "200", tenantId).increment()
                 ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_XML)
@@ -108,7 +107,7 @@ class IdentificationSessionsController(
             }
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null))
             .doOnError { exception ->
-                createCounter("get_tc_token", "500").increment()
+                createCounter("get_tc_token", "500", tenantId).increment()
 
                 log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", exception)
             }
@@ -123,7 +122,7 @@ class IdentificationSessionsController(
     @ApiResponse(responseCode = "404", description = "No corresponding session found for that eIdSessionId", content = [Content()])
     @ApiResponse(responseCode = "401", description = "Authentication failed (missing or wrong api key)", content = [Content()])
     @SecurityRequirement(name = "apiKey")
-    fun getIdentity(@PathVariable eIdSessionId: UUID, authentication: Authentication): Mono<ResponseEntity<GetResultResponseType>> {
+    fun getIdentity(@PathVariable eIdSessionId: UUID, authentication: Authentication, @RequestAttribute tenantId: String): Mono<ResponseEntity<GetResultResponseType>> {
         /*
             Wrapping blocking call to the SDK into Mono.fromCallable
             https://projectreactor.io/docs/core/release/reference/index.html#faq.wrap-blocking
@@ -141,7 +140,7 @@ class IdentificationSessionsController(
             }
             .zipWith(getIdentityResult).subscribeOn(Schedulers.boundedElastic())
             .doOnError { exception ->
-                createCounter("get_eid_information", "500").increment()
+                createCounter("get_eid_information", "500", tenantId).increment()
                 log.error("Failed to fetch identity data: ${exception.message}.")
             }
             .doOnNext {
@@ -149,7 +148,7 @@ class IdentificationSessionsController(
                 val result = it.t2.result
                 // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
                 if (result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-                    createCounter("get_eid_information", "200").increment()
+                    createCounter("get_eid_information", "200", tenantId).increment()
                     identificationSessionService.delete(identificationSession)
                         .doOnError { log.error("Failed to delete identification session. id=${identificationSession.id}") }
                         .subscribe()
@@ -170,7 +169,7 @@ class IdentificationSessionsController(
                 ResponseEntity.internalServerError().body(null)
             )
     }
-    protected fun createCounter(method: String, status: String, tenantID: String = "unknown"): Counter {
-        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, "tenant_id", tenantID)
+    protected fun createCounter(method: String, status: String, tenantId: String = "unknown"): Counter {
+        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, "tenant_id", tenantId)
     }
 }
