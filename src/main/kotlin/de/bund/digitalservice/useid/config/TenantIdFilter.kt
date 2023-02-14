@@ -19,15 +19,15 @@ class TenantIdFilter : WebFilter {
         //
         // For now we always set the tenant id to unknown
         val tenantId: String
-        val authentication = SecurityContextHolder.getContext().authentication
+        val isAuthenticated : Boolean? = SecurityContextHolder.getContext()?.authentication?.isAuthenticated
 
-        if (authentication != null && authentication.isAuthenticated) {
+        tenantId = if (isAuthenticated == true) {
             // api call with authentication token
-            tenantId = "unknown-api-call"
+            "unknown-api-call"
         } else {
             // not an authenticated call or a failed authentication call
             // get tenant id based on csp header?
-            tenantId = "client-call"
+            "client-call"
         }
 
         serverWebExchange.attributes["tenantId"] = tenantId
