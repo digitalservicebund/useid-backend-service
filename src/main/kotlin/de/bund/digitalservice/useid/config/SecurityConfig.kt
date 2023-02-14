@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationFilter
-import de.bund.digitalservice.useid.apikeys.E_SERVICE_AUTHORITY
+import de.bund.digitalservice.useid.apikeys.MANAGE_IDENTIFICATION_SESSION_AUTHORITY
 import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,7 +28,7 @@ class SecurityConfig(
             .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
             .antMatchers(HttpMethod.GET, "$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info").permitAll()
             .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
-            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").hasAuthority(E_SERVICE_AUTHORITY)
+            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
             .anyRequest().permitAll()
             .and().csrf().disable()
             .headers()

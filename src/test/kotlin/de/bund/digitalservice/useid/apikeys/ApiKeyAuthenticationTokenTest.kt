@@ -17,7 +17,7 @@ internal class ApiKeyAuthenticationTokenTest {
     @Test
     fun getAuthorities() {
         assertEquals(1, apiKeyAuthenticationToken.authorities.size)
-        assertEquals(E_SERVICE_AUTHORITY, apiKeyAuthenticationToken.authorities.first().authority)
+        assertEquals(MANAGE_IDENTIFICATION_SESSION_AUTHORITY, apiKeyAuthenticationToken.authorities.first().authority)
     }
 
     @Test

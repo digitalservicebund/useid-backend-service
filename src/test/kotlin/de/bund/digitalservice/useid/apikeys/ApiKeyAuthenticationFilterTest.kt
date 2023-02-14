@@ -67,7 +67,7 @@ internal class ApiKeyAuthenticationFilterTest {
                 assertEquals(validApiKey.keyValue, apiKeyDetails.keyValue)
                 assertEquals(validApiKey.refreshAddress, apiKeyDetails.refreshAddress)
 
-                assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(E_SERVICE_AUTHORITY)))
+                assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)))
             }
         }
         verify { filterChain.doFilter(request, response) }

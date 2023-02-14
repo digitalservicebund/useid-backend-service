@@ -4,7 +4,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-const val E_SERVICE_AUTHORITY = "E_SERVICE"
+const val MANAGE_IDENTIFICATION_SESSION_AUTHORITY = "MANAGE_IDENTIFICATION_SESSION"
 
 open class ApiKeyAuthenticationToken(
     private val apiKey: String,
@@ -18,7 +18,7 @@ open class ApiKeyAuthenticationToken(
     }
 
     override fun getAuthorities(): MutableCollection<GrantedAuthority> {
-        return mutableSetOf(SimpleGrantedAuthority(E_SERVICE_AUTHORITY))
+        return mutableSetOf(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY))
     }
 
     override fun getCredentials(): String {
