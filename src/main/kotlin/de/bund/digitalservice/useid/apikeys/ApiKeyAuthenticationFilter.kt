@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.apikeys
 
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
@@ -23,9 +24,9 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
         val authentication = token?.let { authenticationManager.authenticate(ApiKeyAuthenticationToken(token)) }
 
         if (authentication?.isAuthenticated == true) {
-            SecurityContextHolder.getContext().authentication = authentication
+            setAuthentication(authentication)
         } else {
-            SecurityContextHolder.clearContext()
+            removeAuthentication()
         }
 
         filterChain.doFilter(request, response)
@@ -38,4 +39,12 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
         }
         return authHeader
     }
+}
+
+fun setAuthentication(authentication: Authentication) {
+    SecurityContextHolder.getContext().authentication = authentication
+}
+
+fun removeAuthentication() {
+    SecurityContextHolder.clearContext()
 }

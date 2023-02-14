@@ -3,11 +3,11 @@ package de.bund.digitalservice.useid.apikeys
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
+import io.mockk.unmockkAll
 import io.mockk.verify
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletResponse
 
@@ -34,14 +32,17 @@ internal class ApiKeyAuthenticationFilterTest {
 
     @BeforeEach
     fun beforeEach() {
-        mockkStatic(SecurityContextHolder::class)
-        every { SecurityContextHolder.clearContext() } returns Unit
+        mockkStatic(::setAuthentication)
+        mockkStatic(::removeAuthentication)
+        every { setAuthentication(any()) } returns Unit
+        every { removeAuthentication() } returns Unit
+
         every { apiProperties.apiKeys } returns listOf(validApiKey)
     }
 
-    @AfterEach
-    fun afterEach() {
-        unmockkStatic(SecurityContextHolder::class)
+    @AfterAll
+    fun afterAll() {
+        unmockkAll()
     }
 
     @Test
@@ -50,25 +51,25 @@ internal class ApiKeyAuthenticationFilterTest {
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
-        val context: SecurityContext = mockk(relaxed = true)
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validApiKey.keyValue}")
-        every { SecurityContextHolder.getContext() } returns context
 
         // When
         filter.doFilter(request, response, filterChain)
 
         // Then
         verify {
-            context.authentication = withArg { authentication ->
-                assertEquals(validApiKey.keyValue, authentication.principal)
-                assertEquals(true, authentication.isAuthenticated)
+            setAuthentication(
+                withArg { authentication ->
+                    assertEquals(validApiKey.keyValue, authentication.principal)
+                    assertEquals(true, authentication.isAuthenticated)
 
-                val apiKeyDetails = authentication.details as ApiKeyDetails
-                assertEquals(validApiKey.keyValue, apiKeyDetails.keyValue)
-                assertEquals(validApiKey.refreshAddress, apiKeyDetails.refreshAddress)
+                    val apiKeyDetails = authentication.details as ApiKeyDetails
+                    assertEquals(validApiKey.keyValue, apiKeyDetails.keyValue)
+                    assertEquals(validApiKey.refreshAddress, apiKeyDetails.refreshAddress)
 
-                assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)))
-            }
+                    assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)))
+                }
+            )
         }
         verify { filterChain.doFilter(request, response) }
     }
@@ -85,8 +86,8 @@ internal class ApiKeyAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        verify(exactly = 0) { SecurityContextHolder.getContext() }
-        verify { SecurityContextHolder.clearContext() }
+        verify(exactly = 0) { setAuthentication(any()) }
+        verify { removeAuthentication() }
         verify { filterChain.doFilter(request, response) }
     }
 
@@ -101,8 +102,8 @@ internal class ApiKeyAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        verify(exactly = 0) { SecurityContextHolder.getContext() }
-        verify { SecurityContextHolder.clearContext() }
+        verify(exactly = 0) { setAuthentication(any()) }
+        verify { removeAuthentication() }
         verify { filterChain.doFilter(request, response) }
     }
 
@@ -118,8 +119,8 @@ internal class ApiKeyAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        verify(exactly = 0) { SecurityContextHolder.getContext() }
-        verify { SecurityContextHolder.clearContext() }
+        verify(exactly = 0) { setAuthentication(any()) }
+        verify { removeAuthentication() }
         verify { filterChain.doFilter(request, response) }
     }
 
@@ -135,8 +136,8 @@ internal class ApiKeyAuthenticationFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        verify(exactly = 0) { SecurityContextHolder.getContext() }
-        verify { SecurityContextHolder.clearContext() }
+        verify(exactly = 0) { setAuthentication(any()) }
+        verify { removeAuthentication() }
         verify { filterChain.doFilter(request, response) }
     }
 }
