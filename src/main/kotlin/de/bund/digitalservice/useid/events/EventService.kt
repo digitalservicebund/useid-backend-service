@@ -21,7 +21,8 @@ class EventService {
      * This method subscribes a consumer to events sent to the given id.
      */
     fun subscribeConsumer(widgetSessionId: UUID): SseEmitter {
-        val sseEmitter = SseEmitter() // TODO: implement onCompletion and onTimeout
+        val sseEmitter = SseEmitter()
+        sseEmitter.onCompletion { unsubscribeConsumer(widgetSessionId) }
         consumers[widgetSessionId] = sseEmitter
         log.info { "New consumer added with id $widgetSessionId, total consumers: ${consumers.size}" }
         return sseEmitter

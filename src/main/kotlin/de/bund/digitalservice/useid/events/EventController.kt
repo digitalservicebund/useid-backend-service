@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import reactor.core.publisher.Mono
 import java.util.UUID
 
 @RestController
@@ -40,14 +39,14 @@ class EventController(eventService: EventService) {
     /**
      * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
      */
-    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): Mono<ResponseEntity<Nothing>> {
-        return Mono.fromCallable { eventService.publish(event, widgetSessionId) }
-            .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(null) }
-            .doOnError { log.error(it.message) }
-            .onErrorReturn(
-                ConsumerNotFoundException::class.java,
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
-            )
+    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): ResponseEntity<Nothing> {
+        try {
+            eventService.publish(event, widgetSessionId)
+        } catch (e: ConsumerNotFoundException) {
+            log.error("Failed to publish event: $e.message")
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
     @PostMapping("/events/{widgetSessionId}/success")
@@ -55,7 +54,7 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Push SSE to corresponding widget having a success value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing>> {
+    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): ResponseEntity<Nothing> {
         log.info { "Received success event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
     }
@@ -65,7 +64,7 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Push SSE to corresponding widget having an error value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): Mono<ResponseEntity<Nothing>> {
+    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): ResponseEntity<Nothing> {
         log.info { "Received event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
     }
