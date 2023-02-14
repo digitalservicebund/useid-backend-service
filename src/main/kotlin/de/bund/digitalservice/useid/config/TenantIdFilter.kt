@@ -18,7 +18,7 @@ class TenantIdFilter : GenericFilterBean() {
         val tenantId: String
         val isAuthenticated: Boolean? = SecurityContextHolder.getContext()?.authentication?.isAuthenticated
 
-        //TODO: This seems to be true for /actuator/health. We need a better way
+        // TODO: This seems to be true for /actuator/health. We need a better way
         tenantId = if (isAuthenticated == true) {
             // api call with authentication token
             "unknown-api-call"
