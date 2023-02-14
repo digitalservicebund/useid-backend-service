@@ -18,8 +18,10 @@ class TenantIdFilter : WebFilter {
         // We still need a data structure that allows to retrieve the tenant id for a given value
         //
         // For now we always set the tenant id to unknown
-        var tenantId = "unknown"
-        if (SecurityContextHolder.getContext().authentication.isAuthenticated) {
+        val tenantId: String
+        val authentication = SecurityContextHolder.getContext().authentication
+
+        if (authentication != null && authentication.isAuthenticated) {
             // api call with authentication token
             tenantId = "unknown-api-call"
         } else {
