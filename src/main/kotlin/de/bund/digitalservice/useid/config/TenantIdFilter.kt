@@ -19,7 +19,7 @@ class TenantIdFilter : WebFilter {
         //
         // For now we always set the tenant id to unknown
         val tenantId: String
-        val isAuthenticated : Boolean? = SecurityContextHolder.getContext()?.authentication?.isAuthenticated
+        val isAuthenticated: Boolean? = SecurityContextHolder.getContext()?.authentication?.isAuthenticated
 
         tenantId = if (isAuthenticated == true) {
             // api call with authentication token
