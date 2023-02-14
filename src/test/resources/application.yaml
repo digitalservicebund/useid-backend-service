@@ -6,6 +6,9 @@ api:
   - keyValue: some-api-key
     refreshAddress: some-refresh-address
     dataGroups: [DG1,DG2]
+  - keyValue: other-api-key
+    refreshAddress: other-refresh-address
+    dataGroups: [DG1,DG2]
 
 eidservice:
   wsdl-url: https://mock.url

@@ -178,6 +178,30 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
+    fun `identity data endpoint returns 401 when refreshAddress of passed APIKey does not match the refreshAddress stored in the session`() {
+        val eIdSessionId = UUID.randomUUID().toString()
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+
+        var tcTokenURL = ""
+        webTestClient
+                .post()
+                .uri("/api/v1/identification/sessions")
+                .headers {
+                    it.set(HttpHeaders.AUTHORIZATION, "Bearer other-api-key")
+                }
+                .exchange()
+                .expectStatus().isOk
+                .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+                .exchange()
+                .expectStatus().isOk
+
+        sendIdentityRequest(eIdSessionId)
+                .expectStatus().isUnauthorized
+    }
+
+    @Test
     fun `identity data endpoint returns 403 when no authorization header was passed`() {
         sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
