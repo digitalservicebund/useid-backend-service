@@ -1,5 +1,8 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
+import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.GenericFilterBean
@@ -14,18 +17,20 @@ class TenantIdFilter : GenericFilterBean() {
         // see the other two requests filters for more information
         // We still need a data structure that allows to retrieve the tenant id for a given value
         //
-        // For now we always set the tenant id to unknown
+        // For some reason, we cannot rely on authenticated. It is always set to true. Therefor we rely on the
+        // authentication class.
         val tenantId: String
-        val isAuthenticated: Boolean? = SecurityContextHolder.getContext()?.authentication?.isAuthenticated
+        val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
-        // TODO: This seems to be true for /actuator/health. We need a better way
-        tenantId = if (isAuthenticated == true) {
+        tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
             // api call with authentication token
-            "unknown-api-call"
-        } else {
-            // not an authenticated call or a failed authentication call
+            "valid-api-token-call"
+        } else if (authentication is AnonymousAuthenticationToken) {
+            // not an authenticated call or a failed api token authentication call
             // get tenant id based on csp header?
             "client-call"
+        } else {
+            "unknown-call"
         }
 
         request.setAttribute("tenantId", tenantId)
