@@ -37,19 +37,19 @@ class MatomoTrackingServiceTest {
 
     @Test
     fun `constructEventURL should return correct URL with encoded query parameters`() {
-        val e = MatomoEvent(this, "category", "action", "name", "sessionId", userAgent)
+        val e = MatomoEvent(this, "category", "action", "name", "sessionId", userAgent, "super")
         val url = matomoTrackingService.constructEventURL(e)
 
         val siteId = trackingProperties.matomo.siteId
         val domain = trackingProperties.matomo.domain
 
-        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent"
+        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension1=super"
         assertEquals(expectedURL, url)
     }
 
     @Test
     fun `constructEventURL should return correct URL without sessionId and useragent`() {
-        val e = MatomoEvent(this, "category", "action", "name", null, null)
+        val e = MatomoEvent(this, "category", "action", "name", null, null, null)
         val url = matomoTrackingService.constructEventURL(e)
 
         val siteId = trackingProperties.matomo.siteId
@@ -62,7 +62,7 @@ class MatomoTrackingServiceTest {
     @Test
     fun `matomo tracking service should trigger web request`() {
         // Given
-        val matomoEvent = MatomoEvent(this, "log1", "log2", "log3", "log4", userAgent)
+        val matomoEvent = MatomoEvent(this, "log1", "log2", "log3", "log4", userAgent, null)
         every { webRequests.POST(any()) } returns false
 
         // When

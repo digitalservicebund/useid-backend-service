@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
@@ -36,12 +37,13 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestAttribute tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
             sessionHash,
             userAgent,
+            tenantId
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
@@ -52,16 +54,18 @@ class WidgetController(
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?,
+        @RequestAttribute tenantId: String?
     ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.widget,
             sessionHash,
             userAgent,
+            tenantId
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent)
+            return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent, tenantId)
         }
 
         val widgetViewConfig = mapOf(
@@ -76,12 +80,13 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestAttribute tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
             sessionHash,
             userAgent,
+            tenantId
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
@@ -101,8 +106,8 @@ class WidgetController(
         return modelAndView
     }
 
-    private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?) {
-        val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent)
+    private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?, tenantId: String?) {
+        val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent, tenantId)
         applicationEventPublisher.publishEvent(matomoEvent)
     }
 
@@ -128,12 +133,13 @@ class WidgetController(
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 
-    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?): ModelAndView {
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?, tenantId: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.incompatible,
             sessionHash,
             userAgent,
+            tenantId
         )
         val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
         modelAndView.addAllObjects(defaultViewHeaderConfig)
