@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
-import reactor.core.publisher.FluxSink
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import reactor.core.publisher.Mono
 import java.util.UUID
 
@@ -78,11 +77,8 @@ class EventController(eventService: EventService) {
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     @Operation(summary = "Subscribe for receiving SSE for the provided widgetSessionId")
     @ApiResponse(responseCode = "200", content = [Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)])
-    fun subscribe(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>> {
-        return Flux.create { sink: FluxSink<ServerSentEvent<Any>> ->
-            eventService.subscribeConsumer(widgetSessionId) { event: ServerSentEvent<Any> -> sink.next(event) }
-            sink.onDispose { eventService.unsubscribeConsumer(widgetSessionId) }
-        }
+    fun subscribe(@PathVariable widgetSessionId: UUID): SseEmitter {
+        return eventService.subscribeConsumer(widgetSessionId)
     }
 
     private fun createServerSentEvent(event: SuccessEvent) = ServerSentEvent.builder<Any>()
