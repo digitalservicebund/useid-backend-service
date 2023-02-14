@@ -42,6 +42,10 @@ class SecurityConfig(
                 ApiKeyAuthenticationFilter(authenticationManager),
                 AnonymousAuthenticationFilter::class.java,
             )
+            .addFilterAfter(
+                TenantIdFilter(),
+                FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
+            )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .httpBasic().disable()

@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
@@ -115,7 +116,8 @@ class IdentificationSessionsController(
     @SecurityRequirement(name = "apiKey")
     fun getIdentity(
         @PathVariable eIdSessionId: UUID,
-        authentication: Authentication,
+        @RequestAttribute tenantId: String,
+        authentication: Authentication
     ): ResponseEntity<GetResultResponseType> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
@@ -129,9 +131,9 @@ class IdentificationSessionsController(
         try {
             val eidService = EidService(eidServiceConfig)
             userData = eidService.getEidInformation(eIdSessionId.toString())
-            getEidInformationCallsSuccessfulCounter.increment()
+            createCounter("get_eid_information", "200", tenantId).increment()
         } catch (e: Exception) {
-            getEidInformationCallsWithErrorsCounter.increment()
+            createCounter("get_eid_information", "500", tenantId).increment()
             log.error("Failed to fetch identity data: ${e.message}.")
             throw e
         }
@@ -151,5 +153,9 @@ class IdentificationSessionsController(
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(userData)
+    }
+
+    protected fun createCounter(method: String, status: String, tenantId: String = "unknown"): Counter {
+        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, "tenant_id", tenantId)
     }
 }
