@@ -46,7 +46,7 @@ class GlobalStaticErrorIntegrationTest(
         var tcTokenURL = ""
         webTestClient.post()
             .uri("/api/v1/identification/sessions")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer some-api-key")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key")
             .exchange()
             .expectBody()
             .jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }

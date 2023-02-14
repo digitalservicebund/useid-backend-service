@@ -17,7 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import java.net.URI
 import java.util.UUID
 
-private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
+private const val AUTHORIZATION_HEADER = "Bearer valid-api-key"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
