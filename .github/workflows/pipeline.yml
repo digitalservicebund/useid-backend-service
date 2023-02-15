@@ -337,47 +337,46 @@ jobs:
           commit: true
           url: ${{ secrets.SLACK_WEBHOOK_URL }}
           token: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy-production:
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    concurrency: deploy-production
-    environment: production
-    needs: [build-and-push-image, deploy-staging-verify]
-    permissions:
-      id-token: write # Enable OIDC for gitsign
-    steps:
-      - uses: chainguard-dev/actions/setup-gitsign@ac42db4c9c2e2bd9f66aadf3290c5995891d91a3
-      - name: Deploy new image
-        uses: digitalservicebund/github-actions/argocd-deploy@ccfe8dfdcadb4bd87d074b4e3c946453dfc98360
-        with:
-          environment: production
-          version: ${{ needs.build-and-push-image.outputs.version }}
-          deploying_repo: useid-backend-service
-          infra_repo: useid-infra
-          deploy_key: ${{ secrets.DEPLOY_KEY }}
-          app: useid-production
-          argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
-          argocd_server: ${{ secrets.ARGOCD_SERVER }}
-      - name: Track deploy
-        uses: digitalservicebund/github-actions/track-deployment@b51920b9fdeeb0c8721c210853aee955bd7cefc0
-        with:
-          project: UseId
-          environment: production
-          metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
-          metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
-      - name: Send status to Slack
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy production :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+#  deploy-production:
+#    runs-on: ubuntu-latest
+#    if: ${{ github.ref == 'refs/heads/main' }}
+#    concurrency: deploy-production
+#    environment: production
+#    needs: [build-and-push-image, deploy-staging-verify]
+#    permissions:
+#      id-token: write # Enable OIDC for gitsign
+#    steps:
+#      - uses: chainguard-dev/actions/setup-gitsign@ac42db4c9c2e2bd9f66aadf3290c5995891d91a3
+#      - name: Deploy new image
+#        uses: digitalservicebund/github-actions/argocd-deploy@ccfe8dfdcadb4bd87d074b4e3c946453dfc98360
+#        with:
+#          environment: production
+#          version: ${{ needs.build-and-push-image.outputs.version }}
+#          deploying_repo: useid-backend-service
+#          infra_repo: useid-infra
+#          deploy_key: ${{ secrets.DEPLOY_KEY }}
+#          app: useid-production
+#          argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
+#          argocd_server: ${{ secrets.ARGOCD_SERVER }}
+#      - name: Track deploy
+#        uses: digitalservicebund/github-actions/track-deployment@b51920b9fdeeb0c8721c210853aee955bd7cefc0
+#        with:
+#          project: UseId
+#          environment: production
+#          metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
+#          metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
+#      - name: Send status to Slack
+#        # Third-party action, pin to commit SHA!
+#        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
+#        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
+#        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
+#        env:
+#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#        with:
+#          type: ${{ job.status }}
+#          job_name: "Deploy production :point_right:"
+#          mention: "here"
+#          mention_if: "failure"
+#          commit: true
+#          url: ${{ secrets.SLACK_WEBHOOK_URL }}
+#          token: ${{ secrets.GITHUB_TOKEN }}
