@@ -3,8 +3,6 @@ name: Pipeline WebFlux removal
 on:
   push:
     branches: [USEID-774_Webflux_removal]
-  pull_request:
-    branches: [USEID-774_Webflux_removal]
   # Allow to run this workflow manually
   workflow_dispatch:
 
