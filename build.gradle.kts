@@ -34,7 +34,6 @@ testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 dependencies {
     /** Webservice **/
     implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
     // => CVE-2021-37136, CVE-2021-37137, CVE-2021-43797
     implementation("io.netty:netty-all:4.1.86.Final") {
@@ -104,6 +103,7 @@ dependencies {
         exclude("org.mockito", "mockito-core")
         because("Use MockK instead of Mockito since it is better suited for Kotlin")
     }
+    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:1.0.0")

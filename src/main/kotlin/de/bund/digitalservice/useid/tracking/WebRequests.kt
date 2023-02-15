@@ -9,7 +9,7 @@ import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
 
 @Service
-class WebRequests {
+class WebRequests(private val client: HttpClient) {
 
     fun POST(url: String): Boolean {
         val request: HttpRequest = HttpRequest.newBuilder()
@@ -19,9 +19,7 @@ class WebRequests {
 
         val response: HttpResponse<String>
         try {
-            response = HttpClient
-                .newBuilder()
-                .build()
+            response = client
                 .send(request, BodyHandlers.ofString())
         } catch (e: Exception) {
             return false
