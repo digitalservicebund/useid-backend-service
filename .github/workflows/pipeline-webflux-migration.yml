@@ -1,4 +1,4 @@
-name: Pipeline
+name: Pipeline WebFlux removal
 
 on:
   push:
