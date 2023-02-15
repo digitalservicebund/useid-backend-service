@@ -88,14 +88,7 @@
       "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1"
     },
     {
-      "moduleLicense": "BSD Zero Clause License",
-      "moduleVersion": "2.7.7",
-      "moduleName": "antlr:antlr"
-    },
-    {
-      "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1",
-      "moduleVersion": "5.1.2.Final",
-      "moduleName": "org.hibernate.common:hibernate-commons-annotations"
+      "moduleLicense": "BSD Zero Clause License"
     }
   ]
 }
