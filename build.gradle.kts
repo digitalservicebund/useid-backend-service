@@ -33,15 +33,12 @@ testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
     /** Webservice **/
-    implementation("org.springframework.boot:spring-boot-starter-web")
-
-    // => CVE-2021-37136, CVE-2021-37137, CVE-2021-43797
-    implementation("io.netty:netty-all:4.1.86.Final") {
-        exclude(group = "io.netty", module = "netty-tcnative-classes")
-        because("CVE-2021-43797, not using Tomcat")
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude("org.springframework.boot", "spring-boot-starter-tomcat")
+        because("Using Jetty instead")
     }
-    // => CVE-2022-41881
-    implementation("io.netty:netty-codec-haproxy:4.1.86.Final")
+    implementation("org.springframework.boot:spring-boot-starter-jetty")
+
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     /** Security **/
