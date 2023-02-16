@@ -33,14 +33,6 @@ spring:
     hikari:
       minimum-idle: 10
       maximum-pool-size: 20
-#  r2dbc:
-#    pool:
-#      enabled: true
-#      initial-size: 10
-#      max-size: 20
-#    properties:
-#      sslMode: require
-
 
 springdoc:
   api-docs:

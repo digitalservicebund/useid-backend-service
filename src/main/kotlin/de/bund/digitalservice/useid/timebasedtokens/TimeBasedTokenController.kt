@@ -32,7 +32,7 @@ class TimeBasedTokenController(private val timeBasedTokenService: TimeBasedToken
         try {
             token = timeBasedTokenService.updateOrCreate(useIdSessionId)
         } catch (e: InvalidUseIdSessionIdException) {
-            return ResponseEntity.status(400).body(null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null)
         }
         return ResponseEntity
             .status(HttpStatus.OK)

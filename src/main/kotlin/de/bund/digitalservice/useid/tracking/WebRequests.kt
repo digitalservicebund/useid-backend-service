@@ -19,8 +19,7 @@ class WebRequests(private val client: HttpClient) {
 
         val response: HttpResponse<String>
         try {
-            response = client
-                .send(request, BodyHandlers.ofString())
+            response = client.send(request, BodyHandlers.ofString())
         } catch (e: Exception) {
             return false
         }
