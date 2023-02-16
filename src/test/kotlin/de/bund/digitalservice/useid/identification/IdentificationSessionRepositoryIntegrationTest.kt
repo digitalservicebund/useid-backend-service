@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +25,11 @@ class IdentificationSessionRepositoryIntegrationTest {
         private val DATA_GROUPS: List<String> = listOf(DG1, DG2)
         private val USEID_SESSION_ID: UUID = UUID.randomUUID()
         private val EID_SESSION_ID: UUID = UUID.randomUUID()
+    }
+
+    @BeforeAll
+    fun cleanupDatabase() {
+        identificationSessionRepository.deleteAll()
     }
 
     @Autowired
@@ -75,12 +81,12 @@ class IdentificationSessionRepositoryIntegrationTest {
     }
 
     private fun verifyIdentificationSessionWasDeleted(session: IdentificationSession) {
-        val result = identificationSessionRepository.findById(session.id!!)
+        val result = identificationSessionRepository.findByUseIdSessionId(session.useIdSessionId!!)
         assertEquals(null, result)
     }
 
     private fun verifyIdentificationSessionExists(session: IdentificationSession) {
-        val result = identificationSessionRepository.findById(session.id!!)
+        val result = identificationSessionRepository.findByUseIdSessionId(session.useIdSessionId!!)
         assertEquals(session.id, result?.id)
     }
 
@@ -88,8 +94,7 @@ class IdentificationSessionRepositoryIntegrationTest {
         val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS)
         identificationSession.createdAt = createdAt
 
-        identificationSessionRepository.save(identificationSession)
-        return identificationSession
+        return identificationSessionRepository.save(identificationSession)
     }
 
     private fun validateIdentificationSession(identificationSession: IdentificationSession?) {
