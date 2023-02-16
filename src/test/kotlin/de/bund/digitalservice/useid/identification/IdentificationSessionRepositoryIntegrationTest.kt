@@ -90,11 +90,13 @@ class IdentificationSessionRepositoryIntegrationTest {
         assertEquals(session.id, result?.id)
     }
 
-    private fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
+    fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
         val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS)
-        identificationSession.createdAt = createdAt
 
-        return identificationSessionRepository.save(identificationSession)
+        val savedSession = identificationSessionRepository.save(identificationSession)
+        savedSession.createdAt = createdAt
+
+        return savedSession
     }
 
     private fun validateIdentificationSession(identificationSession: IdentificationSession?) {
