@@ -44,8 +44,6 @@ class SecurityConfig(
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .exceptionHandling()
-            .and()
             .httpBasic().disable()
             .formLogin().disable()
             .logout().disable()
