@@ -29,6 +29,10 @@ spring:
   jackson:
     serialization:
       indent_output: true
+  datasource:
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 20
 #  r2dbc:
 #    pool:
 #      enabled: true
