@@ -33,12 +33,7 @@ testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
     /** Webservice **/
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude("org.springframework.boot", "spring-boot-starter-tomcat")
-        because("Using Jetty instead")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-jetty")
-
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     /** Security **/
