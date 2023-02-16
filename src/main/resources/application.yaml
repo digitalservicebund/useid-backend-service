@@ -22,6 +22,8 @@ server:
   error:
     include-message: never
     include-stacktrace: never
+  tomcat:
+    basedir: /tmp/tomcat
 
 spring:
   jackson:
