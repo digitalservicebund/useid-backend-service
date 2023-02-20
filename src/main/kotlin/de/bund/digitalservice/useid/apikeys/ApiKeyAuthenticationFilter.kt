@@ -20,8 +20,8 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
         filterChain: FilterChain
     ) {
         val authHeader: String? = extractAuthHeader(request)
-        val token = authHeader?.substring(AUTH_HEADER_VALUE_PREFIX.length)
-        val authentication = token?.let { authenticationManager.authenticate(ApiKeyAuthenticationToken(token)) }
+        val apiKey = authHeader?.substring(AUTH_HEADER_VALUE_PREFIX.length)
+        val authentication = apiKey?.let { authenticationManager.authenticate(ApiKeyAuthenticationToken(apiKey)) }
 
         if (authentication?.isAuthenticated == true) {
             setAuthentication(authentication)

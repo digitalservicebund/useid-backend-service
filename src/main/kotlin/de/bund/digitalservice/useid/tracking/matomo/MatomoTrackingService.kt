@@ -42,9 +42,9 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
         val eventUrl = constructEventURL(e)
 
         if (webRequests.POST(eventUrl)) {
-            log.info("Successfully tracked: $eventUrl")
+            log.info("Tracking ok: $eventUrl")
         } else {
-            log.error("Tracking failed for: $eventUrl")
+            log.error("Tracking failed: $eventUrl")
         }
     }
 }

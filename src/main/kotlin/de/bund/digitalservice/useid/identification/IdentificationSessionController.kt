@@ -141,8 +141,7 @@ class IdentificationSessionsController(
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
         val userData: GetResultResponseType?
-        val identificationSession: IdentificationSession?
-        identificationSession = identificationSessionService.findByEIDSessionId(eIdSessionId)
+        val identificationSession = identificationSessionService.findByEIDSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
