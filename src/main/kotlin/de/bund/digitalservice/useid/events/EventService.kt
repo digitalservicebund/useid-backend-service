@@ -56,6 +56,7 @@ class EventService {
         sseExecutor.execute {
             try {
                 emitter.send(SseEmitter.event().data(data).name(type.eventName))
+                emitter.complete()
             } catch (e: Exception) {
                 log.error("Failed to send event to widget $widgetSessionId: ${e.message}", e)
                 emitter.completeWithError(e)
