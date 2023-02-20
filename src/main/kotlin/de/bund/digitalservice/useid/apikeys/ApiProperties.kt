@@ -20,6 +20,8 @@ class ApiProperties {
         @NotBlank
         lateinit var refreshAddress: String
 
+        var tenantId: String = "unknown"
+
         var dataGroups: List<String> = emptyList()
     }
 }

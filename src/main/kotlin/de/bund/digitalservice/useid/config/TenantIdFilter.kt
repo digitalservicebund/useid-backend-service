@@ -11,24 +11,26 @@ import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 
 @Component
-class TenantIdFilter : GenericFilterBean() {
+class TenantIdFilter(
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
+) : GenericFilterBean() {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         // Retrieve tenant id either from authenticated security context (api keys) or from url.
         // see the other two requests filters for more information
         // We still need a data structure that allows to retrieve the tenant id for a given value
         //
-        // For some reason, we cannot rely on authenticated. It is always set to true. Therefor we rely on the
+        // For some reason, we cannot rely on authenticated. It seems to be always set to true. Therefor we rely on the
         // authentication class.
         val tenantId: String
         val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
         tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
             // api call with authentication token
-            "valid-api-token-call"
+            authentication.details.tenantId
         } else if (authentication is AnonymousAuthenticationToken) {
             // not an authenticated call or a failed api token authentication call
             // get tenant id based on csp header?
-            "client-call"
+            contentSecurityPolicyProperties.getTenantId(request.getParameter("hostname"))
         } else {
             "unknown-call"
         }

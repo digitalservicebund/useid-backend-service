@@ -3,12 +3,14 @@ app:
 
 api:
   apiKeys:
-    - keyvalue: foobar
+    - keyValue: foobar
       refreshAddress: http://localhost:8081/success
       dataGroups: [DG4,DG5,DG17]
-    - keyvalue: foobar2
+      tenantId: foobar_tenant_id
+    - keyValue: foobar2
       refreshAddress: https://foobar2.com
       dataGroups: [DG1,DG2, DG3]
+      tenantId: foobar2_tenant_id
 
 eidservice:
   wsdl-url: https://test.governikus-eid.de/eID-Server-230/eID?wsdl
@@ -36,9 +38,12 @@ spring:
 
 csp:
   allowed-hosts:
-    - foo.bar
-    - bar.foo
-    - localhost:8081
+    - host: foo.bar
+      tenantId: foo_bar_tenant_id
+    - host: bar.foo
+      tenantId: bar_foo_tenant_id
+    - host: localhost:8081
+      tenantId: localhost_tenant_id
 
 features:
   desktop-solution-enabled: true
