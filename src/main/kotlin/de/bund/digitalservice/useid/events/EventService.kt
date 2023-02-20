@@ -21,7 +21,7 @@ class EventService {
      */
     fun subscribeWidget(widgetSessionId: UUID): SseEmitter {
         val sseEmitter = SseEmitter()
-        sseEmitter.onCompletion { unsubscribeWidget(widgetSessionId) }
+        sseEmitter.onCompletion { unsubscribeWidget(widgetSessionId) } // FIXME: this does not work yet. When widget tab is closed, the widget is not unsubscribed
         widgets[widgetSessionId] = sseEmitter
         log.info { "New widget added with id $widgetSessionId, total widgets: ${widgets.size}" }
         return sseEmitter
