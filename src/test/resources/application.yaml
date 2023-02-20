@@ -3,8 +3,11 @@ app:
 
 api:
   apiKeys:
-  - keyValue: some-api-key
+  - keyValue: valid-api-key
     refreshAddress: some-refresh-address
+    dataGroups: [DG1,DG2]
+  - keyValue: other-api-key
+    refreshAddress: other-refresh-address
     dataGroups: [DG1,DG2]
 
 eidservice:
@@ -54,3 +57,11 @@ tracking:
 
 features:
   desktop-solution-enabled: true
+
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:12.12-alpine:///integration-tests-db
+    username: root
+    password: secret
+  profiles:
+    active: test

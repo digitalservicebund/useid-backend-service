@@ -1,28 +1,23 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.persistence.FlywayConfig
-import de.bund.digitalservice.useid.persistence.FlywayProperties
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.notNullValue
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
-import org.springframework.context.annotation.Import
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.data.r2dbc.dialect.PostgresDialect
-import org.springframework.r2dbc.core.DatabaseClient
-import reactor.test.StepVerifier
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import java.time.LocalDateTime
-import java.time.LocalDateTime.now
 import java.util.UUID
 
-@DataR2dbcTest
-@Import(FlywayConfig::class, FlywayProperties::class)
-class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerIntegrationTest() {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Tag("integration")
+class IdentificationSessionRepositoryIntegrationTest {
     companion object {
         private const val REFRESH_ADDRESS: String = "some-refresh-address"
         private const val DG1 = "DG1"
@@ -32,41 +27,32 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
         private val EID_SESSION_ID: UUID = UUID.randomUUID()
     }
 
-    @Autowired
-    private lateinit var client: DatabaseClient
+    @BeforeAll
+    fun cleanupDatabase() {
+        identificationSessionRepository.deleteAll()
+    }
 
     @Autowired
     private lateinit var identificationSessionRepository: IdentificationSessionRepository
 
-    private lateinit var template: R2dbcEntityTemplate
-
-    @BeforeAll
-    fun setup() {
-        template = R2dbcEntityTemplate(client, PostgresDialect.INSTANCE)
-    }
-
     @Test
-    fun `find identification by useIdSessionId and eIdSessionId returns the inserted entity`() {
+    fun `find identification session by useIdSessionId and eIdSessionId returns the inserted entity`() {
         // Given
         val identificationSession = IdentificationSession(USEID_SESSION_ID, REFRESH_ADDRESS, DATA_GROUPS)
         identificationSession.eIdSessionId = EID_SESSION_ID
 
         // When
-        template.insert(identificationSession).then().`as`(StepVerifier::create).verifyComplete()
+        identificationSessionRepository.save(identificationSession)
 
         // Then
-        identificationSessionRepository.findByUseIdSessionId(USEID_SESSION_ID).`as`(StepVerifier::create)
-            .assertNext { validateIdentificationSession(it) }
-            .verifyComplete()
-        identificationSessionRepository.findByEIdSessionId(EID_SESSION_ID).`as`(StepVerifier::create)
-            .assertNext { validateIdentificationSession(it) }
-            .verifyComplete()
+        validateIdentificationSession(identificationSessionRepository.findByUseIdSessionId(USEID_SESSION_ID))
+        validateIdentificationSession(identificationSessionRepository.findByEIdSessionId(EID_SESSION_ID))
     }
 
     @Test
     fun `deleteAllByCreatedAtBefore removes expired entities successfully`() {
         // Given
-        val now = now()
+        val now = LocalDateTime.now()
         val deleteBefore = now.minusDays(7)
 
         // To be deleted
@@ -81,7 +67,7 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
         val createdNow = insertNewIdentificationSession(now)
 
         // When
-        identificationSessionRepository.deleteAllByCreatedAtBefore(deleteBefore).`as`(StepVerifier::create).verifyComplete()
+        identificationSessionRepository.deleteAllByCreatedAtBefore(deleteBefore)
 
         // Then
         verifyIdentificationSessionWasDeleted(createdLongBeforeExpiry)
@@ -95,31 +81,30 @@ class IdentificationSessionRepositoryIntegrationTest : PostgresTestcontainerInte
     }
 
     private fun verifyIdentificationSessionWasDeleted(session: IdentificationSession) {
-        identificationSessionRepository.findById(session.id!!).`as`(StepVerifier::create)
-            .expectNextCount(0)
-            .verifyComplete()
+        val result = identificationSessionRepository.findByUseIdSessionId(session.useIdSessionId!!)
+        assertEquals(null, result)
     }
 
     private fun verifyIdentificationSessionExists(session: IdentificationSession) {
-        identificationSessionRepository.findById(session.id!!).`as`(StepVerifier::create)
-            .assertNext { assertThat(it, notNullValue()) }
-            .verifyComplete()
+        val result = identificationSessionRepository.findByUseIdSessionId(session.useIdSessionId!!)
+        assertEquals(session.id, result?.id)
     }
 
-    private fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
+    fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
         val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS)
-        identificationSession.createdAt = createdAt
 
-        template.insert(identificationSession).then().`as`(StepVerifier::create).verifyComplete()
-        return identificationSession
+        val savedSession = identificationSessionRepository.save(identificationSession)
+        savedSession.createdAt = createdAt
+
+        return savedSession
     }
 
-    private fun validateIdentificationSession(identificationSession: IdentificationSession) {
-        assertThat(identificationSession.id, notNullValue())
-        assertThat(identificationSession.eIdSessionId, equalTo(EID_SESSION_ID))
-        assertThat(identificationSession.useIdSessionId, equalTo(USEID_SESSION_ID))
-        assertThat(identificationSession.refreshAddress, equalTo(REFRESH_ADDRESS))
-        assertThat(identificationSession.requestDataGroups, hasItems(DG1))
-        assertThat(identificationSession.requestDataGroups, hasItems(DG2))
+    private fun validateIdentificationSession(identificationSession: IdentificationSession?) {
+        assertThat(identificationSession?.id, notNullValue())
+        assertThat(identificationSession?.eIdSessionId, equalTo(EID_SESSION_ID))
+        assertThat(identificationSession?.useIdSessionId, equalTo(USEID_SESSION_ID))
+        assertThat(identificationSession?.refreshAddress, equalTo(REFRESH_ADDRESS))
+        assertThat(identificationSession?.requestDataGroups, hasItems(DG1))
+        assertThat(identificationSession?.requestDataGroups, hasItems(DG2))
     }
 }

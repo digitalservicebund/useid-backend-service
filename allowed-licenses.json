@@ -83,6 +83,12 @@
     {
       "moduleLicense": null,
       "moduleName": "de.governikus.autent.utils:autent-key-utils"
+    },
+    {
+      "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1"
+    },
+    {
+      "moduleLicense": "BSD Zero Clause License"
     }
   ]
 }

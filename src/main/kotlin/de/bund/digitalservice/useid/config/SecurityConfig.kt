@@ -1,51 +1,52 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationFilter
+import de.bund.digitalservice.useid.apikeys.MANAGE_IDENTIFICATION_SESSION_AUTHORITY
 import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.ReactiveAuthenticationManager
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder
-import org.springframework.security.config.web.server.ServerHttpSecurity
-import org.springframework.security.web.server.SecurityWebFilterChain
-import org.springframework.security.web.server.authentication.AuthenticationWebFilter
-import org.springframework.security.web.server.authentication.ServerAuthenticationConverter
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter
 
 @Configuration
-@EnableWebFluxSecurity
+@EnableWebSecurity
 class SecurityConfig(
-    private val authenticationManager: ReactiveAuthenticationManager,
-    private val authenticationConverter: ServerAuthenticationConverter,
+    private val authenticationManager: AuthenticationManager,
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
 ) {
     @Bean
-    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-        return http.authorizeExchange()
-            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
-            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
-            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
-            .pathMatchers(HttpMethod.GET, "$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info").permitAll()
-            .pathMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
-            .anyExchange().permitAll()
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        return http.authorizeRequests()
+            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
+            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
+            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
+            .antMatchers(HttpMethod.GET, "$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info").permitAll()
+            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
+            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
+            .anyRequest().permitAll()
             .and().csrf().disable()
             .headers()
             .frameOptions().disable()
-            .and().addFilterAfter(
-                authenticationFilter(),
-                SecurityWebFiltersOrder.REACTOR_CONTEXT
-            )
+            .and()
             .addFilterAfter(
                 SecurityHeadersFilter(contentSecurityPolicyProperties),
-                SecurityWebFiltersOrder.LAST
+                FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
             )
+            .addFilterBefore(
+                ApiKeyAuthenticationFilter(authenticationManager),
+                AnonymousAuthenticationFilter::class.java
+            )
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .httpBasic().disable()
+            .formLogin().disable()
+            .logout().disable()
             .build()
-    }
-
-    @Bean
-    fun authenticationFilter(): AuthenticationWebFilter? {
-        val filter = AuthenticationWebFilter(authenticationManager)
-        filter.setServerAuthenticationConverter(authenticationConverter)
-        return filter
     }
 }

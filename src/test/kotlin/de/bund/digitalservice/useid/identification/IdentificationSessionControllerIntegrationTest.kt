@@ -8,7 +8,6 @@ import de.bund.bsi.eid230.TransactionAttestationResponseType
 import de.bund.bsi.eid230.VerificationResultType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
@@ -23,6 +22,7 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,11 +33,12 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.util.UUID
 
-private const val AUTHORIZATION_HEADER = "Bearer some-api-key"
+private const val AUTHORIZATION_HEADER = "Bearer valid-api-key"
 private const val REFRESH_ADDRESS = "some-refresh-address"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
+@Tag("integration")
+class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
     val attributes = listOf("DG1", "DG2")
 
     @Autowired
@@ -74,8 +75,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
-    fun `start session endpoint returns 401 when no authorization header was passed`() {
-        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isUnauthorized
+    fun `start session endpoint returns 403 when no authorization header was passed`() {
+        sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -177,8 +178,32 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
-    fun `identity data endpoint returns 401 when no authorization header was passed`() {
-        sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isUnauthorized
+    fun `identity data endpoint returns 401 when api key differs from the api key used to create the session`() {
+        val eIdSessionId = UUID.randomUUID().toString()
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+
+        var tcTokenURL = ""
+        webTestClient
+            .post()
+            .uri("/api/v1/identification/sessions")
+            .headers {
+                it.set(HttpHeaders.AUTHORIZATION, "Bearer other-api-key")
+            }
+            .exchange()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .exchange()
+            .expectStatus().isOk
+
+        sendIdentityRequest(eIdSessionId)
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `identity data endpoint returns 403 when no authorization header was passed`() {
+        sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -211,7 +236,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         .exchange()
 
     private fun retrieveIdentificationSession(useIdSessionId: UUID): IdentificationSession? {
-        return identificationSessionService.findByUseIdSessionId(useIdSessionId).block()
+        return identificationSessionService.findByUseIdSessionId(useIdSessionId)
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {

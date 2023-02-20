@@ -33,17 +33,7 @@ testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
     /** Webservice **/
-    implementation("org.springframework.boot:spring-boot-starter-webflux") {
-        exclude(group = "io.netty", module = "netty-tcnative-classes")
-        because("CVE-2021-43797, not using Tomcat")
-    }
-    // => CVE-2021-37136, CVE-2021-37137, CVE-2021-43797
-    implementation("io.netty:netty-all:4.1.86.Final") {
-        exclude(group = "io.netty", module = "netty-tcnative-classes")
-        because("CVE-2021-43797, not using Tomcat")
-    }
-    // => CVE-2022-41881
-    implementation("io.netty:netty-codec-haproxy:4.1.86.Final")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     /** Security **/
@@ -54,10 +44,10 @@ dependencies {
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 
     /** Persistence **/
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
-    runtimeOnly("org.postgresql:r2dbc-postgresql")
     implementation("org.flywaydb:flyway-core:9.11.0")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-55:3.1.1")
 
     /** Monitoring **/
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -73,14 +63,12 @@ dependencies {
     implementation("org.yaml:snakeyaml:1.33")
 
     /** Kotlin specific **/
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
 
     /** Docs **/
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.9")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.9")
 
     /** Governikus Autent SDK **/
@@ -107,15 +95,14 @@ dependencies {
         exclude("org.mockito", "mockito-core")
         because("Use MockK instead of Mockito since it is better suited for Kotlin")
     }
+    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("com.ninja-squad:springmockk:4.0.0")
-    testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:1.0.0")
     testImplementation("org.testcontainers:junit-jupiter:1.17.3")
     testImplementation("org.testcontainers:postgresql:1.17.3")
     testImplementation("org.testcontainers:testcontainers:1.17.3")
-    testImplementation("org.testcontainers:r2dbc:1.17.3")
-    testImplementation("org.testcontainers:mysql:1.17.3")
+    testImplementation("org.testcontainers:jdbc:1.17.3")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.jsoup:jsoup:1.15.3")
 
@@ -125,8 +112,8 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:3.21.9")
 
     /** Scheduling **/
-    implementation("net.javacrumbs.shedlock:shedlock-spring:5.0.1")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-r2dbc:4.42.0")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.1.0")
 }
 
 tasks {

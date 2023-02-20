@@ -1,24 +1,29 @@
 package de.bund.digitalservice.useid.tracking
 
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
 import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.net.http.HttpResponse.BodyHandlers
 
 @Service
-class WebRequests(private val client: WebClient) {
+class WebRequests(private val client: HttpClient) {
 
-    fun POST(url: String): Mono<ResponseEntity<Void>> {
-        return client
-            .post()
+    fun POST(url: String): Boolean {
+        val request: HttpRequest = HttpRequest.newBuilder()
             .uri(URI(url))
-            .retrieve()
-            .toBodilessEntity()
-            .onErrorReturn(
-                // everything but 200 will be caught and responded with 500
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null)
-            )
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build()
+
+        val response: HttpResponse<String>
+        try {
+            response = client.send(request, BodyHandlers.ofString())
+        } catch (e: Exception) {
+            return false
+        }
+
+        return response.statusCode() == HttpStatus.OK.value()
     }
 }

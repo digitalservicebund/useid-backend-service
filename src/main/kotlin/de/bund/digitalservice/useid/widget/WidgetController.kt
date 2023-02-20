@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.reactive.result.view.Rendering
+import org.springframework.web.servlet.ModelAndView
 import ua_parser.Client
 import ua_parser.Parser
 import java.net.URLEncoder
@@ -38,7 +38,6 @@ class WidgetController(
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
         publishMatomoEvent(
-            widgetTracking.categories.widget,
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
             sessionHash,
@@ -51,11 +50,10 @@ class WidgetController(
     fun getWidgetPage(
         model: Model,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
-        @RequestParam() hostname: String,
+        @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?
-    ): Rendering {
+    ): ModelAndView {
         publishMatomoEvent(
-            widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.widget,
             sessionHash,
@@ -72,17 +70,14 @@ class WidgetController(
             "additionalClass" to ""
         )
 
-        return Rendering
-            .view(WIDGET_PAGE)
-            .model(defaultViewHeaderConfig + widgetViewConfig)
-            .status(HttpStatus.OK)
-            .build()
+        val modelAndView = ModelAndView(WIDGET_PAGE)
+        modelAndView.addAllObjects(defaultViewHeaderConfig + widgetViewConfig)
+        return modelAndView
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): Rendering {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
         publishMatomoEvent(
-            widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
             sessionHash,
@@ -101,15 +96,13 @@ class WidgetController(
             "additionalClass" to "fallback"
         )
 
-        return Rendering
-            .view(WIDGET_PAGE)
-            .model(defaultViewHeaderConfig + widgetViewFallbackConfig)
-            .status(HttpStatus.OK)
-            .build()
+        val modelAndView = ModelAndView(WIDGET_PAGE)
+        modelAndView.addAllObjects(defaultViewHeaderConfig + widgetViewFallbackConfig)
+        return modelAndView
     }
 
-    private fun publishMatomoEvent(category: String, action: String, name: String, sessionId: String?, userAgent: String?) {
-        val matomoEvent = MatomoEvent(this, category, action, name, sessionId, userAgent)
+    private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?) {
+        val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent)
         applicationEventPublisher.publishEvent(matomoEvent)
     }
 
@@ -135,19 +128,15 @@ class WidgetController(
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 
-    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?): Rendering {
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?): ModelAndView {
         publishMatomoEvent(
-            widgetTracking.categories.widget,
             widgetTracking.actions.loaded,
             widgetTracking.names.incompatible,
             sessionHash,
             userAgent
         )
-
-        return Rendering
-            .view(INCOMPATIBLE_PAGE)
-            .model(defaultViewHeaderConfig)
-            .status(HttpStatus.OK)
-            .build()
+        val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
+        modelAndView.addAllObjects(defaultViewHeaderConfig)
+        return modelAndView
     }
 }

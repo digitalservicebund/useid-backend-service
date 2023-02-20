@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Flux
-import reactor.core.publisher.FluxSink
-import reactor.core.publisher.Mono
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.UUID
 
 @RestController
@@ -41,14 +39,14 @@ class EventController(eventService: EventService) {
     /**
      * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
      */
-    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): Mono<ResponseEntity<Nothing>> {
-        return Mono.fromCallable { eventService.publish(event, widgetSessionId) }
-            .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(null) }
-            .doOnError { log.error(it.message) }
-            .onErrorReturn(
-                ConsumerNotFoundException::class.java,
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
-            )
+    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): ResponseEntity<Nothing> {
+        try {
+            eventService.publish(event, widgetSessionId)
+        } catch (e: ConsumerNotFoundException) {
+            log.error("Failed to publish event: $e.message")
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
     @PostMapping("/events/{widgetSessionId}/success")
@@ -56,7 +54,7 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Push SSE to corresponding widget having a success value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): Mono<ResponseEntity<Nothing>> {
+    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): ResponseEntity<Nothing> {
         log.info { "Received success event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
     }
@@ -66,7 +64,7 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Push SSE to corresponding widget having an error value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): Mono<ResponseEntity<Nothing>> {
+    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): ResponseEntity<Nothing> {
         log.info { "Received event for consumer: $widgetSessionId" }
         return publishEvent(createServerSentEvent(event), widgetSessionId)
     }
@@ -78,11 +76,8 @@ class EventController(eventService: EventService) {
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     @Operation(summary = "Subscribe for receiving SSE for the provided widgetSessionId")
     @ApiResponse(responseCode = "200", content = [Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)])
-    fun subscribe(@PathVariable widgetSessionId: UUID): Flux<ServerSentEvent<Any>> {
-        return Flux.create { sink: FluxSink<ServerSentEvent<Any>> ->
-            eventService.subscribeConsumer(widgetSessionId) { event: ServerSentEvent<Any> -> sink.next(event) }
-            sink.onDispose { eventService.unsubscribeConsumer(widgetSessionId) }
-        }
+    fun subscribe(@PathVariable widgetSessionId: UUID): SseEmitter {
+        return eventService.subscribeConsumer(widgetSessionId)
     }
 
     private fun createServerSentEvent(event: SuccessEvent) = ServerSentEvent.builder<Any>()
