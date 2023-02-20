@@ -14,14 +14,25 @@ class EventService {
 
     private val widgets: MutableMap<UUID, SseEmitter> = HashMap()
 
-    private val sseExecutor = Executors.newSingleThreadExecutor()
+    private val sseExecutor = Executors.newCachedThreadPool()
 
     /**
      * This method subscribes a widget to events sent to the given id.
      */
     fun subscribeWidget(widgetSessionId: UUID): SseEmitter {
         val sseEmitter = SseEmitter()
-        sseEmitter.onCompletion { unsubscribeWidget(widgetSessionId) } // FIXME: this does not work yet. When widget tab is closed, the widget is not unsubscribed
+        sseEmitter.onCompletion {
+            log.info("COMPLETION")
+            unsubscribeWidget(widgetSessionId)
+        } // FIXME: this does not work yet. When widget tab is closed, the widget is not unsubscribed
+        sseEmitter.onError {
+            log.info("ERROR")
+            unsubscribeWidget(widgetSessionId)
+        }
+        sseEmitter.onTimeout {
+            log.info("TIMEOUT")
+            unsubscribeWidget(widgetSessionId)
+        }
         widgets[widgetSessionId] = sseEmitter
         log.info { "New widget added with id $widgetSessionId, total widgets: ${widgets.size}" }
         return sseEmitter
