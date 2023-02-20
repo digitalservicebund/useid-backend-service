@@ -46,7 +46,7 @@ dependencies {
     /** Persistence **/
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
-    implementation("org.flywaydb:flyway-core:9.11.0")
+    implementation("org.flywaydb:flyway-core:9.15.0")
     implementation("io.hypersistence:hypersistence-utils-hibernate-55:3.1.1")
 
     /** Monitoring **/
