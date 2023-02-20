@@ -2,7 +2,6 @@ package de.bund.digitalservice.useid.events
 
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.http.codec.ServerSentEvent
 import org.springframework.stereotype.Service
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.UUID
@@ -13,47 +12,43 @@ import java.util.concurrent.Executors
 class EventService {
     private val log = KotlinLogging.logger {}
 
-    private val consumers: MutableMap<UUID, SseEmitter> = HashMap()
+    private val widgets: MutableMap<UUID, SseEmitter> = HashMap()
 
-    private val nonBlockingService = Executors.newCachedThreadPool() // TODO: set size of thread pool if necessary
+    private val sseExecutor = Executors.newSingleThreadExecutor()
 
     /**
-     * This method subscribes a consumer to events sent to the given id.
+     * This method subscribes a widget to events sent to the given id.
      */
-    fun subscribeConsumer(widgetSessionId: UUID): SseEmitter {
+    fun subscribeWidget(widgetSessionId: UUID): SseEmitter {
         val sseEmitter = SseEmitter()
-        sseEmitter.onCompletion { unsubscribeConsumer(widgetSessionId) }
-        consumers[widgetSessionId] = sseEmitter
-        log.info { "New consumer added with id $widgetSessionId, total consumers: ${consumers.size}" }
+        sseEmitter.onCompletion { unsubscribeWidget(widgetSessionId) }
+        widgets[widgetSessionId] = sseEmitter
+        log.info { "New widget added with id $widgetSessionId, total widgets: ${widgets.size}" }
         return sseEmitter
     }
 
     /**
-     * This method unsubscribes a consumer.
+     * This method unsubscribes a widget.
      */
-    fun unsubscribeConsumer(widgetSessionId: UUID) {
-        consumers.remove(widgetSessionId)
-        log.info { "Consumer with id $widgetSessionId removed, total consumers: ${consumers.size}" }
+    fun unsubscribeWidget(widgetSessionId: UUID) {
+        widgets.remove(widgetSessionId)
+        log.info { "Widget with id $widgetSessionId removed, total widgets: ${widgets.size}" }
     }
 
     /**
-     * This method publishes the given event to the according consumer. The consumer id is specified in the event.
+     * This method publishes the given event to the according widget. The widget id is specified in the event.
      */
-    fun publish(event: ServerSentEvent<Any>, widgetSessionId: UUID) {
-        log.info { "Publish event to consumer $widgetSessionId" }
-        val emitter = consumers[widgetSessionId] ?: throw ConsumerNotFoundException(widgetSessionId)
+    fun publish(data: Any, type: EventType, widgetSessionId: UUID) {
+        log.info { "Publish event to widget $widgetSessionId" }
+        val emitter = widgets[widgetSessionId] ?: throw WidgetNotFoundException(widgetSessionId)
 
-        nonBlockingService.execute {
+        sseExecutor.execute {
             try {
-                emitter.send(event)
-                emitter.complete()
-            } catch (ex: Exception) {
-                emitter.completeWithError(ex)
+                emitter.send(SseEmitter.event().data(data).name(type.eventName))
+            } catch (e: Exception) {
+                log.error("Failed to send event to widget $widgetSessionId: ${e.message}", e)
+                emitter.completeWithError(e)
             }
         }
-    }
-
-    fun numberConsumers(): Int {
-        return consumers.size
     }
 }
