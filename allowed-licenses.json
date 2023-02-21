@@ -100,6 +100,16 @@
     {
       "moduleLicense": null,
       "moduleName": "org.apache.groovy:groovy-bom"
+    },
+    {
+      "moduleLicense": "BSD3",
+      "moduleVersion": "1.1.0",
+      "moduleName": "com.augustcellars.cose:cose-java"
+    },
+    {
+      "moduleLicense": null,
+      "moduleVersion": "2.4.0",
+      "moduleName": "com.yubico:webauthn-server-parent"
     }
   ]
 }

@@ -21,14 +21,13 @@ abstract class WebauthnController {
 
     private val random = SecureRandom()
 
-    @PostMapping(path=["/test/test"])
+    @PostMapping(path = ["/test/test"])
     fun test() {
         println("TEST!")
     }
 
-    @PostMapping(path=["/{wSId}/register"])
+    @PostMapping(path = ["/{wSId}/register"])
     fun startRegistration(@PathVariable wSId: UUID): ResponseEntity<PublicKeyCredentialCreationOptions> {
-
         val test_username = "TEST_USERNAME"
         val test_displayName = "TEST_DISPLAYNAME"
         val test_credentialNickname = "TEST_CREDENTIAL_NICKNAME"
@@ -72,6 +71,4 @@ abstract class WebauthnController {
         random.nextBytes(bytes)
         return ByteArray(bytes)
     }
-
-
 }
