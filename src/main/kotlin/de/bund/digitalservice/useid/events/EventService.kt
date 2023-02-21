@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
+import java.io.IOException
 import java.util.UUID
 import java.util.concurrent.Executors
 
@@ -21,18 +22,7 @@ class EventService {
      */
     fun subscribeWidget(widgetSessionId: UUID): SseEmitter {
         val sseEmitter = SseEmitter()
-        sseEmitter.onCompletion {
-            log.info("COMPLETION")
-            unsubscribeWidget(widgetSessionId)
-        } // FIXME: this does not work yet. When widget tab is closed, the widget is not unsubscribed
-        sseEmitter.onError {
-            log.info("ERROR")
-            unsubscribeWidget(widgetSessionId)
-        }
-        sseEmitter.onTimeout {
-            log.info("TIMEOUT")
-            unsubscribeWidget(widgetSessionId)
-        }
+        sseEmitter.onCompletion { unsubscribeWidget(widgetSessionId) }
         widgets[widgetSessionId] = sseEmitter
         log.info { "New widget added with id $widgetSessionId, total widgets: ${widgets.size}" }
         return sseEmitter
@@ -53,14 +43,14 @@ class EventService {
         log.info { "Publish event to widget $widgetSessionId" }
         val emitter = widgets[widgetSessionId] ?: throw WidgetNotFoundException(widgetSessionId)
 
-        sseExecutor.execute {
-            try {
-                emitter.send(SseEmitter.event().data(data).name(type.eventName))
-                emitter.complete()
-            } catch (e: Exception) {
-                log.error("Failed to send event to widget $widgetSessionId: ${e.message}", e)
-                emitter.completeWithError(e)
-            }
+        // TODO: Clarify the implications of executing this synchronously on the main thread
+        // sseExecutor.execute {
+        try {
+            emitter.send(SseEmitter.event().data(data).name(type.eventName))
+            emitter.complete()
+        } catch (e: IOException) {
+            throw WidgetNotFoundException(widgetSessionId)
         }
+        // }
     }
 }
