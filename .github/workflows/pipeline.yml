@@ -15,7 +15,7 @@ env:
 
 jobs:
   validate-gradle-wrapper:
-    runs.on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Validate gradle wrapper
