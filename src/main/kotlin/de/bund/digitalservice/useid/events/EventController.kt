@@ -36,7 +36,7 @@ class EventController(private val eventService: EventService) {
         try {
             eventService.publish(data, type, widgetSessionId)
         } catch (e: WidgetNotFoundException) {
-            log.error("Failed to publish event: $e.message")
+            log.info("Failed to publish event: ${e.message}")
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).build()

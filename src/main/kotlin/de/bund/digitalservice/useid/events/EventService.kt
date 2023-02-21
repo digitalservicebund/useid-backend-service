@@ -21,7 +21,7 @@ class EventService {
      * This method subscribes a widget to events sent to the given id.
      */
     fun subscribeWidget(widgetSessionId: UUID): SseEmitter {
-        val sseEmitter = SseEmitter()
+        val sseEmitter = SseEmitter(-1L)
         sseEmitter.onCompletion { unsubscribeWidget(widgetSessionId) }
         widgets[widgetSessionId] = sseEmitter
         log.info { "New widget added with id $widgetSessionId, total widgets: ${widgets.size}" }
