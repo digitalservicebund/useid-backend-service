@@ -39,6 +39,9 @@ dependencies {
     /** Security **/
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    /** Desktop Flow **/
+    implementation("com.yubico:webauthn-server-core:2.4.0")
+
     /** UI **/
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
