@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.io.IOException
 import java.util.UUID
-import java.util.concurrent.Executors
 
 @Service
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
@@ -14,8 +13,6 @@ class EventService {
     private val log = KotlinLogging.logger {}
 
     private val widgets: MutableMap<UUID, SseEmitter> = HashMap()
-
-    private val sseExecutor = Executors.newCachedThreadPool()
 
     /**
      * This method subscribes a widget to events sent to the given id.
@@ -44,13 +41,11 @@ class EventService {
         val emitter = widgets[widgetSessionId] ?: throw WidgetNotFoundException(widgetSessionId)
 
         // TODO: Clarify the implications of executing this synchronously on the main thread
-        // sseExecutor.execute {
         try {
             emitter.send(SseEmitter.event().data(data).name(type.eventName))
             emitter.complete()
         } catch (e: IOException) {
             throw WidgetNotFoundException(widgetSessionId)
         }
-        // }
     }
 }
