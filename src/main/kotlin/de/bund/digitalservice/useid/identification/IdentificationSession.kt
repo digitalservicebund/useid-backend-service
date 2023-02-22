@@ -19,8 +19,8 @@ import javax.persistence.Table
 
 @TypeDefs(
     value = [
-        TypeDef(name = "list-array", typeClass = ListArrayType::class)
-    ]
+        TypeDef(name = "list-array", typeClass = ListArrayType::class),
+    ],
 )
 @Table(name = "identification_session")
 @Entity
@@ -34,7 +34,7 @@ data class IdentificationSession(
 
     @Column(name = "request_data_groups")
     @Type(type = "list-array")
-    var requestDataGroups: List<String> = emptyList()
+    var requestDataGroups: List<String> = emptyList(),
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

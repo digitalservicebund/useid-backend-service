@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 @EnableWebSecurity
 class SecurityConfig(
     private val authenticationManager: AuthenticationManager,
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -36,11 +36,11 @@ class SecurityConfig(
             .and()
             .addFilterAfter(
                 SecurityHeadersFilter(contentSecurityPolicyProperties),
-                FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
+                FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .addFilterBefore(
                 ApiKeyAuthenticationFilter(authenticationManager),
-                AnonymousAuthenticationFilter::class.java
+                AnonymousAuthenticationFilter::class.java,
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()

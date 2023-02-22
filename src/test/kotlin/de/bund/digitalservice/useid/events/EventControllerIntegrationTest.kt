@@ -23,7 +23,7 @@ internal class EventControllerIntegrationTest(
     @Autowired
     @Value("\${local.server.port}")
     val port: Int,
-    @Autowired val webTestClient: WebTestClient
+    @Autowired val webTestClient: WebTestClient,
 ) {
 
     lateinit var webClient: WebClient

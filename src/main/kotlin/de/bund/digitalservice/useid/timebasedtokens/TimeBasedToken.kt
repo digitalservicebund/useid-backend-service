@@ -6,5 +6,5 @@ import java.util.UUID
 data class TimeBasedToken(
     val useIdSessionId: UUID,
     val tokenId: UUID,
-    var createdAt: LocalDateTime? = null
+    var createdAt: LocalDateTime? = null,
 )

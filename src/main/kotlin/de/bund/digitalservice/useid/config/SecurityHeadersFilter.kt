@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class SecurityHeadersFilter(
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
 ) : OncePerRequestFilter() {
 
     private val widgetPagePath: PathPattern = PathPatternParser().parse("/$WIDGET_PAGE")

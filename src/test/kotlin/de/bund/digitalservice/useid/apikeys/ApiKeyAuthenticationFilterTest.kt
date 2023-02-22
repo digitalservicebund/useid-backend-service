@@ -68,7 +68,7 @@ internal class ApiKeyAuthenticationFilterTest {
                     assertEquals(validApiKey.refreshAddress, apiKeyDetails.refreshAddress)
 
                     assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)))
-                }
+                },
             )
         }
         verify { filterChain.doFilter(request, response) }

@@ -57,7 +57,7 @@ internal class RefreshControllerTest(@Autowired val webTestClient: WebTestClient
             Arguments.of("alert(1)=foo", "alert%281%29=foo"), // encode unencoded key
             Arguments.of("foo=alert%281%29", "foo=alert%281%29"), // keep value encoding
             Arguments.of("foo=bar%26bar%3Dfoo", "foo=bar%26bar%3Dfoo"), // keep value encoding
-            Arguments.of("alert%281%29=foo", "alert%281%29=foo") // keep key encoding
+            Arguments.of("alert%281%29=foo", "alert%281%29=foo"), // keep key encoding
         )
     }
 

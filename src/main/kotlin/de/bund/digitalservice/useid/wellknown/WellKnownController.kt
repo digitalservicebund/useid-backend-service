@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping
 @Controller
 @Timed
 class WellKnownController(
-    wellKnownProperties: WellKnownProperties
+    wellKnownProperties: WellKnownProperties,
 ) {
     private val iosConfig = wellKnownProperties.iosConfig
     private val androidConfig = wellKnownProperties.androidConfig
 
     @GetMapping(
         path = [".well-known/apple-app-site-association"],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun getAppleAppSiteAssociation(): ResponseEntity<IOSUniversalLink> {
         val appIds = listOf(iosConfig.appId, iosConfig.appIdPreview)
@@ -29,7 +29,7 @@ class WellKnownController(
 
     @GetMapping(
         path = [".well-known/assetlinks.json"],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun getAndroidAppSiteAssociation(): ResponseEntity<AndroidAppLink> {
         val androidApp = AndroidAppLinkItem(
@@ -37,16 +37,16 @@ class WellKnownController(
             AppTarget(
                 androidConfig.namespace,
                 androidConfig.packageDefault.name,
-                listOf(androidConfig.packageDefault.fingerprint)
-            )
+                listOf(androidConfig.packageDefault.fingerprint),
+            ),
         )
         val androidAppPreview = AndroidAppLinkItem(
             listOf(androidConfig.relation),
             AppTarget(
                 androidConfig.namespace,
                 androidConfig.packagePreview.name,
-                listOf(androidConfig.packagePreview.fingerprint)
-            )
+                listOf(androidConfig.packagePreview.fingerprint),
+            ),
         )
         val androidAppLink = AndroidAppLink()
         androidAppLink.add(androidApp)

@@ -162,8 +162,8 @@ tasks {
             files(
                 fileTree(project.buildDir.absolutePath) {
                     include("jacoco/*.exec")
-                }
-            )
+                },
+            ),
         )
 
         // Avoid untested prototype code skewing coverage...
@@ -173,8 +173,8 @@ tasks {
                     fileTree(it) {
                         exclude("**/ApplicationKt**")
                     }
-                }
-            )
+                },
+            ),
         )
 
         reports {
@@ -214,7 +214,7 @@ tasks {
             property(
                 "sonar.coverage.exclusions",
                 // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
-                "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/events/**/*"
+                "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/events/**/*",
             )
         }
     }
@@ -243,14 +243,14 @@ spotless {
             "**/*.md",
             "**/*.properties",
             "**/*.sh",
-            "**/*.yml"
+            "**/*.yml",
         )
         prettier(
             mapOf(
                 "prettier" to "2.6.1",
                 "prettier-plugin-sh" to "0.7.1",
-                "prettier-plugin-properties" to "0.1.0"
-            )
+                "prettier-plugin-properties" to "0.1.0",
+            ),
         ).config(mapOf("keySeparator" to "="))
     }
 }
@@ -262,7 +262,7 @@ licenseReport {
     filters = arrayOf(
         // With second arg true we get the default transformations:
         // https://github.com/jk1/Gradle-License-Report/blob/7cf695c38126b63ef9e907345adab84dfa92ea0e/src/main/resources/default-license-normalizer-bundle.json
-        LicenseBundleNormalizer(null, true)
+        LicenseBundleNormalizer(null, true),
     )
 }
 

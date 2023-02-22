@@ -17,7 +17,7 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         val authHeader: String? = extractAuthHeader(request)
         val apiKey = authHeader?.substring(AUTH_HEADER_VALUE_PREFIX.length)

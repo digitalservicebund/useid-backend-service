@@ -11,7 +11,7 @@ class IdentificationSessionService(private val identificationSessionRepository: 
 
     fun create(refreshAddress: String, requestDataGroups: List<String>): IdentificationSession {
         val session = identificationSessionRepository.save(
-            IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups)
+            IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups),
         )
         log.info("Created new identification session. useIdSessionId=${session.useIdSessionId}")
         return session

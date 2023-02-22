@@ -38,7 +38,7 @@ class WebRequestsTest {
                 withArg { request ->
                     assertEquals(URI(url), request.uri())
                 },
-                BodyHandlers.ofString()
+                BodyHandlers.ofString(),
             )
         }
     }

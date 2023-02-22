@@ -17,7 +17,7 @@ import java.util.Locale
 @Tag("integration")
 class WidgetControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
-    @Autowired val messageSource: MessageSource
+    @Autowired val messageSource: MessageSource,
 ) {
 
     @Test
@@ -43,12 +43,12 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self' foo.bar;"
+                "some default value;frame-ancestors 'self' foo.bar;",
             )
             .expectHeader()
             .valueEquals(
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
-                "foo.bar"
+                "foo.bar",
             )
             .expectHeader()
             .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
@@ -65,7 +65,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';"
+                "some default value;frame-ancestors 'self';",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -82,7 +82,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';"
+                "some default value;frame-ancestors 'self';",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -190,7 +190,7 @@ class WidgetControllerIntegrationTest(
 
     private fun fetchWidgetPageWithMobileDevices(
         androidUserAgent: String,
-        iosUserAgent: String
+        iosUserAgent: String,
     ): Pair<ResponseSpec, ResponseSpec> {
         val iOSResponse: ResponseSpec = webTestClient
             .get()

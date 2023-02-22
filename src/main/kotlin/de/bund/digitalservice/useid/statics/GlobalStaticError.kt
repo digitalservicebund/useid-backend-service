@@ -13,12 +13,12 @@ import kotlin.text.Charsets.UTF_8
 @Component
 class GlobalStaticError(
     private val applicationProperties: ApplicationProperties,
-    private val messageSource: MessageSource
+    private val messageSource: MessageSource,
 ) : DefaultErrorAttributes() {
 
     override fun getErrorAttributes(
         webRequest: WebRequest?,
-        options: ErrorAttributeOptions?
+        options: ErrorAttributeOptions?,
     ): MutableMap<String, Any>? {
         val errorAttributes = super.getErrorAttributes(webRequest, options)
         val statusCode = errorAttributes["status"] as Int

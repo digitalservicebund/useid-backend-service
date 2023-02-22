@@ -19,7 +19,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 class GlobalStaticErrorIntegrationTest(
-    @Autowired val webTestClient: WebTestClient
+    @Autowired val webTestClient: WebTestClient,
 ) {
     @Test
     fun `global error handler should render error page when a client requests to invalid path`() {

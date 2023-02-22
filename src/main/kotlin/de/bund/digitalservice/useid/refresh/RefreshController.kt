@@ -35,7 +35,7 @@ class RefreshController(private val identificationSessionService: Identification
     @ApiResponse(responseCode = "404", description = "There is no corresponding session found for the provided eIdSessionId", content = [Content()])
     fun redirectToEServiceRefreshAddress(
         @RequestParam("sessionId") eIdSessionId: UUID,
-        @RequestParam requestQueryParams: Map<String, String>
+        @RequestParam requestQueryParams: Map<String, String>,
     ): ResponseEntity<Unit> {
         val session = identificationSessionService.findByEIDSessionId(eIdSessionId) ?: run {
             log.error("Failed to load identification session.")

@@ -15,20 +15,20 @@ internal const val QRCODE_WIDGET_PAGE = "qrcode-widget"
 @Timed
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class DesktopWidgetController(
-    private val applicationProperties: ApplicationProperties
+    private val applicationProperties: ApplicationProperties,
 ) {
     @GetMapping("/$QRCODE_WIDGET_PAGE")
     fun getQRCodeWidgetPage(
         model: Model,
         @RequestParam hostname: String,
-        @RequestParam(required = false, name = "hash") sessionHash: String?
+        @RequestParam(required = false, name = "hash") sessionHash: String?,
     ): ModelAndView {
         // no tracking for desktop solution while prototyping
 
         val widgetViewConfig = mapOf(
             "baseUrl" to applicationProperties.baseUrl,
             "isWidget" to true,
-            "additionalClass" to ""
+            "additionalClass" to "",
         )
 
         val modelAndView = ModelAndView(QRCODE_WIDGET_PAGE)

@@ -29,10 +29,10 @@ internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 class WidgetController(
     private val applicationProperties: ApplicationProperties,
     private val widgetTracking: WidgetTracking,
-    private val applicationEventPublisher: ApplicationEventPublisher
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val defaultViewHeaderConfig = mapOf(
-        "baseUrl" to applicationProperties.baseUrl
+        "baseUrl" to applicationProperties.baseUrl,
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
@@ -41,7 +41,7 @@ class WidgetController(
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
             sessionHash,
-            userAgent
+            userAgent,
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
@@ -51,13 +51,13 @@ class WidgetController(
         model: Model,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam hostname: String,
-        @RequestParam(required = false, name = "hash") sessionHash: String?
+        @RequestParam(required = false, name = "hash") sessionHash: String?,
     ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.widget,
             sessionHash,
-            userAgent
+            userAgent,
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
@@ -67,7 +67,7 @@ class WidgetController(
         val widgetViewConfig = mapOf(
             setEiDClientURL("#"),
             "isWidget" to true,
-            "additionalClass" to ""
+            "additionalClass" to "",
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -81,7 +81,7 @@ class WidgetController(
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
             sessionHash,
-            userAgent
+            userAgent,
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
@@ -93,7 +93,7 @@ class WidgetController(
         val widgetViewFallbackConfig = mapOf(
             setEiDClientURL(url),
             "isFallback" to true,
-            "additionalClass" to "fallback"
+            "additionalClass" to "fallback",
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -133,7 +133,7 @@ class WidgetController(
             widgetTracking.actions.loaded,
             widgetTracking.names.incompatible,
             sessionHash,
-            userAgent
+            userAgent,
         )
         val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
         modelAndView.addAllObjects(defaultViewHeaderConfig)

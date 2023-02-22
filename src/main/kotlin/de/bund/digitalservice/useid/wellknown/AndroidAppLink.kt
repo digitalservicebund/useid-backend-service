@@ -8,7 +8,7 @@ data class AndroidAppLinkItem(
     @JsonProperty("relation")
     val relation: List<String>,
     @JsonProperty("target")
-    val appTarget: AppTarget
+    val appTarget: AppTarget,
 )
 
 data class AppTarget(
@@ -17,5 +17,5 @@ data class AppTarget(
     @JsonProperty("package_name")
     val packageName: String,
     @JsonProperty("sha256_cert_fingerprints")
-    val fingerprint: List<String>
+    val fingerprint: List<String>,
 )

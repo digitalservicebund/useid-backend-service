@@ -10,7 +10,7 @@ open class ApiKeyAuthenticationToken(
     private val apiKey: String,
     private val refreshAddress: String? = null,
     private val requestDataGroups: List<String> = emptyList(),
-    private var authenticated: Boolean = false
+    private var authenticated: Boolean = false,
 ) : Authentication {
 
     override fun getName(): String? {

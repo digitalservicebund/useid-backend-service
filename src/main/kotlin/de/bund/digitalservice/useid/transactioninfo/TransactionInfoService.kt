@@ -8,7 +8,7 @@ import java.util.UUID
 @Service
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class TransactionInfoService(
-    private val transactionInfoMockDatasource: TransactionInfoMockDatasource
+    private val transactionInfoMockDatasource: TransactionInfoMockDatasource,
 ) {
 
     private val log = KotlinLogging.logger {}
