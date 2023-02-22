@@ -107,7 +107,7 @@ dependencies {
     testImplementation("org.jsoup:jsoup:1.15.3")
 
     /** Spring Cloud **/
-    implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:3.0.1")
     // => CVE-2022-3171
     implementation("com.google.protobuf:protobuf-java:3.22.0")
 
