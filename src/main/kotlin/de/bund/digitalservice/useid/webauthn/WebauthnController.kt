@@ -12,18 +12,24 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
 import java.security.SecureRandom
 import java.util.UUID
 
-abstract class WebauthnController {
+@RestController
+class WebauthnController {
 
     private val rp: RelyingParty? = null
 
     private val random = SecureRandom()
 
-    @PostMapping(path = ["/test/test"])
-    fun test() {
+    @PostMapping(path = ["/webauthn/test"])
+    fun test(): ResponseEntity<String> {
         println("TEST!")
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body("OK")
     }
 
     @PostMapping(path = ["/{wSId}/register"])
