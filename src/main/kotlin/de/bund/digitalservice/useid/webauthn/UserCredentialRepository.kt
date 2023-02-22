@@ -6,6 +6,7 @@ import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import java.util.Optional
 
+// documentation: https://github.com/Yubico/java-webauthn-server#1-implement-a-credentialrepository
 class UserCredentialRepository : CredentialRepository {
     override fun getCredentialIdsForUsername(username: String?): MutableSet<PublicKeyCredentialDescriptor> {
         return mutableSetOf<PublicKeyCredentialDescriptor>()

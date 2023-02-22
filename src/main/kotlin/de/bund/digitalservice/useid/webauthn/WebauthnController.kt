@@ -9,14 +9,17 @@ import com.yubico.webauthn.data.UserIdentity
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.SecureRandom
 
+internal const val WEBAUTHN_BASE_PATH = "/webauthn"
+
 @RestController
 class WebauthnController(private val relyingParty: RelyingParty) {
 
-    @PostMapping(path = ["/webauthn/test"])
+    @PostMapping(path = ["$WEBAUTHN_BASE_PATH/test"])
     fun test(): ResponseEntity<String> {
         println("TEST!")
         return ResponseEntity
@@ -25,15 +28,14 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             .body("OK")
     }
 
-    @PostMapping(path = ["/webauthn/users"])
+    @PostMapping(path = ["$WEBAUTHN_BASE_PATH/users"])
     fun startRegistration(): ResponseEntity<Any> {
-        val test_username = "TEST_USERNAME"
-        val test_displayName = "TEST_DISPLAYNAME"
-        val test_credentialNickname = "TEST_CREDENTIAL_NICKNAME"
+        val testUsername = "TEST_USERNAME"
+        val testDisplayname = "TEST_DISPLAYNAME"
 
         val userId = UserIdentity.builder()
-            .name(test_username)
-            .displayName(test_displayName)
+            .name(testUsername)
+            .displayName(testDisplayname)
             .id(generateRandom(32))
             .build()
 
@@ -59,6 +61,14 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(resp)
+    }
+
+    @PostMapping(path = ["$WEBAUTHN_BASE_PATH/users/{userId}/{widgetSessionId}/credentials"])
+    fun finishRegistration(@PathVariable userId: String, @PathVariable widgetSessionId: String): ResponseEntity<Any> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body("$userId - $widgetSessionId")
     }
 
     private fun generateRandom(length: Int = 32): ByteArray {
