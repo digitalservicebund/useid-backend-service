@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.codec.ServerSentEvent
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -27,23 +26,17 @@ import java.util.UUID
 @Timed
 @Tag(name = "Events", description = "Each widget subscribes to events and thereby gets informed about progress of the identification flow by the eID-Client.")
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class EventController(eventService: EventService) {
+class EventController(private val eventService: EventService) {
     private val log = KotlinLogging.logger {}
-
-    private val eventService: EventService
-
-    init {
-        this.eventService = eventService
-    }
 
     /**
      * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
      */
-    fun publishEvent(event: ServerSentEvent<Any>, widgetSessionId: UUID): ResponseEntity<Nothing> {
+    fun publishEvent(data: Any, type: EventType, widgetSessionId: UUID): ResponseEntity<Nothing> {
         try {
-            eventService.publish(event, widgetSessionId)
-        } catch (e: ConsumerNotFoundException) {
-            log.error("Failed to publish event: $e.message")
+            eventService.publish(data, type, widgetSessionId)
+        } catch (e: WidgetNotFoundException) {
+            log.info("Failed to publish event: ${e.message}")
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).build()
@@ -54,9 +47,9 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Push SSE to corresponding widget having a success value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody event: SuccessEvent): ResponseEntity<Nothing> {
+    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody successEvent: SuccessEvent): ResponseEntity<Nothing> {
         log.info { "Received success event for consumer: $widgetSessionId" }
-        return publishEvent(createServerSentEvent(event), widgetSessionId)
+        return publishEvent(successEvent, EventType.SUCCESS, widgetSessionId)
     }
 
     @PostMapping("/events/{widgetSessionId}/error")
@@ -64,9 +57,9 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Push SSE to corresponding widget having an error value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody event: ErrorEvent): ResponseEntity<Nothing> {
+    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody errorEvent: ErrorEvent): ResponseEntity<Nothing> {
         log.info { "Received event for consumer: $widgetSessionId" }
-        return publishEvent(createServerSentEvent(event), widgetSessionId)
+        return publishEvent(errorEvent, EventType.ERROR, widgetSessionId)
     }
 
     /**
@@ -77,16 +70,6 @@ class EventController(eventService: EventService) {
     @Operation(summary = "Subscribe for receiving SSE for the provided widgetSessionId")
     @ApiResponse(responseCode = "200", content = [Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)])
     fun subscribe(@PathVariable widgetSessionId: UUID): SseEmitter {
-        return eventService.subscribeConsumer(widgetSessionId)
+        return eventService.subscribeWidget(widgetSessionId)
     }
-
-    private fun createServerSentEvent(event: SuccessEvent) = ServerSentEvent.builder<Any>()
-        .data(event)
-        .event(EventType.SUCCESS.eventName)
-        .build()
-
-    private fun createServerSentEvent(event: ErrorEvent) = ServerSentEvent.builder<Any>()
-        .data(event)
-        .event(EventType.ERROR.eventName)
-        .build()
 }
