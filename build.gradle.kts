@@ -109,7 +109,7 @@ dependencies {
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
     // => CVE-2022-3171
-    implementation("com.google.protobuf:protobuf-java:3.21.9")
+    implementation("com.google.protobuf:protobuf-java:3.22.0")
 
     /** Scheduling **/
     implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
