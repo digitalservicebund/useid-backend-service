@@ -32,7 +32,7 @@ class WebauthnController {
             .body("OK")
     }
 
-    @PostMapping(path = ["/{wSId}/register"])
+    @PostMapping(path = ["/webauthn/{wSId}/register"])
     fun startRegistration(@PathVariable wSId: UUID): ResponseEntity<PublicKeyCredentialCreationOptions> {
         val test_username = "TEST_USERNAME"
         val test_displayName = "TEST_DISPLAYNAME"
