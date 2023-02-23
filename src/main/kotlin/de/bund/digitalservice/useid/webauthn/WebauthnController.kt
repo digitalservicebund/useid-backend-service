@@ -1,9 +1,13 @@
 package de.bund.digitalservice.useid.webauthn
 
+import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartRegistrationOptions
+import com.yubico.webauthn.data.AuthenticatorAttestationResponse
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
 import com.yubico.webauthn.data.ByteArray
+import com.yubico.webauthn.data.ClientRegistrationExtensionOutputs
+import com.yubico.webauthn.data.PublicKeyCredential
 import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
@@ -76,20 +80,38 @@ class WebauthnController(private val relyingParty: RelyingParty) {
         @PathVariable widgetSessionId: String,
         @RequestBody registrationCompleteResponse: RegistrationCompleteResponse
     ): ResponseEntity<Any> {
-        // PublicKeyCredential.builder<>()
+        val authenticatorAttestationResponse = AuthenticatorAttestationResponse
+            .builder()
+            .attestationObject(registrationCompleteResponse.attestationObject)
+            .clientDataJSON(registrationCompleteResponse.clientDataJSON)
+            .build()
+
+        val clientRegistrationExtensionOutputs = ClientRegistrationExtensionOutputs
+            .builder()
+            .build()
+
         // val credential: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>? = null
-        //
-        // val finishRegistrationOptions = FinishRegistrationOptions.builder()
-        //     .request(publicKeyCredentialCreationOptions) // cached from "registration start"
-        //     .response(credential)
-        //     .build()
-        // relyingParty.finishRegistration(finishRegistrationOptions)
+
+        val credentials = PublicKeyCredential
+            .builder<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>()
+            .id(registrationCompleteResponse.rawId)
+            .response(authenticatorAttestationResponse)
+            .clientExtensionResults(clientRegistrationExtensionOutputs)
+            .build()
+
+        val finishRegistrationOptions = FinishRegistrationOptions.builder()
+            .request(publicKeyCredentialCreationOptions) // cached from "registration start"
+            .response(credentials)
+            .build()
+
+        val registrationResult = relyingParty.finishRegistration(finishRegistrationOptions)
 
         val resp = object {
             val userId = userId
             val widgetSessionId = widgetSessionId
             val registrationResponse_rawId = registrationCompleteResponse.rawId
             val registrationResponse_attestationObject = registrationCompleteResponse.attestationObject
+            val registration_result = registrationResult
         }
 
         return ResponseEntity
