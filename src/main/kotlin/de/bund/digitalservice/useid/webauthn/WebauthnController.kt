@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.webauthn
 
-import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
@@ -13,6 +12,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.security.SecureRandom
 
@@ -67,21 +67,35 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             .body(resp)
     }
 
-    @PostMapping(path = ["$WEBAUTHN_BASE_PATH/users/{userId}/{widgetSessionId}/credentials"])
-    fun finishRegistration(@PathVariable userId: String, @PathVariable widgetSessionId: String): ResponseEntity<Any> {
-        val responseJson = ""
-        val response = jsonMapper.readValue("INPUT", RegistrationResponse::class.java)
+    @PostMapping(
+        path = ["$WEBAUTHN_BASE_PATH/users/{userId}/{widgetSessionId}/complete"],
+        headers = ["Content-Type=application/json"]
+    )
+    fun finishRegistration(
+        @PathVariable userId: String,
+        @PathVariable widgetSessionId: String,
+        @RequestBody registrationCompleteResponse: RegistrationCompleteResponse
+    ): ResponseEntity<Any> {
+        // PublicKeyCredential.builder<>()
+        // val credential: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>? = null
+        //
+        // val finishRegistrationOptions = FinishRegistrationOptions.builder()
+        //     .request(publicKeyCredentialCreationOptions) // cached from "registration start"
+        //     .response(credential)
+        //     .build()
+        // relyingParty.finishRegistration(finishRegistrationOptions)
 
-        val finishRegistrationOptions = FinishRegistrationOptions.builder()
-            .request(publicKeyCredentialCreationOptions) // cached from "registration start"
-            .response(response.getCredential())
-            .build()
-        relyingParty.finishRegistration()
+        val resp = object {
+            val userId = userId
+            val widgetSessionId = widgetSessionId
+            val registrationResponse_rawId = registrationCompleteResponse.rawId
+            val registrationResponse_attestationObject = registrationCompleteResponse.attestationObject
+        }
 
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body("$userId - $widgetSessionId")
+            .body(resp)
     }
 
     private fun generateRandom(length: Int = 32): ByteArray {
