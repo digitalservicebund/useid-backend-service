@@ -43,7 +43,7 @@ class WidgetController(
             widgetTracking.names.startIdent,
             sessionHash,
             userAgent,
-            tenantId
+            tenantId,
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
@@ -54,14 +54,14 @@ class WidgetController(
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?,
-        @RequestAttribute tenantId: String?
+        @RequestAttribute tenantId: String?,
     ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.widget,
             sessionHash,
             userAgent,
-            tenantId
+            tenantId,
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
@@ -86,7 +86,7 @@ class WidgetController(
             widgetTracking.names.fallback,
             sessionHash,
             userAgent,
-            tenantId
+            tenantId,
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
@@ -139,7 +139,7 @@ class WidgetController(
             widgetTracking.names.incompatible,
             sessionHash,
             userAgent,
-            tenantId
+            tenantId,
         )
         val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
         modelAndView.addAllObjects(defaultViewHeaderConfig)

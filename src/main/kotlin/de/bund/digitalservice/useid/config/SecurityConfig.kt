@@ -44,7 +44,7 @@ class SecurityConfig(
             )
             .addFilterAfter(
                 TenantIdFilter(contentSecurityPolicyProperties),
-                FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
+                FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()

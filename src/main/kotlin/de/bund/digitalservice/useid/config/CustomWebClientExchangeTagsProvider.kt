@@ -13,7 +13,7 @@ class CustomWebClientExchangeTagsProvider : WebMvcTagsContributor {
         request: HttpServletRequest?,
         response: HttpServletResponse?,
         handler: Any?,
-        exception: Throwable?
+        exception: Throwable?,
     ): MutableIterable<Tag> {
         val tags = mutableListOf<Tag>()
         if (request != null) {

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class TenantIdFilter(
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
+    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         // Retrieve tenant id either from authenticated security context (api keys) or from url.

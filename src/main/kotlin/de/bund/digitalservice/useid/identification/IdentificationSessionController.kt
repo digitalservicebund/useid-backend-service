@@ -117,7 +117,7 @@ class IdentificationSessionsController(
     fun getIdentity(
         @PathVariable eIdSessionId: UUID,
         @RequestAttribute tenantId: String,
-        authentication: Authentication
+        authentication: Authentication,
     ): ResponseEntity<GetResultResponseType> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
