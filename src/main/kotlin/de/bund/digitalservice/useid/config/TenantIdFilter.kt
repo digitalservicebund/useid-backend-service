@@ -22,6 +22,30 @@ class TenantIdFilter(
         val tenantId: String
         val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
+        /*
+               ROUTE NAMES          read tenant...
+            // IDENTIFICATION SESSION
+            -> api key routes   ->  from apiKeyDetails
+            -> get tcToken      ->  useIdSessionId from queryParams
+            // WIDGET
+            -> widget           ->  from hostname parameter
+            -> startEIdButton   ->  attach tenantId in html
+            -> fallbackPage     ->  tcTokenURL from queryParams
+            // Refresh
+            -> refresh          -> eIdSessionId from queryParams
+            // WELL KNOWN
+            -> no idea 🤣
+            // ACTUATOR HEALTH
+            -> not relevant
+            // HOME
+            -> not relevant
+
+            Suggestion:
+            For every route where we already have the hash as a parameter, we can also include the tenantId, that would be ok.
+            Apart from this, futher work seems like a lot of overhead.
+            For every route in the future that is not api key restricted, we need an individual logic to determine the tenantId
+         */
+
         tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
             // api call with authentication token
             authentication.details.tenantId

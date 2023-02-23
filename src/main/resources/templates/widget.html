@@ -82,6 +82,15 @@
         </a>
       </div>
     </div>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+
+      const bundesIdent = {}
+      var message = [[${myVariable}]];
+      console.log(message);
+
+      /*]]>*/
+    </script>
     <script
       type="text/javascript"
       src="js/attachStartIdentButtonOnClick.js"
