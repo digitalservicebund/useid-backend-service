@@ -28,6 +28,9 @@ data class IdentificationSession(
     @Column(name = "request_data_groups")
     @Type(ListArrayType::class)
     var requestDataGroups: List<String> = emptyList(),
+
+    @Column(name = "tenant_id")
+    var tenantId: String? = null,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
