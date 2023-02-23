@@ -19,8 +19,7 @@ class ContentSecurityPolicyProperties {
     @NotEmpty
     lateinit var allowedHosts: List<String>
 
-    @NotEmpty
-    lateinit var hosts: List<Map<String, String>>
+    var hosts: List<Map<String, String>> = emptyList()
 
     fun domainIsAllowed(host: String): Boolean {
         return hosts.find { it["host"] == host } != null || allowedHosts.contains(host)
@@ -33,7 +32,10 @@ class ContentSecurityPolicyProperties {
         return "$defaultConfig$frameAncestors;"
     }
 
-    fun getTenantId(host: String): String {
+    fun getTenantId(host: String?): String {
+        if (host == null) {
+            return "unknown"
+        }
         val entry = hosts.find { it["host"] == host }
         return if (entry != null) {
             (

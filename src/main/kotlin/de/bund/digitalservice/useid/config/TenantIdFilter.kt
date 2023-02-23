@@ -4,17 +4,15 @@ import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.stereotype.Component
-import org.springframework.web.filter.GenericFilterBean
+import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-@Component
 class TenantIdFilter(
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties
-) : GenericFilterBean() {
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+) : OncePerRequestFilter() {
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         // Retrieve tenant id either from authenticated security context (api keys) or from url.
         // see the other two requests filters for more information
         // We still need a data structure that allows to retrieve the tenant id for a given value
@@ -36,6 +34,6 @@ class TenantIdFilter(
         }
 
         request.setAttribute("tenantId", tenantId)
-        return chain.doFilter(request, response)
+        return filterChain.doFilter(request, response)
     }
 }

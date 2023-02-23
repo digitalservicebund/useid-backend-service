@@ -43,7 +43,7 @@ class SecurityConfig(
                 AnonymousAuthenticationFilter::class.java,
             )
             .addFilterAfter(
-                TenantIdFilter(),
+                TenantIdFilter(contentSecurityPolicyProperties),
                 FilterSecurityInterceptor::class.java // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
