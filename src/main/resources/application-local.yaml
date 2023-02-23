@@ -38,6 +38,10 @@ spring:
 
 csp:
   allowed-hosts:
+    - foo.bar
+    - bar.foo
+    - localhost:8081
+  hosts:
     - host: foo.bar
       tenantId: foo_bar_tenant_id
     - host: bar.foo
