@@ -80,7 +80,7 @@ class WebauthnController(private val relyingParty: RelyingParty) {
         path = ["$WEBAUTHN_BASE_PATH/users/{userId}/{widgetSessionId}/complete"],
         headers = ["Content-Type=application/json"]
     )
-    fun finishRegistration(
+    fun completeRegistration(
         @PathVariable userId: String,
         @PathVariable widgetSessionId: String,
         @RequestBody registrationCompleteResponse: RegistrationCompleteResponse
@@ -129,14 +129,14 @@ class WebauthnController(private val relyingParty: RelyingParty) {
         path = ["$WEBAUTHN_BASE_PATH/users/{userId}/{widgetSessionId}/auth/complete"],
         headers = ["Content-Type=application/json"]
     )
-    fun finishAuthentication(
+    fun completeAuthentication(
         @PathVariable userId: String,
         @PathVariable widgetSessionId: String,
         @RequestBody authenticationCompleteResponse: AuthenticationCompleteResponse
     ): ResponseEntity<Any> {
         val publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions
             .builder()
-            .challenge(authenticationCompleteResponse.clientDataJSON) // TODO: THIS NEEDS TO BE THE CHALLENGE
+            .challenge(authenticationCompleteResponse.clientDataJSON) // TODO: THIS WILL BE CREATED IN THE START AUTH ROUTE (WHICH DOES NOT EXIST YET AND PROBABLY WILL BE HANDLED IN SSE)
             .build()
 
         val assertionRequest = AssertionRequest
@@ -144,26 +144,28 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             .publicKeyCredentialRequestOptions(publicKeyCredentialRequestOptions)
             .build()
 
-        val authenticarAssertionResponse = AuthenticatorAssertionResponse
+        val authenticatorAssertionResponse = AuthenticatorAssertionResponse
             .builder()
             .authenticatorData(authenticationCompleteResponse.authenticatorData)
             .clientDataJSON(authenticationCompleteResponse.clientDataJSON)
             .signature(authenticationCompleteResponse.signature)
             .build()
 
-        val clientExtentionResult = ClientExtensionRes
+        val clientAssertionExtensionOutputs = ClientAssertionExtensionOutputs
+            .builder()
+            .build()
 
         val response = PublicKeyCredential
             .builder<AuthenticatorAssertionResponse, ClientAssertionExtensionOutputs>()
-            .id(authenticationCompleteResponse.clientDataJSON) // TODO: THIS NEEDS TO BE THE ID
-            .response(authenticarAssertionResponse)
-            .clientExtensionResults()
+            .id(authenticationCompleteResponse.clientDataJSON) // TODO: THIS NEEDS TO BE THE ID FROM REQ-BODY PROBABLY
+            .response(authenticatorAssertionResponse)
+            .clientExtensionResults(clientAssertionExtensionOutputs)
             .build()
 
         val finishAssertionOptions = FinishAssertionOptions
             .builder()
             .request(assertionRequest)
-            .response(response) // TODO
+            .response(response)
             .build()
 
         val authResult = relyingParty.finishAssertion(finishAssertionOptions)
@@ -171,6 +173,7 @@ class WebauthnController(private val relyingParty: RelyingParty) {
         val resp = object {
             val userId = userId
             val widgetSessionId = widgetSessionId
+            val result = authResult
         }
 
         return ResponseEntity
