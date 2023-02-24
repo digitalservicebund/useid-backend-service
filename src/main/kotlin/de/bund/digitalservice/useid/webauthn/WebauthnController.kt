@@ -1,5 +1,7 @@
 package de.bund.digitalservice.useid.webauthn
 
+import com.yubico.webauthn.AssertionRequest
+import com.yubico.webauthn.FinishAssertionOptions
 import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartRegistrationOptions
@@ -9,6 +11,7 @@ import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.ClientRegistrationExtensionOutputs
 import com.yubico.webauthn.data.PublicKeyCredential
 import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
+import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
 import org.springframework.http.HttpStatus
@@ -112,6 +115,44 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             val registrationResponse_rawId = registrationCompleteResponse.rawId
             val registrationResponse_attestationObject = registrationCompleteResponse.attestationObject
             val registration_result = registrationResult
+        }
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(resp)
+    }
+
+    @PostMapping(
+        path = ["$WEBAUTHN_BASE_PATH/users/{userId}/{widgetSessionId}/auth/complete"],
+        headers = ["Content-Type=application/json"]
+    )
+    fun finishAuthentication(
+        @PathVariable userId: String,
+        @PathVariable widgetSessionId: String,
+        @RequestBody authenticationCompleteResponse: AuthenticationCompleteResponse
+    ): ResponseEntity<Any> {
+        val publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions
+            .builder()
+            .challenge(authenticationCompleteResponse.clientDataJSON) // THIS NEEDS TO BE THE CHALLENGE
+            .build()
+
+        val assertionRequest = AssertionRequest
+            .builder()
+            .publicKeyCredentialRequestOptions(publicKeyCredentialRequestOptions)
+            .build()
+
+        val finishAssertionOptions = FinishAssertionOptions
+            .builder()
+            .request(assertionRequest)
+            .response() // TODO
+            .build()
+
+        val authResult = relyingParty.finishAssertion(finishAssertionOptions)
+
+        val resp = object {
+            val userId = userId
+            val widgetSessionId = widgetSessionId
         }
 
         return ResponseEntity
