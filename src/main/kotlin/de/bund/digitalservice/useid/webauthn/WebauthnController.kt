@@ -5,9 +5,11 @@ import com.yubico.webauthn.FinishAssertionOptions
 import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartRegistrationOptions
+import com.yubico.webauthn.data.AuthenticatorAssertionResponse
 import com.yubico.webauthn.data.AuthenticatorAttestationResponse
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
 import com.yubico.webauthn.data.ByteArray
+import com.yubico.webauthn.data.ClientAssertionExtensionOutputs
 import com.yubico.webauthn.data.ClientRegistrationExtensionOutputs
 import com.yubico.webauthn.data.PublicKeyCredential
 import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
@@ -134,7 +136,7 @@ class WebauthnController(private val relyingParty: RelyingParty) {
     ): ResponseEntity<Any> {
         val publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions
             .builder()
-            .challenge(authenticationCompleteResponse.clientDataJSON) // THIS NEEDS TO BE THE CHALLENGE
+            .challenge(authenticationCompleteResponse.clientDataJSON) // TODO: THIS NEEDS TO BE THE CHALLENGE
             .build()
 
         val assertionRequest = AssertionRequest
@@ -142,10 +144,26 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             .publicKeyCredentialRequestOptions(publicKeyCredentialRequestOptions)
             .build()
 
+        val authenticarAssertionResponse = AuthenticatorAssertionResponse
+            .builder()
+            .authenticatorData(authenticationCompleteResponse.authenticatorData)
+            .clientDataJSON(authenticationCompleteResponse.clientDataJSON)
+            .signature(authenticationCompleteResponse.signature)
+            .build()
+
+        val clientExtentionResult = ClientExtensionRes
+
+        val response = PublicKeyCredential
+            .builder<AuthenticatorAssertionResponse, ClientAssertionExtensionOutputs>()
+            .id(authenticationCompleteResponse.clientDataJSON) // TODO: THIS NEEDS TO BE THE ID
+            .response(authenticarAssertionResponse)
+            .clientExtensionResults()
+            .build()
+
         val finishAssertionOptions = FinishAssertionOptions
             .builder()
             .request(assertionRequest)
-            .response() // TODO
+            .response(response) // TODO
             .build()
 
         val authResult = relyingParty.finishAssertion(finishAssertionOptions)
