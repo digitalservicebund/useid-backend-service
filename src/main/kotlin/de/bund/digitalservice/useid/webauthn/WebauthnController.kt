@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.security.SecureRandom
 
-internal const val WEBAUTHN_BASE_PATH = "/webauthn"
+internal const val WEBAUTHN_BASE_PATH = "/api/v1/webauthn"
 
 @RestController
 class WebauthnController(private val relyingParty: RelyingParty) {
@@ -67,11 +67,11 @@ class WebauthnController(private val relyingParty: RelyingParty) {
 
         val resp = object {
             val userId = userId.id
-            val challenge = publicKeyCredentialCreationOptions.challenge
+            val challenge = publicKeyCredentialCreationOptions.challenge.base64
         }
 
         return ResponseEntity
-            .status(HttpStatus.OK)
+            .status(HttpStatus.ACCEPTED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(resp)
     }

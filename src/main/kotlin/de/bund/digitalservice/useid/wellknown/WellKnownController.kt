@@ -19,12 +19,12 @@ class WellKnownController(
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun getAppleAppSiteAssociation(): ResponseEntity<IOSUniversalLink> {
-        val appIds = listOf(iosConfig.appId, iosConfig.appIdPreview)
+        val appIds = listOf(iosConfig.appId, iosConfig.appIdPreview, iosConfig.appIdPrototype)
         val components = listOf(Component(iosConfig.pathUrl))
         val details = listOf(Details(appIds, components))
         val universalLink = UniversalLink(details)
 
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(IOSUniversalLink(universalLink))
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(IOSUniversalLink(universalLink, Apps(listOf(iosConfig.appIdPrototype))))
     }
 
     @GetMapping(
