@@ -16,10 +16,10 @@ class CustomWebClientExchangeTagsProvider : WebMvcTagsContributor {
         exception: Throwable?,
     ): MutableIterable<Tag> {
         val tags = mutableListOf<Tag>()
-        if (request != null) {
-            val id: Any? = request.getAttribute("tenantId")
-            if (id != null) {
-                val tag = Tag.of("tenant_id", id.toString())
+        request?.let { r ->
+            val id: Any? = r.getAttribute("tenantId")
+            id?.let {
+                val tag = Tag.of("tenant_id", it.toString())
                 tags.add(tag)
             }
         }
