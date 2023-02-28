@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.widget.FALLBACK_PAGE
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.PathContainer
@@ -15,7 +16,8 @@ class SecurityHeadersFilter(
 ) : OncePerRequestFilter() {
 
     private val widgetPagePath: PathPattern = PathPatternParser().parse("/$WIDGET_PAGE")
-    private val listOfPages = listOf(widgetPagePath)
+    private val fallbackPagePath: PathPattern = PathPatternParser().parse("/$FALLBACK_PAGE")
+    private val listOfPages = listOf(widgetPagePath, fallbackPagePath)
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val pathIsValidWidgetPages = listOfPages.any {

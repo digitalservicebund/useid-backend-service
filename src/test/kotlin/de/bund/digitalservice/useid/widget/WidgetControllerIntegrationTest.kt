@@ -89,6 +89,62 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
+    fun `fallback endpoint returns Content-Security-Policy with allowed host when the request URL is valid`() {
+        webTestClient
+            .get()
+            .uri("/$FALLBACK_PAGE?tcTokenURL=foobar&hostname=foo.bar")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self' foo.bar;",
+            )
+            .expectHeader()
+            .valueEquals(
+                HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+                "foo.bar",
+            )
+            .expectHeader()
+            .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
+    }
+
+    @Test
+    fun `fallback endpoint returns default Content-Security-Policy when the request URL is invalid`() {
+        webTestClient
+            .get()
+            .uri("/$FALLBACK_PAGE?tcTokenURL=foobar&hostname=not-allowed.com")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self';",
+            )
+            .expectHeader()
+            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
+    }
+
+    @Test
+    fun `fallback endpoint returns default Content-Security-Policy when query parameter is not set with error`() {
+        webTestClient
+            .get()
+            .uri("/$FALLBACK_PAGE")
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "some default value;frame-ancestors 'self';",
+            )
+            .expectHeader()
+            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
+    }
+
+    @Test
     fun `widget endpoint renders page correctly when the devices are supported`() {
         val compatibleAndroidUserAgent = "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.105 Mobile Safari/537.36"
         val compatibleIOSUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Mobile/15E148 Safari/604.1"
