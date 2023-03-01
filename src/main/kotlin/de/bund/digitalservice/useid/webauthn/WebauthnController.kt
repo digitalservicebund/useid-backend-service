@@ -69,6 +69,7 @@ class WebauthnController(private val relyingParty: RelyingParty) {
             val userId = userId.id
             val challenge = publicKeyCredentialCreationOptions.challenge.base64
         }
+        println("UserID: ${resp.userId.base64} -- Challenge: ${resp.challenge}")
 
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
@@ -87,8 +88,8 @@ class WebauthnController(private val relyingParty: RelyingParty) {
     ): ResponseEntity<Any> {
         val authenticatorAttestationResponse = AuthenticatorAttestationResponse
             .builder()
-            .attestationObject(registrationCompleteResponse.attestationObject)
-            .clientDataJSON(registrationCompleteResponse.clientDataJSON)
+            .attestationObject(ByteArray.fromBase64(registrationCompleteResponse.attestationObject))
+            .clientDataJSON(ByteArray.fromBase64(registrationCompleteResponse.clientDataJSON))
             .build()
 
         val clientRegistrationExtensionOutputs = ClientRegistrationExtensionOutputs
@@ -99,7 +100,7 @@ class WebauthnController(private val relyingParty: RelyingParty) {
 
         val credentials = PublicKeyCredential
             .builder<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>()
-            .id(registrationCompleteResponse.rawId)
+            .id(ByteArray.fromBase64(registrationCompleteResponse.rawId))
             .response(authenticatorAttestationResponse)
             .clientExtensionResults(clientRegistrationExtensionOutputs)
             .build()
@@ -120,7 +121,7 @@ class WebauthnController(private val relyingParty: RelyingParty) {
         }
 
         return ResponseEntity
-            .status(HttpStatus.OK)
+            .status(HttpStatus.ACCEPTED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(resp)
     }
