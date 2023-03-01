@@ -21,7 +21,7 @@ class TenantIdFilter(
         } else if (request.servletPath.equals("/widget")) {
             contentSecurityPolicyProperties.getTenantId(request.getParameter("hostname"))
         } else {
-            "unknown-call"
+            "unknown"
         }
 
         request.setAttribute("tenantId", tenantId)
