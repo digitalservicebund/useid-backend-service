@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
-import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
@@ -13,45 +12,13 @@ class TenantIdFilter(
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        // Retrieve tenant id either from authenticated security context (api keys) or from url.
-        // see the other two requests filters for more information
-        // We still need a data structure that allows to retrieve the tenant id for a given value
-        //
-        // For some reason, we cannot rely on authenticated. It seems to be always set to true. Therefor we rely on the
-        // authentication class.
         val tenantId: String
         val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
-        /*
-               ROUTE NAMES          read tenant...
-            // IDENTIFICATION SESSION
-            -> api key routes   ->  from apiKeyDetails
-            -> get tcToken      ->  useIdSessionId from queryParams
-            // WIDGET
-            -> widget           ->  from hostname parameter
-            -> startEIdButton   ->  attach tenantId in html
-            -> fallbackPage     ->  tcTokenURL from queryParams
-            // Refresh
-            -> refresh          -> eIdSessionId from queryParams
-            // WELL KNOWN
-            -> no idea 🤣
-            // ACTUATOR HEALTH
-            -> not relevant
-            // HOME
-            -> not relevant
-
-            Suggestion:
-            For every route where we already have the hash as a parameter, we can also include the tenantId, that would be ok.
-            Apart from this, futher work seems like a lot of overhead.
-            For every route in the future that is not api key restricted, we need an individual logic to determine the tenantId
-         */
-
         tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
-            // api call with authentication token
             authentication.details.tenantId
-        } else if (authentication is AnonymousAuthenticationToken) {
-            // not an authenticated call or a failed api token authentication call
-            // get tenant id based on csp header?
+            // TODO: Why are all request authenticated?
+        } else if (request.servletPath.equals("/widget")) {
             contentSecurityPolicyProperties.getTenantId(request.getParameter("hostname"))
         } else {
             "unknown-call"
