@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 class SecurityConfig(
     private val authenticationManager: AuthenticationManager,
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
+    private val tenantIdProperties: TenantIdProperties,
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -43,7 +44,7 @@ class SecurityConfig(
                 AnonymousAuthenticationFilter::class.java,
             )
             .addFilterAfter(
-                TenantIdFilter(contentSecurityPolicyProperties),
+                TenantIdFilter(tenantIdProperties),
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

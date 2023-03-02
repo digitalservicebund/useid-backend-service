@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse
 @Tag("test")
 internal class TenantIdFilterTest {
 
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties = mockk()
-    private val filter = TenantIdFilter(contentSecurityPolicyProperties)
+    private val tenantIdProperties: TenantIdProperties = mockk()
+    private val filter = TenantIdFilter(tenantIdProperties)
 
     @BeforeEach
     fun beforeEach() {
@@ -43,7 +43,7 @@ internal class TenantIdFilterTest {
 
     @Test
     fun `should assign the tenant id based on the hostname for calls to the widget`() {
-        every { contentSecurityPolicyProperties.getTenantId("foo") } returns "some-tenant-id"
+        every { tenantIdProperties.getTenantIdForHost("foo") } returns "some-tenant-id"
         // Given
         val request = MockHttpServletRequest()
         request.servletPath = "/widget"
@@ -57,7 +57,27 @@ internal class TenantIdFilterTest {
 
         verify {
             filterChain.doFilter(request, response)
-            contentSecurityPolicyProperties.getTenantId("foo")
+            tenantIdProperties.getTenantIdForHost("foo")
+        }
+    }
+
+    @Test
+    fun `should assign the tenant id based on a valid tenant id query param`() {
+        every { tenantIdProperties.getSanitizedTenantID("some-tenant-id") } returns "some-tenant-id"
+        // Given
+        val request = MockHttpServletRequest()
+        request.servletPath = "/eid-Client"
+        request.addParameter("tenant_id", "some-tenant-id")
+        val response: HttpServletResponse = mockk(relaxed = true)
+        val filterChain: FilterChain = mockk(relaxed = true)
+
+        // When
+        filter.doFilter(request, response, filterChain)
+        assertEquals("some-tenant-id", request.getAttribute("tenantId"))
+
+        verify {
+            filterChain.doFilter(request, response)
+            tenantIdProperties.getSanitizedTenantID("some-tenant-id")
         }
     }
 }

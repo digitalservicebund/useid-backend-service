@@ -19,10 +19,8 @@ class ContentSecurityPolicyProperties {
     @NotEmpty
     lateinit var allowedHosts: List<String>
 
-    var hosts: List<Map<String, String>> = emptyList()
-
     fun domainIsAllowed(host: String): Boolean {
-        return hosts.find { it["host"] == host } != null || allowedHosts.contains(host)
+        return allowedHosts.contains(host)
     }
     fun getCSPHeaderValue(host: String): String {
         return "$defaultConfig$frameAncestors $host;"
@@ -30,21 +28,5 @@ class ContentSecurityPolicyProperties {
 
     fun getDefaultCSPHeaderValue(): String {
         return "$defaultConfig$frameAncestors;"
-    }
-
-    fun getTenantId(host: String?): String {
-        if (host == null) {
-            return "unknown"
-        }
-        val entry = hosts.find { it["host"] == host }
-        return if (entry != null) {
-            (
-                {
-                    entry["host"]
-                }
-                ).toString()
-        } else {
-            "unknown"
-        }
     }
 }

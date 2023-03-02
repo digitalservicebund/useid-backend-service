@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class TenantIdFilter(
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
+    private val tenantIdProperties: TenantIdProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val tenantId: String
@@ -19,10 +19,9 @@ class TenantIdFilter(
             authentication.details.tenantId
             // TODO: Why are all request authenticated?
         } else if (request.servletPath.equals("/widget")) {
-            contentSecurityPolicyProperties.getTenantId(request.getParameter("hostname"))
+            tenantIdProperties.getTenantIdForHost(request.getParameter("hostname"))
         } else if (request.getParameter("tenant_id") != null) {
-            // FIXME: Check against a valid list of tenant ids to avoid code injection
-            request.getParameter("tenant_id")
+            tenantIdProperties.getSanitizedTenantID(request.getParameter("tenant_id"))
         } else {
             "unknown"
         }
