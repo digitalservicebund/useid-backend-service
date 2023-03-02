@@ -20,6 +20,9 @@ class TenantIdFilter(
             // TODO: Why are all request authenticated?
         } else if (request.servletPath.equals("/widget")) {
             contentSecurityPolicyProperties.getTenantId(request.getParameter("hostname"))
+        } else if (request.getParameter("tenant_id") != null) {
+            // FIXME: Check against a valid list of tenant ids to avoid code injection
+            request.getParameter("tenant_id")
         } else {
             "unknown"
         }

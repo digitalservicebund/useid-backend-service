@@ -144,6 +144,7 @@ class WidgetController(
         return modelAndView
     }
 
+    // FIXME: Check against a valid list of tenant ids
     private fun tenantIdOrDefault(tenantId: String?): String {
         return tenantId ?: return "unknown"
     }
