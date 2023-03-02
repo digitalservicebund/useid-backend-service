@@ -38,7 +38,7 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestAttribute tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestParam(required = false, name = "tenant_id") tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
@@ -88,7 +88,6 @@ class WidgetController(
             widgetTracking.names.fallback,
             sessionHash,
             userAgent,
-            null,
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
@@ -108,7 +107,7 @@ class WidgetController(
         return modelAndView
     }
 
-    private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?, tenantId: String?) {
+    private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?, tenantId: String? = null) {
         val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent, tenantId)
         applicationEventPublisher.publishEvent(matomoEvent)
     }
