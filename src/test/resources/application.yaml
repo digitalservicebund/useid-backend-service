@@ -49,6 +49,13 @@ csp:
   allowed-hosts:
     - foo.bar
     - bar.foo
+  hosts:
+    - host: foo.bar
+      tenantId: foo_bar_tenant_id
+    - host: bar.foo
+      tenantId: bar_foo_tenant_id
+    - host: localhost:8081
+      tenantId: localhost_tenant_id
 
 tracking:
   matomo:

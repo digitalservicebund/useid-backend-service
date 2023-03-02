@@ -89,7 +89,7 @@
     */-->
     <script th:inline="javascript" type="text/javascript">
       (function(){
-        const tenantId = [[${widget.tenantId}]];
+        const tenantId = [[${tenantId}]];
         document
                 .getElementById("eid-client-button")
                 .addEventListener("click", async function () {
