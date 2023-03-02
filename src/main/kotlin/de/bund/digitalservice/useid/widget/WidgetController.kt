@@ -34,6 +34,7 @@ class WidgetController(
 ) {
     private val defaultViewHeaderConfig = mapOf(
         "baseUrl" to applicationProperties.baseUrl,
+        "tenantId" to "unknown",
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
@@ -72,6 +73,7 @@ class WidgetController(
             setEiDClientURL("#"),
             "isWidget" to true,
             "additionalClass" to "",
+            "tenantId" to tenantId,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -80,13 +82,13 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestAttribute tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
             sessionHash,
             userAgent,
-            tenantId,
+            null,
         )
         /*
             Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:

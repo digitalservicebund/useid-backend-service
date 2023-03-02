@@ -82,23 +82,31 @@
         </a>
       </div>
     </div>
-    <script th:inline="javascript">
-      /*<![CDATA[*/
-
-      const bundesIdent = {}
-      var message = [[${myVariable}]];
-      console.log(message);
-
-      /*]]>*/
+    <!--/* Wrap everything inside closures to not add to the global namespace */-->
+    <script th:inline="javascript" type="text/javascript">
+      (function(){
+        const tenantId = [[${widget.tenantId}]];
+        document
+                .getElementById("eid-client-button")
+                .addEventListener("click", async function () {
+                  const hash = new URL(window.location).searchParams.get("hash");
+                  await fetch(`/start-ident-button-clicked?hash=${hash}&tenant_id=${tenantId}`, {
+                    cache: "no-store",
+                    method: "POST",
+                    keepalive: true,
+                  });
+                });
+      })();
     </script>
-    <script
-      type="text/javascript"
-      src="js/attachStartIdentButtonOnClick.js"
-    ></script>
-    <script
-      th:if="${isWidget}"
-      type="text/javascript"
-      src="js/setEIDClientURL.js"
-    ></script>
+    <script th:if="${isWidget}" type="text/javascript" th:inline="javascript">
+      (function(){
+        const hash = new URL(window.location).searchParams.get("hash");
+        const tcTokenURLParam = window.location.hash.replace("#", "");
+
+        const eidClientButton = document.getElementById("eid-client-button");
+        const eidClientURL = `${eidClientButton.baseURI}eID-Client?${tcTokenURLParam}&hash=${hash}`;
+        eidClientButton.setAttribute("href", eidClientURL);
+      })();
+    </script>
   </div>
 </div>
