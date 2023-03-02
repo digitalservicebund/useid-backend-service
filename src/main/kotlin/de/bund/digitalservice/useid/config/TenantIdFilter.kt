@@ -17,7 +17,6 @@ class TenantIdFilter(
 
         tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
             authentication.details.tenantId
-            // TODO: Why are all request authenticated?
         } else if (request.servletPath.equals("/widget")) {
             tenantIdProperties.getTenantIdForHost(request.getParameter("hostname"))
         } else if (request.getParameter("tenant_id") != null) {
