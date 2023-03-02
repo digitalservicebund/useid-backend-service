@@ -82,7 +82,11 @@
         </a>
       </div>
     </div>
-    <!--/* Wrap everything inside closures to not add to the global namespace */-->
+    <!--/*
+      -  Wrap everything inside closures to not add to the global namespace
+      -  No document ready needed because we are at the end of the document
+      -  Inlining javascript to save additional requests to the server
+    */-->
     <script th:inline="javascript" type="text/javascript">
       (function(){
         const tenantId = [[${widget.tenantId}]];
@@ -99,7 +103,7 @@
       })();
     </script>
     <script th:if="${isWidget}" type="text/javascript" th:inline="javascript">
-      (function(){
+      (function () {
         const hash = new URL(window.location).searchParams.get("hash");
         const tcTokenURLParam = window.location.hash.replace("#", "");
 
