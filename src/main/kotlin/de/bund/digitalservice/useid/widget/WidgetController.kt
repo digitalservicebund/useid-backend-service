@@ -70,7 +70,7 @@ class WidgetController(
         }
 
         val widgetViewConfig = mapOf(
-            "eidClientUrl" to "#",
+            "eidClientURL" to "#",
             "isWidget" to true,
             "additionalClass" to "",
             "tenantId" to tenantIdOrDefault(tenantId),
@@ -94,10 +94,8 @@ class WidgetController(
             Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
             Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
          */
-        val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}"
-
         val widgetViewFallbackConfig = mapOf(
-            "eidClientUrl" to url,
+            "eidClientURL" to "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
             "isFallback" to true,
             "additionalClass" to "fallback",
             "tenantId" to tenantIdOrDefault(tenantId),
