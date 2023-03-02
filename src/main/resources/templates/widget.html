@@ -86,6 +86,8 @@
       -  Wrap everything inside closures to not add to the global namespace
       -  No document ready needed because we are at the end of the document
       -  Inlining javascript to save additional requests to the server
+      -  Render tenantId as a javascript variable
+      -  Comment won't be visible in the html according to Thymeleaf docs
     */-->
     <script th:inline="javascript" type="text/javascript">
       (function(){
@@ -109,7 +111,7 @@
         const tcTokenURLParam = window.location.hash.replace("#", "");
 
         const eidClientButton = document.getElementById("eid-client-button");
-        const eidClientURL = `${eidClientButton.baseURI}eID-Client?${tcTokenURLParam}&hash=${hash}&=${tenantId}`;
+        const eidClientURL = `${eidClientButton.baseURI}eID-Client?${tcTokenURLParam}&hash=${hash}&tenant_id=${tenantId}`;
         eidClientButton.setAttribute("href", eidClientURL);
       })();
     </script>
