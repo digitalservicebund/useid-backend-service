@@ -104,11 +104,12 @@
     </script>
     <script th:if="${isWidget}" type="text/javascript" th:inline="javascript">
       (function () {
+        const tenantId = [[${tenantId}]];
         const hash = new URL(window.location).searchParams.get("hash");
         const tcTokenURLParam = window.location.hash.replace("#", "");
 
         const eidClientButton = document.getElementById("eid-client-button");
-        const eidClientURL = `${eidClientButton.baseURI}eID-Client?${tcTokenURLParam}&hash=${hash}`;
+        const eidClientURL = `${eidClientButton.baseURI}eID-Client?${tcTokenURLParam}&hash=${hash}&=${tenantId}`;
         eidClientButton.setAttribute("href", eidClientURL);
       })();
     </script>

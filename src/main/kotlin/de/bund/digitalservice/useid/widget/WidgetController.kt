@@ -70,10 +70,10 @@ class WidgetController(
         }
 
         val widgetViewConfig = mapOf(
-            setEiDClientURL("#"),
+            "eidClientUrl" to "#",
             "isWidget" to true,
             "additionalClass" to "",
-            "tenantId" to tenantId,
+            "tenantId" to tenantIdOrDefault(tenantId),
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -82,7 +82,7 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestParam(required = false, name = "tenant_id") tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
@@ -97,9 +97,10 @@ class WidgetController(
         val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}"
 
         val widgetViewFallbackConfig = mapOf(
-            setEiDClientURL(url),
+            "eidClientUrl" to url,
             "isFallback" to true,
             "additionalClass" to "fallback",
+            "tenantId" to tenantIdOrDefault(tenantId),
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -110,10 +111,6 @@ class WidgetController(
     private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?, tenantId: String? = null) {
         val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent, tenantId)
         applicationEventPublisher.publishEvent(matomoEvent)
-    }
-
-    private fun setEiDClientURL(url: String): Pair<String, String> {
-        return "eidClientURL" to url
     }
 
     private fun isIncompatibleOSVersion(userAgent: String?): Boolean {
@@ -145,5 +142,9 @@ class WidgetController(
         val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
         modelAndView.addAllObjects(defaultViewHeaderConfig)
         return modelAndView
+    }
+
+    private fun tenantIdOrDefault(tenantId: String?): String {
+        return tenantId ?: return "unknown"
     }
 }
