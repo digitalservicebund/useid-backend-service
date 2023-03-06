@@ -6,9 +6,9 @@ import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
+import de.bund.digitalservice.useid.tracking.SuccessRateCounters
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
-import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
@@ -54,14 +54,14 @@ class IdentificationSessionsController(
     private val eidServiceConfig: EidServiceConfiguration,
 ) {
     private val log = KotlinLogging.logger {}
-    private val tcTokenCallsSuccessfulCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "200")
-    private val tcTokenCallsWithErrorsCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "500")
-    private val getEidInformationCallsSuccessfulCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
+    private val tcTokenCalls = SuccessRateCounters(
+        success = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "200"),
+        failure = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "500"),
+    )
+    private val getEidInformationCalls = SuccessRateCounters(
+        success = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200"),
+        failure = Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500"),
+    )
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create session as eService")
@@ -108,13 +108,13 @@ class IdentificationSessionsController(
                 .encode().build()
                 .queryParams.getFirst("sessionId")
             identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
-            tcTokenCallsSuccessfulCounter.increment()
+            tcTokenCalls.success.increment()
             ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_XML)
                 .body(tcToken)
         } catch (e: Exception) {
-            tcTokenCallsWithErrorsCounter.increment()
+            tcTokenCalls.failure.increment()
             log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
             throw e
         }
@@ -150,9 +150,9 @@ class IdentificationSessionsController(
         try {
             val eidService = EidService(eidServiceConfig)
             userData = eidService.getEidInformation(eIdSessionId.toString())
-            getEidInformationCallsSuccessfulCounter.increment()
+            getEidInformationCalls.success.increment()
         } catch (e: Exception) {
-            getEidInformationCallsWithErrorsCounter.increment()
+            getEidInformationCalls.failure.increment()
             log.error("Failed to fetch identity data: ${e.message}.")
             throw e
         }
