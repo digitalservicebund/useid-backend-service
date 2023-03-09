@@ -145,7 +145,7 @@ class IdentificationSessionsController(
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         try {
             val eidService = EidService(eidServiceConfig)
