@@ -123,5 +123,58 @@
         refreshTimeBasedToken();
       });
     </script>
+    <script type="text/javascript">
+      function createUser() {
+        let credentialId;
+        fetch(`/api/v1/credentials`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            widgetSessionId: widgetSessionId,
+            refreshAddress: "https://digitalservice.bund.de",
+          }),
+        })
+          .then((r) => r.json())
+          .then((startRegistrationResponse) => {
+            console.log(startRegistrationResponse);
+            credentialId = startRegistrationResponse.credentialId;
+            let pkcCreationOptions =
+              startRegistrationResponse.pkcCreationOptions;
+
+            const enc = new TextEncoder();
+            pkcCreationOptions.publicKey.challenge = enc.encode(
+              pkcCreationOptions.publicKey.challenge
+            );
+            pkcCreationOptions.publicKey.user.id = enc.encode(
+              pkcCreationOptions.publicKey.user.id
+            );
+            console.log(pkcCreationOptions);
+
+            return navigator.credentials.create(pkcCreationOptions);
+          })
+          .then((cred) => {
+            cred.response.transports = cred.response.getTransports();
+            cred.clientExtensionResults = cred.getClientExtensionResults();
+            // cred.rawId = decodeArrayBuffer(cred.rawId)
+            // cred.response.clientDataJSON = decodeArrayBuffer(cred.response.clientDataJSON)
+            // cred.response.attestationObject = decodeArrayBuffer(cred.response.attestationObject)
+            console.log(cred);
+
+            fetch(`/api/v1/credentials/${credentialId}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(cred),
+            });
+          });
+      }
+      function decodeArrayBuffer(buffer) {
+        return String.fromCharCode.apply(null, new Uint8Array(buffer));
+      }
+      createUser();
+    </script>
   </div>
 </div>

@@ -2,12 +2,14 @@ package de.bund.digitalservice.useid.webauthn
 
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.data.RelyingPartyIdentity
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 // documentation: https://github.com/Yubico/java-webauthn-server#2-instantiate-a-relyingparty
 @Configuration
-class RelyingPartyConfig {
+@ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
+class RelyingPartyConfig(val userCredentialService: UserCredentialService) {
 
     @Bean
     fun relyingParty(): RelyingParty {
@@ -19,7 +21,7 @@ class RelyingPartyConfig {
 
         return RelyingParty.builder()
             .identity(rpIdentity)
-            .credentialRepository(UserCredentialRepository())
+            .credentialRepository(userCredentialService)
             .build()
     }
 }
