@@ -12,6 +12,9 @@ import com.yubico.webauthn.data.PublicKeyCredential
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
 import com.yubico.webauthn.exception.AssertionFailedException
+import de.bund.digitalservice.useid.events.EventService
+import de.bund.digitalservice.useid.events.EventType
+import de.bund.digitalservice.useid.events.WidgetNotFoundException
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
@@ -27,11 +30,13 @@ import java.util.UUID
 
 internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
 
+// TODO move logic from controller to service
 @RestController
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class UserCredentialController(
     private val relyingParty: RelyingParty,
     private val userCredentialService: UserCredentialService,
+    private val eventService: EventService,
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -62,6 +67,7 @@ class UserCredentialController(
         val pkcCreationOptions = relyingParty.startRegistration(startOptions)
 
         val userCredential = userCredentialService.create(
+            startRegistrationRequest.widgetSessionId,
             username,
             userId.base64,
             startRegistrationRequest.refreshAddress,
@@ -106,7 +112,7 @@ class UserCredentialController(
         userCredentialService.updateWithAssertionRequest(credentialId, assertionRequest)
 
         val credentialGetJson = assertionRequest.toCredentialsGetJson()
-        // TODO send credentialGetJson to widget via SSE
+        publishEvent(credentialGetJson, EventType.AUTHENTICATE, userCredential.widgetSessionId)
 
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
@@ -146,6 +152,20 @@ class UserCredentialController(
             log.error("Failed to finish WebAuthn authentication: {}", e.message, e)
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    }
+
+    // TODO resolve duplicate code with EventController
+    /**
+     * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
+     */
+    fun publishEvent(data: Any, type: EventType, widgetSessionId: UUID): ResponseEntity<Nothing> {
+        try {
+            eventService.publish(data, type, widgetSessionId)
+        } catch (e: WidgetNotFoundException) {
+            log.info("Failed to publish event: ${e.message}")
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
     private fun generateId(): ByteArray {

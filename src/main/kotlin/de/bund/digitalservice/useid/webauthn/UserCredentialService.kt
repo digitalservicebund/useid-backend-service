@@ -27,6 +27,7 @@ class UserCredentialService(
     private val log = KotlinLogging.logger {}
 
     fun create(
+        widgetSessionId: UUID,
         username: String,
         userIdBase64: String,
         refreshAddress: String,
@@ -34,7 +35,7 @@ class UserCredentialService(
     ): UserCredential {
         val credentialId = UUID.randomUUID()
         val userCredential = userCredentialMockDatasource.save(
-            UserCredential(credentialId, username, userIdBase64, refreshAddress, pckCreationOptions),
+            UserCredential(credentialId, widgetSessionId, username, userIdBase64, refreshAddress, pckCreationOptions),
         )
         log.info("Created new user credential. credentialId=$credentialId")
         return userCredential

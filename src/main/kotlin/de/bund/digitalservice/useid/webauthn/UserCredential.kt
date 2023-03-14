@@ -8,6 +8,7 @@ import java.util.UUID
 
 data class UserCredential(
     val credentialId: UUID,
+    val widgetSessionId: UUID,
     val username: String,
     val userIdBase64: String,
     val refreshAddress: String,

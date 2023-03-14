@@ -17,12 +17,44 @@ function subscribe(widgetSessionId) {
     );
   });
 
+  eventSource.addEventListener("authenticate", function (event) {
+    console.log(
+      "Received authenticate event for " + widgetSessionId + ": " + event.data
+    );
+
+    let credentialGetJson = JSON.parse(event.data);
+
+    console.log(credentialGetJson);
+    credentialGetJson.publicKey.allowCredentials[0].id = base64urlToUint8Array(
+      credentialGetJson.publicKey.allowCredentials[0].id
+    );
+    credentialGetJson.publicKey.challenge = base64urlToUint8Array(
+      credentialGetJson.publicKey.challenge
+    );
+    console.log(credentialGetJson);
+
+    navigator.credentials
+      .get(credentialGetJson)
+      .then((response) => console.log(response));
+  });
+
   eventSource.onerror = async (err) => {
     console.error(
       "Error occurred while listening on events for " + widgetSessionId + ": ",
       err
     );
   };
+}
+
+// TODO resolve duplicate code with qrcode-widget.html
+function base64urlToUint8Array(base64url) {
+  let base64 = base64url
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .replace(/\s/g, "");
+  let string = atob(base64);
+  let charCodeArray = string.split("").map((c) => c.charCodeAt(0));
+  return new Uint8Array(charCodeArray);
 }
 
 function uuidv4() {
