@@ -9,7 +9,6 @@ import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
 import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredential
-import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
 import com.yubico.webauthn.exception.AssertionFailedException
@@ -36,8 +35,6 @@ class UserCredentialController(
 ) {
     private val log = KotlinLogging.logger {}
 
-    private lateinit var pkcCreationOptions: PublicKeyCredentialCreationOptions
-
     @PostMapping(path = [CREDENTIALS_BASE_PATH])
     fun startRegistration(
         @RequestBody startRegistrationRequest: StartRegistrationRequest,
@@ -62,7 +59,7 @@ class UserCredentialController(
             )
             .build()
 
-        pkcCreationOptions = relyingParty.startRegistration(startOptions)
+        val pkcCreationOptions = relyingParty.startRegistration(startOptions)
 
         val userCredential = userCredentialService.create(
             username,
@@ -74,7 +71,12 @@ class UserCredentialController(
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(StartRegistrationResponse(userCredential.credentialId, userCredential.pckCreationOptions))
+            .body(
+                StartRegistrationResponse(
+                    userCredential.credentialId,
+                    userCredential.pckCreationOptions.toCredentialsCreateJson(),
+                ),
+            )
     }
 
     @PutMapping(
@@ -91,7 +93,7 @@ class UserCredentialController(
         val pkc = PublicKeyCredential.parseRegistrationResponseJson(publicKeyCredentialJson)
 
         val finishRegistrationOptions = FinishRegistrationOptions.builder()
-            .request(PublicKeyCredentialCreationOptions.fromJson(userCredential.pckCreationOptions)) // cached from "registration start"
+            .request(userCredential.pckCreationOptions)
             .response(pkc)
             .build()
 

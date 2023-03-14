@@ -124,8 +124,9 @@
       });
     </script>
     <script type="text/javascript">
-      function createUser() {
+      function createCredentials() {
         let credentialId;
+
         fetch(`/api/v1/credentials`, {
           method: "POST",
           headers: {
@@ -138,43 +139,87 @@
         })
           .then((r) => r.json())
           .then((startRegistrationResponse) => {
-            console.log(startRegistrationResponse);
             credentialId = startRegistrationResponse.credentialId;
-            let pkcCreationOptions =
-              startRegistrationResponse.pkcCreationOptions;
-
-            const enc = new TextEncoder();
-            pkcCreationOptions.publicKey.challenge = enc.encode(
-              pkcCreationOptions.publicKey.challenge
+            return createWebAuthnCredentialsViaBrowser(
+              startRegistrationResponse
             );
-            pkcCreationOptions.publicKey.user.id = enc.encode(
-              pkcCreationOptions.publicKey.user.id
-            );
-            console.log(pkcCreationOptions);
-
-            return navigator.credentials.create(pkcCreationOptions);
           })
-          .then((cred) => {
-            cred.response.transports = cred.response.getTransports();
-            cred.clientExtensionResults = cred.getClientExtensionResults();
-            // cred.rawId = decodeArrayBuffer(cred.rawId)
-            // cred.response.clientDataJSON = decodeArrayBuffer(cred.response.clientDataJSON)
-            // cred.response.attestationObject = decodeArrayBuffer(cred.response.attestationObject)
-            console.log(cred);
-
-            fetch(`/api/v1/credentials/${credentialId}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(cred),
-            });
+          .then((credentials) => {
+            updateCredentials(credentialId, convertCredentials(credentials));
           });
       }
-      function decodeArrayBuffer(buffer) {
-        return String.fromCharCode.apply(null, new Uint8Array(buffer));
+
+      function createWebAuthnCredentialsViaBrowser(startRegistrationResponse) {
+        let pkcCreationOptions = JSON.parse(
+          startRegistrationResponse.pkcCreationOptions
+        );
+
+        pkcCreationOptions.publicKey.challenge = base64urlToUint8Array(
+          pkcCreationOptions.publicKey.challenge
+        );
+        pkcCreationOptions.publicKey.user.id = base64urlToUint8Array(
+          pkcCreationOptions.publicKey.user.id
+        );
+
+        return navigator.credentials.create(pkcCreationOptions);
       }
-      createUser();
+
+      function convertCredentials(credentials) {
+        let flatCred = flatten(credentials);
+        flatCred.response = flatten(flatCred.response);
+        flatCred.response.transports = credentials.response.getTransports();
+        flatCred.clientExtensionResults =
+          credentials.getClientExtensionResults();
+        flatCred.rawId = decodeArrayBuffer(credentials.rawId);
+        flatCred.response.clientDataJSON = decodeArrayBuffer(
+          credentials.response.clientDataJSON
+        );
+        flatCred.response.attestationObject = decodeArrayBuffer(
+          credentials.response.attestationObject
+        );
+        return flatCred;
+      }
+
+      function updateCredentials(credentialId, flatCred) {
+        fetch(`/api/v1/credentials/${credentialId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(flatCred),
+        });
+      }
+
+      function flatten(obj) {
+        let result = {};
+        for (let key in obj) {
+          result[key] = obj[key];
+        }
+        return result;
+      }
+
+      function decodeArrayBuffer(buffer) {
+        let uint8Array = new Uint8Array(buffer);
+        let string = String.fromCharCode.apply(null, uint8Array);
+        let b64 = btoa(string);
+        let b64url = b64
+          .replace(/=/g, "")
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_");
+        return b64url;
+      }
+
+      function base64urlToUint8Array(base64url) {
+        let base64 = base64url
+          .replace(/-/g, "+")
+          .replace(/_/g, "/")
+          .replace(/\s/g, "");
+        let string = atob(base64);
+        let charCodeArray = string.split("").map((c) => c.charCodeAt(0));
+        return new Uint8Array(charCodeArray);
+      }
+
+      createCredentials();
     </script>
   </div>
 </div>

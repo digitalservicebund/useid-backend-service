@@ -34,7 +34,7 @@ class UserCredentialService(
     ): UserCredential {
         val credentialId = UUID.randomUUID()
         val userCredential = userCredentialMockDatasource.save(
-            UserCredential(credentialId, username, userIdBase64, refreshAddress, pckCreationOptions.toCredentialsCreateJson()),
+            UserCredential(credentialId, username, userIdBase64, refreshAddress, pckCreationOptions),
         )
         log.info("Created new user credential. credentialId=$credentialId")
         return userCredential
