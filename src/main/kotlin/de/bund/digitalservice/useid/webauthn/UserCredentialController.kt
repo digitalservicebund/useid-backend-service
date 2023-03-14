@@ -12,6 +12,7 @@ import com.yubico.webauthn.data.PublicKeyCredential
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
 import com.yubico.webauthn.exception.AssertionFailedException
+import de.bund.digitalservice.useid.events.AuthenticateEvent
 import de.bund.digitalservice.useid.events.EventService
 import de.bund.digitalservice.useid.events.EventType
 import de.bund.digitalservice.useid.events.WidgetNotFoundException
@@ -112,7 +113,8 @@ class UserCredentialController(
         userCredentialService.updateWithAssertionRequest(credentialId, assertionRequest)
 
         val credentialGetJson = assertionRequest.toCredentialsGetJson()
-        publishEvent(credentialGetJson, EventType.AUTHENTICATE, userCredential.widgetSessionId)
+        val authenticateEvent = AuthenticateEvent(credentialId, credentialGetJson)
+        publishEvent(authenticateEvent, EventType.AUTHENTICATE, userCredential.widgetSessionId)
 
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)

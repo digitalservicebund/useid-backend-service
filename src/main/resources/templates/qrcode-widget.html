@@ -145,7 +145,10 @@
             );
           })
           .then((credentials) => {
-            updateCredentials(credentialId, convertCredentials(credentials));
+            updateCredentials(
+              credentialId,
+              convertRegistrationCredentials(credentials)
+            );
           });
       }
 
@@ -164,7 +167,7 @@
         return navigator.credentials.create(pkcCreationOptions);
       }
 
-      function convertCredentials(credentials) {
+      function convertRegistrationCredentials(credentials) {
         let flatCred = flatten(credentials);
         flatCred.response = flatten(flatCred.response);
         flatCred.response.transports = credentials.response.getTransports();
