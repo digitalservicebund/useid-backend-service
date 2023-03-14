@@ -22,13 +22,13 @@ class SecurityConfig(
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http.authorizeRequests()
-            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
-            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
-            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
-            .antMatchers(HttpMethod.GET, "$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info").permitAll()
-            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
-            .antMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
+        return http.authorizeHttpRequests()
+            .requestMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tc-token").permitAll()
+            .requestMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens/*").permitAll()
+            .requestMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/*/tokens").permitAll()
+            .requestMatchers(HttpMethod.GET, "$IDENTIFICATION_SESSIONS_BASE_PATH/*/transaction-info").permitAll()
+            .requestMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").authenticated()
+            .requestMatchers("$IDENTIFICATION_SESSIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
             .anyRequest().permitAll()
             .and().csrf().disable()
             .headers()
