@@ -22,6 +22,12 @@
       "moduleLicense": "EPL 1.0"
     },
     {
+      "moduleLicense": "The BSD License"
+    },
+    {
+      "moduleLicense": "BSD Zero Clause License"
+    },
+    {
       "moduleLicense": "The 2-Clause BSD License"
     },
     {
@@ -38,6 +44,9 @@
     },
     {
       "moduleLicense": "GNU Lesser General Public License"
+    },
+    {
+      "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1"
     },
     {
       "moduleLicense": "GNU Lesser General Public License v3.0"
@@ -85,10 +94,12 @@
       "moduleName": "de.governikus.autent.utils:autent-key-utils"
     },
     {
-      "moduleLicense": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1"
+      "moduleLicense": null,
+      "moduleName": "com.squareup.okio:okio"
     },
     {
-      "moduleLicense": "BSD Zero Clause License"
+      "moduleLicense": null,
+      "moduleName": "org.apache.groovy:groovy-bom"
     }
   ]
 }
