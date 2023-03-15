@@ -14,9 +14,8 @@ class RelyingPartyConfig(val userCredentialService: UserCredentialService) {
     @Bean
     fun relyingParty(): RelyingParty {
         val rpIdentity = RelyingPartyIdentity.builder()
-            .id("1f24-2003-d6-cf04-9000-80be-b1fd-2410-2a4a.eu.ngrok.io") // Set this to a parent domain that covers all subdomains
-            // where users' credentials should be valid
-            .name("Example Application")
+            .id(applicationProperties.baseUrl) // Set this to a parent domain that covers all subdomains where users' credentials should be valid
+            .name("BundesIdent")
             .build()
 
         return RelyingParty.builder()
