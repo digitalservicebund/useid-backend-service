@@ -39,9 +39,6 @@ dependencies {
     /** Security **/
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-    /** Desktop Flow **/
-    implementation("com.yubico:webauthn-server-core:2.4.0")
-
     /** UI **/
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
@@ -85,6 +82,9 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
     // => CVE-2022-40153
     implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
+
+    /** WebAuthn **/
+    implementation("com.yubico:webauthn-server-core:2.4.0")
 
     /** Helpers **/
     implementation("com.github.ua-parser:uap-java:1.5.4")
