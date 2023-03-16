@@ -11,7 +11,7 @@ import java.net.URI
 // documentation: https://github.com/Yubico/java-webauthn-server#2-instantiate-a-relyingparty
 @Configuration
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class RelyingPartyConfig(val credentialService: CredentialService, val applicationProperties: ApplicationProperties) {
+class RelyingPartyConfig(val credentialMockDatasource: CredentialMockDatasource, val applicationProperties: ApplicationProperties) {
 
     @Bean
     fun relyingParty(): RelyingParty {
@@ -22,7 +22,7 @@ class RelyingPartyConfig(val credentialService: CredentialService, val applicati
 
         return RelyingParty.builder()
             .identity(rpIdentity)
-            .credentialRepository(credentialService)
+            .credentialRepository(credentialMockDatasource)
             .build()
     }
 }

@@ -1,13 +1,17 @@
 package de.bund.digitalservice.useid.credentials
 
+import com.yubico.webauthn.CredentialRepository
+import com.yubico.webauthn.RegisteredCredential
 import com.yubico.webauthn.data.ByteArray
+import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Repository
+import java.util.Optional
 import java.util.UUID
 
 @Repository
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class CredentialMockDatasource {
+class CredentialMockDatasource : CredentialRepository {
     private val credentials = mutableListOf<Credential>()
 
     fun save(credential: Credential): Credential {
@@ -40,4 +44,36 @@ class CredentialMockDatasource {
     fun delete(credentialId: UUID) {
         credentials.removeAll { it.credentialId == credentialId }
     }
+
+    override fun getCredentialIdsForUsername(username: String): MutableSet<PublicKeyCredentialDescriptor> {
+        val credential = findByUsername(username) ?: return mutableSetOf()
+        return mutableSetOf(credential.keyId!!)
+    }
+
+    override fun getUserHandleForUsername(username: String): Optional<ByteArray> {
+        val credential = findByUsername(username) ?: return Optional.empty()
+        return Optional.of(credential.getUserHandle())
+    }
+
+    override fun getUsernameForUserHandle(userHandle: ByteArray): Optional<String> {
+        val credential = findByUserId(userHandle.base64) ?: return Optional.empty()
+        return Optional.of(credential.username)
+    }
+
+    override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential> {
+        val credential = findByUserId(userHandle.base64) ?: return Optional.empty()
+        return Optional.of(createRegisteredCredential(credential))
+    }
+
+    override fun lookupAll(credentialId: ByteArray): MutableSet<RegisteredCredential> {
+        val credential = findByKeyCredentialId(credentialId) ?: return mutableSetOf()
+        return mutableSetOf(createRegisteredCredential(credential))
+    }
+
+    private fun createRegisteredCredential(credential: Credential): RegisteredCredential =
+        RegisteredCredential.builder()
+            .credentialId(credential.keyId!!.id)
+            .userHandle(credential.getUserHandle())
+            .publicKeyCose(credential.publicKeyCose)
+            .build()
 }

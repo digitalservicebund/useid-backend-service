@@ -1,17 +1,14 @@
 package de.bund.digitalservice.useid.credentials
 
 import com.yubico.webauthn.AssertionRequest
-import com.yubico.webauthn.CredentialRepository
 import com.yubico.webauthn.FinishAssertionOptions
 import com.yubico.webauthn.FinishRegistrationOptions
-import com.yubico.webauthn.RegisteredCredential
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartAssertionOptions
 import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
 import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredential
-import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
 import com.yubico.webauthn.exception.AssertionFailedException
@@ -19,7 +16,6 @@ import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
-import java.util.Optional
 import java.util.UUID
 import kotlin.jvm.optionals.getOrDefault
 
@@ -28,7 +24,7 @@ import kotlin.jvm.optionals.getOrDefault
 class CredentialService(
     private val credentialMockDatasource: CredentialMockDatasource,
     private val relyingParty: RelyingParty,
-) : CredentialRepository {
+) {
 
     private val log = KotlinLogging.logger {}
 
@@ -130,38 +126,6 @@ class CredentialService(
 
         return credential.refreshAddress
     }
-
-    override fun getCredentialIdsForUsername(username: String): MutableSet<PublicKeyCredentialDescriptor> {
-        val credential = credentialMockDatasource.findByUsername(username) ?: return mutableSetOf()
-        return mutableSetOf(credential.keyId!!)
-    }
-
-    override fun getUserHandleForUsername(username: String): Optional<ByteArray> {
-        val credential = credentialMockDatasource.findByUsername(username) ?: return Optional.empty()
-        return Optional.of(credential.getUserHandle())
-    }
-
-    override fun getUsernameForUserHandle(userHandle: ByteArray): Optional<String> {
-        val credential = credentialMockDatasource.findByUserId(userHandle.base64) ?: return Optional.empty()
-        return Optional.of(credential.username)
-    }
-
-    override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential> {
-        val credential = credentialMockDatasource.findByUserId(userHandle.base64) ?: return Optional.empty()
-        return Optional.of(createRegisteredCredential(credential))
-    }
-
-    override fun lookupAll(credentialId: ByteArray): MutableSet<RegisteredCredential> {
-        val credential = credentialMockDatasource.findByKeyCredentialId(credentialId) ?: return mutableSetOf()
-        return mutableSetOf(createRegisteredCredential(credential))
-    }
-
-    private fun createRegisteredCredential(credential: Credential): RegisteredCredential =
-        RegisteredCredential.builder()
-            .credentialId(credential.keyId!!.id)
-            .userHandle(credential.getUserHandle())
-            .publicKeyCose(credential.publicKeyCose)
-            .build()
 
     private fun generateUserId(): ByteArray {
         val bytes = ByteArray(32)
