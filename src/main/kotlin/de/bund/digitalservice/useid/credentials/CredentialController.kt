@@ -15,7 +15,6 @@ import com.yubico.webauthn.exception.AssertionFailedException
 import de.bund.digitalservice.useid.events.AuthenticateEvent
 import de.bund.digitalservice.useid.events.EventService
 import de.bund.digitalservice.useid.events.EventType
-import de.bund.digitalservice.useid.events.WidgetNotFoundException
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
@@ -112,9 +111,11 @@ class CredentialController(
         )
         credentialService.updateWithAssertionRequest(credentialId, assertionRequest)
 
-        val credentialGetJson = assertionRequest.toCredentialsGetJson()
-        val authenticateEvent = AuthenticateEvent(credentialId, credentialGetJson)
-        publishEvent(authenticateEvent, EventType.AUTHENTICATE, userCredential.widgetSessionId)
+        eventService.publish(
+            AuthenticateEvent(credentialId, assertionRequest.toCredentialsGetJson()),
+            EventType.AUTHENTICATE,
+            userCredential.widgetSessionId,
+        )
 
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
@@ -154,20 +155,6 @@ class CredentialController(
             log.error("Failed to finish WebAuthn authentication: {}", e.message, e)
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-    }
-
-    // TODO resolve duplicate code with EventController
-    /**
-     * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
-     */
-    fun publishEvent(data: Any, type: EventType, widgetSessionId: UUID): ResponseEntity<Nothing> {
-        try {
-            eventService.publish(data, type, widgetSessionId)
-        } catch (e: WidgetNotFoundException) {
-            log.info("Failed to publish event: ${e.message}")
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
     private fun generateId(): ByteArray {
