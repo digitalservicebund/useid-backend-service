@@ -5,8 +5,13 @@ import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.errors.NotFoundException
+import de.bund.digitalservice.useid.errors.UnauthorizedException
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
+import de.bund.digitalservice.useid.runIgnoring
+import de.bund.digitalservice.useid.runLogging
 import de.bund.digitalservice.useid.tracking.SuccessRateCounters
+import de.bund.digitalservice.useid.tracking.monitor
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.micrometer.core.instrument.Metrics
@@ -74,15 +79,13 @@ class IdentificationSessionsController(
     @SecurityRequirement(name = "apiKey")
     fun createSession(
         authentication: Authentication,
-    ): ResponseEntity<CreateIdentificationSessionResponse> {
+    ): ResponseEntity<CreateIdentificationSessionResponse> = log.runLogging("createSession") {
         val apiKeyDetails = authentication.details as ApiKeyDetails
         val session =
             identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
         val tcTokenUrl =
             "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .contentType(MediaType.APPLICATION_JSON)
+        ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
             .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
 
@@ -97,28 +100,19 @@ class IdentificationSessionsController(
         description = "No corresponding session found for that useIdSessionId",
         content = [Content()],
     )
-    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<TCTokenType> {
-        return try {
-            val identificationSession = identificationSessionService.findByUseIdSessionId(useIdSessionId)
-                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-            val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
-            val tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
-            val eIdSessionId = UriComponentsBuilder
-                .fromHttpUrl(tcToken.refreshAddress)
-                .encode().build()
-                .queryParams.getFirst("sessionId")
-            identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
-            tcTokenCalls.success.increment()
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(tcToken)
-        } catch (e: Exception) {
-            tcTokenCalls.failure.increment()
-            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
-            throw e
+    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<TCTokenType> =
+        log.runLogging("getTCToken useIdSessionId=$useIdSessionId") {
+            tcTokenCalls.monitor {
+                val identificationSession =
+                    identificationSessionService.findByUseIdSessionId(useIdSessionId) ?: throw NotFoundException()
+                val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
+                val tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
+                val eIdSessionId = UriComponentsBuilder.fromHttpUrl(tcToken.refreshAddress).encode()
+                    .build().queryParams.getFirst("sessionId")
+                identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
+                ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_XML).body(tcToken)
+            }
         }
-    }
 
     @GetMapping("/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
@@ -137,40 +131,28 @@ class IdentificationSessionsController(
     fun getIdentity(
         @PathVariable eIdSessionId: UUID,
         authentication: Authentication,
-    ): ResponseEntity<GetResultResponseType> {
+    ): ResponseEntity<GetResultResponseType> = log.runLogging("getIdentity id=$eIdSessionId") {
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
-        val userData: GetResultResponseType?
         val identificationSession = identificationSessionService.findByEIDSessionId(eIdSessionId)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+            ?: throw NotFoundException()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+            throw UnauthorizedException()
         }
-        try {
+        val userData: GetResultResponseType = getEidInformationCalls.monitor {
             val eidService = EidService(eidServiceConfig)
-            userData = eidService.getEidInformation(eIdSessionId.toString())
-            getEidInformationCalls.success.increment()
-        } catch (e: Exception) {
-            getEidInformationCalls.failure.increment()
-            log.error("Failed to fetch identity data: ${e.message}.")
-            throw e
+            eidService.getEidInformation(eIdSessionId.toString())
         }
-
         // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
         if (userData.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-            try {
+            log.runIgnoring<Exception>("Failed to delete identification session. id=${identificationSession.id}") {
                 identificationSessionService.delete(identificationSession)
-            } catch (e: Exception) {
-                log.error("Failed to delete identification session. id=${identificationSession.id}")
             }
         } else {
             // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
             log.info("The resultMinor for identification session is ${userData.result.resultMinor}. id=${identificationSession.id}")
         }
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(userData)
+        ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(userData)
     }
 }
