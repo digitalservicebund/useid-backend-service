@@ -16,7 +16,6 @@ import java.util.UUID
 
 internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
 
-// TODO move logic from controller to service
 @RestController
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class CredentialController(
