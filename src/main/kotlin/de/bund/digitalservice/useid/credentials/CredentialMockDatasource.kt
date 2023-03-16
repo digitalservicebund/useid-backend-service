@@ -15,9 +15,10 @@ class CredentialMockDatasource {
         return credential
     }
 
-    fun update(credential: Credential) {
+    fun update(credential: Credential): Credential {
         credentials.removeAll { it.credentialId == credential.credentialId }
         credentials.add(credential)
+        return credential
     }
 
     fun findById(credentialId: UUID): Credential? {

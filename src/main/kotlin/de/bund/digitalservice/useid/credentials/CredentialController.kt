@@ -1,21 +1,8 @@
 package de.bund.digitalservice.useid.credentials
 
-import com.yubico.webauthn.AssertionRequest
-import com.yubico.webauthn.FinishAssertionOptions
-import com.yubico.webauthn.FinishRegistrationOptions
-import com.yubico.webauthn.RelyingParty
-import com.yubico.webauthn.StartAssertionOptions
-import com.yubico.webauthn.StartRegistrationOptions
-import com.yubico.webauthn.data.AuthenticatorSelectionCriteria
-import com.yubico.webauthn.data.ByteArray
-import com.yubico.webauthn.data.PublicKeyCredential
-import com.yubico.webauthn.data.ResidentKeyRequirement
-import com.yubico.webauthn.data.UserIdentity
-import com.yubico.webauthn.exception.AssertionFailedException
 import de.bund.digitalservice.useid.events.AuthenticateEvent
 import de.bund.digitalservice.useid.events.EventService
 import de.bund.digitalservice.useid.events.EventType
-import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -25,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.security.SecureRandom
 import java.util.UUID
 
 internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
@@ -34,44 +20,16 @@ internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
 @RestController
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class CredentialController(
-    private val relyingParty: RelyingParty,
     private val credentialService: CredentialService,
     private val eventService: EventService,
 ) {
-    private val log = KotlinLogging.logger {}
-
     @PostMapping(path = [CREDENTIALS_BASE_PATH])
     fun startRegistration(
         @RequestBody startRegistrationRequest: StartRegistrationRequest,
     ): ResponseEntity<Any> {
-        val username = startRegistrationRequest.widgetSessionId.toString()
-        val userId = generateId()
-
-        val user = UserIdentity.builder()
-            .name(username)
-            .displayName(username)
-            .id(userId)
-            .build()
-
-        val residentKeyRequirement = ResidentKeyRequirement.DISCOURAGED // OR: ResidentKeyRequirement.REQUIRED
-
-        val startOptions = StartRegistrationOptions.builder()
-            .user(user)
-            .authenticatorSelection(
-                AuthenticatorSelectionCriteria.builder()
-                    .residentKey(residentKeyRequirement)
-                    .build(),
-            )
-            .build()
-
-        val pkcCreationOptions = relyingParty.startRegistration(startOptions)
-
-        val userCredential = credentialService.create(
+        val credential = credentialService.startRegistration(
             startRegistrationRequest.widgetSessionId,
-            username,
-            userId.base64,
             startRegistrationRequest.refreshAddress,
-            pkcCreationOptions,
         )
 
         return ResponseEntity
@@ -79,8 +37,8 @@ class CredentialController(
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 StartRegistrationResponse(
-                    userCredential.credentialId,
-                    userCredential.pckCreationOptions.toCredentialsCreateJson(),
+                    credential.credentialId,
+                    credential.pckCreationOptions.toCredentialsCreateJson(),
                 ),
             )
     }
@@ -93,29 +51,10 @@ class CredentialController(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
     ): ResponseEntity<Any> {
-        val userCredential = credentialService.findByCredentialId(credentialId)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        credentialService.finishRegistration(credentialId, publicKeyCredentialJson)
 
-        val pkc = PublicKeyCredential.parseRegistrationResponseJson(publicKeyCredentialJson)
-
-        val finishRegistrationOptions = FinishRegistrationOptions.builder()
-            .request(userCredential.pckCreationOptions)
-            .response(pkc)
-            .build()
-
-        val result = relyingParty.finishRegistration(finishRegistrationOptions)
-        credentialService.updateWithRegistrationResult(credentialId, result, pkc)
-
-        val assertionRequest: AssertionRequest = relyingParty.startAssertion(
-            StartAssertionOptions.builder().username(userCredential.username).build(),
-        )
-        credentialService.updateWithAssertionRequest(credentialId, assertionRequest)
-
-        eventService.publish(
-            AuthenticateEvent(credentialId, assertionRequest.toCredentialsGetJson()),
-            EventType.AUTHENTICATE,
-            userCredential.widgetSessionId,
-        )
+        val credential = credentialService.startAuthentication(credentialId)
+        sendAuthenticateEventToWidget(credential)
 
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
@@ -123,8 +62,16 @@ class CredentialController(
             .build()
     }
 
+    private fun sendAuthenticateEventToWidget(credential: Credential) {
+        eventService.publish(
+            AuthenticateEvent(credential.credentialId, credential.assertionRequest!!.toCredentialsGetJson()),
+            EventType.AUTHENTICATE,
+            credential.widgetSessionId,
+        )
+    }
+
     @PostMapping(
-        path = ["$CREDENTIALS_BASE_PATH/{credentialId}/authentications"], // TODO think about endpoint design
+        path = ["$CREDENTIALS_BASE_PATH/{credentialId}/authentications"],
         headers = ["Content-Type=application/json"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
@@ -132,34 +79,10 @@ class CredentialController(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
     ): ResponseEntity<Any> {
-        val userCredential = credentialService.findByCredentialId(credentialId)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-
-        val pkc = PublicKeyCredential.parseAssertionResponseJson(publicKeyCredentialJson)
-
-        val finishAssertionOptions = FinishAssertionOptions.builder()
-            .request(userCredential.assertionRequest)
-            .response(pkc)
-            .build()
-
-        try {
-            val assertionResult = relyingParty.finishAssertion(finishAssertionOptions)
-            if (assertionResult.isSuccess) {
-                credentialService.delete(userCredential.credentialId)
-                return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(CompleteAuthenticationResponse(userCredential.refreshAddress))
-            }
-        } catch (e: AssertionFailedException) {
-            log.error("Failed to finish WebAuthn authentication: {}", e.message, e)
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-    }
-
-    private fun generateId(): ByteArray {
-        val bytes = ByteArray(32)
-        SecureRandom().nextBytes(bytes)
-        return ByteArray(bytes)
+        val refreshAddress = credentialService.finishAuthentication(credentialId, publicKeyCredentialJson)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(CompleteAuthenticationResponse(refreshAddress))
     }
 }
