@@ -1,14 +1,14 @@
 package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
-import jakarta.servlet.FilterChain
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.PathContainer
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.pattern.PathPattern
 import org.springframework.web.util.pattern.PathPatternParser
+import javax.servlet.FilterChain
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 class SecurityHeadersFilter(
     private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,

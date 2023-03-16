@@ -7,6 +7,7 @@ import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
+import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.Operation
@@ -96,7 +97,7 @@ class IdentificationSessionsController(
         description = "No corresponding session found for that useIdSessionId",
         content = [Content()],
     )
-    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<JakartaTCToken> {
+    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<TCTokenType> {
         return try {
             val identificationSession = identificationSessionService.findByUseIdSessionId(useIdSessionId)
                 ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
@@ -111,7 +112,7 @@ class IdentificationSessionsController(
             ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_XML)
-                .body(JakartaTCToken.fromTCTokenType(tcToken))
+                .body(tcToken)
         } catch (e: Exception) {
             tcTokenCallsWithErrorsCounter.increment()
             log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
