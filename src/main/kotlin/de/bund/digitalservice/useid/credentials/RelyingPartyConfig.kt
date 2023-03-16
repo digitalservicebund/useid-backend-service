@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.webauthn
+package de.bund.digitalservice.useid.credentials
 
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.data.RelyingPartyIdentity
@@ -11,7 +11,7 @@ import java.net.URI
 // documentation: https://github.com/Yubico/java-webauthn-server#2-instantiate-a-relyingparty
 @Configuration
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class RelyingPartyConfig(val userCredentialService: UserCredentialService, val applicationProperties: ApplicationProperties) {
+class RelyingPartyConfig(val credentialService: CredentialService, val applicationProperties: ApplicationProperties) {
 
     @Bean
     fun relyingParty(): RelyingParty {
@@ -22,7 +22,7 @@ class RelyingPartyConfig(val userCredentialService: UserCredentialService, val a
 
         return RelyingParty.builder()
             .identity(rpIdentity)
-            .credentialRepository(userCredentialService)
+            .credentialRepository(credentialService)
             .build()
     }
 }

@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.webauthn
+package de.bund.digitalservice.useid.credentials
 
 import com.yubico.webauthn.AssertionRequest
 import com.yubico.webauthn.data.ByteArray
@@ -6,7 +6,7 @@ import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import java.util.UUID
 
-data class UserCredential(
+data class Credential(
     val credentialId: UUID,
     val widgetSessionId: UUID,
     val username: String,
