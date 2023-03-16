@@ -217,7 +217,7 @@ tasks {
             property(
                 "sonar.coverage.exclusions",
                 // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
-                "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/events/**/*",
+                "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/events/**/*,**/de/bund/digitalservice/useid/credentials/**/*",
             )
         }
     }
