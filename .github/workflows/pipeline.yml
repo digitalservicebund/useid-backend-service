@@ -200,7 +200,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-push-image:
-    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - build
@@ -218,7 +217,6 @@ jobs:
       imageTag: ${{ github.sha }}
 
   deploy-staging:
-    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-staging
     environment: staging
@@ -268,7 +266,6 @@ jobs:
           url: ${{ secrets.SLACK_WEBHOOK_URL }}
           token: ${{ secrets.GITHUB_TOKEN }}
   deploy-production:
-    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-production
     environment: production
