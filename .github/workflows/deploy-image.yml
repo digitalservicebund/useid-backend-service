@@ -15,6 +15,20 @@ on:
       argoCDServer:
         description: "Url of the ArgoCD server"
         required: true
+  workflow_call:
+    inputs:
+      imageTag:
+        description: "Image tag to deploy"
+        required: true
+      environment:
+        description: "Environment to deploy to"
+        required: true
+      appName:
+        description: "Name of the app that is deployed"
+        required: true
+      argoCDServer:
+        description: "Url of the ArgoCD server"
+        required: true
 
 env:
   CONTAINER_IMAGE_VERSION: ${{ github.event.inputs.imageTag }}

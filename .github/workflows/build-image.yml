@@ -9,6 +9,14 @@ on:
       imageTag:
         description: "Label for the image"
         required: true
+  workflow_call:
+    inputs:
+      ref:
+        description: "Branch, tag or commit sha to build"
+        required: true
+      imageTag:
+        description: "Label for the image"
+        required: true
 
 env:
   CONTAINER_REGISTRY: ghcr.io
