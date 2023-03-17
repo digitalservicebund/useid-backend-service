@@ -1,20 +1,27 @@
 package de.bund.digitalservice.useid.identification
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EntityListeners
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
 import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
+import org.hibernate.annotations.TypeDefs
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 import java.util.UUID
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EntityListeners
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Table
 
+@TypeDefs(
+    value = [
+        TypeDef(name = "list-array", typeClass = ListArrayType::class),
+    ],
+)
 @Table(name = "identification_session")
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -26,7 +33,7 @@ data class IdentificationSession(
     var refreshAddress: String? = null,
 
     @Column(name = "request_data_groups")
-    @Type(ListArrayType::class)
+    @Type(type = "list-array")
     var requestDataGroups: List<String> = emptyList(),
 ) {
     @Id

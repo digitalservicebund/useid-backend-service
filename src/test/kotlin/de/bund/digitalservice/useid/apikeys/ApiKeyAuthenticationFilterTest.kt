@@ -5,8 +5,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import io.mockk.verify
-import jakarta.servlet.FilterChain
-import jakarta.servlet.http.HttpServletResponse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterAll
@@ -17,6 +15,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import javax.servlet.FilterChain
+import javax.servlet.http.HttpServletResponse
 
 @Tag("test")
 internal class ApiKeyAuthenticationFilterTest {

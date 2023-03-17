@@ -213,7 +213,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun mockTcToken(refreshAddress: String) {
-        val mockTCToken = mockk<TCTokenType>(relaxed = true)
+        val mockTCToken = mockk<TCTokenType>()
         every { mockTCToken.refreshAddress } returns refreshAddress
         every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
     }
