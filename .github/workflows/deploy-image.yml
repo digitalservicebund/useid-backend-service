@@ -12,6 +12,9 @@ on:
       appName:
         description: "Name of the app that is deployed"
         required: true
+      argoCDServer:
+        description: "Url of the ArgoCD server"
+        required: true
 
 env:
   CONTAINER_IMAGE_VERSION: ${{ github.event.inputs.imageTag }}
@@ -26,7 +29,7 @@ jobs:
     steps:
       - uses: chainguard-dev/actions/setup-gitsign@ac42db4c9c2e2bd9f66aadf3290c5995891d91a3
       - name: Deploy new image
-        uses: digitalservicebund/github-actions/argocd-deploy@ccfe8dfdcadb4bd87d074b4e3c946453dfc98360
+        uses: digitalservicebund/github-actions/argocd-deploy@9b15fba0ce0e874d9af5be33ebeea7d476f808d0
         with:
           environment: ${{ github.event.inputs.environment }}
           version: ${{ env.CONTAINER_IMAGE_VERSION }}
@@ -35,7 +38,8 @@ jobs:
           deploy_key: ${{ secrets.DEPLOY_KEY }}
           app: ${{ github.event.inputs.appName }}
           argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
-          argocd_server: ${{ secrets.ARGOCD_SERVER }}
+          argocd_server: ${{ github.event.inputs.argoCDServer }}
+          argocd_sync_timeout: 300
       - name: Track deploy
         uses: digitalservicebund/github-actions/track-deployment@b51920b9fdeeb0c8721c210853aee955bd7cefc0
         with:
