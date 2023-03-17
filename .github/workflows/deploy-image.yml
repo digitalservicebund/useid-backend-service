@@ -1,10 +1,16 @@
-name: Deploy staging
+name: Deploy image
 
 on:
   workflow_dispatch:
     inputs:
       imageTag:
         description: "Image tag to deploy"
+        required: true
+      environment:
+        description: "Environment to deploy to"
+        required: true
+      appName:
+        description: "Name of the app that is deployed"
         required: true
 
 env:
@@ -22,19 +28,19 @@ jobs:
       - name: Deploy new image
         uses: digitalservicebund/github-actions/argocd-deploy@ccfe8dfdcadb4bd87d074b4e3c946453dfc98360
         with:
-          environment: staging
+          environment: ${{ github.event.inputs.environment }}
           version: ${{ env.CONTAINER_IMAGE_VERSION }}
           deploying_repo: useid-backend-service
           infra_repo: useid-infra
           deploy_key: ${{ secrets.DEPLOY_KEY }}
-          app: useid-staging
+          app: ${{ github.event.inputs.appName }}
           argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
           argocd_server: ${{ secrets.ARGOCD_SERVER }}
       - name: Track deploy
         uses: digitalservicebund/github-actions/track-deployment@b51920b9fdeeb0c8721c210853aee955bd7cefc0
         with:
           project: UseId
-          environment: staging
+          environment: ${{ github.event.inputs.environment }}
           metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
           metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
       - name: Send status to Slack
@@ -46,7 +52,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           type: ${{ job.status }}
-          job_name: "Deploy staging :point_right:"
+          job_name: "Deploy ${{ github.event.inputs.environment }} :point_right:"
           mention: "here"
           mention_if: "failure"
           commit: true
