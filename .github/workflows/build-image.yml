@@ -4,17 +4,21 @@ on:
   workflow_dispatch:
     inputs:
       ref:
+        type: string
         description: "Branch, tag or commit sha to build"
         required: true
       imageTag:
+        type: string
         description: "Label for the image"
         required: true
   workflow_call:
     inputs:
       ref:
+        type: string
         description: "Branch, tag or commit sha to build"
         required: true
       imageTag:
+        type: string
         description: "Label for the image"
         required: true
 

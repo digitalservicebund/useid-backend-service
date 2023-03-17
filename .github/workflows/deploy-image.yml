@@ -4,30 +4,38 @@ on:
   workflow_dispatch:
     inputs:
       imageTag:
+        type: string
         description: "Image tag to deploy"
         required: true
       environment:
+        type: string
         description: "Environment to deploy to"
         required: true
       appName:
+        type: string
         description: "Name of the app that is deployed"
         required: true
       argoCDServer:
+        type: string
         description: "Url of the ArgoCD server"
         required: true
   workflow_call:
     inputs:
       imageTag:
+        type: string
         description: "Image tag to deploy"
         required: true
       environment:
+        type: string
         description: "Environment to deploy to"
         required: true
       appName:
+        type: string
         description: "Name of the app that is deployed"
         required: true
     secrets:
       argoCDServer:
+        type: string
         description: "Url of the ArgoCD server"
         required: true
 
