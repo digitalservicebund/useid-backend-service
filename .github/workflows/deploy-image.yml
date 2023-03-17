@@ -34,10 +34,10 @@ env:
   CONTAINER_IMAGE_VERSION: ${{ github.event.inputs.imageTag }}
 
 jobs:
-  deploy-staging:
+  deploy-image:
     runs-on: ubuntu-latest
-    concurrency: deploy-staging
-    environment: staging
+    concurrency: deploy-image
+    environment: ${{ github.event.inputs.environment }}
     permissions:
       id-token: write # Enable OIDC for gitsign
     steps:
