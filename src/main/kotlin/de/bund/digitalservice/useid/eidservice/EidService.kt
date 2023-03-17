@@ -71,13 +71,13 @@ class EidService constructor(config: EidServiceConfiguration, private val dataGr
 
     override fun getTcToken(refreshUrl: String?): TCTokenType {
         var tcToken: TCTokenType? = null
-        tcTokenCallsTimer.record { tcToken = super.getTcToken(refreshUrl) }
+        tcTokenCallsTimer.recordCallable { tcToken = super.getTcToken(refreshUrl) }
         return tcToken!!
     }
 
     override fun getEidInformation(sessionId: String?): GetResultResponseType {
         var eidInformation: GetResultResponseType? = null
-        getEidInformationTimer.record { eidInformation = super.getEidInformation(sessionId) }
+        getEidInformationTimer.recordCallable { eidInformation = super.getEidInformation(sessionId) }
         return eidInformation!!
     }
 }
