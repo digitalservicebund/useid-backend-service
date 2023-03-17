@@ -219,7 +219,8 @@ jobs:
       imageTag: ${{ needs.build-and-push-image.outputs.version }}
       environment: staging
       appName: useid-staging
-      argoCDServer: ${{ secrets.ARGOCD_SERVER_STAGING }}
+    secrets:
+      argoCDServer: "${{ secrets.ARGOCD_SERVER_STAGING }}"
 
   deploy-staging-verify:
     runs-on: ubuntu-latest
@@ -256,14 +257,15 @@ jobs:
           commit: true
           url: ${{ secrets.SLACK_WEBHOOK_URL }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
   deploy-production:
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-production
-    environment: production
     needs: [build-and-push-image, deploy-staging-verify]
     uses: digitalservicebund/useid-backend-service/.github/workflows/deploy-image.yml@main
     with:
       imageTag: ${{ needs.build-and-push-image.outputs.version }}
       environment: production
       appName: useid-production
-      argoCDServer: ${{ secrets.ARGOCD_SERVER }}
+    secrets:
+      argoCDServer: "${{ secrets.ARGOCD_SERVER }}"

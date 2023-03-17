@@ -26,6 +26,7 @@ on:
       appName:
         description: "Name of the app that is deployed"
         required: true
+    secrets:
       argoCDServer:
         description: "Url of the ArgoCD server"
         required: true
