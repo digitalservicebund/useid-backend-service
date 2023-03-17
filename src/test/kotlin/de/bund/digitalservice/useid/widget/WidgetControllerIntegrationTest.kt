@@ -1,9 +1,9 @@
 package de.bund.digitalservice.useid.widget
 
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.jsoup.Jsoup
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,10 +14,11 @@ import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import java.util.Locale
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("integration")
 class WidgetControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
-    @Autowired val messageSource: MessageSource
-) : PostgresTestcontainerIntegrationTest() {
+    @Autowired val messageSource: MessageSource,
+) {
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
@@ -42,12 +43,12 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self' foo.bar;"
+                "some default value;frame-ancestors 'self' foo.bar;",
             )
             .expectHeader()
             .valueEquals(
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
-                "foo.bar"
+                "foo.bar",
             )
             .expectHeader()
             .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
@@ -64,7 +65,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';"
+                "some default value;frame-ancestors 'self';",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -81,7 +82,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';"
+                "some default value;frame-ancestors 'self';",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -189,7 +190,7 @@ class WidgetControllerIntegrationTest(
 
     private fun fetchWidgetPageWithMobileDevices(
         androidUserAgent: String,
-        iosUserAgent: String
+        iosUserAgent: String,
     ): Pair<ResponseSpec, ResponseSpec> {
         val iOSResponse: ResponseSpec = webTestClient
             .get()

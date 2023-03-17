@@ -1,13 +1,14 @@
 package de.bund.digitalservice.useid.statics
 
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class HomeControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : PostgresTestcontainerIntegrationTest() {
+@Tag("integration")
+class HomeControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
     @Test
     fun `should redirect to public facing website`() {
@@ -16,7 +17,7 @@ class HomeControllerIntegrationTest(@Autowired val webTestClient: WebTestClient)
             .uri("/")
             .exchange()
             .expectStatus()
-            .isSeeOther
+            .is3xxRedirection
             .expectHeader()
             .location("https://digitalservice.bund.de")
     }

@@ -22,18 +22,17 @@ server:
   error:
     include-message: never
     include-stacktrace: never
+  tomcat:
+    basedir: /tmp/tomcat
 
 spring:
   jackson:
     serialization:
       indent_output: true
-  r2dbc:
-    pool:
-      enabled: true
-      initial-size: 10
-      max-size: 20
-    properties:
-      sslMode: require
+  datasource:
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 20
 
 springdoc:
   api-docs:

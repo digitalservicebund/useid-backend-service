@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 import java.net.URI
 import java.net.URLEncoder
 import java.util.UUID
@@ -36,23 +35,17 @@ class RefreshController(private val identificationSessionService: Identification
     @ApiResponse(responseCode = "404", description = "There is no corresponding session found for the provided eIdSessionId", content = [Content()])
     fun redirectToEServiceRefreshAddress(
         @RequestParam("sessionId") eIdSessionId: UUID,
-        @RequestParam requestQueryParams: Map<String, String>
-    ): Mono<ResponseEntity<Unit>> {
-        return identificationSessionService.findByEIDSessionId(eIdSessionId)
-            .doOnError {
-                log.error("Failed to load identification session.", it)
-            }
-            .map {
-                val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
-                ResponseEntity
-                    .status(HttpStatus.SEE_OTHER)
-                    .location(URI.create("${it.refreshAddress}?$responseQueryParams"))
-                    .build<Unit>()
-            }
-            .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build())
-            .onErrorReturn(
-                ResponseEntity.internalServerError().build()
-            )
+        @RequestParam requestQueryParams: Map<String, String>,
+    ): ResponseEntity<Unit> {
+        val session = identificationSessionService.findByEIDSessionId(eIdSessionId) ?: run {
+            log.error("Failed to load identification session.")
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        }
+        val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
+        return ResponseEntity
+            .status(HttpStatus.SEE_OTHER)
+            .location(URI.create("${session.refreshAddress}?$responseQueryParams"))
+            .build()
     }
 
     private fun buildEncodedQueryParameters(parameters: Map<String, String>): String =

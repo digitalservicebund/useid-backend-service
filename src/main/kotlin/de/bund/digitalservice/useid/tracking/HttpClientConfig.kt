@@ -2,13 +2,13 @@ package de.bund.digitalservice.useid.tracking
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.client.WebClient
+import java.net.http.HttpClient
 
 @Configuration
-class WebClientConfig {
+class HttpClientConfig {
 
     @Bean
-    fun webClient(): WebClient {
-        return WebClient.create()
+    fun httpClient(): HttpClient {
+        return HttpClient.newBuilder().build()
     }
 }

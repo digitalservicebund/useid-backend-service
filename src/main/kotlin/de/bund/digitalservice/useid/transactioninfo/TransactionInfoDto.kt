@@ -6,5 +6,5 @@ data class TransactionInfoDto(
     val useIdSessionId: UUID,
     val providerName: String,
     val providerURL: String,
-    var additionalInfo: List<AdditionalInfo>
+    var additionalInfo: List<AdditionalInfo>,
 )

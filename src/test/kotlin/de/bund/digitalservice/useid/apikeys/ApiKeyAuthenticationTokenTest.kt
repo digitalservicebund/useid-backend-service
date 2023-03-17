@@ -11,23 +11,24 @@ internal class ApiKeyAuthenticationTokenTest {
 
     @Test
     fun getName() {
-        assertEquals(apiKeyAuthenticationToken.name, null)
+        assertEquals(null, apiKeyAuthenticationToken.name)
     }
 
     @Test
     fun getAuthorities() {
-        assertEquals(apiKeyAuthenticationToken.authorities.size, 0)
+        assertEquals(1, apiKeyAuthenticationToken.authorities.size)
+        assertEquals(MANAGE_IDENTIFICATION_SESSION_AUTHORITY, apiKeyAuthenticationToken.authorities.first().authority)
     }
 
     @Test
     fun getCredentials() {
-        assertEquals(apiKeyAuthenticationToken.credentials, apiKey)
+        assertEquals(apiKey, apiKeyAuthenticationToken.credentials)
     }
 
     @Test
     fun setAuthenticated() {
-        assertEquals(apiKeyAuthenticationToken.isAuthenticated, false)
+        assertEquals(false, apiKeyAuthenticationToken.isAuthenticated)
         apiKeyAuthenticationToken.isAuthenticated = true
-        assertEquals(apiKeyAuthenticationToken.isAuthenticated, true)
+        assertEquals(true, apiKeyAuthenticationToken.isAuthenticated)
     }
 }

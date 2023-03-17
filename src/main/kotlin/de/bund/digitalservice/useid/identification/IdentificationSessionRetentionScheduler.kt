@@ -18,8 +18,6 @@ class IdentificationSessionRetentionScheduler(val identificationSessionRepositor
     fun cleanupExpiredIdentificationSessionFromDatabase() {
         log.info("Cleanup identification sessions older than $RETENTION_IN_DAYS days.")
         identificationSessionRepository.deleteAllByCreatedAtBefore(now().minusDays(RETENTION_IN_DAYS))
-            .doOnError { log.error("Failed to cleanup expired identification sessions.", it) }
-            .doOnSuccess { log.info("Successfully removed identification sessions older than $RETENTION_IN_DAYS days.") }
-            .subscribe()
+        log.info("Successfully removed identification sessions older than $RETENTION_IN_DAYS days.")
     }
 }

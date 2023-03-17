@@ -24,7 +24,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
             readCertificate(eidServiceProperties.tlsCert),
             "eid-server",
             eidServiceProperties.truststorePassword,
-            KeyStoreSupporter.KeyStoreType.JKS
+            KeyStoreSupporter.KeyStoreType.JKS,
         )
     }
 
@@ -41,7 +41,7 @@ class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) :
         val tlsKeyStore = KeyStoreSupporter.readKeyStore(
             keystore.keystore.inputStream,
             KeyStoreSupporter.KeyStoreType.valueOf(keystore.type),
-            keystore.password
+            keystore.password,
         )
         return KeyStoreAccessor(tlsKeyStore, keystore.password, keystore.alias, keystore.password)
     }

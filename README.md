@@ -3,13 +3,11 @@
 [![Pipeline](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/pipeline.yml/badge.svg)](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/pipeline.yml)
 [![Scan](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/scan.yml/badge.svg)](https://github.com/digitalservicebund/useid-backend-service/actions/workflows/scan.yml)
 
-Kotlin service built with
-the [Spring WebFlux reactive stack](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#spring-webflux)
-.
+Kotlin service built with the [Spring Web MVC stack](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc).
 
 ## Prerequisites
 
-Kotlin 1.6 w/ Java 17, Docker for building and running the containerized application:
+Kotlin 1.8 w/ Java 17, Docker for building and running the containerized application:
 
 ```bash
 brew install openjdk@17

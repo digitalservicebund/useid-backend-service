@@ -9,12 +9,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title th:text="#{widget.meta.title}"></title>
+    <!-- don't move the base - it must be declared first to make all relative paths work -->
+    <base th:href="${baseUrl}" />
     <link rel="stylesheet" href="css/sanitize.css" />
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/widget.css" />
     <link rel="stylesheet" href="css/errorNotification.css" />
     <link rel="icon" type="image/png" sizes="any" href="images/favicon.png" />
-    <base th:href="${baseUrl}" />
   </head>
   <body>
     <div layout:fragment="content"></div>

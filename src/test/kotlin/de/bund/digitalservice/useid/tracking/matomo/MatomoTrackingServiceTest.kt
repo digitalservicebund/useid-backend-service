@@ -3,10 +3,10 @@ package de.bund.digitalservice.useid.tracking.matomo
 import com.ninjasquad.springmockk.MockkBean
 import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.WebRequests
-import de.bund.digitalservice.useid.util.PostgresTestcontainerIntegrationTest
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,11 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.system.OutputCaptureExtension
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import reactor.core.publisher.Mono
 
 @ExtendWith(value = [OutputCaptureExtension::class, SpringExtension::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
+@Tag("integration")
+class MatomoTrackingServiceTest {
 
     @Autowired
     private lateinit var matomoTrackingService: MatomoTrackingService
@@ -60,10 +60,15 @@ class MatomoTrackingServiceTest : PostgresTestcontainerIntegrationTest() {
     }
 
     @Test
-    fun `matomo tracking service should trigger web request and log event category, action and name and code 200`() {
+    fun `matomo tracking service should trigger web request`() {
+        // Given
         val matomoEvent = MatomoEvent(this, "log1", "log2", "log3", "log4", userAgent)
+        every { webRequests.POST(any()) } returns false
+
+        // When
         applicationEventPublisher.publishEvent(matomoEvent)
-        every { webRequests.POST(any()) } returns Mono.empty()
+
+        // Then
         verify { webRequests.POST(any()) }
     }
 }

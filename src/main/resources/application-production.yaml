@@ -9,7 +9,7 @@ eidservice:
 
 sentry:
   environment: production
-  traces-sample-rate: 0.3
+  traces-sample-rate: 0.01
 
 features:
   desktop-solution-enabled: false
