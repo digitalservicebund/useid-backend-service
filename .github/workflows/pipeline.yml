@@ -205,6 +205,10 @@ jobs:
       - build
       - audit-licenses
       - vulnerability-scan
+    permissions:
+      contents: read
+      id-token: write # This is used to complete the identity challenge with sigstore/fulcio..
+      packages: write
     uses: digitalservicebund/useid-backend-service/.github/workflows/build-image.yml@main
     with:
       ref: main
@@ -214,6 +218,8 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-staging
     needs: [build-and-push-image]
+    permissions:
+      id-token: write # Enable OIDC for gitsign
     uses: digitalservicebund/useid-backend-service/.github/workflows/deploy-image.yml@main
     with:
       imageTag: ${{ needs.build-and-push-image.outputs.version }}
@@ -262,6 +268,8 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-production
     needs: [build-and-push-image, deploy-staging-verify]
+    permissions:
+      id-token: write # Enable OIDC for gitsign
     uses: digitalservicebund/useid-backend-service/.github/workflows/deploy-image.yml@main
     with:
       imageTag: ${{ needs.build-and-push-image.outputs.version }}
