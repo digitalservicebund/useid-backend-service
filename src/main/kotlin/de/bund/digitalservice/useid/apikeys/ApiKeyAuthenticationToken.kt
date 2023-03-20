@@ -12,7 +12,7 @@ open class ApiKeyAuthenticationToken(
     private val requestDataGroups: List<String> = emptyList(),
     private var authenticated: Boolean = false,
     private val tenantId: String? = null,
-    ) : Authentication {
+) : Authentication {
 
     override fun getName(): String? {
         return null

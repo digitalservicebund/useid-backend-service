@@ -87,7 +87,7 @@ internal class TenantIdFilterTest {
     @Test
     fun `should assign the tenant id of authenticated api calls`() {
         val authentication: ApiKeyAuthenticationToken = ApiKeyAuthenticationToken("key", "address", emptyList(), true, "some-tenant-id")
-        val securityContext:  SecurityContext = mockk()
+        val securityContext: SecurityContext = mockk()
         every { securityContext.authentication } returns authentication
         SecurityContextHolder.setContext(securityContext)
 
@@ -109,6 +109,4 @@ internal class TenantIdFilterTest {
 
         SecurityContextHolder.clearContext()
     }
-
-
 }
