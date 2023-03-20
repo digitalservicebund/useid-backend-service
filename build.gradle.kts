@@ -84,7 +84,7 @@ dependencies {
     implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
 
     /** Helpers **/
-    implementation("com.github.ua-parser:uap-java:1.5.3")
+    implementation("com.github.ua-parser:uap-java:1.5.4")
 
     /** Development **/
     implementation("org.springframework.boot:spring-boot-configuration-processor")
