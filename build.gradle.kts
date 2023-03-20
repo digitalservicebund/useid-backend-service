@@ -60,7 +60,7 @@ dependencies {
     // => CVE-2022-42003, CVE-2022-42004
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
     // => CVE-2022-25857
-    implementation("org.yaml:snakeyaml:1.33")
+    implementation("org.yaml:snakeyaml:2.0")
 
     /** Kotlin specific **/
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -84,7 +84,7 @@ dependencies {
     implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
 
     /** Helpers **/
-    implementation("com.github.ua-parser:uap-java:1.5.3")
+    implementation("com.github.ua-parser:uap-java:1.5.4")
 
     /** Development **/
     implementation("org.springframework.boot:spring-boot-configuration-processor")
