@@ -16,7 +16,7 @@ class TenantIdFilter(
         val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
         tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
-            authentication.details.tenantId
+            tenantIdProperties.getSanitizedTenantID(authentication.details.tenantId)
         } else if (request.servletPath.equals("/widget")) {
             tenantIdProperties.getTenantIdForHost(request.getParameter("hostname"))
         } else if (request.getParameter("tenant_id") != null) {

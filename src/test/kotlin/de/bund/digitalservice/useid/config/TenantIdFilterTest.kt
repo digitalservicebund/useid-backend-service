@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletResponse
 
@@ -80,4 +83,32 @@ internal class TenantIdFilterTest {
             tenantIdProperties.getSanitizedTenantID("some-tenant-id")
         }
     }
+
+    @Test
+    fun `should assign the tenant id of authenticated api calls`() {
+        val authentication: ApiKeyAuthenticationToken = ApiKeyAuthenticationToken("key", "address", emptyList(), true, "some-tenant-id")
+        val securityContext:  SecurityContext = mockk()
+        every { securityContext.authentication } returns authentication
+        SecurityContextHolder.setContext(securityContext)
+
+        // Given
+        val request = MockHttpServletRequest()
+        request.servletPath = "/eid-Client"
+        request.addParameter("tenant_id", "some-tenant-id")
+        val response: HttpServletResponse = mockk(relaxed = true)
+        val filterChain: FilterChain = mockk(relaxed = true)
+
+        // When
+        filter.doFilter(request, response, filterChain)
+        assertEquals("some-tenant-id", request.getAttribute("tenantId"))
+
+        verify {
+            filterChain.doFilter(request, response)
+            tenantIdProperties.getSanitizedTenantID("some-tenant-id")
+        }
+
+        SecurityContextHolder.clearContext()
+    }
+
+
 }
