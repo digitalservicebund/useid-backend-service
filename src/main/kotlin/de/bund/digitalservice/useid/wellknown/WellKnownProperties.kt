@@ -1,10 +1,10 @@
 package de.bund.digitalservice.useid.wellknown
 
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotEmpty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
-import javax.validation.Valid
-import javax.validation.constraints.NotEmpty
 
 @Component
 @ConfigurationProperties(prefix = "wellknown")

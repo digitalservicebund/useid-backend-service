@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.timebasedtokens
 
-import de.bund.digitalservice.useid.identification.IdentificationSessionService
+import de.bund.digitalservice.useid.identification.IdentificationSessionRepository
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
@@ -11,11 +11,13 @@ class InvalidUseIdSessionIdException : Exception("No session for useIdSessionId 
 
 @Service
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class TimeBasedTokenService(private val mockDatasource: TBTMockDatasource, private val identificationSessionService: IdentificationSessionService) {
+class TimeBasedTokenService(private val mockDatasource: TBTMockDatasource, private val identificationSessionRepository: IdentificationSessionRepository) {
     private val log = KotlinLogging.logger {}
 
     fun updateOrCreate(useIdSessionId: UUID): TimeBasedToken {
-        identificationSessionService.findByUseIdSessionId(useIdSessionId) ?: throw InvalidUseIdSessionIdException()
+        if (!identificationSessionRepository.existsByUseIdSessionId(useIdSessionId)) {
+            throw InvalidUseIdSessionIdException()
+        }
         try {
             mockDatasource.deleteAllByUseIdSessionId(useIdSessionId)
         } catch (e: Exception) {

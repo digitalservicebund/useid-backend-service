@@ -2,11 +2,11 @@ import com.github.jk1.license.filter.LicenseBundleNormalizer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.6"
+    id("org.springframework.boot") version "3.0.4"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.8.0"
     kotlin("plugin.spring") version "1.8.0"
-    id("com.diffplug.spotless") version "6.15.0"
+    id("com.diffplug.spotless") version "6.17.0"
     id("jacoco")
     id("org.sonarqube") version "4.0.0.2929"
     id("com.github.jk1.dependency-license-report") version "2.1"
@@ -46,14 +46,14 @@ dependencies {
     /** Persistence **/
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
-    implementation("org.flywaydb:flyway-core:9.15.1")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-55:3.2.0")
+    implementation("org.flywaydb:flyway-core:9.16.0")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.2.0")
 
     /** Monitoring **/
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("io.sentry:sentry-spring-boot-starter:6.14.0")
+    implementation("io.sentry:sentry-spring-boot-starter:6.16.0")
 
     /** Data processing **/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -112,8 +112,8 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:3.22.0")
 
     /** Scheduling **/
-    implementation("net.javacrumbs.shedlock:shedlock-spring:5.1.0")
-    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.1.0")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
 }
 
 tasks {
@@ -191,15 +191,15 @@ tasks {
             ?: "digitalservicebund/${rootProject.name}"
         val containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
 
-        imageName = "$containerRegistry/$containerImageName:$containerImageVersion"
-        builder = "paketobuildpacks/builder@sha256:8c317e17e87583e0ea8bfc2ffd2952b684d1028be2a40317af8f791f72b85f4e" // pin to version 0.1.313-tiny
-        isPublish = false
+        imageName.set("$containerRegistry/$containerImageName:$containerImageVersion")
+        builder.set("paketobuildpacks/builder@sha256:8c317e17e87583e0ea8bfc2ffd2952b684d1028be2a40317af8f791f72b85f4e") // pin to version 0.1.313-tiny
+        publish.set(false)
 
         docker {
             publishRegistry {
-                username = System.getenv("CONTAINER_REGISTRY_USER") ?: ""
-                password = System.getenv("CONTAINER_REGISTRY_PASSWORD") ?: ""
-                url = "https://$containerRegistry"
+                username.set(System.getenv("CONTAINER_REGISTRY_USER") ?: "")
+                password.set(System.getenv("CONTAINER_REGISTRY_PASSWORD") ?: "")
+                url.set("https://$containerRegistry")
             }
         }
     }

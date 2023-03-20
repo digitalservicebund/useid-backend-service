@@ -2,12 +2,9 @@ package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
-import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.Operation
@@ -28,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.util.UriComponentsBuilder
 import java.util.UUID
 
 internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
@@ -50,21 +46,16 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 )
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
-    private val applicationProperties: ApplicationProperties,
     private val eidServiceConfig: EidServiceConfiguration,
 ) {
     private val log = KotlinLogging.logger {}
-    private val tcTokenCallsSuccessfulCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "200")
-    private val tcTokenCallsWithErrorsCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_tc_token", "status", "500")
     private val getEidInformationCallsSuccessfulCounter: Counter =
         Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
     private val getEidInformationCallsWithErrorsCounter: Counter =
         Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Create session as eService")
+    @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
         responseCode = "401",
@@ -72,14 +63,12 @@ class IdentificationSessionsController(
         content = [Content()],
     )
     @SecurityRequirement(name = "apiKey")
-    fun createSession(
+    fun startSession(
         authentication: Authentication,
     ): ResponseEntity<CreateIdentificationSessionResponse> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
-        val session =
-            identificationSessionService.create(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
         val tcTokenUrl =
-            "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
+            identificationSessionService.startSession(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
@@ -97,26 +86,16 @@ class IdentificationSessionsController(
         description = "No corresponding session found for that useIdSessionId",
         content = [Content()],
     )
-    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<TCTokenType> {
+    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<JakartaTCToken> {
         return try {
-            val identificationSession = identificationSessionService.findByUseIdSessionId(useIdSessionId)
-                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-            val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
-            val tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
-            val eIdSessionId = UriComponentsBuilder
-                .fromHttpUrl(tcToken.refreshAddress)
-                .encode().build()
-                .queryParams.getFirst("sessionId")
-            identificationSessionService.updateEIDSessionId(useIdSessionId, UUID.fromString(eIdSessionId))
-            tcTokenCallsSuccessfulCounter.increment()
+            val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
             ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_XML)
-                .body(tcToken)
-        } catch (e: Exception) {
-            tcTokenCallsWithErrorsCounter.increment()
-            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
-            throw e
+                .body(JakartaTCToken.fromTCTokenType(tcToken))
+        } catch (e: IdentificationSessionNotFoundException) {
+            log.error(e.message, e)
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         }
     }
 
@@ -141,11 +120,11 @@ class IdentificationSessionsController(
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
         val userData: GetResultResponseType?
-        val identificationSession = identificationSessionService.findByEIDSessionId(eIdSessionId)
+        val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         try {
             val eidService = EidService(eidServiceConfig)

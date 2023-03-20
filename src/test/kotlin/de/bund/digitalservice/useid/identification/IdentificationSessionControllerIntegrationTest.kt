@@ -42,7 +42,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     val attributes = listOf("DG1", "DG2")
 
     @Autowired
-    private lateinit var identificationSessionService: IdentificationSessionService
+    private lateinit var identificationSessionRepository: IdentificationSessionRepository
 
     @Autowired
     private lateinit var applicationProperties: ApplicationProperties
@@ -58,7 +58,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     fun `start session endpoint returns TCTokenUrl`() {
         var tcTokenURL = ""
 
-        sendCreateSessionRequest()
+        sendStartSessionRequest()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
@@ -82,7 +82,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     @Test
     fun `tcToken endpoint returns valid tc-token and sets correct eIdSessionId in IdentificationSession`() {
         var tcTokenURL = ""
-        sendCreateSessionRequest()
+        sendStartSessionRequest()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
@@ -119,7 +119,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         every { anyConstructed<EidService>().getTcToken(any()) } throws Error("internal server error")
 
         var tcTokenURL = ""
-        sendCreateSessionRequest()
+        sendStartSessionRequest()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
@@ -133,7 +133,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
 
         var tcTokenURL = ""
-        sendCreateSessionRequest()
+        sendStartSessionRequest()
             .expectStatus().isOk
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
@@ -213,7 +213,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun mockTcToken(refreshAddress: String) {
-        val mockTCToken = mockk<TCTokenType>()
+        val mockTCToken = mockk<TCTokenType>(relaxed = true)
         every { mockTCToken.refreshAddress } returns refreshAddress
         every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
     }
@@ -229,14 +229,14 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         .get()
         .uri(uri)
 
-    private fun sendCreateSessionRequest() = webTestClient
+    private fun sendStartSessionRequest() = webTestClient
         .post()
         .uri("/api/v1/identification/sessions")
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
     private fun retrieveIdentificationSession(useIdSessionId: UUID): IdentificationSession? {
-        return identificationSessionService.findByUseIdSessionId(useIdSessionId)
+        return identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
     }
 
     private fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {
