@@ -10,4 +10,5 @@ interface IdentificationSessionRepository : JpaRepository<IdentificationSession,
     fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession?
     fun findByUseIdSessionId(useIdSessionId: UUID): IdentificationSession?
     fun deleteAllByCreatedAtBefore(before: LocalDateTime)
+    fun existsByUseIdSessionId(useIdSessionId: UUID): Boolean
 }
