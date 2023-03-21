@@ -46,20 +46,18 @@ class CredentialController(
 
     @PutMapping(
         path = ["/{credentialId}"],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun completeRegistration(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<Void> {
         credentialService.finishRegistration(credentialId, publicKeyCredentialJson)
 
         val credential = credentialService.startAuthentication(credentialId)
         sendAuthenticateEventToWidget(credential)
 
         return ResponseEntity
-            .status(HttpStatus.ACCEPTED)
-            .contentType(MediaType.APPLICATION_JSON)
+            .status(HttpStatus.NO_CONTENT)
             .build()
     }
 
