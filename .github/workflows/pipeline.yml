@@ -222,7 +222,7 @@ jobs:
       id-token: write # Enable OIDC for gitsign
     uses: ./.github/workflows/deploy-image.yml
     with:
-      imageTag: ${{ env.CONTAINER_IMAGE_NAME }}
+      imageTag: ${{ github.sha }}
       environment: staging
       appName: useid-staging
     secrets:
@@ -272,7 +272,7 @@ jobs:
       id-token: write # Enable OIDC for gitsign
     uses: ./.github/workflows/deploy-image.yml
     with:
-      imageTag: ${{ env.CONTAINER_IMAGE_NAME }}
+      imageTag: ${{ github.sha }}
       environment: production
       appName: useid-production
     secrets:
