@@ -1,3 +1,6 @@
+/**
+ * This method is only used by the app simulator. The registration would usually be done by the eID-Client in production.
+ */
 function registerWebAuthnCredentials(widgetSessionId) {
   let credentialId;
 
@@ -24,6 +27,9 @@ function registerWebAuthnCredentials(widgetSessionId) {
     );
 }
 
+/**
+ * This method is only used by the app simulator. The registration would usually be done by the eID-Client in production.
+ */
 function createWebAuthnCredentialsViaBrowser(startRegistrationResponse) {
   let pkcCreationOptions = JSON.parse(
     startRegistrationResponse.pkcCreationOptions
@@ -39,6 +45,9 @@ function createWebAuthnCredentialsViaBrowser(startRegistrationResponse) {
   return navigator.credentials.create(pkcCreationOptions);
 }
 
+/**
+ * This method is only used by the app simulator. The registration would usually be done by the eID-Client in production.
+ */
 function convertRegistrationCredentials(credentials) {
   let flatCred = flatten(credentials);
   flatCred.response = flatten(flatCred.response);
@@ -54,6 +63,9 @@ function convertRegistrationCredentials(credentials) {
   return flatCred;
 }
 
+/**
+ * This method is only used by the app simulator. The registration would usually be done by the eID-Client in production.
+ */
 function updateCredentials(credentialId, flatCred) {
   return fetch(`/api/v1/credentials/${credentialId}`, {
     method: "PUT",
