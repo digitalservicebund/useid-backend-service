@@ -200,7 +200,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-push-image:
-    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     needs:
       - build
@@ -210,108 +209,24 @@ jobs:
       contents: read
       id-token: write # This is used to complete the identity challenge with sigstore/fulcio..
       packages: write
-    outputs:
-      version: ${{ steps.set-version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: "17.0"
-          distribution: "temurin"
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build and publish container image
-        run: CONTAINER_REGISTRY_USER=${{ github.actor }} CONTAINER_REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }} ./gradlew bootBuildImage --publishImage
-      - name: Install cosign
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88
-      - name: Log into container registry
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          registry: ${{ env.CONTAINER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Sign the published Docker image
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
-        run: cosign sign ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
-      - name: Download cosign vulnerability scan record
-        uses: actions/download-artifact@v3
-        with:
-          name: "vuln.json"
-      - name: Attest vulnerability scan
-        run: cosign attest --replace --predicate vuln.json --type vuln ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-      - id: set-version
-        run: echo "version=$CONTAINER_IMAGE_VERSION" >> $GITHUB_OUTPUT
-      - name: Send status to Slack
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Build/push image :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/build-image.yml
+    with:
+      ref: main
+      imageTag: ${{ github.sha }}
 
   deploy-staging:
-    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-staging
-    environment: staging
     needs: [build-and-push-image]
     permissions:
       id-token: write # Enable OIDC for gitsign
-    steps:
-      - uses: chainguard-dev/actions/setup-gitsign@ac42db4c9c2e2bd9f66aadf3290c5995891d91a3
-      - name: Deploy new image
-        uses: digitalservicebund/github-actions/argocd-deploy@9b15fba0ce0e874d9af5be33ebeea7d476f808d0
-        with:
-          environment: staging
-          version: ${{ needs.build-and-push-image.outputs.version }}
-          deploying_repo: useid-backend-service
-          infra_repo: useid-infra
-          deploy_key: ${{ secrets.DEPLOY_KEY }}
-          app: useid-staging
-          argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
-          argocd_server: ${{ secrets.ARGOCD_SERVER_STAGING }}
-          argocd_sync_timeout: 300
-      - name: Track deploy
-        uses: digitalservicebund/github-actions/track-deployment@808a08421edc16be156787f56af63b846ea6f557
-        with:
-          project: UseId
-          environment: staging
-          metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
-          metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
-      - name: Send status to Slack
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy staging :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/deploy-image.yml
+    with:
+      imageTag: ${{ needs.build-and-push-image.outputs.version }}
+      environment: staging
+      appName: useid-staging
+    secrets:
+      argoCDServer: "${{ secrets.ARGOCD_SERVER_STAGING }}"
 
   deploy-staging-verify:
     runs-on: ubuntu-latest
@@ -350,46 +265,15 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-production:
-    runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     concurrency: deploy-production
-    environment: production
     needs: [build-and-push-image, deploy-staging-verify]
     permissions:
       id-token: write # Enable OIDC for gitsign
-    steps:
-      - uses: chainguard-dev/actions/setup-gitsign@ac42db4c9c2e2bd9f66aadf3290c5995891d91a3
-      - name: Deploy new image
-        uses: digitalservicebund/github-actions/argocd-deploy@9b15fba0ce0e874d9af5be33ebeea7d476f808d0
-        with:
-          environment: production
-          version: ${{ needs.build-and-push-image.outputs.version }}
-          deploying_repo: useid-backend-service
-          infra_repo: useid-infra
-          deploy_key: ${{ secrets.DEPLOY_KEY }}
-          app: useid-production
-          argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
-          argocd_server: ${{ secrets.ARGOCD_SERVER }}
-          argocd_sync_timeout: 300
-      - name: Track deploy
-        uses: digitalservicebund/github-actions/track-deployment@808a08421edc16be156787f56af63b846ea6f557
-        with:
-          project: UseId
-          environment: production
-          metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
-          metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
-      - name: Send status to Slack
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy production :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/deploy-image.yml
+    with:
+      imageTag: ${{ needs.build-and-push-image.outputs.version }}
+      environment: production
+      appName: useid-production
+    secrets:
+      argoCDServer: "${{ secrets.ARGOCD_SERVER }}"
