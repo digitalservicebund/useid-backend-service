@@ -57,7 +57,7 @@ class CredentialService(
             .build()
     }
 
-    private fun buildStartRegistrationOptions(user: UserIdentity): StartRegistrationOptions? {
+    private fun buildStartRegistrationOptions(user: UserIdentity): StartRegistrationOptions {
         return StartRegistrationOptions.builder()
             .user(user)
             .authenticatorSelection(
