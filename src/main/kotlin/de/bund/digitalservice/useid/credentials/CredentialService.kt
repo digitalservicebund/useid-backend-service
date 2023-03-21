@@ -99,7 +99,9 @@ class CredentialService(
             ?: throw CredentialNotFoundException(credentialId)
 
         val assertionRequest: AssertionRequest = relyingParty.startAssertion(
-            StartAssertionOptions.builder().username(credential.username).build(),
+            StartAssertionOptions.builder()
+                .username(credential.username)
+                .build(),
         )
 
         credential.assertionRequest = assertionRequest
