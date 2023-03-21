@@ -78,7 +78,7 @@ class CredentialService(
         val pkc = PublicKeyCredential.parseRegistrationResponseJson(publicKeyCredentialJson)
 
         val finishRegistrationOptions = FinishRegistrationOptions.builder()
-            .request(credential.pckCreationOptions)
+            .request(credential.pkcCreationOptions)
             .response(pkc)
             .build()
 

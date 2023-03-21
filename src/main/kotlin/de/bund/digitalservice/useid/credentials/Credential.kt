@@ -12,7 +12,7 @@ data class Credential(
     val username: String,
     val userIdBase64: String,
     val refreshAddress: String,
-    val pckCreationOptions: PublicKeyCredentialCreationOptions,
+    val pkcCreationOptions: PublicKeyCredentialCreationOptions,
 ) {
     var keyId: PublicKeyCredentialDescriptor? = null
     var publicKeyCose: ByteArray? = null

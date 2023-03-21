@@ -37,7 +37,7 @@ class CredentialController(
             .body(
                 StartRegistrationResponse(
                     credential.credentialId,
-                    credential.pckCreationOptions.toCredentialsCreateJson(),
+                    credential.pkcCreationOptions.toCredentialsCreateJson(),
                 ),
             )
     }
