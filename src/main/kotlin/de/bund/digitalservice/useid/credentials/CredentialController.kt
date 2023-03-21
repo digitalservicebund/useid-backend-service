@@ -34,7 +34,7 @@ class CredentialController(
         )
 
         return ResponseEntity
-            .status(HttpStatus.ACCEPTED)
+            .status(HttpStatus.CREATED)
             .contentType(MediaType.APPLICATION_JSON)
             .body(
                 StartRegistrationResponse(
