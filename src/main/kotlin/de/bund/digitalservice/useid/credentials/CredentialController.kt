@@ -74,6 +74,10 @@ class CredentialController(
     }
 
     private fun sendAuthenticateEventToWidget(credential: Credential) {
+        if (credential.authenticationHasNotStarted()) {
+            throw IllegalStateException("Authentication with credentials has not been started yet. credentialId=${credential.credentialId}")
+        }
+
         eventService.publish(
             AuthenticateEvent(credential.credentialId, credential.assertionRequest!!.toCredentialsGetJson()),
             EventType.AUTHENTICATE,

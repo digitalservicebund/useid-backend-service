@@ -25,4 +25,8 @@ data class Credential(
     fun getUserHandle(): ByteArray {
         return ByteArray.fromBase64(userIdBase64)
     }
+
+    fun authenticationHasNotStarted(): Boolean {
+        return assertionRequest == null
+    }
 }
