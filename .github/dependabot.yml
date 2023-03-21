@@ -6,6 +6,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    labels:
+      - "dependabot"
     # Too much noise with patch releases...
     ignore:
       - dependency-name: "*"
@@ -14,6 +16,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    labels:
+      - "dependabot"
     # Too much noise with patch releases...
     ignore:
       - dependency-name: "*"
