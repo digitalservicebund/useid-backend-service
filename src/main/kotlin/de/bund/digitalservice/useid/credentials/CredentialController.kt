@@ -11,18 +11,20 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
 
 @RestController
+@RequestMapping(CREDENTIALS_BASE_PATH)
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class CredentialController(
     private val credentialService: CredentialService,
     private val eventService: EventService,
 ) {
-    @PostMapping(path = [CREDENTIALS_BASE_PATH])
+    @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun startRegistration(
         @RequestBody startRegistrationRequest: StartRegistrationRequest,
     ): ResponseEntity<Any> {
@@ -43,8 +45,8 @@ class CredentialController(
     }
 
     @PutMapping(
-        path = ["$CREDENTIALS_BASE_PATH/{credentialId}"],
-        headers = ["Content-Type=application/json"],
+        path = ["/{credentialId}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun completeRegistration(
         @PathVariable credentialId: UUID,
@@ -70,8 +72,7 @@ class CredentialController(
     }
 
     @PostMapping(
-        path = ["$CREDENTIALS_BASE_PATH/{credentialId}/authentications"],
-        headers = ["Content-Type=application/json"],
+        path = ["/{credentialId}/authentications"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     fun completeAuthentication(
