@@ -47,7 +47,8 @@ class CredentialMockDatasource : CredentialRepository {
 
     override fun getCredentialIdsForUsername(username: String): MutableSet<PublicKeyCredentialDescriptor> {
         val credential = findByUsername(username) ?: return mutableSetOf()
-        return mutableSetOf(credential.keyId!!)
+        val keyId = credential.keyId ?: return mutableSetOf()
+        return mutableSetOf(keyId)
     }
 
     override fun getUserHandleForUsername(username: String): Optional<ByteArray> {
