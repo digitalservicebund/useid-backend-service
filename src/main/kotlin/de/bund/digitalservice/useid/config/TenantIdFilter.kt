@@ -14,17 +14,19 @@ class TenantIdFilter(
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
-        val tenant: TenantProperties.Tenant? = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
+        val tenant: Tenant? = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
             tenantProperties.findByApiKey(authentication.details.keyValue)
         } else if (request.servletPath.equals("/widget")) {
             tenantProperties.findByAllowedHost(request.getParameter("hostname"))
         } else if (request.getParameter("tenant_id") != null) {
             tenantProperties.findByAllowedHost(request.getParameter("tenant_id"))
         } else {
-            null
+            val defaultTenant = Tenant()
+            defaultTenant.id = "default"
+            defaultTenant
         }
-        val tenantId: String = tenant?.id ?: "unknown"
-        request.setAttribute("tenantId", tenantId)
+
+        request.setAttribute("tenant", tenant)
         return filterChain.doFilter(request, response)
     }
 }

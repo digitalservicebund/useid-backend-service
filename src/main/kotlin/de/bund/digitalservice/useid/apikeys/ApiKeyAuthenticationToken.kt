@@ -11,7 +11,6 @@ open class ApiKeyAuthenticationToken(
     private val refreshAddress: String? = null,
     private val requestDataGroups: List<String> = emptyList(),
     private var authenticated: Boolean = false,
-    private val tenantId: String? = null,
 ) : Authentication {
 
     override fun getName(): String? {
@@ -27,7 +26,7 @@ open class ApiKeyAuthenticationToken(
     }
 
     override fun getDetails(): ApiKeyDetails {
-        return ApiKeyDetails(apiKey, refreshAddress, requestDataGroups, tenantId)
+        return ApiKeyDetails(apiKey, refreshAddress, requestDataGroups)
     }
 
     override fun getPrincipal(): String {
