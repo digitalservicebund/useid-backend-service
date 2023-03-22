@@ -1,14 +1,22 @@
 app:
   base-url: http://localhost:8080
 
-api:
-  apiKeys:
-  - keyValue: valid-api-key
-    refreshAddress: some-refresh-address
-    dataGroups: [DG1,DG2]
-  - keyValue: other-api-key
-    refreshAddress: other-refresh-address
-    dataGroups: [DG1,DG2]
+tenant:
+  tenants:
+    - id: tenant_foo
+      apiKey: foobar
+      refreshAddress: http://localhost:8081/success
+      dataGroups: [ DG4,DG5,DG17 ]
+      allowedHost: foo.local
+    - id: tenant_bar
+      apiKey: foobar2
+      refreshAddress: https://foobar2.com
+      dataGroups: [ DG1,DG2, DG3 ]
+      allowedHost: bar.local
+
+csp:
+  default-config: "some default value;"
+  frame-ancestors: "frame-ancestors 'self'"
 
 eidservice:
   wsdl-url: https://mock.url
@@ -46,16 +54,6 @@ wellknown:
 csp:
   default-config: "some default value;"
   frame-ancestors: "frame-ancestors 'self'"
-  allowed-hosts:
-    - foo.bar
-    - bar.foo
-  hosts:
-    - host: foo.bar
-      tenantId: foo_bar_tenant_id
-    - host: bar.foo
-      tenantId: bar_foo_tenant_id
-    - host: localhost:8081
-      tenantId: localhost_tenant_id
 
 tracking:
   matomo:

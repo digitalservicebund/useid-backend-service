@@ -4,27 +4,27 @@ import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 class TenantIdFilter(
-    private val tenantIdProperties: TenantIdProperties,
+    private val tenantProperties: TenantProperties
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        val tenantId: String
         val authentication: Authentication? = SecurityContextHolder.getContext()?.authentication
 
-        tenantId = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
-            tenantIdProperties.getSanitizedTenantID(authentication.details.tenantId)
+        val tenant: TenantProperties.Tenant? = if (authentication is ApiKeyAuthenticationToken && authentication.isAuthenticated) {
+            tenantProperties.findByApiKey(authentication.details.keyValue)
         } else if (request.servletPath.equals("/widget")) {
-            tenantIdProperties.getTenantIdForHost(request.getParameter("hostname"))
+            tenantProperties.findByAllowedHost(request.getParameter("hostname"))
         } else if (request.getParameter("tenant_id") != null) {
-            tenantIdProperties.getSanitizedTenantID(request.getParameter("tenant_id"))
+            tenantProperties.findByAllowedHost(request.getParameter("tenant_id"))
         } else {
-            "unknown"
+            null
         }
-
+        val tenantId : String = tenant?.id ?: "unknown"
         request.setAttribute("tenantId", tenantId)
         return filterChain.doFilter(request, response)
     }

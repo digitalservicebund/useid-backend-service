@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.apikeys
 
+import de.bund.digitalservice.useid.config.TenantProperties
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
@@ -9,14 +10,14 @@ import org.springframework.stereotype.Component
  * of a valid API key.
  */
 @Component
-class ApiKeyAuthenticationManager(val apiProperties: ApiProperties) : AuthenticationManager {
+class ApiKeyAuthenticationManager(val tenantProperties: TenantProperties) : AuthenticationManager {
     override fun authenticate(authentication: Authentication): Authentication {
         if (authentication !is ApiKeyAuthenticationToken) {
             return authentication
         }
-        val validApiKey = apiProperties.apiKeys.find { it.keyValue == authentication.principal }
+        val validTenant = tenantProperties.findByApiKey(authentication.principal)
             ?: return authentication
 
-        return ApiKeyAuthenticationToken(validApiKey.keyValue, validApiKey.refreshAddress, validApiKey.dataGroups, true)
+        return ApiKeyAuthenticationToken(validTenant.apiKey, validTenant.refreshAddress, validTenant.dataGroups, true)
     }
 }

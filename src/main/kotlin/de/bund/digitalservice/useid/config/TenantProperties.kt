@@ -11,6 +11,21 @@ class TenantProperties {
 
     var tenants: List<Tenant> = emptyList()
 
+    fun findByApiKey(key: String?): Tenant?
+    {
+        return tenants.find { it.apiKey == key }
+    }
+
+    fun findByAllowedHost(host: String?): Tenant?
+    {
+        return tenants.find { it.allowedHost == host}
+    }
+
+    fun findByTenantId(id: String?): Tenant?
+    {
+        return tenants.find { it.id == id}
+    }
+
     class Tenant {
         lateinit var id: String
 
@@ -22,7 +37,6 @@ class TenantProperties {
         // csp header information
         lateinit var defaultConfig: String
         lateinit var frameAncestors: String
-        lateinit var allowedHosts: List<String>
-
+        lateinit var allowedHost: String
     }
 }
