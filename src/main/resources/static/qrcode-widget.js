@@ -38,10 +38,6 @@ const widgetContainer =
     "src",
     `${useIdUrl}/qrcode-widget?hostname=${location.host}&hash=${hashString}#tcTokenURL=${tcTokenURL}`
   );
-  iframe.setAttribute(
-    "allow",
-    "publickey-credentials-get *" // TODO only allow for specific domains
-  );
   iframe.name = "Mit BundesIdent online ausweisen";
   iframe.style.width = "100%";
   iframe.style.height = "100%";

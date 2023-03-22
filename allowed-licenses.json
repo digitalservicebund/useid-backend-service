@@ -100,14 +100,6 @@
     {
       "moduleLicense": null,
       "moduleName": "org.apache.groovy:groovy-bom"
-    },
-    {
-      "moduleLicense": "BSD3"
-    },
-    {
-      "moduleLicense": null,
-      "moduleName": "com.yubico:webauthn-server-parent",
-      "note": "Declares BSD license. See here: https://mvnrepository.com/artifact/com.yubico/webauthn-server-parent/2.4.0"
     }
   ]
 }

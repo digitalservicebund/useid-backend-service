@@ -31,7 +31,6 @@ wellknown:
   ios-config:
     app-id: "VDTVKQ35RL.de.bund.digitalservice.UseID"
     app-id-preview: "VDTVKQ35RL.de.bund.digitalservice.UseID-Preview"
-    app-id-prototype: "VDTVKQ35RL.de.bund.digitalservice.UseID-Prototype"
     path-url: "/eID-Client"
 
   android-config:

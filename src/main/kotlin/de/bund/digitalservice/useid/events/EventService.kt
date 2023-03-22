@@ -43,8 +43,7 @@ class EventService {
         // TODO: Clarify the implications of executing this synchronously on the main thread
         try {
             emitter.send(SseEmitter.event().data(data).name(type.eventName))
-            // TODO only complete when needed
-            // emitter.complete()
+            emitter.complete()
         } catch (e: IOException) {
             throw WidgetNotFoundException(widgetSessionId)
         }
