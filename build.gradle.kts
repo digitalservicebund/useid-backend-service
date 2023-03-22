@@ -45,6 +45,7 @@ dependencies {
 
     /** Persistence **/
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core:9.16.0")
     implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.2.0")
 
