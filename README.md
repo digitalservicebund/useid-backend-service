@@ -277,10 +277,14 @@ See https://github.com/npryce/adr-tools regarding usage.
 Opt in to CI posting notifications for failing jobs to a particular Slack channel by setting a repository secret with
 the name `SLACK_WEBHOOK_URL`, containing a url for [Incoming Webhooks](https://api.slack.com/messaging/webhooks).
 
-## Swagger/OpenAPI
+## API documentation
 
-How to access the page:
-
-1. [Production](https://eid.digitalservicebund.de/swagger/docs.html)
-2. [Staging](https://useid.dev.ds4g.net/swagger/docs.html)
-3. [Local](http://localhost:8080/swagger/docs.html)
+- Production:
+  - [Swagger UI](https://eid.digitalservicebund.de/api/docs)
+  - [JSON](https://eid.digitalservicebund.de/api/docs.json)
+- Staging:
+  - [Swagger UI](https://useid.dev.ds4g.net/api/docs)
+  - [JSON](https://useid.dev.ds4g.net/api/docs.json)
+- Local
+  - [Swagger UI](http://localhost:8080/api/docs)
+  - [JSON](http://localhost:8080/api/docs.json)

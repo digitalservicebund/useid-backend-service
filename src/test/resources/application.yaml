@@ -65,3 +65,9 @@ spring:
     password: secret
   profiles:
     active: test
+
+springdoc:
+  api-docs:
+    path: /api/docs.json
+  swagger-ui:
+    path: /api/docs

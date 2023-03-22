@@ -36,9 +36,9 @@ spring:
 
 springdoc:
   api-docs:
-    path: /v1
+    path: /api/docs.json
   swagger-ui:
-    path: /swagger/docs.html
+    path: /api/docs
     operationsSorter: method
 
 eidservice:

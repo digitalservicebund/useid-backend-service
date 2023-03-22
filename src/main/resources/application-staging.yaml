@@ -13,3 +13,6 @@ sentry:
 
 features:
   desktop-solution-enabled: true
+
+springdoc:
+  show-actuator: true
