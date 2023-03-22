@@ -30,9 +30,9 @@ class IdentificationSessionService(private val identificationSessionRepository: 
      * @param requestDataGroups the data being requested for that identification session
      * @return TC token URL for the started session
      */
-    fun startSession(refreshAddress: String, requestDataGroups: List<String>): String {
+    fun startSession(refreshAddress: String, requestDataGroups: List<String>, tenantID: String): String {
         val session = identificationSessionRepository.save(
-            IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups),
+            IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups, tenantID),
         )
         log.info("Created new identification session. useIdSessionId=${session.useIdSessionId}")
         return buildTcTokenUrl(session)

@@ -17,9 +17,9 @@ class CustomWebClientExchangeTagsProvider : WebMvcTagsContributor {
     ): MutableIterable<Tag> {
         val tags = mutableListOf<Tag>()
         request?.let { r ->
-            val id: Any? = r.getAttribute("tenantId")
-            id?.let {
-                val tag = Tag.of("tenant_id", it.toString())
+            val tenant: Tenant? = r.getAttribute("tenant") as Tenant?
+            tenant?.let {
+                val tag = Tag.of("tenant_id", tenant.id)
                 tags.add(tag)
             }
         }

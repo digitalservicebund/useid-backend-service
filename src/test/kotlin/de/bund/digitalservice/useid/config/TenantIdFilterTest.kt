@@ -5,6 +5,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import io.mockk.verify
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -13,14 +15,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletResponse
 
 @Tag("test")
 internal class TenantIdFilterTest {
 
-    private val tenantIdProperties: TenantIdProperties = mockk()
-    private val filter = TenantIdFilter(tenantIdProperties)
+    // TODO: get a tenant from tenantProperties itself instead of mocking
+    private val tenantProperties: TenantProperties = mockk()
+    private val filter = TenantIdFilter(tenantProperties)
 
     @BeforeEach
     fun beforeEach() {
@@ -46,7 +47,10 @@ internal class TenantIdFilterTest {
 
     @Test
     fun `should assign the tenant id based on the hostname for calls to the widget`() {
-        every { tenantIdProperties.getTenantIdForHost("foo") } returns "some-tenant-id"
+        val tenant = Tenant().apply {
+            id = "some-tenant-id"
+        }
+        every { tenantProperties.findByAllowedHost("foo") } returns tenant
         // Given
         val request = MockHttpServletRequest()
         request.servletPath = "/widget"
@@ -60,13 +64,16 @@ internal class TenantIdFilterTest {
 
         verify {
             filterChain.doFilter(request, response)
-            tenantIdProperties.getTenantIdForHost("foo")
+            tenantProperties.findByAllowedHost("foo")
         }
     }
 
     @Test
     fun `should assign the tenant id based on a valid tenant id query param`() {
-        every { tenantIdProperties.getSanitizedTenantID("some-tenant-id") } returns "some-tenant-id"
+        val tenant = Tenant().apply {
+            id = "some-tenant-id"
+        }
+        every { tenantProperties.findByTenantId("some-tenant-id") } returns tenant
         // Given
         val request = MockHttpServletRequest()
         request.servletPath = "/eid-Client"
@@ -80,13 +87,13 @@ internal class TenantIdFilterTest {
 
         verify {
             filterChain.doFilter(request, response)
-            tenantIdProperties.getSanitizedTenantID("some-tenant-id")
+            tenantProperties.findByTenantId("some-tenant-id")
         }
     }
 
     @Test
     fun `should assign the tenant id of authenticated api calls`() {
-        val authentication: ApiKeyAuthenticationToken = ApiKeyAuthenticationToken("key", "address", emptyList(), true, "some-tenant-id")
+        val authentication = ApiKeyAuthenticationToken("foobar", "address", emptyList(), true)
         val securityContext: SecurityContext = mockk()
         every { securityContext.authentication } returns authentication
         SecurityContextHolder.setContext(securityContext)
@@ -94,17 +101,17 @@ internal class TenantIdFilterTest {
         // Given
         val request = MockHttpServletRequest()
         request.servletPath = "/eid-Client"
-        request.addParameter("tenant_id", "some-tenant-id")
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
 
         // When
         filter.doFilter(request, response, filterChain)
-        assertEquals("some-tenant-id", request.getAttribute("tenantId"))
+        val tenant = request.getAttribute("tenant") as Tenant?
+        assertEquals("tenant_foo", tenant?.id)
 
         verify {
             filterChain.doFilter(request, response)
-            tenantIdProperties.getSanitizedTenantID("some-tenant-id")
+            tenantProperties.findByApiKey("foobar")
         }
 
         SecurityContextHolder.clearContext()

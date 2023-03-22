@@ -1,5 +1,5 @@
 app:
-  base-url: http://localhost:
+  base-url: http://localhost:8080
 
 tenant:
   tenants:

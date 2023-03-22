@@ -1,5 +1,7 @@
 package de.bund.digitalservice.useid.apikeys
 
+import de.bund.digitalservice.useid.config.Tenant
+import de.bund.digitalservice.useid.config.TenantProperties
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -11,23 +13,37 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-@Tag("test")
-internal class ApiKeyAuthenticationFilterTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("integration")
+class ApiKeyAuthenticationFilterTest {
 
-    private val apiProperties: ApiProperties = mockk()
+    @Autowired
+    private lateinit var tenantProperties: TenantProperties
 
-    private val manager = ApiKeyAuthenticationManager(apiProperties)
-    private val filter = ApiKeyAuthenticationFilter(manager)
-    private val validApiKey = ApiProperties.ApiKey().apply {
-        keyValue = "valid-api-key"
+    private lateinit var manager: ApiKeyAuthenticationManager
+    private lateinit var filter: ApiKeyAuthenticationFilter
+
+    private val validTenant = Tenant().apply {
+        apiKey = "valid-api-key"
         refreshAddress = "some-refresh-address"
+    }
+
+    @BeforeAll
+    fun setup() {
+        println(tenantProperties.tenants[0].apiKey)
+
+        manager = ApiKeyAuthenticationManager(tenantProperties)
+        filter = ApiKeyAuthenticationFilter(manager)
     }
 
     @BeforeEach
@@ -36,8 +52,6 @@ internal class ApiKeyAuthenticationFilterTest {
         mockkStatic(::removeAuthentication)
         every { setAuthentication(any()) } returns Unit
         every { removeAuthentication() } returns Unit
-
-        every { apiProperties.apiKeys } returns listOf(validApiKey)
     }
 
     @AfterAll
@@ -51,7 +65,7 @@ internal class ApiKeyAuthenticationFilterTest {
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
-        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validApiKey.keyValue}")
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validTenant.apiKey}")
 
         // When
         filter.doFilter(request, response, filterChain)
@@ -60,12 +74,12 @@ internal class ApiKeyAuthenticationFilterTest {
         verify {
             setAuthentication(
                 withArg { authentication ->
-                    assertEquals(validApiKey.keyValue, authentication.principal)
+                    assertEquals(validTenant.apiKey, authentication.principal)
                     assertEquals(true, authentication.isAuthenticated)
 
                     val apiKeyDetails = authentication.details as ApiKeyDetails
-                    assertEquals(validApiKey.keyValue, apiKeyDetails.keyValue)
-                    assertEquals(validApiKey.refreshAddress, apiKeyDetails.refreshAddress)
+                    assertEquals(validTenant.apiKey, apiKeyDetails.keyValue)
+                    assertEquals(validTenant.refreshAddress, apiKeyDetails.refreshAddress)
 
                     assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)))
                 },
@@ -113,7 +127,7 @@ internal class ApiKeyAuthenticationFilterTest {
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
-        request.addHeader(HttpHeaders.AUTHORIZATION, "BeaRinValid ${validApiKey.keyValue}")
+        request.addHeader(HttpHeaders.AUTHORIZATION, "BeaRinValid ${validTenant.apiKey}")
 
         // When
         filter.doFilter(request, response, filterChain)

@@ -3,8 +3,10 @@ package de.bund.digitalservice.useid.identification
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
+import de.bund.digitalservice.useid.config.Tenant
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
+import io.micrometer.core.annotation.Timed
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.Operation
@@ -32,6 +34,7 @@ internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/s
 internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
+@Timed
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 @Tag(
     name = "Identification Sessions",
@@ -66,10 +69,11 @@ class IdentificationSessionsController(
     @SecurityRequirement(name = "apiKey")
     fun startSession(
         authentication: Authentication,
+        @RequestAttribute tenant: Tenant,
     ): ResponseEntity<CreateIdentificationSessionResponse> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
         val tcTokenUrl =
-            identificationSessionService.startSession(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
+            identificationSessionService.startSession(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups, tenant.id)
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
