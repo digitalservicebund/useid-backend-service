@@ -15,17 +15,17 @@ class ApiDocsIntegrationTest(@Autowired val webTestClient: WebTestClient) {
     fun `api docs ui endpoint returns redirects to swagger ui`() {
         webTestClient
             .get()
-            .uri("/api/docs/ui")
+            .uri("/api/docs")
             .exchange()
             .expectStatus().is3xxRedirection
-            .expectHeader().location("/api/docs/swagger-ui/index.html")
+            .expectHeader().location("/api/swagger-ui/index.html")
     }
 
     @Test
     fun `swagger ui endpoint returns html page successfully`() {
         webTestClient
             .get()
-            .uri("/api/docs/swagger-ui/index.html")
+            .uri("/api/swagger-ui/index.html")
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.TEXT_HTML)
@@ -35,7 +35,7 @@ class ApiDocsIntegrationTest(@Autowired val webTestClient: WebTestClient) {
     fun `api docs endpoint returns json representation of api docs successfully`() {
         webTestClient
             .get()
-            .uri("/api/docs")
+            .uri("/api/docs.json")
             .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON)

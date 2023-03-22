@@ -280,11 +280,11 @@ the name `SLACK_WEBHOOK_URL`, containing a url for [Incoming Webhooks](https://a
 ## API documentation
 
 - Production:
-  - [Swagger UI](https://eid.digitalservicebund.de/api/docs/ui)
-  - [JSON](https://eid.digitalservicebund.de/api/docs/ui)
+  - [Swagger UI](https://eid.digitalservicebund.de/api/docs)
+  - [JSON](https://eid.digitalservicebund.de/api/docs.json)
 - Staging:
-  - [Swagger UI](https://useid.dev.ds4g.net/api/docs/ui)
-  - [JSON](https://useid.dev.ds4g.net/api/docs)
+  - [Swagger UI](https://useid.dev.ds4g.net/api/docs)
+  - [JSON](https://useid.dev.ds4g.net/api/docs.json)
 - Local
-  - [Swagger UI](http://localhost:8080/api/docs/ui)
-  - [JSON](http://localhost:8080/api/docs)
+  - [Swagger UI](http://localhost:8080/api/docs)
+  - [JSON](http://localhost:8080/api/docs.json)
