@@ -79,6 +79,11 @@
         <div class="app-stores__content">
           <h2 style="margin-top: 0; margin-bottom: 0.5rem">QR-Code scannen</h2>
           <div id="qrcode" style="background: white; padding: 0.4rem"></div>
+          <br />
+          <h2 style="margin-top: 0; margin-bottom: 0.5rem">Oder</h2>
+          <a id="app-simulator-button" target="_blank">
+            App Simulator öffnen
+          </a>
         </div>
       </div>
       <div class="data-privacy-wrapper">
@@ -92,7 +97,15 @@
       </div>
     </div>
     <script src="js/qrcode.min.js"></script>
+    <script type="text/javascript" src="js/webauthn.js"></script>
     <script type="text/javascript" src="js/eventSource.js"></script>
+    <script type="text/javascript">
+      const appSimulatorButton = document.getElementById(
+        "app-simulator-button"
+      );
+      const appSimulatorURL = `${appSimulatorButton.baseURI}app-simulator?widgetSessionId=${widgetSessionId}`;
+      appSimulatorButton.setAttribute("href", appSimulatorURL);
+    </script>
     <script type="text/javascript">
       let qrCode, tcToken, hash, useIdSessionId;
       const baseUrl = "desktopident://127.0.0.1:24727/eID-Client";

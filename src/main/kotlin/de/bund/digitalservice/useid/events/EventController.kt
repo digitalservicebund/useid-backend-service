@@ -30,40 +30,46 @@ class EventController(private val eventService: EventService) {
     private val log = KotlinLogging.logger {}
 
     /**
-     * Receive events from the eID client (i.e. Ident-App) and publish them to the respective consumer.
+     * Receive a success event from the eID client (i.e. Ident-App) and publish it to the respective consumer.
      */
-    fun publishEvent(data: Any, type: EventType, widgetSessionId: UUID): ResponseEntity<Nothing> {
-        try {
-            eventService.publish(data, type, widgetSessionId)
-        } catch (e: WidgetNotFoundException) {
-            log.info("Failed to publish event: ${e.message}")
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
-    }
-
     @PostMapping("/events/{widgetSessionId}/success")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Push SSE to corresponding widget having a success value")
     @ApiResponse(responseCode = "202", content = [Content()])
-    @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
-    fun sendSuccess(@PathVariable widgetSessionId: UUID, @RequestBody successEvent: SuccessEvent): ResponseEntity<Nothing> {
+    @ApiResponse(
+        responseCode = "404",
+        description = "No consumer found for that widgetSessionId",
+        content = [Content()],
+    )
+    fun sendSuccess(
+        @PathVariable widgetSessionId: UUID,
+        @RequestBody successEvent: SuccessEvent,
+    ): ResponseEntity<Nothing> {
         log.info { "Received success event for consumer: $widgetSessionId" }
-        return publishEvent(successEvent, EventType.SUCCESS, widgetSessionId)
+        eventService.publish(successEvent, EventType.SUCCESS, widgetSessionId)
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
+    /**
+     * Receive an error event from the eID client (i.e. Ident-App) and publish it to the respective consumer.
+     */
     @PostMapping("/events/{widgetSessionId}/error")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Push SSE to corresponding widget having an error value")
     @ApiResponse(responseCode = "202", content = [Content()])
-    @ApiResponse(responseCode = "404", description = "No consumer found for that widgetSessionId", content = [Content()])
+    @ApiResponse(
+        responseCode = "404",
+        description = "No consumer found for that widgetSessionId",
+        content = [Content()],
+    )
     fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody errorEvent: ErrorEvent): ResponseEntity<Nothing> {
         log.info { "Received event for consumer: $widgetSessionId" }
-        return publishEvent(errorEvent, EventType.ERROR, widgetSessionId)
+        eventService.publish(errorEvent, EventType.ERROR, widgetSessionId)
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
     /**
-     * At this endpoint consumers can open an SSE channel to consume events.
+     * Subscribe to events for a specific widget.
      */
     @CrossOrigin
     @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
