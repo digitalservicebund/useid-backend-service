@@ -1,0 +1,27 @@
+<div
+  layout:decorate="~{layout/base}"
+  layout:fragment="content"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+  <div class="container">
+    <div class="widget">
+      <br /><br /><br /><br />
+      <div class="app-stores">
+        <h1>This isn't the BundesIdent App.</h1>
+        <h2>... or is it?</h2>
+        <button onclick="startRegistration()">Start authentication</button>
+      </div>
+    </div>
+    <script type="text/javascript" src="js/webauthn.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+      /*<![CDATA[*/
+      let widgetSessionId = /*[[${widgetSessionId}]]*/ null;
+      /*]]>*/
+
+      function startRegistration() {
+        registerWebAuthnCredentials(widgetSessionId);
+      }
+    </script>
+  </div>
+</div>
