@@ -11,19 +11,16 @@ class TenantProperties {
 
     var tenants: List<Tenant> = emptyList()
 
-    fun findByApiKey(key: String?): Tenant?
-    {
+    fun findByApiKey(key: String?): Tenant? {
         return tenants.find { it.apiKey == key }
     }
 
-    fun findByAllowedHost(host: String?): Tenant?
-    {
-        return tenants.find { it.allowedHost == host}
+    fun findByAllowedHost(host: String?): Tenant? {
+        return tenants.find { it.allowedHost == host }
     }
 
-    fun findByTenantId(id: String?): Tenant?
-    {
-        return tenants.find { it.id == id}
+    fun findByTenantId(id: String?): Tenant? {
+        return tenants.find { it.id == id }
     }
 
     class Tenant {
