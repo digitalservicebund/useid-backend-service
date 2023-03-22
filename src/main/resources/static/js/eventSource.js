@@ -17,6 +17,14 @@ function subscribe(widgetSessionId) {
     );
   });
 
+  eventSource.addEventListener("authenticate", function (event) {
+    console.log(
+      "Received authenticate event for " + widgetSessionId + ": " + event.data
+    );
+
+    authenticateWithWebAuthnCredentials(event);
+  });
+
   eventSource.onerror = async (err) => {
     console.error(
       "Error occurred while listening on events for " + widgetSessionId + ": ",
