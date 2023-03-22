@@ -45,7 +45,6 @@ dependencies {
 
     /** Persistence **/
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly("org.postgresql:postgresql:42.5.0") // Pin version due to CVE-2022-31197
     implementation("org.flywaydb:flyway-core:9.16.0")
     implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.2.0")
 
@@ -59,8 +58,6 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // => CVE-2022-42003, CVE-2022-42004
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
-    // => CVE-2022-25857
-    implementation("org.yaml:snakeyaml:2.0")
 
     /** Kotlin specific **/
     implementation("org.jetbrains.kotlin:kotlin-reflect")
