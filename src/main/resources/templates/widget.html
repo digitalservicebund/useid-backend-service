@@ -8,7 +8,7 @@
     <div class="widget">
       <div
         th:if="${isFallback}"
-        th:insert="fragments/error :: notification(text=#{widget.fallback.error.text})"
+        th:insert="~{fragments/error :: notification(text=#{widget.fallback.error.text})}"
       ></div>
       <div class="cards">
         <img
