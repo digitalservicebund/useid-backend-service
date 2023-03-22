@@ -5,7 +5,7 @@ import de.bund.digitalservice.useid.events.EventService
 import de.bund.digitalservice.useid.events.EventType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.parameters.RequestBody
+import org.springframework.web.bind.annotation.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -61,7 +61,7 @@ class CredentialController(
     @ApiResponse(responseCode = "204", content = [Content()])
     fun completeRegistration(
         @PathVariable credentialId: UUID,
-        @RequestBody(description = "PublicKeyCredential returned after registration as described here: https://webauthn.guide/#registration") publicKeyCredentialJson: String,
+        @RequestBody publicKeyCredentialJson: String,
     ): ResponseEntity<Void> {
         credentialService.finishRegistration(credentialId, publicKeyCredentialJson)
 
@@ -93,7 +93,7 @@ class CredentialController(
     @ApiResponse(responseCode = "200", content = [Content()])
     fun completeAuthentication(
         @PathVariable credentialId: UUID,
-        @RequestBody(description = "PublicKeyCredential returned after authentication as described here: https://webauthn.guide/#authentication") publicKeyCredentialJson: String,
+        @RequestBody publicKeyCredentialJson: String,
     ): ResponseEntity<Any> {
         val refreshAddress = credentialService.finishAuthentication(credentialId, publicKeyCredentialJson)
         return ResponseEntity
