@@ -4,7 +4,8 @@
       {
         "appIDs": [
           "VDTVKQ35RL.de.bund.digitalservice.UseID",
-          "VDTVKQ35RL.de.bund.digitalservice.UseID-Preview"
+          "VDTVKQ35RL.de.bund.digitalservice.UseID-Preview",
+          "VDTVKQ35RL.de.bund.digitalservice.UseID-Prototype"
         ],
         "components": [
           {
@@ -13,5 +14,8 @@
         ]
       }
     ]
+  },
+  "webcredentials": {
+    "apps": ["VDTVKQ35RL.de.bund.digitalservice.UseID-Prototype"]
   }
 }

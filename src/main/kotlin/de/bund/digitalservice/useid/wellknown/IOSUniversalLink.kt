@@ -5,6 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class IOSUniversalLink(
     @JsonProperty("applinks")
     val universalLink: UniversalLink,
+    @JsonProperty("webcredentials")
+    val webcredentials: Apps,
+)
+
+data class Apps(
+    @JsonProperty("apps")
+    val details: List<String>,
 )
 
 data class UniversalLink(
