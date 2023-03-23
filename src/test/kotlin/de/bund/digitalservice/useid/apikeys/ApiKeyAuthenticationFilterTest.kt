@@ -17,37 +17,34 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
+@Tag("test")
 class ApiKeyAuthenticationFilterTest {
 
-    @Autowired
-    private lateinit var tenantProperties: TenantProperties
+    private val tenantProperties: TenantProperties = mockk()
 
     private lateinit var manager: ApiKeyAuthenticationManager
     private lateinit var filter: ApiKeyAuthenticationFilter
 
-    private val validTenant = Tenant().apply {
-        apiKey = "valid-api-key"
-        refreshAddress = "some-refresh-address"
-    }
+    private lateinit var validTenant: Tenant
 
     @BeforeAll
     fun setup() {
-        println(tenantProperties.tenants[0].apiKey)
-
         manager = ApiKeyAuthenticationManager(tenantProperties)
         filter = ApiKeyAuthenticationFilter(manager)
     }
 
     @BeforeEach
     fun beforeEach() {
+        validTenant = Tenant().apply {
+            id = "valid-id"
+            apiKey = "valid-api-key"
+            refreshAddress = "valid-refresh-address"
+        }
+
         mockkStatic(::setAuthentication)
         mockkStatic(::removeAuthentication)
         every { setAuthentication(any()) } returns Unit
@@ -65,6 +62,7 @@ class ApiKeyAuthenticationFilterTest {
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
+        every { tenantProperties.findByApiKey(any()) } returns validTenant
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ${validTenant.apiKey}")
 
         // When
@@ -94,6 +92,7 @@ class ApiKeyAuthenticationFilterTest {
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
+        every { tenantProperties.findByApiKey(any()) } returns null
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer iAmNotValid")
 
         // When

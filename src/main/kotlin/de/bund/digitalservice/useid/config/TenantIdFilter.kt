@@ -19,10 +19,10 @@ class TenantIdFilter(
         } else if (request.servletPath.equals("/widget")) {
             tenantProperties.findByAllowedHost(request.getParameter("hostname"))
         } else if (request.getParameter("tenant_id") != null) {
-            tenantProperties.findByAllowedHost(request.getParameter("tenant_id"))
+            tenantProperties.findByTenantId(request.getParameter("tenant_id"))
         } else {
             val defaultTenant = Tenant()
-            defaultTenant.id = "default"
+            defaultTenant.id = "unknown"
             defaultTenant
         }
 
