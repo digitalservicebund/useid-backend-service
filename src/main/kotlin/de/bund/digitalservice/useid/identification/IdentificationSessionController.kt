@@ -1,10 +1,9 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
-import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
-import de.bund.digitalservice.useid.config.Tenant
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.tenant.Tenant
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import io.micrometer.core.annotation.Timed
 import io.micrometer.core.instrument.Counter
@@ -25,7 +24,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
@@ -69,11 +67,10 @@ class IdentificationSessionsController(
     @SecurityRequirement(name = "apiKey")
     fun startSession(
         authentication: Authentication,
-        @RequestAttribute tenant: Tenant,
     ): ResponseEntity<CreateIdentificationSessionResponse> {
-        val apiKeyDetails = authentication.details as ApiKeyDetails
+        val tenant = authentication.details as Tenant
         val tcTokenUrl =
-            identificationSessionService.startSession(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups, tenant.id)
+            identificationSessionService.startSession(tenant.refreshAddress, tenant.dataGroups, tenant.id)
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
@@ -120,24 +117,23 @@ class IdentificationSessionsController(
     @SecurityRequirement(name = "apiKey")
     fun getIdentity(
         @PathVariable eIdSessionId: UUID,
-        @RequestAttribute tenantId: String,
         authentication: Authentication,
     ): ResponseEntity<GetResultResponseType> {
-        val apiKeyDetails = authentication.details as ApiKeyDetails
+        val tenant = authentication.details as Tenant
 
         val userData: GetResultResponseType?
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
+        if (tenant.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         try {
             val eidService = EidService(eidServiceConfig)
             userData = eidService.getEidInformation(eIdSessionId.toString())
-            createCounter("get_eid_information", "200", tenantId).increment()
+            createCounter("get_eid_information", "200", tenant.id).increment()
         } catch (e: Exception) {
-            createCounter("get_eid_information", "500", tenantId).increment()
+            createCounter("get_eid_information", "500", tenant.id).increment()
             log.error("Failed to fetch identity data: ${e.message}.")
             throw e
         }

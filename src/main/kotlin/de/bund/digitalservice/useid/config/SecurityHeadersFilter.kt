@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.tenant.TenantProperties
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

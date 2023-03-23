@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.apikeys
+package de.bund.digitalservice.useid.tenant
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
@@ -6,10 +6,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 const val MANAGE_IDENTIFICATION_SESSION_AUTHORITY = "MANAGE_IDENTIFICATION_SESSION"
 
-open class ApiKeyAuthenticationToken(
-    private val apiKey: String,
-    private val refreshAddress: String? = null,
-    private val requestDataGroups: List<String> = emptyList(),
+open class TenantAuthentication(
+    private val tenant: Tenant,
     private var authenticated: Boolean = false,
 ) : Authentication {
 
@@ -22,15 +20,15 @@ open class ApiKeyAuthenticationToken(
     }
 
     override fun getCredentials(): String {
-        return apiKey
+        return tenant.apiKey
     }
 
-    override fun getDetails(): ApiKeyDetails {
-        return ApiKeyDetails(apiKey, refreshAddress, requestDataGroups)
+    override fun getDetails(): Tenant {
+        return tenant
     }
 
     override fun getPrincipal(): String {
-        return apiKey
+        return tenant.apiKey
     }
 
     override fun isAuthenticated(): Boolean {

@@ -61,9 +61,9 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .expectStatus()
             .is3xxRedirection
             .expectHeader()
-            // "some-refresh-address" value is defined in the test application.yaml
+            // "valid-refresh-address" value is defined in application.yaml under test
             // Validate if all request parameters are forwarded
-            .location("some-refresh-address?sessionId=$eIdSessionId&error=false&test=123")
+            .location("valid-refresh-address?sessionId=$eIdSessionId&error=false&test=123")
     }
 
     @Test

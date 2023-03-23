@@ -3,16 +3,16 @@ app:
 
 tenant:
   tenants:
-    - id: tenant_foo
-      apiKey: foobar
-      refreshAddress: http://localhost:8081/success
-      dataGroups: [ DG4,DG5,DG17 ]
-      allowedHost: foo.local
-    - id: tenant_bar
-      apiKey: foobar2
-      refreshAddress: https://foobar2.com
-      dataGroups: [ DG1,DG2, DG3 ]
-      allowedHost: bar.local
+    - id: integration_test_1
+      apiKey: valid-api-key
+      refreshAddress: valid-refresh-address
+      dataGroups: [ DG1,DG2 ]
+      allowedHost: i.am.allowed.de
+    - id: integration_test_2
+      apiKey: another-valid-api-key
+      refreshAddress: another-valid-refresh-address
+      dataGroups: [ DG4,DG17 ]
+      allowedHost: i.am.also.allowed.de
 
 csp:
   default-config: "some default value;"

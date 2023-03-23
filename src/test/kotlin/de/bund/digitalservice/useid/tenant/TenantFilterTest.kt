@@ -1,6 +1,5 @@
-package de.bund.digitalservice.useid.config
+package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationToken
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -13,14 +12,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
 
 @Tag("test")
-internal class TenantIdFilterTest {
+internal class TenantFilterTest {
 
     private val tenantProperties: TenantProperties = mockk()
-    private val filter = TenantIdFilter(tenantProperties)
+    private val filter = TenantFilter(tenantProperties)
 
     private lateinit var validTenant: Tenant
 
@@ -95,31 +92,6 @@ internal class TenantIdFilterTest {
             filterChain.doFilter(request, response)
             tenantProperties.findByTenantId(any())
         }
-    }
-
-    @Test
-    fun `should assign the tenant based on a valid api key`() {
-        // Given
-        val authentication = ApiKeyAuthenticationToken(validTenant.apiKey, validTenant.refreshAddress, emptyList(), true)
-        val securityContext: SecurityContext = mockk()
-        every { securityContext.authentication } returns authentication
-        SecurityContextHolder.setContext(securityContext)
-        every { tenantProperties.findByApiKey(any()) } returns validTenant
-        val request = MockHttpServletRequest()
-        val response: HttpServletResponse = mockk(relaxed = true)
-        val filterChain: FilterChain = mockk(relaxed = true)
-
-        // When
-        filter.doFilter(request, response, filterChain)
-
-        // Then
-        assertEquals(validTenant.id, getTenantIdFromRequest(request))
-        verify {
-            filterChain.doFilter(request, response)
-            tenantProperties.findByApiKey(validTenant.apiKey)
-        }
-
-        SecurityContextHolder.clearContext()
     }
 
     private fun getTenantIdFromRequest(request: MockHttpServletRequest) =

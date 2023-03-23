@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.tenant.Tenant
 import io.micrometer.core.instrument.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

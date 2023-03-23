@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.config
+package de.bund.digitalservice.useid.tenant
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component

@@ -34,7 +34,7 @@ import java.net.URI
 import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer valid-api-key"
-private const val REFRESH_ADDRESS = "some-refresh-address"
+private const val REFRESH_ADDRESS = "valid-refresh-address"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -187,7 +187,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .post()
             .uri("/api/v1/identification/sessions")
             .headers {
-                it.set(HttpHeaders.AUTHORIZATION, "Bearer other-api-key")
+                it.set(HttpHeaders.AUTHORIZATION, "Bearer another-valid-api-key")
             }
             .exchange()
             .expectStatus().isOk

@@ -36,19 +36,19 @@ class WidgetControllerIntegrationTest(
     fun `widget endpoint returns Content-Security-Policy with allowed host when the request URL is valid`() {
         webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=i.am.allowed.de")
             .exchange()
             .expectStatus()
             .isOk
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self' foo.bar;",
+                "some default value;frame-ancestors 'self' i.am.allowed.de;",
             )
             .expectHeader()
             .valueEquals(
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
-                "foo.bar",
+                "i.am.allowed.de",
             )
             .expectHeader()
             .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)

@@ -1,8 +1,10 @@
 package de.bund.digitalservice.useid.config
 
-import de.bund.digitalservice.useid.apikeys.ApiKeyAuthenticationFilter
-import de.bund.digitalservice.useid.apikeys.MANAGE_IDENTIFICATION_SESSION_AUTHORITY
 import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
+import de.bund.digitalservice.useid.tenant.MANAGE_IDENTIFICATION_SESSION_AUTHORITY
+import de.bund.digitalservice.useid.tenant.TenantAuthenticationFilter
+import de.bund.digitalservice.useid.tenant.TenantFilter
+import de.bund.digitalservice.useid.tenant.TenantProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -40,11 +42,11 @@ class SecurityConfig(
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .addFilterBefore(
-                ApiKeyAuthenticationFilter(authenticationManager),
+                TenantAuthenticationFilter(authenticationManager),
                 AnonymousAuthenticationFilter::class.java,
             )
             .addFilterAfter(
-                TenantIdFilter(tenantProperties),
+                TenantFilter(tenantProperties),
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

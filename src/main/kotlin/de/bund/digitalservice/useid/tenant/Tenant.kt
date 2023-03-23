@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.config
+package de.bund.digitalservice.useid.tenant
 
 class Tenant {
     lateinit var id: String
