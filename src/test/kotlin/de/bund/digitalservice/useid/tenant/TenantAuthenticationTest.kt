@@ -19,6 +19,16 @@ internal class TenantAuthenticationTest {
     }
 
     @Test
+    fun getDetails() {
+        assertEquals(tenant.id, tenantAuthentication.details.id)
+    }
+
+    @Test
+    fun getPrincipal() {
+        assertEquals(tenant.apiKey, tenantAuthentication.principal)
+    }
+
+    @Test
     fun getAuthorities() {
         assertEquals(1, tenantAuthentication.authorities.size)
         assertEquals(MANAGE_IDENTIFICATION_SESSION_AUTHORITY, tenantAuthentication.authorities.first().authority)

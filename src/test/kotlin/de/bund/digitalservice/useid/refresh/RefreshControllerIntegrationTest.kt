@@ -17,7 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import java.net.URI
 import java.util.UUID
 
-private const val AUTHORIZATION_HEADER = "Bearer valid-api-key"
+private const val AUTHORIZATION_HEADER = "Bearer valid-api-key-1"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -63,7 +63,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .expectHeader()
             // "valid-refresh-address" value is defined in application.yaml under test
             // Validate if all request parameters are forwarded
-            .location("valid-refresh-address?sessionId=$eIdSessionId&error=false&test=123")
+            .location("valid-refresh-address-1?sessionId=$eIdSessionId&error=false&test=123")
     }
 
     @Test

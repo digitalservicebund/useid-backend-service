@@ -35,22 +35,24 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns Content-Security-Policy with allowed host when the request URL is valid`() {
+    fun `widget endpoint returns Content-Security-Policy with allowed host when the request contains a valid hostname parameter`() {
+        val allowedHost = "i.am.allowed.1"
+
         webTestClient
             .get()
-            .uri("/widget?hostname=i.am.allowed.de")
+            .uri("/widget?hostname=$allowedHost")
             .exchange()
             .expectStatus()
             .isOk
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS i.am.allowed.de;",
+                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS $allowedHost;",
             )
             .expectHeader()
             .valueEquals(
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
-                "i.am.allowed.de",
+                allowedHost,
             )
             .expectHeader()
             .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
@@ -61,6 +63,23 @@ class WidgetControllerIntegrationTest(
         webTestClient
             .get()
             .uri("/widget?hostname=not-allowed.com")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS;",
+            )
+            .expectHeader()
+            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
+    }
+
+    @Test
+    fun `widget endpoint returns default Content-Security-Policy when query parameter hostname has empty value`() {
+        webTestClient
+            .get()
+            .uri("/widget?hostname=")
             .exchange()
             .expectStatus()
             .isOk

@@ -11,7 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
-class TenantAuthenticationFilter(private val authenticationManager: AuthenticationManager) :
+class TenantAuthenticationFilter(private val tenantAuthenticationManager: AuthenticationManager) :
     OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -24,10 +24,11 @@ class TenantAuthenticationFilter(private val authenticationManager: Authenticati
         val unverifiedTenant = Tenant().apply {
             this.apiKey = apiKey
         }
-        val authentication = authenticationManager.authenticate(TenantAuthentication(unverifiedTenant))
+        val unverifiedAuthentication = TenantAuthentication(unverifiedTenant)
+        val verifiedAuthentication = tenantAuthenticationManager.authenticate(unverifiedAuthentication)
 
-        if (authentication?.isAuthenticated == true) {
-            setAuthentication(authentication)
+        if (verifiedAuthentication?.isAuthenticated == true) {
+            setAuthentication(verifiedAuthentication)
         } else {
             removeAuthentication()
         }

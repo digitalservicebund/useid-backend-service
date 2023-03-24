@@ -26,11 +26,12 @@ class SecurityHeadersFilter(
 
         if (!pathIsValidWidgetPages) return filterChain.doFilter(request, response)
 
-        val tenant = tenantProperties.findByAllowedHost(request.getParameter("hostname"))
+        val host = request.getParameter("hostname") ?: ""
+        val tenant = tenantProperties.findByAllowedHost(host)
 
         if (tenant != null) {
-            response.setHeader("Content-Security-Policy", contentSecurityPolicy.getCSPHeaderValue(tenant.allowedHost))
-            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, tenant.allowedHost)
+            response.setHeader("Content-Security-Policy", contentSecurityPolicy.getCSPHeaderValue(host))
+            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, host)
             response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
         } else {
             response.setHeader("Content-Security-Policy", contentSecurityPolicy.getDefaultCSPHeaderValue())

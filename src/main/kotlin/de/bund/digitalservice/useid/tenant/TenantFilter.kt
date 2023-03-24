@@ -14,7 +14,8 @@ class TenantFilter(
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val tenant: Tenant? = if (request.servletPath.equals(REQUEST_PATH_WIDGET)) {
-            tenantProperties.findByAllowedHost(request.getParameter("hostname"))
+            val host = request.getParameter("hostname") ?: ""
+            tenantProperties.findByAllowedHost(host)
         } else if (request.getParameter(PARAM_NAME_TENANT_ID) != null) {
             tenantProperties.findByTenantId(request.getParameter(PARAM_NAME_TENANT_ID))
         } else {

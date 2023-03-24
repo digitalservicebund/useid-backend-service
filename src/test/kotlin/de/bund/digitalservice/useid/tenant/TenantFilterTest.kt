@@ -29,7 +29,7 @@ internal class TenantFilterTest {
             apiKey = "valid-api-key"
             refreshAddress = "valid-refresh-address"
             dataGroups = listOf("DG1", "DG2")
-            allowedHost = "i.am.allowed.de"
+            allowedHosts = listOf("i.am.allowed.de", "i.am.allowed.2.de", "i.am.allowed.as.well.de")
         }
     }
 
@@ -61,7 +61,7 @@ internal class TenantFilterTest {
         every { tenantProperties.findByAllowedHost(any()) } returns validTenant
         val request = MockHttpServletRequest()
         request.servletPath = "/widget"
-        request.addParameter("hostname", validTenant.allowedHost)
+        request.addParameter("hostname", validTenant.allowedHosts[0])
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
 
@@ -72,7 +72,7 @@ internal class TenantFilterTest {
         assertEquals(validTenant.id, getTenantIdFromRequest(request))
         verify {
             filterChain.doFilter(request, response)
-            tenantProperties.findByAllowedHost(validTenant.allowedHost)
+            tenantProperties.findByAllowedHost(validTenant.allowedHosts[0])
         }
     }
 
