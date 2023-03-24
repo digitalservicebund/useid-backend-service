@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
 import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
 import org.springframework.context.ApplicationEventPublisher
@@ -38,7 +39,7 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestParam(required = false, name = "tenant_id") tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestParam(required = false, name = PARAM_NAME_TENANT_ID) tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
@@ -82,7 +83,7 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestParam(required = false, name = "tenant_id") tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
+    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestParam(required = false, name = PARAM_NAME_TENANT_ID) tenantId: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,

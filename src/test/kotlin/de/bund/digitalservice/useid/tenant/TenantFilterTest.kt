@@ -79,7 +79,7 @@ internal class TenantFilterTest {
         // Given
         every { tenantProperties.findByTenantId(any()) } returns validTenant
         val request = MockHttpServletRequest()
-        request.addParameter("tenant_id", validTenant.id)
+        request.addParameter(PARAM_NAME_TENANT_ID, validTenant.id)
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
 
@@ -95,5 +95,5 @@ internal class TenantFilterTest {
     }
 
     private fun getTenantIdFromRequest(request: MockHttpServletRequest) =
-        (request.getAttribute("tenant") as Tenant).id
+        (request.getAttribute(REQUEST_ATTR_TENANT) as Tenant).id
 }

@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid.identification
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
 import de.bund.digitalservice.useid.tenant.Tenant
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import io.micrometer.core.annotation.Timed
@@ -156,6 +157,6 @@ class IdentificationSessionsController(
     }
 
     protected fun createCounter(method: String, status: String, tenantId: String = "unknown"): Counter {
-        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, "tenant_id", tenantId)
+        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, PARAM_NAME_TENANT_ID, tenantId)
     }
 }
