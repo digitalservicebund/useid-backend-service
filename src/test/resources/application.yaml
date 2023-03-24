@@ -14,10 +14,6 @@ tenant:
       dataGroups: [ DG4,DG17 ]
       allowedHost: i.am.also.allowed.de
 
-csp:
-  default-config: "some default value;"
-  frame-ancestors: "frame-ancestors 'self'"
-
 eidservice:
   wsdl-url: https://mock.url
   url: https://mock.url

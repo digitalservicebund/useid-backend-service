@@ -14,10 +14,6 @@ tenant:
       dataGroups: [ DG1,DG2, DG3 ]
       allowedHost: bar.local
 
-csp:
-  default-config: "some default value;"
-  frame-ancestors: "frame-ancestors 'self'"
-
 eidservice:
   wsdl-url: https://test.governikus-eid.de/eID-Server-230/eID?wsdl
   url: https://test.governikus-eid.de:8444/eID-Server-230/eID

@@ -13,7 +13,7 @@ import org.springframework.web.util.pattern.PathPatternParser
 
 class SecurityHeadersFilter(
     private val tenantProperties: TenantProperties,
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
+    private val contentSecurityPolicy: ContentSecurityPolicy,
 ) : OncePerRequestFilter() {
 
     private val widgetPagePath: PathPattern = PathPatternParser().parse("/$WIDGET_PAGE")
@@ -29,11 +29,11 @@ class SecurityHeadersFilter(
         val tenant = tenantProperties.findByAllowedHost(request.getParameter("hostname"))
 
         if (tenant != null) {
-            response.setHeader("Content-Security-Policy", contentSecurityPolicyProperties.getCSPHeaderValue(tenant.allowedHost))
+            response.setHeader("Content-Security-Policy", contentSecurityPolicy.getCSPHeaderValue(tenant.allowedHost))
             response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, tenant.allowedHost)
             response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
         } else {
-            response.setHeader("Content-Security-Policy", contentSecurityPolicyProperties.getDefaultCSPHeaderValue())
+            response.setHeader("Content-Security-Policy", contentSecurityPolicy.getDefaultCSPHeaderValue())
         }
 
         return filterChain.doFilter(request, response)

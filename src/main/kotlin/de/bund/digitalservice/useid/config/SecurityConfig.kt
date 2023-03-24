@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 @EnableWebSecurity
 class SecurityConfig(
     private val authenticationManager: AuthenticationManager,
-    private val contentSecurityPolicyProperties: ContentSecurityPolicyProperties,
+    private val contentSecurityPolicy: ContentSecurityPolicy,
     private val tenantProperties: TenantProperties,
 ) {
     @Bean
@@ -38,7 +38,7 @@ class SecurityConfig(
             .frameOptions().disable()
             .and()
             .addFilterAfter(
-                SecurityHeadersFilter(tenantProperties, contentSecurityPolicyProperties),
+                SecurityHeadersFilter(tenantProperties, contentSecurityPolicy),
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .addFilterBefore(

@@ -1,5 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
+import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
+import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.jsoup.Jsoup
@@ -43,7 +45,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self' i.am.allowed.de;",
+                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS i.am.allowed.de;",
             )
             .expectHeader()
             .valueEquals(
@@ -65,7 +67,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';",
+                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -82,7 +84,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';",
+                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
