@@ -153,6 +153,14 @@ class IdentificationSessionsController(
     }
 
     protected fun createCounter(method: String, status: String, tenantId: String): Counter {
-        return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, PARAM_NAME_TENANT_ID, tenantId)
+        return Metrics.counter(
+            METRIC_NAME_EID_SERVICE_REQUESTS,
+            "method",
+            method,
+            "status",
+            status,
+            PARAM_NAME_TENANT_ID,
+            tenantId,
+        )
     }
 }
