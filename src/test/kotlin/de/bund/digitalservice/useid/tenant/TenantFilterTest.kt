@@ -23,10 +23,13 @@ internal class TenantFilterTest {
 
     @BeforeEach
     fun beforeEach() {
+        // same as in test application.yaml
         validTenant = Tenant().apply {
-            id = "some-tenant-id"
-            refreshAddress = "address"
+            id = "integration_test_1"
             apiKey = "valid-api-key"
+            refreshAddress = "valid-refresh-address"
+            dataGroups = listOf("DG1", "DG2")
+            allowedHost = "i.am.allowed.de"
         }
     }
 
@@ -55,11 +58,10 @@ internal class TenantFilterTest {
     @Test
     fun `should assign the tenant based on the hostname for calls to the widget`() {
         // Given
-        val allowedHost = "foo"
         every { tenantProperties.findByAllowedHost(any()) } returns validTenant
         val request = MockHttpServletRequest()
         request.servletPath = "/widget"
-        request.addParameter("hostname", allowedHost)
+        request.addParameter("hostname", validTenant.allowedHost)
         val response: HttpServletResponse = mockk(relaxed = true)
         val filterChain: FilterChain = mockk(relaxed = true)
 
@@ -70,7 +72,7 @@ internal class TenantFilterTest {
         assertEquals(validTenant.id, getTenantIdFromRequest(request))
         verify {
             filterChain.doFilter(request, response)
-            tenantProperties.findByAllowedHost(allowedHost)
+            tenantProperties.findByAllowedHost(validTenant.allowedHost)
         }
     }
 

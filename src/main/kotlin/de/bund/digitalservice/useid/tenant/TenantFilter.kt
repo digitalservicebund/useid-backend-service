@@ -7,7 +7,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 internal const val REQUEST_ATTR_TENANT = "tenant"
 internal const val PARAM_NAME_TENANT_ID = "tenant_id"
-internal const val REQUEST_PATH_WIDGET = "tenant_id"
+internal const val REQUEST_PATH_WIDGET = "/widget"
 
 class TenantFilter(
     private val tenantProperties: TenantProperties,
