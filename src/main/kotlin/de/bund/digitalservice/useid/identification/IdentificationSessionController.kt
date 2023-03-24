@@ -52,10 +52,6 @@ class IdentificationSessionsController(
     private val eidServiceConfig: EidServiceConfiguration,
 ) {
     private val log = KotlinLogging.logger {}
-    private val getEidInformationCallsSuccessfulCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
@@ -156,7 +152,7 @@ class IdentificationSessionsController(
             .body(userData)
     }
 
-    protected fun createCounter(method: String, status: String, tenantId: String = "unknown"): Counter {
+    protected fun createCounter(method: String, status: String, tenantId: String): Counter {
         return Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", method, "status", status, PARAM_NAME_TENANT_ID, tenantId)
     }
 }
