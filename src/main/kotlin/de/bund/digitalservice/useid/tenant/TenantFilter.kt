@@ -7,12 +7,13 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 internal const val REQUEST_ATTR_TENANT = "tenant"
 internal const val PARAM_NAME_TENANT_ID = "tenant_id"
+internal const val REQUEST_PATH_WIDGET = "tenant_id"
 
 class TenantFilter(
     private val tenantProperties: TenantProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        val tenant: Tenant? = if (request.servletPath.equals("/widget")) {
+        val tenant: Tenant? = if (request.servletPath.equals(REQUEST_PATH_WIDGET)) {
             tenantProperties.findByAllowedHost(request.getParameter("hostname"))
         } else if (request.getParameter(PARAM_NAME_TENANT_ID) != null) {
             tenantProperties.findByTenantId(request.getParameter(PARAM_NAME_TENANT_ID))
