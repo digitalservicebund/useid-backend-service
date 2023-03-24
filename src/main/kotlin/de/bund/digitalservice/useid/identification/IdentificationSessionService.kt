@@ -28,6 +28,7 @@ class IdentificationSessionService(private val identificationSessionRepository: 
      *
      * @param refreshAddress the refresh address to be returned to after finishing the session
      * @param requestDataGroups the data being requested for that identification session
+     * @param tenantID the id of the tenant that is starting the identification session
      * @return TC token URL for the started session
      */
     fun startSession(refreshAddress: String, requestDataGroups: List<String>, tenantID: String): String {
