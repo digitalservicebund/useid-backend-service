@@ -6,13 +6,23 @@ tenant:
     - id: tenant_foo
       apiKey: foobar
       refreshAddress: http://localhost:8081/success
-      dataGroups: [ DG4,DG5,DG17 ]
-      allowedHosts: ["foo.local", "foo.2.local"]
+      dataGroups:
+        - DG4
+        - DG5
+        - DG17
+      allowedHosts:
+        - "localhost:8081"
+        - "foo.2.local"
     - id: tenant_bar
       apiKey: foobar2
       refreshAddress: https://foobar2.com
-      dataGroups: [ DG1,DG2, DG3 ]
-      allowedHosts: ["bar.local", "bar.2.local"]
+      dataGroups:
+        - DG1
+        - DG2
+        - DG3
+      allowedHosts:
+        - "bar.local"
+        - "bar.2.local"
 
 eidservice:
   wsdl-url: https://test.governikus-eid.de/eID-Server-230/eID?wsdl

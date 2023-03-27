@@ -6,13 +6,21 @@ tenant:
     - id: integration_test_1
       apiKey: valid-api-key-1
       refreshAddress: valid-refresh-address-1
-      dataGroups: [ DG1,DG2 ]
-      allowedHosts: ["i.am.allowed.1", "i.am.also.allowed.1"]
+      dataGroups:
+        - DG1
+        - DG2
+      allowedHosts:
+        - "i.am.allowed.1"
+        - "i.am.also.allowed.1"
     - id: integration_test_2
       apiKey: valid-api-key-2
       refreshAddress: valid-refresh-address-2
-      dataGroups: [ DG4,DG17 ]
-      allowedHosts: ["i.am.allowed.2", "i.am.also.allowed.2"]
+      dataGroups:
+        - DG4
+        - DG17
+      allowedHosts:
+        - "i.am.allowed.2"
+        - "i.am.also.allowed.2"
 
 eidservice:
   wsdl-url: https://mock.url
