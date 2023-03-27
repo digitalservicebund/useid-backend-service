@@ -79,6 +79,9 @@ dependencies {
     // => CVE-2022-40153
     implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
 
+    /** Governikus Panstar SDK **/
+    implementation("de.governikus.panstar.sdk:panstar-soap-sdk:2.2.0")
+
     /** WebAuthn **/
     implementation("com.yubico:webauthn-server-core:2.4.0")
 

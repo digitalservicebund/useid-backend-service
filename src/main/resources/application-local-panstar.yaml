@@ -1,0 +1,13 @@
+panstar:
+  url: https://dev.id.governikus-eid.de:8444/eID-Server-240
+  tls-cert: classpath:eid-server-certificates/local/test.governikus-eid.de.cer
+  sig-cert: classpath:eid-server-certificates/local/test-wssign.governikus-eid.de.cer
+  truststore-password: 123456
+  soap-tls-keystore:
+    keystore: classpath:soap-certificates/local/Digital_Service_Webservice_Authentication_123456.p12
+    alias: "webservice authentication"
+    password: 123456
+  soap-sig-keystore:
+    keystore: classpath:soap-certificates/local/Digital_Service_Webservice_Signature_123456.p12
+    alias: "webservice signature"
+    password: 123456
