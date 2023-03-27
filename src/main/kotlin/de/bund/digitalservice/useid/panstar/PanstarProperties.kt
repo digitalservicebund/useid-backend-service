@@ -8,12 +8,9 @@ import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 
 @Component
-@ConfigurationProperties(prefix = "panstar")
+@ConfigurationProperties(prefix = "eidservice")
 @Validated
 class PanstarProperties {
-    @NotBlank
-    lateinit var truststorePassword: String
-
     @NotBlank
     lateinit var url: String
 
@@ -29,6 +26,9 @@ class PanstarProperties {
 
     class Keystore {
         lateinit var keystore: Resource
+
+        @NotBlank
+        lateinit var type: String
 
         @NotBlank
         lateinit var alias: String

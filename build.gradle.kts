@@ -23,6 +23,9 @@ repositories {
     maven {
         url = uri("https://nexus-ext.governikus.de/nexus/content/groups/public/")
     }
+    maven {
+        url = uri("https://build.shibboleth.net/nexus/content/repositories/releases//")
+    }
 }
 
 jacoco {
