@@ -1,12 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.bsi.eid230.GetResultResponseType
+import de.bund.bsi.eid240.GetResultResponse
 import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
-import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
-import de.bund.digitalservice.useid.eidservice.EidService
-import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
@@ -46,13 +41,8 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 )
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
-    private val eidServiceConfig: EidServiceConfiguration,
 ) {
     private val log = KotlinLogging.logger {}
-    private val getEidInformationCallsSuccessfulCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
@@ -116,37 +106,17 @@ class IdentificationSessionsController(
     fun getIdentity(
         @PathVariable eIdSessionId: UUID,
         authentication: Authentication,
-    ): ResponseEntity<GetResultResponseType> {
+    ): ResponseEntity<GetResultResponse> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
-        val userData: GetResultResponseType?
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
-        try {
-            val eidService = EidService(eidServiceConfig)
-            userData = eidService.getEidInformation(eIdSessionId.toString())
-            getEidInformationCallsSuccessfulCounter.increment()
-        } catch (e: Exception) {
-            getEidInformationCallsWithErrorsCounter.increment()
-            log.error("Failed to fetch identity data: ${e.message}.")
-            throw e
-        }
 
-        // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
-        if (userData.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-            try {
-                identificationSessionService.delete(identificationSession)
-            } catch (e: Exception) {
-                log.error("Failed to delete identification session. id=${identificationSession.id}")
-            }
-        } else {
-            // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
-            log.info("The resultMinor for identification session is ${userData.result.resultMinor}. id=${identificationSession.id}")
-        }
+        val userData: GetResultResponse = identificationSessionService.getIdentity(eIdSessionId, identificationSession)
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)

@@ -70,20 +70,12 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.4")
 
-    /** Governikus Autent SDK **/
-    implementation("de.governikus.autent.sdk:eid-webservice-sdk:3.73.9")
-    implementation("de.governikus.autent.utils:autent-key-utils:4.0.14")
-    // => CVE-2015-7501, CVE-2015-6420
-    implementation("commons-collections:commons-collections:3.2.2")
-    // => CVE-2021-40690
-    implementation("org.apache.santuario:xmlsec:3.0.0")
-    // => CVE-2020-28052
-    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
-    // => CVE-2022-40153
-    implementation("com.fasterxml.woodstox:woodstox-core:6.5.0")
-
     /** Governikus Panstar SDK **/
     implementation("de.governikus.panstar.sdk:panstar-soap-sdk:2.2.0")
+    implementation("de.governikus:identification-report-impl-java:1.0.0")
+    implementation("javax.xml.ws:jaxws-api:2.3.1")
+    implementation("com.sun.xml.bind:jaxb-impl:2.3.5")
+    implementation("com.sun.xml.messaging.saaj:saaj-impl:1.5.3")
 
     /** WebAuthn **/
     implementation("com.yubico:webauthn-server-core:2.4.0")
