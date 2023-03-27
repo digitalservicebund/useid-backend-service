@@ -89,7 +89,11 @@
       -  Render tenantId as a javascript variable
       -  Comment won't be visible in the html according to Thymeleaf docs
     */-->
-    <script th:inline="javascript" type="text/javascript">
+    <script
+      th:inline="javascript"
+      type="text/javascript"
+      th:attr="nonce=${cspNonce}"
+    >
       (function(){
         const tenantId = [[${tenantId}]];
         document
@@ -104,7 +108,12 @@
                 });
       })();
     </script>
-    <script th:if="${isWidget}" type="text/javascript" th:inline="javascript">
+    <script
+      th:if="${isWidget}"
+      type="text/javascript"
+      th:inline="javascript"
+      th:attr="nonce=${cspNonce}"
+    >
       (function () {
         const tenantId = [[${tenantId}]];
         const hash = new URL(window.location).searchParams.get("hash");

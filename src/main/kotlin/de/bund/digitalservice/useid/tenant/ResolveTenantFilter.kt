@@ -9,7 +9,7 @@ internal const val REQUEST_ATTR_TENANT = "tenant"
 internal const val PARAM_NAME_TENANT_ID = "tenant_id"
 internal const val REQUEST_PATH_WIDGET = "/widget"
 
-class TenantFilter(
+class ResolveTenantFilter(
     private val tenantProperties: TenantProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
@@ -28,6 +28,7 @@ class TenantFilter(
                 fallbackTenant
             }
 
+        // assign entire object, because the WidgetController needs access to multiple properties instead of only the id
         request.setAttribute(REQUEST_ATTR_TENANT, tenant)
         return filterChain.doFilter(request, response)
     }

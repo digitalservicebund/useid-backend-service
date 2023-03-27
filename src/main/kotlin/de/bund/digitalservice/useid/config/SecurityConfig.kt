@@ -2,8 +2,8 @@ package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
 import de.bund.digitalservice.useid.tenant.MANAGE_IDENTIFICATION_SESSION_AUTHORITY
+import de.bund.digitalservice.useid.tenant.ResolveTenantFilter
 import de.bund.digitalservice.useid.tenant.TenantAuthenticationFilter
-import de.bund.digitalservice.useid.tenant.TenantFilter
 import de.bund.digitalservice.useid.tenant.TenantProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -46,7 +46,7 @@ class SecurityConfig(
                 AnonymousAuthenticationFilter::class.java,
             )
             .addFilterAfter(
-                TenantFilter(tenantProperties),
+                ResolveTenantFilter(tenantProperties),
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

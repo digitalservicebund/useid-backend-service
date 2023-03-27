@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 
 @Tag("test")
-internal class TenantFilterTest {
+internal class ResolveTenantFilterTest {
 
     private val tenantProperties: TenantProperties = mockk()
-    private val filter = TenantFilter(tenantProperties)
+    private val filter = ResolveTenantFilter(tenantProperties)
 
     private lateinit var validTenant: Tenant
 

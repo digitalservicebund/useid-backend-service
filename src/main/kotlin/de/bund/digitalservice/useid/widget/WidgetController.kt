@@ -78,6 +78,7 @@ class WidgetController(
             "isWidget" to true,
             "additionalClass" to "",
             "tenantId" to tenant.id,
+            "cspNonce" to tenant.cspNonce,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -110,6 +111,7 @@ class WidgetController(
             "isFallback" to true,
             "additionalClass" to "fallback",
             "tenantId" to tenant.id,
+            "cspNonce" to tenant.cspNonce,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)

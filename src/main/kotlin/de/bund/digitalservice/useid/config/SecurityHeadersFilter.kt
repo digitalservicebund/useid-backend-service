@@ -10,7 +10,9 @@ import org.springframework.http.server.PathContainer
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.pattern.PathPattern
 import org.springframework.web.util.pattern.PathPatternParser
+import java.util.UUID
 
+internal const val HTTP_HEADER_CONTENT_SECURITY_POLICY = "Content-Security-Policy"
 class SecurityHeadersFilter(
     private val tenantProperties: TenantProperties,
     private val contentSecurityPolicy: ContentSecurityPolicy,
@@ -30,11 +32,13 @@ class SecurityHeadersFilter(
         val tenant = tenantProperties.findByAllowedHost(host)
 
         if (tenant != null) {
-            response.setHeader("Content-Security-Policy", contentSecurityPolicy.getCSPHeaderValue(host))
+            val nonce = UUID.randomUUID().toString()
+            tenant.cspNonce = nonce
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getCSPHeaderValue(host, nonce))
             response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, host)
             response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
         } else {
-            response.setHeader("Content-Security-Policy", contentSecurityPolicy.getDefaultCSPHeaderValue())
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getDefaultCSPHeaderValue())
         }
 
         return filterChain.doFilter(request, response)

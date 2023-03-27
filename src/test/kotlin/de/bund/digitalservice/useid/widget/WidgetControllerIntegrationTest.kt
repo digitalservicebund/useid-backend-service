@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
 import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
+import de.bund.digitalservice.useid.config.CSP_SCRIPT_SRC_CONFIG
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.jsoup.Jsoup
@@ -47,7 +48,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS $allowedHost;",
+                "$CSP_DEFAULT_CONFIG;$CSP_SCRIPT_SRC_CONFIG 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
             )
             .expectHeader()
             .valueEquals(
@@ -69,7 +70,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS;",
+                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -86,7 +87,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS;",
+                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -103,7 +104,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG$CSP_FRAME_ANCESTORS;",
+                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
