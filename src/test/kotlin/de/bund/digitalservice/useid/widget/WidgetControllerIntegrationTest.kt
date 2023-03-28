@@ -45,7 +45,7 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns Content-Security-Policy with allowed host when the request contains a valid hostname parameter`() {
+    fun `widget endpoint returns Content-Security-Policy with allowed host and nonce when the request contains a valid hostname parameter`() {
         // GIVEN
         val allowedHost = "i.am.allowed.1"
         val nonce = UUID.randomUUID().toString()

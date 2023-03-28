@@ -39,7 +39,7 @@ internal class ResolveTenantFilterTest {
     }
 
     @Test
-    fun `should assign the tenant id unknown for all unknown calls`() {
+    fun `should assign the tenant with id unknown for all unknown calls`() {
         // Given
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
