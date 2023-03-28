@@ -89,16 +89,10 @@ jobs:
           format: "cosign-vuln"
           ignore-unfixed: true
           output: "vuln.json"
-      - name: Upload cosign vulnerability scan record
-        uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        with:
-          name: "vuln.json"
-          path: "vuln.json"
-          if-no-files-found: error
 
       - name: Download cosign vulnerability scan record
         uses: actions/download-artifact@v3
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         with:
           name: "vuln.json"
 
