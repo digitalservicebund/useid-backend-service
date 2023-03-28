@@ -15,20 +15,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 class GlobalExceptionHandler {
     private val log = KotlinLogging.logger {}
 
-    @ExceptionHandler(value = [WidgetNotFoundException::class, IdentificationSessionNotFoundException::class])
-    fun handleNotFoundExceptions(e: Exception): ResponseEntity<Any> {
+    @ExceptionHandler(value = [WidgetNotFoundException::class, IdentificationSessionNotFoundException::class, CredentialNotFoundException::class])
+    fun handleNotFound(e: Exception): ResponseEntity<Any> {
         log.info("${e.message}")
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
     }
 
-    @ExceptionHandler(CredentialNotFoundException::class)
-    fun handleCredentialNotFoundException(e: Exception): ResponseEntity<Any> {
-        log.info("Could not find credential: ${e.message}")
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-    }
-
     @ExceptionHandler(value = [AssertionFailedException::class, InvalidApiKeyException::class])
-    fun handleAssertionFailedException(e: Exception): ResponseEntity<Any> {
+    fun handleUnauthorized(e: Exception): ResponseEntity<Any> {
         log.info("${e.message}")
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
     }

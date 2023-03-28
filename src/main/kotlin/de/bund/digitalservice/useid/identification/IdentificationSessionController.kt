@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.tags.Tag
-import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -43,8 +42,6 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
 ) {
-    private val log = KotlinLogging.logger {}
-
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")

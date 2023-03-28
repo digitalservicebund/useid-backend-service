@@ -68,7 +68,9 @@ class IdentificationSessionService(
             throw e
         }
 
-        updateEIdSessionId(useIdSessionId, extractEIdSessionId(tcTokenWrapper.tcToken))
+        val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+        session!!.eIdSessionId = extractEIdSessionId(tcTokenWrapper.tcToken)
+        log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
 
         return tcTokenWrapper.tcToken
     }
@@ -141,11 +143,5 @@ class IdentificationSessionService(
 
     fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession? {
         return identificationSessionRepository.findByEIdSessionId(eIdSessionId)
-    }
-
-    private fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID) {
-        val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
-        session!!.eIdSessionId = eIdSessionId
-        log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
     }
 }
