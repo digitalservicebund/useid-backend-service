@@ -1,0 +1,70 @@
+name: Deploy image
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        type: string
+        description: "Image tag to deploy"
+        required: true
+      environment:
+        type: string
+        description: "Environment to deploy to"
+        required: true
+  workflow_call:
+    inputs:
+      imageTag:
+        type: string
+        description: "Image tag to deploy"
+        required: true
+      environment:
+        type: string
+        description: "Environment to deploy to"
+        required: true
+env:
+  CONTAINER_IMAGE_VERSION: ${{ github.event.inputs.imageTag }}
+  APP_NAME: useid-${{ github.event.inputs.environment }}
+
+jobs:
+  deploy-image:
+    runs-on: ubuntu-latest
+    concurrency: deploy-image
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      id-token: write # Enable OIDC for gitsign
+    steps:
+      - uses: chainguard-dev/actions/setup-gitsign@ac42db4c9c2e2bd9f66aadf3290c5995891d91a3
+      - name: Deploy new image
+        uses: digitalservicebund/github-actions/argocd-deploy@9b15fba0ce0e874d9af5be33ebeea7d476f808d0
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          version: ${{ env.CONTAINER_IMAGE_VERSION }}
+          deploying_repo: useid-backend-service
+          infra_repo: useid-infra
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          app: ${{ env.APP_NAME }}
+          argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
+          argocd_server: ${{ secrets.ARGOCD_SERVER }}
+          argocd_sync_timeout: 300
+      - name: Track deploy
+        uses: digitalservicebund/github-actions/track-deployment@808a08421edc16be156787f56af63b846ea6f557
+        with:
+          project: UseId
+          environment: ${{ github.event.inputs.environment }}
+          metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
+          metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
+      - name: Send status to Slack
+        # Third-party action, pin to commit SHA!
+        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
+        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
+        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          type: ${{ job.status }}
+          job_name: "Deploy ${{ github.event.inputs.environment }} :point_right:"
+          mention: "here"
+          mention_if: "failure"
+          commit: true
+          url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          token: ${{ secrets.GITHUB_TOKEN }}
