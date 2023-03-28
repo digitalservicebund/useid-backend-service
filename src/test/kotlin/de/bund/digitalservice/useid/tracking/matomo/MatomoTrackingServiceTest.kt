@@ -37,13 +37,13 @@ class MatomoTrackingServiceTest {
 
     @Test
     fun `constructEventURL should return correct URL with encoded query parameters`() {
-        val e = MatomoEvent(this, "category", "action", "name", "sessionId", userAgent, "super")
+        val e = MatomoEvent(this, "category", "action", "name", "sessionId", userAgent, "tenantFoo")
         val url = matomoTrackingService.constructEventURL(e)
 
         val siteId = trackingProperties.matomo.siteId
         val domain = trackingProperties.matomo.domain
 
-        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension1=super"
+        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension2=tenantFoo"
         assertEquals(expectedURL, url)
     }
 
