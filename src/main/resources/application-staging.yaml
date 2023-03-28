@@ -2,10 +2,9 @@ app:
   base-url: https://useid.dev.ds4g.net
 
 eidservice:
-  wsdl-url: https://eid-ref1.eid-service.de/eID-Server-230/eID?wsdl
-  url: https://eid-ref1.eid-service.de:9443/eID-Server-230/eID
-  tls-cert: classpath:eid-server-certificates/dev/dev-dtrust-eid-tls.cer
-  sig-cert: classpath:eid-server-certificates/dev/dev-dtrust-eid-sig.cer
+  url: https://eid-epan1-ref.eid-service.de:9443/eID-Server-240
+  tls-cert: classpath:eid-server-certificates/panstar/dev.id.governikus-eid.de.cer
+  sig-cert: classpath:eid-server-certificates/panstar/dev.id.governikus-eid.de-ws-sig.cer
 
 sentry:
   environment: staging
