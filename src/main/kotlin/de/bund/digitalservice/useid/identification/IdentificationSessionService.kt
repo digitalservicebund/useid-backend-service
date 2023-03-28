@@ -58,6 +58,7 @@ class IdentificationSessionService(
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
+        // TODO read request data from identification session
         val requestData: RequestData = RequestData().documentType(true)
             .issuingState(false)
             .dateOfExpiry(true)

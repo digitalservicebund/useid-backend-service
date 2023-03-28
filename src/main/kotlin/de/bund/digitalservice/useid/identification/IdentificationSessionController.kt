@@ -109,10 +109,13 @@ class IdentificationSessionsController(
     ): ResponseEntity<GetResultResponse> {
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
+        // TODO extract method to check validity of api key
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
+            // TODO throw exception to use global exception handler to return error
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             log.error("API key differs from the API key used to start the identification session.")
+            // TODO throw exception and use global exception handler to return error
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
 
