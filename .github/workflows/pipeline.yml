@@ -297,21 +297,6 @@ jobs:
           environment: staging
           metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
           metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
-      - name: Send status to Slack
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy staging :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-staging-verify:
     runs-on: ubuntu-latest
@@ -378,18 +363,3 @@ jobs:
           environment: production
           metrics_deployment_webhook_url: ${{ secrets.METRICS_DEPLOYMENT_WEBHOOK_URL }}
           metrics_webhook_token: ${{ secrets.METRICS_WEBHOOK_TOKEN }}
-      - name: Send status to Slack
-        # Third-party action, pin to commit SHA!
-        # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: lazy-actions/slatify@c4847b8c84e3e8076fd3c42cc00517a10426ed65
-        if: ${{ failure() && env.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy production :point_right:"
-          mention: "here"
-          mention_if: "failure"
-          commit: true
-          url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          token: ${{ secrets.GITHUB_TOKEN }}
