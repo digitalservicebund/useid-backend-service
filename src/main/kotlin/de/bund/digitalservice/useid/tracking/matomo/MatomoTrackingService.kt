@@ -3,7 +3,6 @@ package de.bund.digitalservice.useid.tracking.matomo
 import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.WebRequests
 import mu.KotlinLogging
-import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -20,7 +19,7 @@ import kotlin.text.Charsets.UTF_8
  * Documentation about matomo events
  * https://matomo.org/guide/reports/event-tracking/
  */
-@Profile("!local")
+// @Profile("!local")
 @Service
 class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) {
 

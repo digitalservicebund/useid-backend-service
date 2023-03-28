@@ -46,13 +46,13 @@ class IdentificationSessionService(
         val identificationSession = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
             ?: throw IdentificationSessionNotFoundException(useIdSessionId)
         val tcToken: TCTokenType
+        val tenantID = identificationSession.tenantId ?: ""
         try {
             val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
             tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
-            // TODO: IMPLEMENT TENANT ID FETCHING HERE. COULD ALSO BE INCLUDED IN TCTOKENURL AS QUERY PARAM OR SAVED IN DATABASE WITH SESSION
-            metricsService.incrementCounter(METRIC_NAME_EID_TCTOKEN, "200", "TODO")
+            metricsService.incrementCounter(METRIC_NAME_EID_TCTOKEN, "200", tenantID)
         } catch (e: Exception) {
-            metricsService.incrementCounter(METRIC_NAME_EID_TCTOKEN, "500", "TODO")
+            metricsService.incrementCounter(METRIC_NAME_EID_TCTOKEN, "500", tenantID)
             log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
             throw e
         }
