@@ -4,13 +4,11 @@ import de.bund.bsi.eid240.GetResultResponse
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
-import de.governikus.identification.report.constants.SchemaConstants
 import de.governikus.panstar.sdk.soap.configuration.SoapConfiguration
 import de.governikus.panstar.sdk.soap.handler.SoapHandler
 import de.governikus.panstar.sdk.soap.handler.TcTokenWrapper
 import de.governikus.panstar.sdk.tctoken.TCTokenType
 import de.governikus.panstar.sdk.utils.RequestData
-import de.governikus.panstar.sdk.utils.constant.LevelOfAssuranceType
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import mu.KotlinLogging
@@ -58,34 +56,7 @@ class IdentificationSessionService(
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
-        // TODO read request data from identification session
-        val requestData: RequestData = RequestData().documentType(true)
-            .issuingState(false)
-            .dateOfExpiry(true)
-            .givenNames(false)
-            .familyNames(true)
-            .artisticName(false)
-            .academicTitle(true)
-            .dateOfBirth(false)
-            .placeOfBirth(true)
-            .nationality(false)
-            .birthName(true)
-            .placeOfResidence(false)
-            .communityID(true)
-            .residencePermitI(false)
-            .restrictedID(true)
-            .ageVerification(false, 18)
-            .placeVerification(true, "02760400110000")
-            .transactionInfo("This is a demo transaction info.")
-            .levelOfAssurance(LevelOfAssuranceType.BUND_NORMAL)
-            .seCertified(true)
-            .seEndorsed(false)
-            .hwKeyStore(true)
-            .cardCertified(true)
-            .transactionAttestation(
-                SchemaConstants.Ids.IDENTIFICATION_REPORT_2_0_ID,
-                "{\"subjectRefType\": \"${SchemaConstants.Ids.FINK_PERSON_REF_MINIMAL_ID}\"}",
-            )
+        val requestData: RequestData = getRequestData(useIdSessionId)
 
         val tcTokenWrapper: TcTokenWrapper?
         try {
@@ -100,6 +71,35 @@ class IdentificationSessionService(
         updateEIdSessionId(useIdSessionId, extractEIdSessionId(tcTokenWrapper.tcToken))
 
         return tcTokenWrapper.tcToken
+    }
+
+    private fun getRequestData(useIdSessionId: UUID): RequestData {
+        val identificationSession = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+            ?: throw IdentificationSessionNotFoundException(useIdSessionId)
+
+        val requestData = RequestData()
+
+        identificationSession.requestDataGroups.forEach {
+            when (it) {
+                "DG1" -> requestData.documentType(true)
+                "DG2" -> requestData.issuingState(true)
+                "DG3" -> requestData.dateOfExpiry(true)
+                "DG4" -> requestData.givenNames(true)
+                "DG5" -> requestData.familyNames(true)
+                "DG7" -> requestData.academicTitle(true)
+                "DG8" -> requestData.dateOfBirth(true)
+                "DG9" -> requestData.placeOfBirth(true)
+                "DG10" -> requestData.nationality(true)
+                "DG13" -> requestData.birthName(true)
+                "DG17" -> requestData.placeOfResidence(true)
+                "DG19" -> requestData.residencePermitI(true)
+                else -> {
+                    throw IllegalStateException("Invalid data group for this eService")
+                }
+            }
+        }
+
+        return requestData
     }
 
     fun getIdentity(
