@@ -43,7 +43,7 @@ class MatomoTrackingServiceTest {
         val siteId = trackingProperties.matomo.siteId
         val domain = trackingProperties.matomo.domain
 
-        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension2=tenantFoo"
+        val expectedURL = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension3=tenantFoo"
         assertEquals(expectedURL, url)
     }
 

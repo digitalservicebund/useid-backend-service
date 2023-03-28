@@ -3,10 +3,11 @@ package de.bund.digitalservice.useid.tracking
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 
-// @Profile("!local")
+@Profile("!local")
 @Component
 @ConfigurationProperties(prefix = "tracking")
 @Validated
