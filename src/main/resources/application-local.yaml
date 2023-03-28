@@ -13,8 +13,8 @@ api:
 eidservice:
   wsdl-url: https://test.governikus-eid.de/eID-Server-230/eID?wsdl
   url: https://test.governikus-eid.de:8444/eID-Server-230/eID
-  tls-cert: classpath:eid-server-certificates/local/test.governikus-eid.de.cer
-  sig-cert: classpath:eid-server-certificates/local/test-wssign.governikus-eid.de.cer
+  tls-cert: classpath:eid-server-certificates/local-panstar/test.governikus-eid.de.cer
+  sig-cert: classpath:eid-server-certificates/local-panstar/test-wssign.governikus-eid.de.cer
   truststore-password: 123456
   soap-tls-keystore:
     keystore: classpath:soap-certificates/local/Digital_Service_Webservice_Authentication_123456.p12
