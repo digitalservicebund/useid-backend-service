@@ -11,14 +11,6 @@ on:
         type: string
         description: "Environment to deploy to"
         required: true
-      appName:
-        type: string
-        description: "Name of the app that is deployed"
-        required: true
-      argoCDServer:
-        type: string
-        description: "Url of the ArgoCD server"
-        required: true
   workflow_call:
     inputs:
       imageTag:
@@ -29,17 +21,9 @@ on:
         type: string
         description: "Environment to deploy to"
         required: true
-      appName:
-        type: string
-        description: "Name of the app that is deployed"
-        required: true
-    secrets:
-      argoCDServer:
-        description: "Url of the ArgoCD server"
-        required: true
-
 env:
   CONTAINER_IMAGE_VERSION: ${{ github.event.inputs.imageTag }}
+  APP_NAME: useid-${{ github.event.inputs.environment }}
 
 jobs:
   deploy-image:
@@ -58,9 +42,9 @@ jobs:
           deploying_repo: useid-backend-service
           infra_repo: useid-infra
           deploy_key: ${{ secrets.DEPLOY_KEY }}
-          app: ${{ github.event.inputs.appName }}
+          app: ${{ env.APP_NAME }}
           argocd_pipeline_password: ${{ secrets.ARGOCD_PIPELINE_PASSWORD }}
-          argocd_server: ${{ github.event.inputs.argoCDServer }}
+          argocd_server: ${{ secrets.ARGOCD_SERVER }}
           argocd_sync_timeout: 300
       - name: Track deploy
         uses: digitalservicebund/github-actions/track-deployment@808a08421edc16be156787f56af63b846ea6f557
