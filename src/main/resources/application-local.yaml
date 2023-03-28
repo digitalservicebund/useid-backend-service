@@ -3,7 +3,7 @@ app:
 
 tenant:
   tenants:
-    - id: tenant_foo
+    - id: tenantFoo
       apiKey: foobar
       refreshAddress: http://localhost:8081/success
       dataGroups:
@@ -13,7 +13,7 @@ tenant:
       allowedHosts:
         - "localhost:8081"
         - "foo.2.local"
-    - id: tenant_bar
+    - id: tenantBar
       apiKey: foobar2
       refreshAddress: https://foobar2.com
       dataGroups:

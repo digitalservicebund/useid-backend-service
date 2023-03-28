@@ -31,10 +31,8 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
     fun constructEventURL(e: MatomoEvent): String {
         val session = e.sessionId?.let { "&uid=$it" } ?: ""
         val userAgent = e.userAgent?.let { "&ua=${UriUtils.encode(e.userAgent, UTF_8)}" } ?: ""
-        // Use a custom dimension to track the tenant id. The documentation recommends it over custom variables.
-        // We assume it is the dimension with index 1
-        // https://matomo.org/faq/reporting-tools/create-track-and-manage-custom-dimensions/
-        val tenantId = e.tenantId?.let { "&dimension1=${UriUtils.encode(e.tenantId, UTF_8)}" } ?: ""
+        // custom dimension for tenantId -> https://matomo.org/faq/reporting-tools/create-track-and-manage-custom-dimensions/
+        val tenantId = e.tenantId?.let { "&dimension2=${UriUtils.encode(e.tenantId, UTF_8)}" } ?: ""
         val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}$session$userAgent$tenantId"
         log.debug { url }
         return url
