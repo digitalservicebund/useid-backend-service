@@ -10,5 +10,8 @@ interface IdentificationSessionRepository : JpaRepository<IdentificationSession,
     fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession?
     fun findByUseIdSessionId(useIdSessionId: UUID): IdentificationSession?
     fun deleteAllByCreatedAtBefore(before: LocalDateTime)
+
+    @Query("DELETE FROM IdentificationSession session WHERE session.eIdSessionId = :eIdSessionId")
+    fun deleteByEIdSessionId(eIdSessionId: UUID)
     fun existsByUseIdSessionId(useIdSessionId: UUID): Boolean
 }

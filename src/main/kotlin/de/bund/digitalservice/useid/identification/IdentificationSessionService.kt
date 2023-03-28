@@ -104,7 +104,6 @@ class IdentificationSessionService(
 
     fun getIdentity(
         eIdSessionId: UUID,
-        identificationSession: IdentificationSession,
     ): GetResultResponse {
         val userData: GetResultResponse?
         try {
@@ -119,13 +118,14 @@ class IdentificationSessionService(
         // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
         if (userData.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
             try {
-                delete(identificationSession)
+                identificationSessionRepository.deleteByEIdSessionId(eIdSessionId)
+                log.info("Deleted identification session.")
             } catch (e: Exception) {
-                log.error("Failed to delete identification session. id=${identificationSession.id}")
+                log.error("Failed to delete identification session.")
             }
         } else {
             // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
-            log.info("The resultMinor for identification session is ${userData.result.resultMinor}. id=${identificationSession.id}")
+            log.info("The resultMinor for identification session is ${userData.result.resultMinor}.")
         }
         return userData
     }
@@ -155,10 +155,5 @@ class IdentificationSessionService(
         identificationSessionRepository.save(session)
         log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
         return session
-    }
-
-    private fun delete(identificationSession: IdentificationSession) {
-        identificationSessionRepository.delete(identificationSession)
-        log.info("Deleted identification session. useIdSessionId=${identificationSession.useIdSessionId}")
     }
 }
