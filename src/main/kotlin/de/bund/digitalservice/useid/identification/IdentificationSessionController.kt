@@ -1,14 +1,12 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
-import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
+import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
+import de.bund.digitalservice.useid.metrics.MetricsService
 import de.bund.digitalservice.useid.tenant.Tenant
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import io.micrometer.core.annotation.Timed
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.Metrics
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
@@ -50,6 +48,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val eidServiceConfig: EidServiceConfiguration,
+    private val metricsService: MetricsService,
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -128,9 +127,9 @@ class IdentificationSessionsController(
         try {
             val eidService = EidService(eidServiceConfig)
             userData = eidService.getEidInformation(eIdSessionId.toString())
-            createCounter("get_eid_information", "200", tenant.id).increment()
+            metricsService.incrementCounter(METRIC_NAME_EID_INFORMATION, "200", tenant.id)
         } catch (e: Exception) {
-            createCounter("get_eid_information", "500", tenant.id).increment()
+            metricsService.incrementCounter(METRIC_NAME_EID_INFORMATION, "500", tenant.id)
             log.error("Failed to fetch identity data: ${e.message}.")
             throw e
         }
@@ -150,17 +149,5 @@ class IdentificationSessionsController(
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body(userData)
-    }
-
-    protected fun createCounter(method: String, status: String, tenantId: String): Counter {
-        return Metrics.counter(
-            METRIC_NAME_EID_SERVICE_REQUESTS,
-            "method",
-            method,
-            "status",
-            status,
-            PARAM_NAME_TENANT_ID,
-            tenantId,
-        )
     }
 }
