@@ -1,11 +1,13 @@
 package de.bund.digitalservice.useid.widget
 
-import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
-import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
-import de.bund.digitalservice.useid.config.CSP_SCRIPT_SRC_CONFIG
+import de.bund.digitalservice.useid.config.ContentSecurityPolicy
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.jsoup.Jsoup
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,13 +17,20 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import java.util.Locale
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 class WidgetControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
     @Autowired val messageSource: MessageSource,
+    @Autowired val contentSecurityPolicy: ContentSecurityPolicy,
 ) {
+
+    @AfterAll
+    fun afterAll() {
+        unmockkStatic(UUID::class)
+    }
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
@@ -37,18 +46,24 @@ class WidgetControllerIntegrationTest(
 
     @Test
     fun `widget endpoint returns Content-Security-Policy with allowed host when the request contains a valid hostname parameter`() {
+        // GIVEN
         val allowedHost = "i.am.allowed.1"
+        val nonce = UUID.randomUUID().toString()
+        mockkStatic(UUID::class)
+        every { UUID.randomUUID().toString() } returns nonce
 
         webTestClient
+            // WHEN
             .get()
             .uri("/widget?hostname=$allowedHost")
             .exchange()
+            // THEN
             .expectStatus()
             .isOk
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_SCRIPT_SRC_CONFIG 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
+                contentSecurityPolicy.getCSPHeaderValue(allowedHost, nonce),
             )
             .expectHeader()
             .valueEquals(
@@ -70,7 +85,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
+                contentSecurityPolicy.getDefaultCSPHeaderValue(),
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -87,7 +102,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
+                contentSecurityPolicy.getDefaultCSPHeaderValue(),
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -104,7 +119,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
+                contentSecurityPolicy.getDefaultCSPHeaderValue(),
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
