@@ -78,16 +78,11 @@ class IdentificationSessionsController(
         content = [Content()],
     )
     fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<JakartaTCToken> {
-        return try {
-            val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(JakartaTCToken.fromTCTokenType(tcToken))
-        } catch (e: IdentificationSessionNotFoundException) {
-            log.error(e.message, e)
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        }
+        val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_XML)
+            .body(JakartaTCToken.fromTCTokenType(tcToken))
     }
 
     @GetMapping("/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -121,7 +116,7 @@ class IdentificationSessionsController(
         val apiKeyDetails = authentication.details as ApiKeyDetails
 
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
-            ?: throw IdentificationSessionNotFoundException(eIdSessionId)
+            ?: throw IdentificationSessionNotFoundException()
         if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
             throw InvalidApiKeyException("API key does not match with API key used to start the session.")
         }

@@ -1,17 +1,19 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.bsi.eid230.GetResultResponseType
-import de.bund.bsi.eid230.LevelOfAssuranceType
-import de.bund.bsi.eid230.OperationsResponderType
-import de.bund.bsi.eid230.PersonalDataType
-import de.bund.bsi.eid230.TransactionAttestationResponseType
-import de.bund.bsi.eid230.VerificationResultType
+import com.ninjasquad.springmockk.MockkBean
+import de.bund.bsi.eid240.EIDTypeResponseType
+import de.bund.bsi.eid240.GetResultResponse
+import de.bund.bsi.eid240.OperationsResponderType
+import de.bund.bsi.eid240.PersonalDataType
+import de.bund.bsi.eid240.TransactionAttestationResponseType
+import de.bund.bsi.eid240.VerificationResultType
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.eidservice.EidService
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
+import de.governikus.panstar.sdk.soap.handler.TcTokenWrapper
+import de.governikus.panstar.sdk.tctoken.TCTokenType
+import de.governikus.panstar.sdk.utils.constant.LevelOfAssuranceType
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkConstructor
 import oasis.names.tc.dss._1_0.core.schema.Result
 import org.awaitility.Awaitility
 import org.awaitility.Awaitility.await
@@ -38,19 +40,18 @@ private const val REFRESH_ADDRESS = "some-refresh-address"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class IdentificationSessionControllerIntegrationTest(
+    @Autowired val webTestClient: WebTestClient,
+    @Autowired val identificationSessionRepository: IdentificationSessionRepository,
+    @Autowired val applicationProperties: ApplicationProperties,
+) {
     val attributes = listOf("DG1", "DG2")
 
-    @Autowired
-    private lateinit var identificationSessionRepository: IdentificationSessionRepository
-
-    @Autowired
-    private lateinit var applicationProperties: ApplicationProperties
+    @MockkBean
+    private lateinit var soapHandler: SoapHandler
 
     @BeforeAll
     fun setup() {
-        mockkConstructor(EidService::class)
-
         Awaitility.setDefaultTimeout(ONE_SECOND)
     }
 
@@ -116,7 +117,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `tcToken endpoint returns 500 when error is thrown`() {
-        every { anyConstructed<EidService>().getTcToken(any()) } throws Error("internal server error")
+        every { soapHandler.getTcToken(any(), any()) } throws Error("internal server error")
 
         var tcTokenURL = ""
         sendStartSessionRequest()
@@ -146,15 +147,16 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         mockResult.resultMajor = "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"
         val personalData = PersonalDataType()
         personalData.givenNames = "Ben"
-        val mockGetResultResponseType = mockk<GetResultResponseType>()
+        val mockGetResultResponseType = mockk<GetResultResponse>()
         every { mockGetResultResponseType.personalData } returns personalData
         every { mockGetResultResponseType.fulfilsAgeVerification } returns VerificationResultType()
         every { mockGetResultResponseType.fulfilsPlaceVerification } returns VerificationResultType()
         every { mockGetResultResponseType.operationsAllowedByUser } returns OperationsResponderType()
         every { mockGetResultResponseType.transactionAttestationResponse } returns TransactionAttestationResponseType()
-        every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.HTTP_EIDAS_EUROPA_EU_LO_A_LOW
+        every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.EIDAS_LOW.name
+        every { mockGetResultResponseType.eidTypeResponse } returns EIDTypeResponseType()
         every { mockGetResultResponseType.result } returns mockResult
-        every { anyConstructed<EidService>().getEidInformation(any()) } returns mockGetResultResponseType
+        every { soapHandler.getResult(any()) } returns mockGetResultResponseType
 
         sendIdentityRequest(eIdSessionId)
             .expectStatus().isOk
@@ -215,7 +217,9 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     private fun mockTcToken(refreshAddress: String) {
         val mockTCToken = mockk<TCTokenType>(relaxed = true)
         every { mockTCToken.refreshAddress } returns refreshAddress
-        every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
+        val mockTCTokenWrapper = mockk<TcTokenWrapper>(relaxed = true)
+        every { mockTCTokenWrapper.tcToken } returns mockTCToken
+        every { soapHandler.getTcToken(any(), any()) } returns mockTCTokenWrapper
     }
 
     private fun sendIdentityRequest(eIdSessionId: String) =

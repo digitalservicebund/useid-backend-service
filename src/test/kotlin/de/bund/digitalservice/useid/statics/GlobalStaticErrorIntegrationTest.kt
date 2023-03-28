@@ -1,8 +1,8 @@
 package de.bund.digitalservice.useid.statics
 
-import de.bund.digitalservice.useid.eidservice.EidService
+import com.ninjasquad.springmockk.MockkBean
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
 import io.mockk.every
-import io.mockk.mockkConstructor
 import org.apache.http.client.utils.URIBuilder
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
@@ -21,6 +21,9 @@ import org.springframework.test.web.reactive.server.WebTestClient
 class GlobalStaticErrorIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
 ) {
+    @MockkBean
+    private lateinit var soapHandler: SoapHandler
+
     @Test
     fun `global error handler should render error page when a client requests to invalid path`() {
         val client = webTestClient.get()
@@ -39,9 +42,7 @@ class GlobalStaticErrorIntegrationTest(
 
     @Test
     fun `global error handler should render error page when a client makes invalid request to identification endpoint`() {
-        mockkConstructor(EidService::class)
-
-        every { anyConstructed<EidService>().getTcToken(any()) } throws Error("internal server error")
+        every { soapHandler.getTcToken(any(), any()) } throws Error("internal server error")
 
         var tcTokenURL = ""
         webTestClient.post()

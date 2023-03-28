@@ -1,13 +1,13 @@
 package de.bund.digitalservice.useid.refresh
 
-import de.bund.digitalservice.useid.eidservice.EidService
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import com.ninjasquad.springmockk.MockkBean
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
+import de.governikus.panstar.sdk.soap.handler.TcTokenWrapper
+import de.governikus.panstar.sdk.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,10 +23,8 @@ private const val AUTHORIZATION_HEADER = "Bearer valid-api-key"
 @Tag("integration")
 class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
-    @BeforeAll
-    fun setup() {
-        mockkConstructor(EidService::class)
-    }
+    @MockkBean
+    private lateinit var soapHandler: SoapHandler
 
     @AfterAll
     fun afterTests() {
@@ -37,10 +35,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     fun `refresh endpoint redirects client to correct refresh address when eIdSessionId is valid`() {
         var tcTokenURL = ""
         val eIdSessionId = UUID.randomUUID()
-        val mockTCToken = mockk<TCTokenType>()
-
-        every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
-        every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=$eIdSessionId"
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
 
         webTestClient
             .post()
@@ -74,5 +69,13 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .exchange()
             .expectStatus()
             .isNotFound
+    }
+
+    private fun mockTcToken(refreshAddress: String) {
+        val mockTCToken = mockk<TCTokenType>(relaxed = true)
+        every { mockTCToken.refreshAddress } returns refreshAddress
+        val mockTCTokenWrapper = mockk<TcTokenWrapper>(relaxed = true)
+        every { mockTCTokenWrapper.tcToken } returns mockTCToken
+        every { soapHandler.getTcToken(any(), any()) } returns mockTCTokenWrapper
     }
 }

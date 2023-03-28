@@ -4,7 +4,6 @@ import de.bund.bsi.eid240.GetResultResponse
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
-import de.governikus.panstar.sdk.soap.configuration.SoapConfiguration
 import de.governikus.panstar.sdk.soap.handler.SoapHandler
 import de.governikus.panstar.sdk.soap.handler.TcTokenWrapper
 import de.governikus.panstar.sdk.tctoken.TCTokenType
@@ -13,6 +12,7 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.UUID
 
@@ -20,7 +20,7 @@ import java.util.UUID
 class IdentificationSessionService(
     private val identificationSessionRepository: IdentificationSessionRepository,
     private val applicationProperties: ApplicationProperties,
-    private val soapConfiguration: SoapConfiguration,
+    private val soapHandler: SoapHandler,
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -34,8 +34,6 @@ class IdentificationSessionService(
     private val getEidInformationCallsWithErrorsCounter: Counter =
         Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
-    private var soapHandler: SoapHandler? = null
-
     /**
      * Starting a new identification session
      *
@@ -43,6 +41,7 @@ class IdentificationSessionService(
      * @param requestDataGroups the data being requested for that identification session
      * @return TC token URL for the started session
      */
+    @Transactional
     fun startSession(refreshAddress: String, requestDataGroups: List<String>): String {
         val session = identificationSessionRepository.save(
             IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups),
@@ -55,12 +54,13 @@ class IdentificationSessionService(
         return "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
     }
 
+    @Transactional
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
         val requestData: RequestData = getRequestData(useIdSessionId)
 
         val tcTokenWrapper: TcTokenWrapper?
         try {
-            tcTokenWrapper = getSoapHandler().getTcToken(requestData, "${applicationProperties.baseUrl}$REFRESH_PATH")
+            tcTokenWrapper = soapHandler.getTcToken(requestData, "${applicationProperties.baseUrl}$REFRESH_PATH")
             tcTokenCallsSuccessfulCounter.increment()
         } catch (e: Exception) {
             tcTokenCallsWithErrorsCounter.increment()
@@ -102,12 +102,13 @@ class IdentificationSessionService(
         return requestData
     }
 
+    @Transactional
     fun getIdentity(
         eIdSessionId: UUID,
     ): GetResultResponse {
         val userData: GetResultResponse?
         try {
-            userData = getSoapHandler().getResult(eIdSessionId.toString())
+            userData = soapHandler.getResult(eIdSessionId.toString())
             getEidInformationCallsSuccessfulCounter.increment()
         } catch (e: Exception) {
             getEidInformationCallsWithErrorsCounter.increment()
@@ -121,20 +122,13 @@ class IdentificationSessionService(
                 identificationSessionRepository.deleteByEIdSessionId(eIdSessionId)
                 log.info("Deleted identification session.")
             } catch (e: Exception) {
-                log.error("Failed to delete identification session.")
+                log.error("Failed to delete identification session.", e)
             }
         } else {
             // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
             log.info("The resultMinor for identification session is ${userData.result.resultMinor}.")
         }
         return userData
-    }
-
-    private fun getSoapHandler(): SoapHandler {
-        if (soapHandler == null) {
-            soapHandler = SoapHandler(soapConfiguration)
-        }
-        return soapHandler!!
     }
 
     private fun extractEIdSessionId(tcToken: TCTokenType): UUID {
@@ -149,11 +143,9 @@ class IdentificationSessionService(
         return identificationSessionRepository.findByEIdSessionId(eIdSessionId)
     }
 
-    private fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID): IdentificationSession {
+    private fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID) {
         val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
         session!!.eIdSessionId = eIdSessionId
-        identificationSessionRepository.save(session)
         log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
-        return session
     }
 }
