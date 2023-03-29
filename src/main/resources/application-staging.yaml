@@ -3,8 +3,8 @@ app:
 
 eidservice:
   url: https://eid-epan1-ref.eid-service.de:9443/eID-Server-240
-  tls-cert: classpath:eid-server-certificates/dev-panstar/dev-dtrust-eid-panstar-sig.der
-  sig-cert: classpath:eid-server-certificates/dev-panstar/dev-dtrust-eid-panstar-tls.cer
+  tls-cert: classpath:eid-server-certificates/dev-panstar/dev-dtrust-eid-panstar-tls.der
+  sig-cert: classpath:eid-server-certificates/dev-panstar/dev-dtrust-eid-panstar-sig.cer
 
 sentry:
   environment: staging
