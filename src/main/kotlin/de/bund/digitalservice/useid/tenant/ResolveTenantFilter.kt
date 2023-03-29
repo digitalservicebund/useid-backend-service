@@ -1,5 +1,7 @@
 package de.bund.digitalservice.useid.tenant
 
+import de.bund.digitalservice.useid.tenant.tenants.FallbackTenant
+import de.bund.digitalservice.useid.tenant.tenants.WidgetDefaultTenant
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -13,23 +15,20 @@ class ResolveTenantFilter(
     private val tenantProperties: TenantProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        val fallbackTenant = Tenant().apply {
-            id = "unknown"
-        }
-
-        val tenant =
+        val resolvedTenant =
             if (request.servletPath.equals(REQUEST_PATH_WIDGET)) {
                 val host = request.getParameter("hostname") ?: ""
-                tenantProperties.findByAllowedHost(host) ?: fallbackTenant
+                val tenant = tenantProperties.findByAllowedHost(host) ?: WidgetDefaultTenant()
+                tenant.cspHost = host
+                tenant
             } else if (request.getParameter(PARAM_NAME_TENANT_ID) != null) {
                 val id = request.getParameter(PARAM_NAME_TENANT_ID)
-                tenantProperties.findByTenantId(id) ?: fallbackTenant
+                tenantProperties.findByTenantId(id) ?: FallbackTenant()
             } else {
-                fallbackTenant
+                FallbackTenant()
             }
 
-        // assign entire object, because the WidgetController needs access to multiple properties instead of only the id
-        request.setAttribute(REQUEST_ATTR_TENANT, tenant)
+        request.setAttribute(REQUEST_ATTR_TENANT, resolvedTenant)
         return filterChain.doFilter(request, response)
     }
 }

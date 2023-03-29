@@ -1,6 +1,9 @@
 package de.bund.digitalservice.useid.config
 
+import de.bund.digitalservice.useid.tenant.REQUEST_ATTR_TENANT
 import de.bund.digitalservice.useid.tenant.TenantProperties
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
+import de.bund.digitalservice.useid.tenant.tenants.WidgetDefaultTenant
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -28,17 +31,14 @@ class SecurityHeadersFilter(
 
         if (!pathIsValidWidgetPages) return filterChain.doFilter(request, response)
 
-        val host = request.getParameter("hostname") ?: ""
-        val tenant = tenantProperties.findByAllowedHost(host)
-
-        if (tenant != null) {
-            val nonce = UUID.randomUUID().toString()
-            tenant.cspNonce = nonce
-            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getCSPHeaderValue(host, nonce))
-            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, host)
-            response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
-        } else {
+        val tenant = request.getAttribute(REQUEST_ATTR_TENANT) as Tenant
+        if (tenant is WidgetDefaultTenant) {
             response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getDefaultCSPHeaderValue())
+        } else {
+            tenant.cspNonce = UUID.randomUUID().toString()
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getCSPHeaderValue(tenant.cspHost, tenant.cspNonce))
+            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, tenant.cspHost)
+            response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
         }
 
         return filterChain.doFilter(request, response)

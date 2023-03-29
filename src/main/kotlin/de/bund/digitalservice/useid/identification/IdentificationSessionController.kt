@@ -4,7 +4,7 @@ import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
 import de.bund.digitalservice.useid.metrics.MetricsService
-import de.bund.digitalservice.useid.tenant.Tenant
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
@@ -127,9 +127,9 @@ class IdentificationSessionsController(
         try {
             val eidService = EidService(eidServiceConfig)
             userData = eidService.getEidInformation(eIdSessionId.toString())
-            metricsService.incrementCounter(METRIC_NAME_EID_INFORMATION, "200", tenant.id)
+            metricsService.incrementSuccessCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
         } catch (e: Exception) {
-            metricsService.incrementCounter(METRIC_NAME_EID_INFORMATION, "500", tenant.id)
+            metricsService.incrementErrorCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
             log.error("Failed to fetch identity data: ${e.message}.")
             throw e
         }

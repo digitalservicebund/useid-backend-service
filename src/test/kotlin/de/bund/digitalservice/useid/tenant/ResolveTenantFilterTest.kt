@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.tenant
 
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -23,13 +24,9 @@ internal class ResolveTenantFilterTest {
 
     @BeforeEach
     fun beforeEach() {
-        // same as in test application.yaml
         validTenant = Tenant().apply {
             id = "integration_test_1"
-            apiKey = "valid-api-key"
-            refreshAddress = "valid-refresh-address"
-            dataGroups = listOf("DG1", "DG2")
-            allowedHosts = listOf("i.am.allowed.de", "i.am.allowed.2.de", "i.am.allowed.as.well.de")
+            allowedHosts = listOf("i.am.allowed.de")
         }
     }
 
@@ -49,7 +46,7 @@ internal class ResolveTenantFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        assertEquals("unknown", getTenantIdFromRequest(request))
+        assertEquals("fallbackTenant", getTenantIdFromRequest(request))
         verify {
             filterChain.doFilter(request, response)
         }

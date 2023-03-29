@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.tenant.Tenant
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
 import org.springframework.context.ApplicationEventPublisher

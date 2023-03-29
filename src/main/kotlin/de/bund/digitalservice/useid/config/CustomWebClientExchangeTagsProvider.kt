@@ -2,7 +2,7 @@ package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
 import de.bund.digitalservice.useid.tenant.REQUEST_ATTR_TENANT
-import de.bund.digitalservice.useid.tenant.Tenant
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import io.micrometer.core.instrument.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

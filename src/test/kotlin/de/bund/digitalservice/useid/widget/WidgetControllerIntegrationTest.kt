@@ -1,6 +1,8 @@
 package de.bund.digitalservice.useid.widget
 
-import de.bund.digitalservice.useid.config.ContentSecurityPolicy
+import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
+import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
+import de.bund.digitalservice.useid.config.CSP_SCRIPT_SRC_CONFIG
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -24,7 +26,6 @@ import java.util.UUID
 class WidgetControllerIntegrationTest(
     @Autowired val webTestClient: WebTestClient,
     @Autowired val messageSource: MessageSource,
-    @Autowired val contentSecurityPolicy: ContentSecurityPolicy,
 ) {
 
     @AfterAll
@@ -63,7 +64,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                contentSecurityPolicy.getCSPHeaderValue(allowedHost, nonce),
+                "$CSP_DEFAULT_CONFIG;$CSP_SCRIPT_SRC_CONFIG 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
             )
             .expectHeader()
             .valueEquals(
@@ -75,7 +76,7 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns default Content-Security-Policy when the request URL is invalid`() {
+    fun `widget endpoint returns default Content-Security-Policy when query parameter hostname has forbidden value`() {
         webTestClient
             .get()
             .uri("/widget?hostname=not-allowed.com")
@@ -85,7 +86,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                contentSecurityPolicy.getDefaultCSPHeaderValue(),
+                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -102,7 +103,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                contentSecurityPolicy.getDefaultCSPHeaderValue(),
+                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -119,7 +120,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                contentSecurityPolicy.getDefaultCSPHeaderValue(),
+                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
             )
             .expectHeader()
             .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)

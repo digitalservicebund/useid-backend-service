@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.tenant
 
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
@@ -17,9 +18,7 @@ class TenantProperties {
 
     fun findByAllowedHost(host: String): Tenant? {
         for (tenant in tenants) {
-            for (allowedHost in tenant.allowedHosts) {
-                if (allowedHost == host) return tenant
-            }
+            if (tenant.allowedHosts.contains(host)) return tenant
         }
         return null
     }

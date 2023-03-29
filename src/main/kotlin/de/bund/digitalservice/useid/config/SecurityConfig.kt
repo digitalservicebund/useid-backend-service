@@ -37,16 +37,16 @@ class SecurityConfig(
             .headers()
             .frameOptions().disable()
             .and()
-            .addFilterAfter(
-                SecurityHeadersFilter(tenantProperties, contentSecurityPolicy),
-                FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
-            )
             .addFilterBefore(
                 TenantAuthenticationFilter(authenticationManager),
                 AnonymousAuthenticationFilter::class.java,
             )
             .addFilterAfter(
                 ResolveTenantFilter(tenantProperties),
+                FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
+            )
+            .addFilterAfter(
+                SecurityHeadersFilter(tenantProperties, contentSecurityPolicy),
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

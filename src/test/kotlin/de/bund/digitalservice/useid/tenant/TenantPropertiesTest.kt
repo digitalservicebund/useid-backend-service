@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.tenant
 
+import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag

@@ -50,9 +50,9 @@ class IdentificationSessionService(
         try {
             val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
             tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
-            metricsService.incrementCounter(METRIC_NAME_EID_TCTOKEN, "200", tenantID)
+            metricsService.incrementSuccessCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
         } catch (e: Exception) {
-            metricsService.incrementCounter(METRIC_NAME_EID_TCTOKEN, "500", tenantID)
+            metricsService.incrementErrorCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
             log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
             throw e
         }
