@@ -76,7 +76,7 @@
           src="images/list-2.svg"
           th:alt="#{widget.step-two-alt}"
         />
-        <div class="app-stores__content">
+        <div class="app-stores__content" id="qrcode-viewer">
           <h2 style="margin-top: 0; margin-bottom: 0.5rem">QR-Code scannen</h2>
           <div id="qrcode" style="background: white; padding: 0.4rem"></div>
           <br />
@@ -84,6 +84,10 @@
           <a id="app-simulator-button" target="_blank">
             App Simulator öffnen
           </a>
+        </div>
+        <div class="app-stores__content" style="display: none;" id="start-webauthn-auth">
+          <h2 style="margin-top: 0; margin-bottom: 0.5rem">Vorgang abschließen</h2>
+          <button type="button" id="start-webauthn-auth-button">Hier klicken zum Abschlie&szlig;en</button>
         </div>
       </div>
       <div class="data-privacy-wrapper">
