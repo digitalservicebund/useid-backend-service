@@ -1,7 +1,7 @@
 eidservice:
   url: https://dev.id.governikus-eid.de:8444/eID-Server-240
-  tls-cert: classpath:eid-server-certificates/panstar/dev.id.governikus-eid.de.cer
-  sig-cert: classpath:eid-server-certificates/panstar/dev.id.governikus-eid.de-ws-sig.cer
+  tls-cert: classpath:eid-server-certificates/local-panstar/dev.id.governikus-eid.de.cer
+  sig-cert: classpath:eid-server-certificates/local-panstar/dev.id.governikus-eid.de-ws-sig.cer
   soap-tls-keystore:
     keystore: classpath:soap-certificates/panstar/Governikus_Localhost_Authentication_620935.jks
     type: JKS
