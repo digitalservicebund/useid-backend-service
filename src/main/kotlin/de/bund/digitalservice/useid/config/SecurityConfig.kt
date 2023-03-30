@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor
+import org.springframework.security.web.access.intercept.AuthorizationFilter
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter
 
 @Configuration
@@ -42,11 +42,11 @@ class SecurityConfig(
             )
             .addFilterAfter(
                 ResolveTenantFilter(tenantProperties),
-                FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
+                AuthorizationFilter::class.java, // Last filter in the Spring Security filter chain
             )
             .addFilterAfter(
                 SecurityHeadersFilter(),
-                FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
+                AuthorizationFilter::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
