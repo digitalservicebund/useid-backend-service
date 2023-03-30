@@ -3,10 +3,10 @@ package de.bund.digitalservice.useid.tracking.matomo
 import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.WebRequests
 import mu.KotlinLogging
-import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import org.springframework.web.util.UriComponentsBuilder
 import org.springframework.web.util.UriUtils
 import kotlin.text.Charsets.UTF_8
 
@@ -20,23 +20,38 @@ import kotlin.text.Charsets.UTF_8
  * Documentation about matomo events
  * https://matomo.org/guide/reports/event-tracking/
  */
-@Profile("!local")
 @Service
 class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) {
 
     private val log = KotlinLogging.logger {}
     private val siteId = trackingProperties.matomo.siteId
     private val domain = trackingProperties.matomo.domain
+    private val dimensionIdTenant = trackingProperties.matomo.dimensionIdTenant
 
     fun constructEventURL(e: MatomoEvent): String {
         val session = e.sessionId?.let { "&uid=$it" } ?: ""
-        val userAgent = e.userAgent?.let { "&ua=${UriUtils.encode(e.userAgent, UTF_8)}" } ?: ""
+        val userAgent = e.userAgent?.let { "&ua=${encode(e.userAgent)}" } ?: ""
         // custom dimension for tenantId -> https://matomo.org/faq/reporting-tools/create-track-and-manage-custom-dimensions/
-        val tenantId = e.tenantId?.let { "&dimension3=${UriUtils.encode(e.tenantId, UTF_8)}" } ?: ""
-        val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}$session$userAgent$tenantId"
-        log.debug { url }
-        return url
+        val tenantId = e.tenantId?.let { "&dimension$dimensionIdTenant=${encode(e.tenantId)}" } ?: ""
+
+        return UriComponentsBuilder
+            .newInstance()
+            .scheme("https")
+            .host(domain)
+            .path("?idsite=$siteId")
+            .path("&rec=1")
+            .path("&ca=1")
+            .path("&e_c=${e.category}")
+            .path("&e_a=${e.action}")
+            .path("&e_n=${e.name}")
+            .path(session)
+            .path(userAgent)
+            .path(tenantId)
+            .build()
+            .toUriString()
     }
+
+    private fun encode(input: String): String = UriUtils.encode(input, UTF_8)
 
     @EventListener
     @Async

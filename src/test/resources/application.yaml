@@ -58,7 +58,8 @@ wellknown:
 tracking:
   matomo:
     site-id: "1"
-    domain: "https://example.com"
+    domain: "example.com"
+    dimensionIdTenant: "3"
 
 features:
   desktop-solution-enabled: true
