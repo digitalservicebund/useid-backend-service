@@ -7,13 +7,13 @@ internal const val CSP_SCRIPT_SRC_CONFIG = "script-src 'self'"
 internal const val CSP_FRAME_ANCESTORS = "frame-ancestors 'self'"
 
 @Component
-class ContentSecurityPolicy {
+abstract class ContentSecurityPolicyHeaders {
 
-    fun getCSPHeaderValue(host: String, nonce: String): String {
-        return "$CSP_DEFAULT_CONFIG;$CSP_SCRIPT_SRC_CONFIG 'nonce-$nonce';$CSP_FRAME_ANCESTORS $host;"
-    }
+    companion object {
 
-    fun getDefaultCSPHeaderValue(): String {
-        return "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;"
+        const val default = "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;"
+        fun widget(host: String, nonce: String): String {
+            return "$CSP_DEFAULT_CONFIG;$CSP_SCRIPT_SRC_CONFIG 'nonce-$nonce';$CSP_FRAME_ANCESTORS $host;"
+        }
     }
 }

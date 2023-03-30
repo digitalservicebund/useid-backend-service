@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 @EnableWebSecurity
 class SecurityConfig(
     private val authenticationManager: AuthenticationManager,
-    private val contentSecurityPolicy: ContentSecurityPolicy,
     private val tenantProperties: TenantProperties,
 ) {
     @Bean
@@ -46,7 +45,7 @@ class SecurityConfig(
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .addFilterAfter(
-                SecurityHeadersFilter(tenantProperties, contentSecurityPolicy),
+                SecurityHeadersFilter(),
                 FilterSecurityInterceptor::class.java, // Last filter in the Spring Security filter chain
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

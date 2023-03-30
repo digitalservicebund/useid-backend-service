@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.tenant.REQUEST_ATTR_TENANT
-import de.bund.digitalservice.useid.tenant.TenantProperties
 import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import de.bund.digitalservice.useid.tenant.tenants.WidgetDefaultTenant
 import de.bund.digitalservice.useid.widget.WIDGET_PAGE
@@ -16,10 +15,7 @@ import org.springframework.web.util.pattern.PathPatternParser
 import java.util.UUID
 
 internal const val HTTP_HEADER_CONTENT_SECURITY_POLICY = "Content-Security-Policy"
-class SecurityHeadersFilter(
-    private val tenantProperties: TenantProperties,
-    private val contentSecurityPolicy: ContentSecurityPolicy,
-) : OncePerRequestFilter() {
+class SecurityHeadersFilter : OncePerRequestFilter() {
 
     private val widgetPagePath: PathPattern = PathPatternParser().parse("/$WIDGET_PAGE")
     private val listOfPages = listOf(widgetPagePath)
@@ -32,11 +28,11 @@ class SecurityHeadersFilter(
         if (!pathIsValidWidgetPages) return filterChain.doFilter(request, response)
 
         val tenant = request.getAttribute(REQUEST_ATTR_TENANT) as Tenant
+        tenant.cspNonce = UUID.randomUUID().toString()
         if (tenant is WidgetDefaultTenant) {
-            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getDefaultCSPHeaderValue())
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, ContentSecurityPolicyHeaders.default)
         } else {
-            tenant.cspNonce = UUID.randomUUID().toString()
-            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, contentSecurityPolicy.getCSPHeaderValue(tenant.cspHost, tenant.cspNonce))
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, ContentSecurityPolicyHeaders.widget(tenant.cspHost, tenant.cspNonce))
             response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, tenant.cspHost)
             response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
         }

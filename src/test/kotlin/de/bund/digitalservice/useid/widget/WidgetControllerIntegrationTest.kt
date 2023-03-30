@@ -33,11 +33,14 @@ class WidgetControllerIntegrationTest(
         unmockkStatic(UUID::class)
     }
 
+    val allowedHost = "i.am.allowed.1"
+    val forbiddenHost = "i.am.forbidden"
+
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
         webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .exchange()
             .expectStatus()
             .isOk
@@ -48,7 +51,6 @@ class WidgetControllerIntegrationTest(
     @Test
     fun `widget endpoint returns Content-Security-Policy with allowed host and nonce when the request contains a valid hostname parameter`() {
         // GIVEN
-        val allowedHost = "i.am.allowed.1"
         val nonce = UUID.randomUUID().toString()
         mockkStatic(UUID::class)
         every { UUID.randomUUID().toString() } returns nonce
@@ -79,7 +81,7 @@ class WidgetControllerIntegrationTest(
     fun `widget endpoint returns default Content-Security-Policy when query parameter hostname has forbidden value`() {
         webTestClient
             .get()
-            .uri("/widget?hostname=not-allowed.com")
+            .uri("/widget?hostname=$forbiddenHost")
             .exchange()
             .expectStatus()
             .isOk
@@ -232,13 +234,13 @@ class WidgetControllerIntegrationTest(
     ): Pair<ResponseSpec, ResponseSpec> {
         val iOSResponse: ResponseSpec = webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .header("User-Agent", androidUserAgent)
             .exchange()
 
         val androidResponse: ResponseSpec = webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .header("User-Agent", iosUserAgent)
             .exchange()
 

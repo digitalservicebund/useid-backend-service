@@ -6,6 +6,6 @@ open class Tenant {
     lateinit var refreshAddress: String
     var dataGroups: List<String> = emptyList()
     var allowedHosts: List<String> = emptyList()
-    var cspNonce: String = ""
-    var cspHost: String = ""
+    lateinit var cspNonce: String
+    lateinit var cspHost: String
 }
