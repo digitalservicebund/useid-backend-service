@@ -9,6 +9,11 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.actuate.metrics.web.servlet.WebMvcTagsContributor
 import org.springframework.stereotype.Component
 
+/*
+    This class improves the automated metrics of actuator by appending a tenantID to the metrics, which are exposed on our health & metrics endpoints.
+    code example for appending a custom tag: https://stackoverflow.com/questions/51552889/how-to-define-additional-or-custom-tags-for-default-spring-boot-2-metrics/61679022#61679022
+    documentation about actuator: https://www.baeldung.com/spring-boot-actuators
+ */
 @Component
 class CustomWebClientExchangeTagsProvider : WebMvcTagsContributor {
 
