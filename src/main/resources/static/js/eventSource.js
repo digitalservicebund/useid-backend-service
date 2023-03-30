@@ -22,11 +22,13 @@ function subscribe(widgetSessionId) {
       "Received authenticate event for " + widgetSessionId + ": " + event.data
     );
 
-    document.getElementById('start-webauthn-auth-button').addEventListener('click', () => {
-      authenticateWithWebAuthnCredentials(event);
-    });
-    document.getElementById('start-webauthn-auth').style.display = 'block';
-    document.getElementById('qrcode-viewer').style.display = 'none';
+    document
+      .getElementById("start-webauthn-auth-button")
+      .addEventListener("click", () => {
+        authenticateWithWebAuthnCredentials(event);
+      });
+    document.getElementById("start-webauthn-auth").style.display = "block";
+    document.getElementById("qrcode-viewer").style.display = "none";
   });
 
   eventSource.onerror = async (err) => {
