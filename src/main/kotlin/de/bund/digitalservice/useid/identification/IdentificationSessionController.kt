@@ -120,8 +120,8 @@ class IdentificationSessionsController(
         val userData: GetResultResponseType?
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        if (tenant.refreshAddress != identificationSession.refreshAddress) {
-            log.error("API key differs from the API key used to start the identification session.")
+        if (tenant.id != identificationSession.tenantId) {
+            log.error("Tenant is not the tenant used to start the identification session.")
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         try {
