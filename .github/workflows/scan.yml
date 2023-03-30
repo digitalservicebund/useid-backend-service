@@ -73,8 +73,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Attest vulnerability scan
         run: cosign attest --replace --predicate vuln.json --type vuln ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
-        env:
-          COSIGN_EXPERIMENTAL: "true"
+
       - name: Send status to Slack
         # Third-party action, pin to commit SHA!
         # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions

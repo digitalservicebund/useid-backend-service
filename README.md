@@ -178,7 +178,7 @@ are [signed with keyless signatures](https://github.com/sigstore/cosign/blob/mai
 **To verify an image**:
 
 ```bash
-COSIGN_EXPERIMENTAL=1 cosign verify "ghcr.io/digitalservicebund/useid-backend-service:$(git log -1 origin/main --format='%H')"
+cosign verify "ghcr.io/digitalservicebund/useid-backend-service:$(git log -1 origin/main --format='%H')"
 ```
 
 If you need to push a new container image to the registry manually there are two ways to do this:
