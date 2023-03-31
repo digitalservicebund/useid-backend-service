@@ -38,24 +38,24 @@ class MatomoTrackingServiceTest {
     @Test
     fun `constructEventURL should return correct URL with encoded query parameters`() {
         val e = MatomoEvent(this, "category", "action", "name", "sessionId", userAgent, "tenantFoo")
-        val url = matomoTrackingService.constructEventURL(e)
+        val url = matomoTrackingService.constructEventUrl(e)
 
         val siteId = trackingProperties.matomo.siteId
         val domain = trackingProperties.matomo.domain
 
-        val expectedURL = "https://$domain/?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension3=tenantFoo"
+        val expectedURL = "https://$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension3=tenantFoo"
         assertEquals(expectedURL, url)
     }
 
     @Test
     fun `constructEventURL should return correct URL without sessionId and useragent`() {
         val e = MatomoEvent(this, "category", "action", "name", null, null, null)
-        val url = matomoTrackingService.constructEventURL(e)
+        val url = matomoTrackingService.constructEventUrl(e)
 
         val siteId = trackingProperties.matomo.siteId
         val domain = trackingProperties.matomo.domain
 
-        val expectedURL = "https://$domain/?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}"
+        val expectedURL = "https://$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}"
         assertEquals(expectedURL, url)
     }
 
