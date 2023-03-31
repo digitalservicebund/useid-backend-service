@@ -62,7 +62,7 @@ jobs:
       - name: Install cosign
         # Third-party action, pin to commit SHA!
         # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
-        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88
+        uses: sigstore/cosign-installer@c3667d99424e7e6047999fb6246c0da843953c65
       - name: Log into container registry
         # Third-party action, pin to commit SHA!
         # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
@@ -72,9 +72,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Attest vulnerability scan
-        run: cosign attest --replace --predicate vuln.json --type vuln ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }}
-        env:
-          COSIGN_EXPERIMENTAL: "true"
+        run: cosign attest --replace --predicate vuln.json --type vuln ${{ env.CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ env.CONTAINER_IMAGE_VERSION }} --yes
+
       - name: Send status to Slack
         # Third-party action, pin to commit SHA!
         # See https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
