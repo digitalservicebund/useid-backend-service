@@ -18,9 +18,9 @@ class ResolveTenantFilter(
         val resolvedTenant =
             if (request.servletPath.equals(REQUEST_PATH_WIDGET)) {
                 val host = request.getParameter("hostname") ?: ""
-                val tenant = tenantProperties.findByAllowedHost(host) ?: WidgetDefaultTenant()
-                tenant.cspHost = host
-                tenant
+                (tenantProperties.findByAllowedHost(host) ?: WidgetDefaultTenant()).apply {
+                    cspHost = host
+                }
             } else if (request.getParameter(PARAM_NAME_TENANT_ID) != null) {
                 val id = request.getParameter(PARAM_NAME_TENANT_ID)
                 tenantProperties.findByTenantId(id) ?: FallbackTenant()

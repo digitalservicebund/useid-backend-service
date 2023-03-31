@@ -36,7 +36,7 @@ class MatomoTrackingServiceTest {
     val encodedUserAgent = "Mozilla%2F5.0%20%28Macintosh%3B%20Intel%20Mac%20OS%20X%2010_15_7%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F109.0.0.0%20Safari%2F537.36"
 
     @Test
-    fun `constructEventURL should return correct URL with encoded query parameters`() {
+    fun `constructEventUrl should return correct URL with encoded query parameters`() {
         val e = MatomoEvent(this, "category", "action", "name", "sessionId", userAgent, "tenantFoo")
         val url = matomoTrackingService.constructEventUrl(e)
 
@@ -48,7 +48,7 @@ class MatomoTrackingServiceTest {
     }
 
     @Test
-    fun `constructEventURL should return correct URL without sessionId and useragent`() {
+    fun `constructEventUrl should return correct URL when passing null for all optional parameters`() {
         val e = MatomoEvent(this, "category", "action", "name", null, null, null)
         val url = matomoTrackingService.constructEventUrl(e)
 
