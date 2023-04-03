@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.tenant.tenants
+package de.bund.digitalservice.useid.tenant
 
 open class Tenant {
     lateinit var id: String

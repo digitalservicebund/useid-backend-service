@@ -2,7 +2,6 @@ package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
 import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
-import de.bund.digitalservice.useid.config.CSP_SCRIPT_SRC_CONFIG
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -33,8 +32,29 @@ class WidgetControllerIntegrationTest(
         unmockkStatic(UUID::class)
     }
 
+    val validTenantId = "integration_test_1"
+    val invalidTenantId = "anInvalidTenantId"
+
     val allowedHost = "i.am.allowed.1"
     val forbiddenHost = "i.am.forbidden"
+
+    @Test
+    fun `widget endpoint WIDGET_START_IDENT_BTN_CLICKED should return 200 when query parameter tenant_id has correct value`() {
+        webTestClient
+            .post()
+            .uri("/$WIDGET_START_IDENT_BTN_CLICKED?tenant_id=$validTenantId")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun `widget endpoint WIDGET_START_IDENT_BTN_CLICKED should return 200 when query parameter tenant_id is missing`() {
+        webTestClient
+            .post()
+            .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
+            .exchange()
+            .expectStatus().isOk
+    }
 
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
@@ -66,7 +86,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_SCRIPT_SRC_CONFIG 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
+                "$CSP_DEFAULT_CONFIG;script-src 'self' 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
             )
             .expectHeader()
             .valueEquals(
@@ -78,54 +98,23 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns default Content-Security-Policy when query parameter hostname has forbidden value`() {
-        webTestClient
-            .get()
-            .uri("/widget?hostname=$forbiddenHost")
-            .exchange()
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .valueEquals(
-                "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
-            )
-            .expectHeader()
-            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
-    }
-
-    @Test
-    fun `widget endpoint returns default Content-Security-Policy when query parameter hostname has empty value`() {
-        webTestClient
-            .get()
-            .uri("/widget?hostname=")
-            .exchange()
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .valueEquals(
-                "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
-            )
-            .expectHeader()
-            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
-    }
-
-    @Test
-    fun `widget endpoint returns default Content-Security-Policy when query parameter is not set with error`() {
+    fun `widget endpoint returns 400 when query parameter is not set`() {
         webTestClient
             .get()
             .uri("/widget")
             .exchange()
             .expectStatus()
             .isBadRequest
-            .expectHeader()
-            .valueEquals(
-                "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;$CSP_FRAME_ANCESTORS;",
-            )
-            .expectHeader()
-            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
+    }
+
+    @Test
+    fun `widget endpoint returns 401 when hostname parameter contains forbidden value`() {
+        webTestClient
+            .get()
+            .uri("/widget?hostname=$forbiddenHost")
+            .exchange()
+            .expectStatus()
+            .isUnauthorized
     }
 
     @Test
@@ -217,15 +206,6 @@ class WidgetControllerIntegrationTest(
         val hasCorrectUrl = containsString("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
 
         assertThat(eidClientButton, hasCorrectUrl)
-    }
-
-    @Test
-    fun `widget endpoint APP_OPENED should return 200`() {
-        webTestClient
-            .post()
-            .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
-            .exchange()
-            .expectStatus().isOk
     }
 
     private fun fetchWidgetPageWithMobileDevices(

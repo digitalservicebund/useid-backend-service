@@ -1,9 +1,10 @@
 package de.bund.digitalservice.useid.metrics
 
-import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import org.springframework.stereotype.Service
+
+internal const val METRICS_TAG_NAME_TENANT_ID = "tenant_id"
 
 @Service
 class MetricsService {
@@ -24,7 +25,7 @@ class MetricsService {
             method,
             "status",
             status,
-            PARAM_NAME_TENANT_ID,
+            METRICS_TAG_NAME_TENANT_ID,
             tenantId,
         )
     }

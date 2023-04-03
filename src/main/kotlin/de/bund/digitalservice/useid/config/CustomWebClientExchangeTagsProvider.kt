@@ -1,8 +1,8 @@
 package de.bund.digitalservice.useid.config
 
-import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
+import de.bund.digitalservice.useid.metrics.METRICS_TAG_NAME_TENANT_ID
 import de.bund.digitalservice.useid.tenant.REQUEST_ATTR_TENANT
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
+import de.bund.digitalservice.useid.tenant.Tenant
 import io.micrometer.core.instrument.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -27,7 +27,7 @@ class CustomWebClientExchangeTagsProvider : WebMvcTagsContributor {
         request?.let { r ->
             val tenant: Tenant? = r.getAttribute(REQUEST_ATTR_TENANT) as Tenant?
             tenant?.let {
-                val tag = Tag.of(PARAM_NAME_TENANT_ID, tenant.id)
+                val tag = Tag.of(METRICS_TAG_NAME_TENANT_ID, tenant.id)
                 tags.add(tag)
             }
         }

@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
+import de.bund.digitalservice.useid.tenant.Tenant
 import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
 import org.springframework.context.ApplicationEventPublisher
@@ -47,7 +47,7 @@ class WidgetController(
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleStartIdentButtonClicked(
         @RequestParam(required = false, name = "hash") sessionHash: String?,
-        @RequestAttribute tenant: Tenant,
+        @RequestAttribute(required = false) tenant: Tenant?,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
     ): ResponseEntity<String> {
         publishMatomoEvent(
@@ -55,7 +55,7 @@ class WidgetController(
             widgetTracking.names.startIdent,
             sessionHash,
             userAgent,
-            tenant.id,
+            tenant?.id,
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
@@ -98,7 +98,7 @@ class WidgetController(
         model: Model,
         @RequestParam tcTokenURL: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?,
-        @RequestAttribute tenant: Tenant,
+        @RequestAttribute(required = false) tenant: Tenant?,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
     ): ModelAndView {
         publishMatomoEvent(
@@ -106,13 +106,13 @@ class WidgetController(
             widgetTracking.names.fallback,
             sessionHash,
             userAgent,
-            tenant.id,
+            tenant?.id,
         )
         val widgetViewFallbackConfig = mapOf(
             "eidClientURL" to "$eIdClientBaseUrl?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
             "isFallback" to true,
             "additionalClass" to "fallback",
-            "tenantId" to tenant.id,
+            "tenantId" to tenant?.id,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -125,7 +125,7 @@ class WidgetController(
         name: String,
         sessionId: String?,
         userAgent: String?,
-        tenantId: String,
+        tenantId: String?,
     ) {
         val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent, tenantId)
         applicationEventPublisher.publishEvent(matomoEvent)

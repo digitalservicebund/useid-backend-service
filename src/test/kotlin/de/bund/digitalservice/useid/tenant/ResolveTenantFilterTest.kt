@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -36,7 +35,7 @@ internal class ResolveTenantFilterTest {
     }
 
     @Test
-    fun `should assign the tenant with id unknown for all unknown calls`() {
+    fun `should not assign any tenant for all unknown calls`() {
         // Given
         val request = MockHttpServletRequest()
         val response: HttpServletResponse = mockk(relaxed = true)
@@ -46,14 +45,14 @@ internal class ResolveTenantFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        assertEquals("fallbackTenant", getTenantIdFromRequest(request))
+        assertEquals(null, request.getAttribute(REQUEST_ATTR_TENANT))
         verify {
             filterChain.doFilter(request, response)
         }
     }
 
     @Test
-    fun `should assign the tenant based on the hostname for calls to the widget`() {
+    fun `should assign the correct tenant based on the corresponding hostname for calls to the widget`() {
         // Given
         every { tenantProperties.findByAllowedHost(any()) } returns validTenant
         val request = MockHttpServletRequest()
@@ -74,7 +73,7 @@ internal class ResolveTenantFilterTest {
     }
 
     @Test
-    fun `should assign the tenant based on a valid tenant id query param`() {
+    fun `should assign the correct tenant based on the corresponding tenant id query param`() {
         // Given
         every { tenantProperties.findByTenantId(any()) } returns validTenant
         val request = MockHttpServletRequest()
@@ -93,6 +92,25 @@ internal class ResolveTenantFilterTest {
         }
     }
 
-    private fun getTenantIdFromRequest(request: MockHttpServletRequest) =
-        (request.getAttribute(REQUEST_ATTR_TENANT) as Tenant).id
+    @Test
+    fun `should not assign any tenant when findByTenantId returns null`() {
+        // Given
+        every { tenantProperties.findByTenantId(any()) } returns null
+        val request = MockHttpServletRequest()
+        request.addParameter(PARAM_NAME_TENANT_ID, "i-am-not-a-valid-tenant-id")
+        val response: HttpServletResponse = mockk(relaxed = true)
+        val filterChain: FilterChain = mockk(relaxed = true)
+
+        // When
+        filter.doFilter(request, response, filterChain)
+
+        // Then
+        assertEquals(null, request.getAttribute(REQUEST_ATTR_TENANT))
+        verify {
+            filterChain.doFilter(request, response)
+            tenantProperties.findByTenantId(any())
+        }
+    }
+
+    private fun getTenantIdFromRequest(request: MockHttpServletRequest) = (request.getAttribute(REQUEST_ATTR_TENANT) as Tenant).id
 }

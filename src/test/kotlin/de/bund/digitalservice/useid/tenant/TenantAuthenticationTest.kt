@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test

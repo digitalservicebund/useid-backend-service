@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated

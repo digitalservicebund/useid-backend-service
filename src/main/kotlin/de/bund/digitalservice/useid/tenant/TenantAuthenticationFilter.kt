@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

@@ -3,6 +3,7 @@ package de.bund.digitalservice.useid.tracking.matomo
 import de.bund.digitalservice.useid.tracking.TrackingProperties
 import de.bund.digitalservice.useid.tracking.WebRequests
 import mu.KotlinLogging
+import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
@@ -22,6 +23,7 @@ import kotlin.text.Charsets.UTF_8
  * https://matomo.org/guide/reports/event-tracking/
  */
 @Service
+@Profile("!test") // tests do not need to fire tracking events
 class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) {
 
     private val log = KotlinLogging.logger {}

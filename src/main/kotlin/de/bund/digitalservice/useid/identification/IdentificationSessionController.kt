@@ -4,7 +4,7 @@ import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
 import de.bund.digitalservice.useid.metrics.MetricsService
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
+import de.bund.digitalservice.useid.tenant.Tenant
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation

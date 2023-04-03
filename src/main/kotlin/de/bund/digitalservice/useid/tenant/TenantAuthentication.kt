@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

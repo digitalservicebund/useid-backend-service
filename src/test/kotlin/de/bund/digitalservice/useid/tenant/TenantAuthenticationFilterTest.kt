@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.tenant
 
-import de.bund.digitalservice.useid.tenant.tenants.Tenant
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
