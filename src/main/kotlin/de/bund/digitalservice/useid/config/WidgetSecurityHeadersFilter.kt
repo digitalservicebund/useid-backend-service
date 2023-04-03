@@ -15,7 +15,7 @@ import org.springframework.web.util.pattern.PathPatternParser
 import java.util.UUID
 
 internal const val HTTP_HEADER_CONTENT_SECURITY_POLICY = "Content-Security-Policy"
-class SecurityHeadersFilter : OncePerRequestFilter() {
+class WidgetSecurityHeadersFilter : OncePerRequestFilter() {
 
     private val widgetPagePath: PathPattern = PathPatternParser().parse("/$WIDGET_PAGE")
     private val listOfPages = listOf(widgetPagePath)
@@ -30,9 +30,9 @@ class SecurityHeadersFilter : OncePerRequestFilter() {
         val tenant = request.getAttribute(REQUEST_ATTR_TENANT) as Tenant
         tenant.cspNonce = UUID.randomUUID().toString()
         if (tenant is WidgetDefaultTenant) {
-            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, ContentSecurityPolicyHeaders.default)
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, WidgetContentSecurityPolicyHeaders.default)
         } else {
-            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, ContentSecurityPolicyHeaders.widget(tenant.cspHost, tenant.cspNonce))
+            response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, WidgetContentSecurityPolicyHeaders.widget(tenant.cspHost, tenant.cspNonce))
             response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, tenant.cspHost)
             response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
         }

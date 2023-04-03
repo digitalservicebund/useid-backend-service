@@ -7,7 +7,7 @@ internal const val CSP_SCRIPT_SRC_CONFIG = "script-src 'self'"
 internal const val CSP_FRAME_ANCESTORS = "frame-ancestors 'self'"
 
 @Component
-abstract class ContentSecurityPolicyHeaders {
+abstract class WidgetContentSecurityPolicyHeaders {
 
     companion object {
 

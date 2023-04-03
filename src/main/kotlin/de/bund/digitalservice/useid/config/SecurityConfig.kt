@@ -45,7 +45,7 @@ class SecurityConfig(
                 AuthorizationFilter::class.java, // Last filter in the Spring Security filter chain
             )
             .addFilterAfter(
-                SecurityHeadersFilter(),
+                WidgetSecurityHeadersFilter(),
                 ResolveTenantFilter::class.java,
             )
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

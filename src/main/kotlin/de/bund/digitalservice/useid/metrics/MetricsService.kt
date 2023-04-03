@@ -17,6 +17,7 @@ class MetricsService {
     }
 
     private fun createCounter(method: String, status: String, tenantId: String): Counter {
+        // TODO: save counters with the same "method, status, tenantId" and reuse them instead of creating a new one
         return Metrics.counter(
             METRIC_NAME_EID_SERVICE_REQUESTS,
             "method",

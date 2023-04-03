@@ -37,19 +37,19 @@ class MatomoTrackingService(trackingProperties: TrackingProperties, private val 
             .queryParam("idsite", siteId)
             .queryParam("rec", 1)
             .queryParam("ca", 1)
-            .queryParamIfPresent("e_c", enc(e.category))
-            .queryParamIfPresent("e_a", enc(e.action))
-            .queryParamIfPresent("e_n", enc(e.name))
-            .queryParamIfPresent("uid", enc(e.sessionId))
-            .queryParamIfPresent("ua", enc(e.userAgent))
+            .queryParamIfPresent("e_c", uriEncode(e.category))
+            .queryParamIfPresent("e_a", uriEncode(e.action))
+            .queryParamIfPresent("e_n", uriEncode(e.name))
+            .queryParamIfPresent("uid", uriEncode(e.sessionId))
+            .queryParamIfPresent("ua", uriEncode(e.userAgent))
             // custom dimension for tenantId -> https://matomo.org/faq/reporting-tools/create-track-and-manage-custom-dimensions/
-            .queryParamIfPresent("dimension$dimensionIdTenant", enc(e.tenantId))
+            .queryParamIfPresent("dimension$dimensionIdTenant", uriEncode(e.tenantId))
             .build()
             .toString()
     }
 
     // UriComponentBuilder does not support query param encoding
-    private fun enc(input: String?): Optional<String> {
+    private fun uriEncode(input: String?): Optional<String> {
         if (input == null) return Optional.empty()
         return Optional.of<String>(UriUtils.encode(input, UTF_8))
     }

@@ -26,6 +26,13 @@ internal const val INCOMPATIBLE_PAGE = "incompatible"
 internal const val FALLBACK_PAGE = "eID-Client"
 internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 
+/*
+    Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
+    Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
+    Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
+ */
+private const val eIdClientBaseUrl = "bundesident://127.0.0.1:24727/eID-Client"
+
 @Controller
 @Timed
 class WidgetController(
@@ -101,13 +108,8 @@ class WidgetController(
             userAgent,
             tenant.id,
         )
-        /*
-            Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
-            Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
-            Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
-         */
         val widgetViewFallbackConfig = mapOf(
-            "eidClientURL" to "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
+            "eidClientURL" to "$eIdClientBaseUrl?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
             "isFallback" to true,
             "additionalClass" to "fallback",
             "tenantId" to tenant.id,
