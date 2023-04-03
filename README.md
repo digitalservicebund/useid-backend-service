@@ -42,6 +42,8 @@ docker-compose up -d
 
 **To start the application locally run:**
 
+You need to set the environment variable TRACKING_MATOMO_DOMAIN
+
 ```bash
 ./gradlew bootRun --args='--spring.profiles.active=local'
 ```
