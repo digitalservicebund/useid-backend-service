@@ -121,7 +121,7 @@ class IdentificationSessionsController(
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         if (tenant.id != identificationSession.tenantId) {
-            log.error("Tenant is not the tenant used to start the identification session.")
+            log.error("Tenant is not the tenant used to start the identification session")
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         try {
@@ -130,7 +130,7 @@ class IdentificationSessionsController(
             metricsService.incrementSuccessCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
         } catch (e: Exception) {
             metricsService.incrementErrorCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
-            log.error("Failed to fetch identity data: ${e.message}.")
+            log.error("Failed to fetch identity data: ${e.message}")
             throw e
         }
 
