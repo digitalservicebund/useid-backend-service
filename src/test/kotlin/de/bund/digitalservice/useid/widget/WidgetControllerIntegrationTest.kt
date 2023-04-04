@@ -98,7 +98,7 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns 400 when query parameter is not set`() {
+    fun `widget endpoint returns 400 when query parameter hostname is not set`() {
         webTestClient
             .get()
             .uri("/widget")
@@ -108,7 +108,7 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns 401 when hostname parameter contains forbidden value`() {
+    fun `widget endpoint returns 401 when query parameter hostname contains forbidden value`() {
         webTestClient
             .get()
             .uri("/widget?hostname=$forbiddenHost")

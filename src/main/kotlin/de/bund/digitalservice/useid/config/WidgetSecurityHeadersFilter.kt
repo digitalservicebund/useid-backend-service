@@ -32,8 +32,6 @@ class WidgetSecurityHeadersFilter : OncePerRequestFilter() {
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, tenant.cspHost)
         response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN)
 
-        // response.setHeader(HTTP_HEADER_CONTENT_SECURITY_POLICY, WidgetContentSecurityPolicyHeaders.default)
-
         return filterChain.doFilter(request, response)
     }
 }
