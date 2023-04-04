@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import org.springframework.web.util.UriComponentsBuilder
 import org.springframework.web.util.UriUtils
+import java.util.Optional
 import kotlin.text.Charsets.UTF_8
 
 /**
@@ -20,26 +22,44 @@ import kotlin.text.Charsets.UTF_8
  * Documentation about matomo events
  * https://matomo.org/guide/reports/event-tracking/
  */
-@Profile("!local")
 @Service
+@Profile("!test") // (integration) tests do not need to fire tracking events
 class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) {
 
     private val log = KotlinLogging.logger {}
     private val siteId = trackingProperties.matomo.siteId
     private val domain = trackingProperties.matomo.domain
+    private val dimensionIdTenant = trackingProperties.matomo.dimensionIdTenant
 
-    fun constructEventURL(e: MatomoEvent): String {
-        val session = e.sessionId?.let { "&uid=$it" } ?: ""
-        val userAgent = e.userAgent?.let { "&ua=${UriUtils.encode(e.userAgent, UTF_8)}" } ?: ""
-        val url = "$domain?idsite=$siteId&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}$session$userAgent"
-        log.debug { url }
-        return url
+    fun constructEventUrl(e: MatomoEvent): String {
+        return UriComponentsBuilder
+            .newInstance()
+            .scheme("https")
+            .host(domain)
+            .queryParam("idsite", siteId)
+            .queryParam("rec", 1)
+            .queryParam("ca", 1)
+            .queryParamIfPresent("e_c", uriEncode(e.category))
+            .queryParamIfPresent("e_a", uriEncode(e.action))
+            .queryParamIfPresent("e_n", uriEncode(e.name))
+            .queryParamIfPresent("uid", uriEncode(e.sessionId))
+            .queryParamIfPresent("ua", uriEncode(e.userAgent))
+            // custom dimension for tenantId -> https://matomo.org/faq/reporting-tools/create-track-and-manage-custom-dimensions/
+            .queryParamIfPresent("dimension$dimensionIdTenant", uriEncode(e.tenantId))
+            .build()
+            .toString()
+    }
+
+    // UriComponentBuilder does not support query param encoding
+    private fun uriEncode(input: String?): Optional<String> {
+        if (input == null) return Optional.empty()
+        return Optional.of<String>(UriUtils.encode(input, UTF_8))
     }
 
     @EventListener
     @Async
     fun sendEvent(e: MatomoEvent) {
-        val eventUrl = constructEventURL(e)
+        val eventUrl = constructEventUrl(e)
 
         if (webRequests.POST(eventUrl)) {
             log.info("Tracking ok: $eventUrl")

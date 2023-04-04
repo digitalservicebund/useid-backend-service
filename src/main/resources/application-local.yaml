@@ -1,14 +1,18 @@
 app:
   base-url: http://localhost:8080
 
-api:
-  apiKeys:
-    - keyvalue: foobar
+tenant:
+  tenants:
+    - id: tenantFoo
+      apiKey: foobar
       refreshAddress: http://localhost:8081/success
-      dataGroups: [DG4,DG5,DG17]
-    - keyvalue: foobar2
-      refreshAddress: https://foobar2.com
-      dataGroups: [DG1,DG2, DG3]
+      dataGroups:
+        - DG4
+        - DG5
+        - DG17
+      allowedHosts:
+        - "localhost:8081"
+        - "foo.2.local"
 
 eidservice:
   wsdl-url: https://test.governikus-eid.de/eID-Server-230/eID?wsdl
@@ -34,11 +38,10 @@ spring:
     username: root
     password: secret
 
-csp:
-  allowed-hosts:
-    - foo.bar
-    - bar.foo
-    - localhost:8081
+tracking:
+  matomo:
+    siteId: "5"
+    dimensionIdTenant: "3"
 
 features:
   desktop-solution-enabled: true

@@ -4,7 +4,7 @@ import de.bund.bsi.eid230.AttributeRequestType
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.bsi.eid230.OperationsRequestorType
 import de.bund.bsi.eid230.UseIDRequestType
-import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
+import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.eidservices.EidService230
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType

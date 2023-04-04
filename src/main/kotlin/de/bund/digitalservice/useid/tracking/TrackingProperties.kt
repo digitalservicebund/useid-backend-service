@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 
-@Profile("!local")
 @Component
 @ConfigurationProperties(prefix = "tracking")
 @Validated
+@Profile("!test") // (integration) tests do not need to fire tracking events
 class TrackingProperties {
 
     @Valid
@@ -22,5 +22,8 @@ class TrackingProperties {
 
         @NotBlank
         lateinit var domain: String
+
+        @NotBlank
+        lateinit var dimensionIdTenant: String
     }
 }

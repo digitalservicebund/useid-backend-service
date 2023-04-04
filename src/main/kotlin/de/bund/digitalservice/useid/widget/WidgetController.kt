@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.tenant.Tenant
 import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
 import org.springframework.context.ApplicationEventPublisher
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
@@ -24,10 +26,17 @@ internal const val INCOMPATIBLE_PAGE = "incompatible"
 internal const val FALLBACK_PAGE = "eID-Client"
 internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 
+/*
+    Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
+    Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
+    Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
+ */
+private const val eIdClientBaseUrl = "bundesident://127.0.0.1:24727/eID-Client"
+
 @Controller
 @Timed
 class WidgetController(
-    private val applicationProperties: ApplicationProperties,
+    applicationProperties: ApplicationProperties,
     private val widgetTracking: WidgetTracking,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
@@ -36,12 +45,17 @@ class WidgetController(
     )
 
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
-    fun handleStartIdentButtonClicked(@RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ResponseEntity<String> {
+    fun handleStartIdentButtonClicked(
+        @RequestParam(required = false, name = "hash") sessionHash: String?,
+        @RequestAttribute(required = false) tenant: Tenant?,
+        @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
+    ): ResponseEntity<String> {
         publishMatomoEvent(
             widgetTracking.actions.buttonPressed,
             widgetTracking.names.startIdent,
             sessionHash,
             userAgent,
+            tenant?.id,
         )
         return ResponseEntity.status(HttpStatus.OK).body("")
     }
@@ -52,22 +66,26 @@ class WidgetController(
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?,
+        @RequestAttribute tenant: Tenant,
     ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.widget,
             sessionHash,
             userAgent,
+            tenant.id,
         )
 
         if (isIncompatibleOSVersion(userAgent)) {
-            return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent)
+            return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent, tenant)
         }
 
         val widgetViewConfig = mapOf(
-            setEiDClientURL("#"),
+            "eidClientURL" to "#",
             "isWidget" to true,
             "additionalClass" to "",
+            "tenantId" to tenant.id,
+            "cspNonce" to tenant.cspNonce,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -76,24 +94,25 @@ class WidgetController(
     }
 
     @GetMapping("/$FALLBACK_PAGE")
-    fun getUniversalLinkFallbackPage(model: Model, @RequestParam tcTokenURL: String, @RequestParam(required = false, name = "hash") sessionHash: String?, @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?): ModelAndView {
+    fun getUniversalLinkFallbackPage(
+        model: Model,
+        @RequestParam tcTokenURL: String,
+        @RequestParam(required = false, name = "hash") sessionHash: String?,
+        @RequestAttribute(required = false) tenant: Tenant?,
+        @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
+    ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.fallback,
             sessionHash,
             userAgent,
+            tenant?.id,
         )
-        /*
-            Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
-            Specifications Version 1.4 8. October 2021, Chapter 2.2 Full eID-Client
-            Note: Replaced the prefix eid:// with bundesident:// to make sure only the BundesIdent app is opened
-         */
-        val url = "bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}"
-
         val widgetViewFallbackConfig = mapOf(
-            setEiDClientURL(url),
+            "eidClientURL" to "$eIdClientBaseUrl?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
             "isFallback" to true,
             "additionalClass" to "fallback",
+            "tenantId" to tenant?.id,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -101,13 +120,15 @@ class WidgetController(
         return modelAndView
     }
 
-    private fun publishMatomoEvent(action: String, name: String, sessionId: String?, userAgent: String?) {
-        val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent)
+    private fun publishMatomoEvent(
+        action: String,
+        name: String,
+        sessionId: String?,
+        userAgent: String?,
+        tenantId: String?,
+    ) {
+        val matomoEvent = MatomoEvent(this, widgetTracking.categories.widget, action, name, sessionId, userAgent, tenantId)
         applicationEventPublisher.publishEvent(matomoEvent)
-    }
-
-    private fun setEiDClientURL(url: String): Pair<String, String> {
-        return "eidClientURL" to url
     }
 
     private fun isIncompatibleOSVersion(userAgent: String?): Boolean {
@@ -128,15 +149,20 @@ class WidgetController(
             Integer.parseInt(parsedUserAgent.os.major) < supportedMajorVersion
     }
 
-    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?): ModelAndView {
+    private fun handleRequestWithIncompatibleOSVersion(sessionHash: String?, userAgent: String?, tenant: Tenant): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
             widgetTracking.names.incompatible,
             sessionHash,
             userAgent,
+            tenant.id,
+        )
+        val incompatibleViewHeader = mapOf(
+            "tenantId" to tenant.id,
         )
         val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
-        modelAndView.addAllObjects(defaultViewHeaderConfig)
+        modelAndView.addAllObjects(defaultViewHeaderConfig + incompatibleViewHeader)
+
         return modelAndView
     }
 }

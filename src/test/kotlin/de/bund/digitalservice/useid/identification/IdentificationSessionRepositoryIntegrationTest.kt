@@ -25,6 +25,7 @@ class IdentificationSessionRepositoryIntegrationTest {
         private val DATA_GROUPS: List<String> = listOf(DG1, DG2)
         private val USEID_SESSION_ID: UUID = UUID.randomUUID()
         private val EID_SESSION_ID: UUID = UUID.randomUUID()
+        private val TENANT_ID: String = "TestTenant"
     }
 
     @BeforeAll
@@ -38,7 +39,7 @@ class IdentificationSessionRepositoryIntegrationTest {
     @Test
     fun `find identification session by useIdSessionId and eIdSessionId returns the inserted entity`() {
         // Given
-        val identificationSession = IdentificationSession(USEID_SESSION_ID, REFRESH_ADDRESS, DATA_GROUPS)
+        val identificationSession = IdentificationSession(USEID_SESSION_ID, REFRESH_ADDRESS, DATA_GROUPS, TENANT_ID)
         identificationSession.eIdSessionId = EID_SESSION_ID
 
         // When
@@ -91,7 +92,7 @@ class IdentificationSessionRepositoryIntegrationTest {
     }
 
     fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {
-        val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS)
+        val identificationSession = IdentificationSession(UUID.randomUUID(), REFRESH_ADDRESS, DATA_GROUPS, TENANT_ID)
 
         val savedSession = identificationSessionRepository.save(identificationSession)
         savedSession.createdAt = createdAt

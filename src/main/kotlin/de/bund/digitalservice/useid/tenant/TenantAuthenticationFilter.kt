@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.apikeys
+package de.bund.digitalservice.useid.tenant
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -11,7 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 private const val AUTH_HEADER_VALUE_PREFIX = "Bearer "
 
-class ApiKeyAuthenticationFilter(private val authenticationManager: AuthenticationManager) :
+class TenantAuthenticationFilter(private val tenantAuthenticationManager: AuthenticationManager) :
     OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -20,11 +20,15 @@ class ApiKeyAuthenticationFilter(private val authenticationManager: Authenticati
         filterChain: FilterChain,
     ) {
         val authHeader: String? = extractAuthHeader(request)
-        val apiKey = authHeader?.substring(AUTH_HEADER_VALUE_PREFIX.length)
-        val authentication = apiKey?.let { authenticationManager.authenticate(ApiKeyAuthenticationToken(apiKey)) }
+        val apiKey = authHeader?.substring(AUTH_HEADER_VALUE_PREFIX.length) ?: ""
+        val unverifiedTenant = Tenant().apply {
+            this.apiKey = apiKey
+        }
+        val unverifiedAuthentication = TenantAuthentication(unverifiedTenant)
+        val verifiedAuthentication = tenantAuthenticationManager.authenticate(unverifiedAuthentication)
 
-        if (authentication?.isAuthenticated == true) {
-            setAuthentication(authentication)
+        if (verifiedAuthentication?.isAuthenticated == true) {
+            setAuthentication(verifiedAuthentication)
         } else {
             removeAuthentication()
         }

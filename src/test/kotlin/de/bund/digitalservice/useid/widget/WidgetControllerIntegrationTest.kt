@@ -1,8 +1,14 @@
 package de.bund.digitalservice.useid.widget
 
+import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
+import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.jsoup.Jsoup
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +18,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import java.util.Locale
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
@@ -20,11 +27,40 @@ class WidgetControllerIntegrationTest(
     @Autowired val messageSource: MessageSource,
 ) {
 
+    @AfterAll
+    fun afterAll() {
+        unmockkStatic(UUID::class)
+    }
+
+    val validTenantId = "integration_test_1"
+    val invalidTenantId = "anInvalidTenantId"
+
+    val allowedHost = "i.am.allowed.1"
+    val forbiddenHost = "i.am.forbidden"
+
+    @Test
+    fun `widget endpoint WIDGET_START_IDENT_BTN_CLICKED should return 200 when query parameter tenant_id has correct value`() {
+        webTestClient
+            .post()
+            .uri("/$WIDGET_START_IDENT_BTN_CLICKED?tenant_id=$validTenantId")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun `widget endpoint WIDGET_START_IDENT_BTN_CLICKED should return 200 when query parameter tenant_id is missing`() {
+        webTestClient
+            .post()
+            .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
+            .exchange()
+            .expectStatus().isOk
+    }
+
     @Test
     fun `widget endpoint should disable X-Frame-Options`() {
         webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .exchange()
             .expectStatus()
             .isOk
@@ -33,59 +69,52 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint returns Content-Security-Policy with allowed host when the request URL is valid`() {
+    fun `widget endpoint returns Content-Security-Policy with allowed host and nonce when the request contains a valid hostname parameter`() {
+        // GIVEN
+        val nonce = UUID.randomUUID().toString()
+        mockkStatic(UUID::class)
+        every { UUID.randomUUID().toString() } returns nonce
+
         webTestClient
+            // WHEN
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .exchange()
+            // THEN
             .expectStatus()
             .isOk
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "some default value;frame-ancestors 'self' foo.bar;",
+                "$CSP_DEFAULT_CONFIG;script-src 'self' 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
             )
             .expectHeader()
             .valueEquals(
                 HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
-                "foo.bar",
+                allowedHost,
             )
             .expectHeader()
             .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
     }
 
     @Test
-    fun `widget endpoint returns default Content-Security-Policy when the request URL is invalid`() {
-        webTestClient
-            .get()
-            .uri("/widget?hostname=not-allowed.com")
-            .exchange()
-            .expectStatus()
-            .isOk
-            .expectHeader()
-            .valueEquals(
-                "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';",
-            )
-            .expectHeader()
-            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
-    }
-
-    @Test
-    fun `widget endpoint returns default Content-Security-Policy when query parameter is not set with error`() {
+    fun `widget endpoint returns 400 when query parameter hostname is not set`() {
         webTestClient
             .get()
             .uri("/widget")
             .exchange()
             .expectStatus()
             .isBadRequest
-            .expectHeader()
-            .valueEquals(
-                "Content-Security-Policy",
-                "some default value;frame-ancestors 'self';",
-            )
-            .expectHeader()
-            .doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)
+    }
+
+    @Test
+    fun `widget endpoint returns 401 when query parameter hostname contains forbidden value`() {
+        webTestClient
+            .get()
+            .uri("/widget?hostname=$forbiddenHost")
+            .exchange()
+            .expectStatus()
+            .isUnauthorized
     }
 
     @Test
@@ -179,28 +208,19 @@ class WidgetControllerIntegrationTest(
         assertThat(eidClientButton, hasCorrectUrl)
     }
 
-    @Test
-    fun `widget endpoint APP_OPENED should return 200`() {
-        webTestClient
-            .post()
-            .uri("/$WIDGET_START_IDENT_BTN_CLICKED")
-            .exchange()
-            .expectStatus().isOk
-    }
-
     private fun fetchWidgetPageWithMobileDevices(
         androidUserAgent: String,
         iosUserAgent: String,
     ): Pair<ResponseSpec, ResponseSpec> {
         val iOSResponse: ResponseSpec = webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .header("User-Agent", androidUserAgent)
             .exchange()
 
         val androidResponse: ResponseSpec = webTestClient
             .get()
-            .uri("/widget?hostname=foo.bar")
+            .uri("/widget?hostname=$allowedHost")
             .header("User-Agent", iosUserAgent)
             .exchange()
 

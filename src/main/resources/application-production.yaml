@@ -11,5 +11,10 @@ sentry:
   environment: production
   traces-sample-rate: 0.01
 
+tracking:
+  matomo:
+    siteId: "3"
+    dimensionIdTenant: "1"
+
 features:
   desktop-solution-enabled: false

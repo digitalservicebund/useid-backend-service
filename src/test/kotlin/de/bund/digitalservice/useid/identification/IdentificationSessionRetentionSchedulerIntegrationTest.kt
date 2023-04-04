@@ -22,7 +22,7 @@ internal class IdentificationSessionRetentionSchedulerIntegrationTest {
     fun `Cleanup successfully removes expired identification sessions from database`() {
         // Given
         val useIdSessionId = UUID.randomUUID()
-        val identificationSession = IdentificationSession(useIdSessionId, "some-refresh-address", emptyList())
+        val identificationSession = IdentificationSession(useIdSessionId, "some-refresh-address", emptyList(), "testTenant")
         identificationSession.createdAt = now().minusDays(RETENTION_IN_DAYS).minusDays(1)
         repository.save(identificationSession)
 

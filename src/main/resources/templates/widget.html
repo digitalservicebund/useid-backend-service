@@ -83,13 +83,39 @@
       </div>
     </div>
     <script
+      th:inline="javascript"
       type="text/javascript"
-      src="js/attachStartIdentButtonOnClick.js"
-    ></script>
+      th:attr="nonce=${cspNonce}"
+    >
+      (function(){
+        const tenantId = [[${tenantId}]];
+        document
+                .getElementById("eid-client-button")
+                .addEventListener("click", async function () {
+                  const hash = new URL(window.location).searchParams.get("hash");
+                  await fetch(`/start-ident-button-clicked?hash=${hash}&tenant_id=${tenantId}`, {
+                    cache: "no-store",
+                    method: "POST",
+                    keepalive: true,
+                  });
+                });
+      })();
+    </script>
     <script
       th:if="${isWidget}"
       type="text/javascript"
-      src="js/setEIDClientURL.js"
-    ></script>
+      th:inline="javascript"
+      th:attr="nonce=${cspNonce}"
+    >
+      (function () {
+        const tenantId = [[${tenantId}]];
+        const hash = new URL(window.location).searchParams.get("hash");
+        const tcTokenURLParam = window.location.hash.replace("#", "");
+
+        const eidClientButton = document.getElementById("eid-client-button");
+        const eidClientURL = `${eidClientButton.baseURI}eID-Client?${tcTokenURLParam}&hash=${hash}&tenant_id=${tenantId}`;
+        eidClientButton.setAttribute("href", eidClientURL);
+      })();
+    </script>
   </div>
 </div>

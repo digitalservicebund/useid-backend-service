@@ -1,12 +1,12 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
-import de.bund.digitalservice.useid.apikeys.ApiKeyDetails
-import de.bund.digitalservice.useid.config.METRIC_NAME_EID_SERVICE_REQUESTS
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
+import de.bund.digitalservice.useid.metrics.MetricsService
+import de.bund.digitalservice.useid.tenant.Tenant
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.Metrics
+import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
@@ -31,6 +31,7 @@ internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/s
 internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
+@Timed
 @RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 @Tag(
     name = "Identification Sessions",
@@ -47,12 +48,9 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 class IdentificationSessionsController(
     private val identificationSessionService: IdentificationSessionService,
     private val eidServiceConfig: EidServiceConfiguration,
+    private val metricsService: MetricsService,
 ) {
     private val log = KotlinLogging.logger {}
-    private val getEidInformationCallsSuccessfulCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "200")
-    private val getEidInformationCallsWithErrorsCounter: Counter =
-        Metrics.counter(METRIC_NAME_EID_SERVICE_REQUESTS, "method", "get_eid_information", "status", "500")
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
@@ -66,9 +64,9 @@ class IdentificationSessionsController(
     fun startSession(
         authentication: Authentication,
     ): ResponseEntity<CreateIdentificationSessionResponse> {
-        val apiKeyDetails = authentication.details as ApiKeyDetails
+        val tenant = authentication.details as Tenant
         val tcTokenUrl =
-            identificationSessionService.startSession(apiKeyDetails.refreshAddress!!, apiKeyDetails.requestDataGroups)
+            identificationSessionService.startSession(tenant.refreshAddress, tenant.dataGroups, tenant.id)
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
@@ -117,22 +115,22 @@ class IdentificationSessionsController(
         @PathVariable eIdSessionId: UUID,
         authentication: Authentication,
     ): ResponseEntity<GetResultResponseType> {
-        val apiKeyDetails = authentication.details as ApiKeyDetails
+        val tenant = authentication.details as Tenant
 
         val userData: GetResultResponseType?
         val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        if (apiKeyDetails.refreshAddress != identificationSession.refreshAddress) {
-            log.error("API key differs from the API key used to start the identification session.")
+        if (tenant.id != identificationSession.tenantId) {
+            log.error("Tenant is not the tenant used to start the identification session")
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
         }
         try {
             val eidService = EidService(eidServiceConfig)
             userData = eidService.getEidInformation(eIdSessionId.toString())
-            getEidInformationCallsSuccessfulCounter.increment()
+            metricsService.incrementSuccessCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
         } catch (e: Exception) {
-            getEidInformationCallsWithErrorsCounter.increment()
-            log.error("Failed to fetch identity data: ${e.message}.")
+            metricsService.incrementErrorCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
+            log.error("Failed to fetch identity data: ${e.message}")
             throw e
         }
 
