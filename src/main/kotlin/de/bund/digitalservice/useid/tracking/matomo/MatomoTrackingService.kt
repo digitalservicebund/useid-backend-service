@@ -23,7 +23,7 @@ import kotlin.text.Charsets.UTF_8
  * https://matomo.org/guide/reports/event-tracking/
  */
 @Service
-@Profile("!test") // tests do not need to fire tracking events
+@Profile("!test") // (integration) tests do not need to fire tracking events
 class MatomoTrackingService(trackingProperties: TrackingProperties, private val webRequests: WebRequests) {
 
     private val log = KotlinLogging.logger {}

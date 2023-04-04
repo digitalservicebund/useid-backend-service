@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated
 @Component
 @ConfigurationProperties(prefix = "tracking")
 @Validated
-@Profile("!test") // tests do not need to fire tracking events
+@Profile("!test") // (integration) tests do not need to fire tracking events
 class TrackingProperties {
 
     @Valid
