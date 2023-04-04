@@ -11,6 +11,11 @@ sentry:
   environment: staging
   traces-sample-rate: 0.1
 
+tracking:
+  matomo:
+    siteId: "2"
+    dimensionIdTenant: "1"
+
 features:
   desktop-solution-enabled: true
 

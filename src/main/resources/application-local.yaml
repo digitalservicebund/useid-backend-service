@@ -38,6 +38,11 @@ spring:
     username: root
     password: secret
 
+tracking:
+  matomo:
+    siteId: "5"
+    dimensionIdTenant: "3"
+
 features:
   desktop-solution-enabled: true
 
