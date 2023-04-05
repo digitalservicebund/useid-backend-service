@@ -1,12 +1,12 @@
 package de.bund.digitalservice.useid.refresh
 
+import de.bund.digitalservice.useid.identification.IdentificationSessionNotFoundException
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,8 +27,6 @@ internal const val REFRESH_PATH = "/refresh"
 @RequestMapping(REFRESH_PATH)
 class RefreshController(private val identificationSessionService: IdentificationSessionService) {
 
-    private val log = KotlinLogging.logger {}
-
     @GetMapping
     @Operation(summary = "Redirect user to eService (after identification)")
     @ApiResponse(responseCode = "303", content = [Content()])
@@ -38,8 +36,7 @@ class RefreshController(private val identificationSessionService: Identification
         @RequestParam requestQueryParams: Map<String, String>,
     ): ResponseEntity<Unit> {
         val session = identificationSessionService.findByEIdSessionId(eIdSessionId) ?: run {
-            log.error("Failed to load identification session.")
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+            throw IdentificationSessionNotFoundException()
         }
         val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
         return ResponseEntity

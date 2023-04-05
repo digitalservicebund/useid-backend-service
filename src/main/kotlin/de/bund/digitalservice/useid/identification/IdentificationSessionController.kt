@@ -1,11 +1,8 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
-import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
-import de.bund.digitalservice.useid.metrics.MetricsService
+import de.bund.digitalservice.useid.tenant.InvalidTenantException
 import de.bund.digitalservice.useid.tenant.Tenant
-import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
@@ -15,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.tags.Tag
-import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -45,12 +41,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
     scheme = "Bearer",
     description = "API key as bearer token in `Authorization` header",
 )
-class IdentificationSessionsController(
-    private val identificationSessionService: IdentificationSessionService,
-    private val eidServiceConfig: EidServiceConfiguration,
-    private val metricsService: MetricsService,
-) {
-    private val log = KotlinLogging.logger {}
+class IdentificationSessionsController(private val identificationSessionService: IdentificationSessionService) {
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
@@ -85,16 +76,11 @@ class IdentificationSessionsController(
         content = [Content()],
     )
     fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<JakartaTCToken> {
-        return try {
-            val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.APPLICATION_XML)
-                .body(JakartaTCToken.fromTCTokenType(tcToken))
-        } catch (e: IdentificationSessionNotFoundException) {
-            log.error(e.message, e)
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        }
+        val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_XML)
+            .body(JakartaTCToken.fromTCTokenType(tcToken))
     }
 
     @GetMapping("/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -116,38 +102,20 @@ class IdentificationSessionsController(
         authentication: Authentication,
     ): ResponseEntity<GetResultResponseType> {
         val tenant = authentication.details as Tenant
+        validateTenant(tenant, eIdSessionId)
 
-        val userData: GetResultResponseType?
-        val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        if (tenant.id != identificationSession.tenantId) {
-            log.error("Tenant is not the tenant used to start the identification session")
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
-        }
-        try {
-            val eidService = EidService(eidServiceConfig)
-            userData = eidService.getEidInformation(eIdSessionId.toString())
-            metricsService.incrementSuccessCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
-        } catch (e: Exception) {
-            metricsService.incrementErrorCounter(METRIC_NAME_EID_INFORMATION, tenant.id)
-            log.error("Failed to fetch identity data: ${e.message}")
-            throw e
-        }
-
-        // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
-        if (userData.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
-            try {
-                identificationSessionService.delete(identificationSession)
-            } catch (e: Exception) {
-                log.error("Failed to delete identification session. id=${identificationSession.id}")
-            }
-        } else {
-            // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
-            log.info("The resultMinor for identification session is ${userData.result.resultMinor}. id=${identificationSession.id}")
-        }
+        val identity = identificationSessionService.getIdentity(eIdSessionId, tenant.id)
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(userData)
+            .body(identity)
+    }
+
+    fun validateTenant(tenant: Tenant, eIdSessionId: UUID) {
+        val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
+            ?: throw IdentificationSessionNotFoundException()
+        if (tenant.id != identificationSession.tenantId) {
+            throw InvalidTenantException("Tenant does not match with tenant used to start the session.")
+        }
     }
 }
