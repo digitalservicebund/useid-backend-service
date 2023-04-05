@@ -38,7 +38,7 @@ internal class RefreshControllerTest(@Autowired val webTestClient: WebTestClient
         val eIdSessionId: UUID = UUID.randomUUID()
         val refreshAddress = "some-refresh-address"
         val identificationSession = IdentificationSession(UUID.randomUUID(), refreshAddress, emptyList())
-        every { identificationSessionService.findByEIdSessionId(any()) } returns identificationSession
+        every { identificationSessionService.findByEIdSessionIdOrThrow(any()) } returns identificationSession
 
         // When
         client

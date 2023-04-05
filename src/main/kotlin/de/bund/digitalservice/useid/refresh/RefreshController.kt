@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.refresh
 
-import de.bund.digitalservice.useid.identification.IdentificationSessionNotFoundException
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
@@ -35,9 +34,7 @@ class RefreshController(private val identificationSessionService: Identification
         @RequestParam("sessionId") eIdSessionId: UUID,
         @RequestParam requestQueryParams: Map<String, String>,
     ): ResponseEntity<Unit> {
-        val session = identificationSessionService.findByEIdSessionId(eIdSessionId) ?: run {
-            throw IdentificationSessionNotFoundException()
-        }
+        val session = identificationSessionService.findByEIdSessionIdOrThrow(eIdSessionId)
         val responseQueryParams: String = buildEncodedQueryParameters(requestQueryParams)
         return ResponseEntity
             .status(HttpStatus.SEE_OTHER)

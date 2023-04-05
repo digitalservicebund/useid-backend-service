@@ -112,8 +112,7 @@ class IdentificationSessionsController(private val identificationSessionService:
     }
 
     fun validateTenant(tenant: Tenant, eIdSessionId: UUID) {
-        val identificationSession = identificationSessionService.findByEIdSessionId(eIdSessionId)
-            ?: throw IdentificationSessionNotFoundException()
+        val identificationSession = identificationSessionService.findByEIdSessionIdOrThrow(eIdSessionId)
         if (tenant.id != identificationSession.tenantId) {
             throw InvalidTenantException("Tenant does not match with tenant used to start the session.")
         }

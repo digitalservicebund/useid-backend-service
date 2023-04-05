@@ -73,8 +73,9 @@ class IdentificationSessionService(
         return UUID.fromString(eIdSessionId)
     }
 
-    fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession? {
+    fun findByEIdSessionIdOrThrow(eIdSessionId: UUID): IdentificationSession {
         return identificationSessionRepository.findByEIdSessionId(eIdSessionId)
+            ?: throw IdentificationSessionNotFoundException()
     }
 
     fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID): IdentificationSession {
