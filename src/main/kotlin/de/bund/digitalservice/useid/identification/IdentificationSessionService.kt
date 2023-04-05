@@ -11,7 +11,6 @@ import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.UUID
 
@@ -33,7 +32,6 @@ class IdentificationSessionService(
      * @param tenantID the id of the tenant that is starting the identification session
      * @return TC token URL for the started session
      */
-    @Transactional
     fun startSession(refreshAddress: String, requestDataGroups: List<String>, tenantID: String): String {
         val session = identificationSessionRepository.save(
             IdentificationSession(UUID.randomUUID(), refreshAddress, requestDataGroups, tenantID),
@@ -46,7 +44,6 @@ class IdentificationSessionService(
         return "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
     }
 
-    @Transactional
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
         val identificationSession = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
             ?: throw IdentificationSessionNotFoundException(useIdSessionId)
@@ -86,7 +83,6 @@ class IdentificationSessionService(
         return session
     }
 
-    @Transactional
     fun getIdentity(
         eIdSessionId: UUID,
         tenantId: String,
