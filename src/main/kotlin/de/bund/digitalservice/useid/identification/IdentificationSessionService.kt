@@ -1,7 +1,9 @@
 package de.bund.digitalservice.useid.identification
 
+import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eidservice.EidService
+import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
 import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_TCTOKEN
 import de.bund.digitalservice.useid.metrics.MetricsService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
@@ -68,8 +70,9 @@ class IdentificationSessionService(
         return UUID.fromString(eIdSessionId)
     }
 
-    fun findByEIdSessionId(eIdSessionId: UUID): IdentificationSession? {
+    fun findByEIdSessionIdOrThrow(eIdSessionId: UUID): IdentificationSession {
         return identificationSessionRepository.findByEIdSessionId(eIdSessionId)
+            ?: throw IdentificationSessionNotFoundException()
     }
 
     fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID): IdentificationSession {
@@ -80,8 +83,45 @@ class IdentificationSessionService(
         return session
     }
 
-    fun delete(identificationSession: IdentificationSession) {
-        identificationSessionRepository.delete(identificationSession)
-        log.info("Deleted identification session. useIdSessionId=${identificationSession.useIdSessionId}")
+    fun getIdentity(
+        eIdSessionId: UUID,
+        tenantId: String,
+    ): GetResultResponseType {
+        val eidInformation = getEidInformation(eIdSessionId, tenantId)
+
+        // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
+        if (eidInformation.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+            deleteSession(eIdSessionId)
+        } else {
+            // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
+            log.info("The resultMinor for identification session is ${eidInformation.result.resultMinor}.")
+        }
+        return eidInformation
+    }
+
+    private fun getEidInformation(
+        eIdSessionId: UUID,
+        tenantId: String,
+    ): GetResultResponseType {
+        val result: GetResultResponseType
+        try {
+            val eidService = EidService(eidServiceConfig)
+            result = eidService.getEidInformation(eIdSessionId.toString())
+            metricsService.incrementSuccessCounter(METRIC_NAME_EID_INFORMATION, tenantId)
+        } catch (e: Exception) {
+            metricsService.incrementErrorCounter(METRIC_NAME_EID_INFORMATION, tenantId)
+            log.error("Failed to fetch identity data: ${e.message}")
+            throw e
+        }
+        return result
+    }
+
+    private fun deleteSession(eIdSessionId: UUID) {
+        try {
+            identificationSessionRepository.deleteByEIdSessionId(eIdSessionId)
+            log.info("Deleted identification session.")
+        } catch (e: Exception) {
+            log.error("Failed to delete identification session.")
+        }
     }
 }

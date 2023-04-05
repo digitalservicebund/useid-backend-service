@@ -11,7 +11,6 @@ import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredential
 import com.yubico.webauthn.data.ResidentKeyRequirement
 import com.yubico.webauthn.data.UserIdentity
-import com.yubico.webauthn.exception.AssertionFailedException
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
@@ -121,7 +120,7 @@ class CredentialService(
 
         val assertionResult = relyingParty.finishAssertion(finishAssertionOptions)
         if (!assertionResult.isSuccess) {
-            throw AssertionFailedException("WebAuthn assertion failed. credentialsId=$credentialId")
+            throw InvalidCredentialException(credentialId)
         }
 
         credentialMockDatasource.delete(credentialId)
