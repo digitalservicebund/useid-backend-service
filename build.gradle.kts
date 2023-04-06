@@ -98,7 +98,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:4.0.0")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.tngtech.archunit:archunit-junit5:1.0.0")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.18.0")
     testImplementation("org.testcontainers:postgresql:1.17.3")
     testImplementation("org.testcontainers:testcontainers:1.17.3")
     testImplementation("org.testcontainers:jdbc:1.17.3")
