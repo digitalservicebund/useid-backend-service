@@ -1,13 +1,14 @@
 # Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 version: 2
 updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "daily"
-    labels:
-      - "dependabot"
+      # By default, Dependabot checks for new versions at a random set time for the repository.
+      time: "08:00"
+      timezone: "Europe/Berlin"
     # Too much noise with patch releases...
     ignore:
       - dependency-name: "*"
@@ -16,9 +17,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    labels:
-      - "dependabot"
-    # Too much noise with patch releases...
+      time: "08:00"
+      timezone: "Europe/Berlin"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
