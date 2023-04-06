@@ -1,7 +1,8 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.CSP_DEFAULT_CONFIG
-import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS
+import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS_NONE
+import de.bund.digitalservice.useid.config.CSP_FRAME_ANCESTORS_SELF
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -86,7 +87,7 @@ class WidgetControllerIntegrationTest(
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
-                "$CSP_DEFAULT_CONFIG;script-src 'self' 'nonce-$nonce';$CSP_FRAME_ANCESTORS $allowedHost;",
+                "$CSP_DEFAULT_CONFIG;script-src 'self' 'nonce-$nonce';$CSP_FRAME_ANCESTORS_SELF $allowedHost;",
             )
             .expectHeader()
             .valueEquals(
@@ -186,6 +187,28 @@ class WidgetControllerIntegrationTest(
         val actualErrorTitle = parsedResponseBody.getElementsByClass("error_title").text()
         val expectedErrorTitle = messageSource.getMessage("error.default.title", null, Locale.GERMAN)
         assertThat(actualErrorTitle, containsString(expectedErrorTitle))
+    }
+
+    @Test
+    fun `widget endpoint FALLBACK_PAGE returns Content-Security-Policy with nonce and disallowing use of frames`() {
+        // GIVEN
+        val nonce = UUID.randomUUID().toString()
+        mockkStatic(UUID::class)
+        every { UUID.randomUUID().toString() } returns nonce
+
+        webTestClient
+            // WHEN
+            .get()
+            .uri("/eID-Client?tcTokenURL=foobar")
+            .exchange()
+            // THEN
+            .expectStatus()
+            .isOk
+            .expectHeader()
+            .valueEquals(
+                "Content-Security-Policy",
+                "$CSP_DEFAULT_CONFIG;script-src 'self' 'nonce-$nonce';$CSP_FRAME_ANCESTORS_NONE;",
+            )
     }
 
     @Test

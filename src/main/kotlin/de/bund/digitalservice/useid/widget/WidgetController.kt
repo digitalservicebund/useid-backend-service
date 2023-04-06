@@ -1,6 +1,8 @@
 package de.bund.digitalservice.useid.widget
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.config.REQUEST_ATTR_CSP_NONCE
+import de.bund.digitalservice.useid.tenant.REQUEST_ATTR_TENANT
 import de.bund.digitalservice.useid.tenant.Tenant
 import de.bund.digitalservice.useid.tracking.matomo.MatomoEvent
 import io.micrometer.core.annotation.Timed
@@ -47,7 +49,7 @@ class WidgetController(
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleStartIdentButtonClicked(
         @RequestParam(required = false, name = "hash") sessionHash: String?,
-        @RequestAttribute(required = false) tenant: Tenant?,
+        @RequestAttribute(required = false, name = REQUEST_ATTR_TENANT) tenant: Tenant?,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
     ): ResponseEntity<String> {
         publishMatomoEvent(
@@ -66,7 +68,8 @@ class WidgetController(
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
         @RequestParam hostname: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?,
-        @RequestAttribute tenant: Tenant,
+        @RequestAttribute(name = REQUEST_ATTR_TENANT) tenant: Tenant,
+        @RequestAttribute(name = REQUEST_ATTR_CSP_NONCE) cspNonce: String,
     ): ModelAndView {
         publishMatomoEvent(
             widgetTracking.actions.loaded,
@@ -85,7 +88,7 @@ class WidgetController(
             "isWidget" to true,
             "additionalClass" to "",
             "tenantId" to tenant.id,
-            "cspNonce" to tenant.cspNonce,
+            "cspNonce" to cspNonce,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
@@ -98,7 +101,8 @@ class WidgetController(
         model: Model,
         @RequestParam tcTokenURL: String,
         @RequestParam(required = false, name = "hash") sessionHash: String?,
-        @RequestAttribute(required = false) tenant: Tenant?,
+        @RequestAttribute(required = false, name = REQUEST_ATTR_TENANT) tenant: Tenant?,
+        @RequestAttribute(name = REQUEST_ATTR_CSP_NONCE) cspNonce: String,
         @RequestHeader(name = HttpHeaders.USER_AGENT, required = false) userAgent: String?,
     ): ModelAndView {
         publishMatomoEvent(
@@ -113,6 +117,7 @@ class WidgetController(
             "isFallback" to true,
             "additionalClass" to "fallback",
             "tenantId" to tenant?.id,
+            "cspNonce" to cspNonce,
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)

@@ -6,6 +6,5 @@ class Tenant {
     lateinit var refreshAddress: String
     lateinit var dataGroups: List<String>
     lateinit var allowedHosts: List<String>
-    lateinit var cspNonce: String
     lateinit var cspHost: String
 }
