@@ -64,8 +64,8 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
 
     /** Docs **/
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.0.4")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.1.0")
 
     /** Governikus Autent SDK **/
     implementation("de.governikus.autent.sdk:eid-webservice-sdk:3.73.9")
