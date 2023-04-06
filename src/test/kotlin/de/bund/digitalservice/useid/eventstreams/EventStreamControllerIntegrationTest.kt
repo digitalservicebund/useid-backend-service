@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.events
+package de.bund.digitalservice.useid.eventstreams
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -19,7 +19,7 @@ private val WIDGET_SESSION_ID: UUID = UUID.randomUUID()
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-internal class EventControllerIntegrationTest(
+internal class EventStreamControllerIntegrationTest(
     @Autowired
     @Value("\${local.server.port}")
     val port: Int,
@@ -49,7 +49,7 @@ internal class EventControllerIntegrationTest(
         // When
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/$unknownId/success"))
+            .uri(URI.create("http://localhost:$port/api/v1/event-streams/$unknownId/success"))
             .bodyValue(event)
             .exchange()
             // Then
@@ -63,7 +63,7 @@ internal class EventControllerIntegrationTest(
         // Given
         val event = successEvent()
 
-        val disposable = webClient.get().uri("/events/$WIDGET_SESSION_ID")
+        val disposable = webClient.get().uri("/event-streams/$WIDGET_SESSION_ID")
             .accept(TEXT_EVENT_STREAM)
             .retrieve()
             .bodyToFlux(SuccessEvent::class.java)
@@ -72,7 +72,7 @@ internal class EventControllerIntegrationTest(
         // Then
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/$WIDGET_SESSION_ID/success"))
+            .uri(URI.create("http://localhost:$port/api/v1/event-streams/$WIDGET_SESSION_ID/success"))
             .bodyValue(event)
             .exchange()
             .expectStatus().isAccepted
@@ -82,7 +82,7 @@ internal class EventControllerIntegrationTest(
 
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/$WIDGET_SESSION_ID/success"))
+            .uri(URI.create("http://localhost:$port/api/v1/event-streams/$WIDGET_SESSION_ID/success"))
             .bodyValue(event)
             .exchange()
             .expectStatus().isNotFound
@@ -97,7 +97,7 @@ internal class EventControllerIntegrationTest(
         // When
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/${UUID.randomUUID()}/success"))
+            .uri(URI.create("http://localhost:$port/api/v1/event-streams/${UUID.randomUUID()}/success"))
             .bodyValue(event)
             .exchange()
             // Then
@@ -112,7 +112,7 @@ internal class EventControllerIntegrationTest(
         // When
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/${UUID.randomUUID()}/success"))
+            .uri(URI.create("http://localhost:$port/api/v1/event-streams/${UUID.randomUUID()}/success"))
             .bodyValue(event)
             .exchange()
             // Then
@@ -127,7 +127,7 @@ internal class EventControllerIntegrationTest(
         // When
         webTestClient
             .post()
-            .uri(URI.create("http://localhost:$port/api/v1/events/$malformedEventId/success"))
+            .uri(URI.create("http://localhost:$port/api/v1/event-streams/$malformedEventId/success"))
             .bodyValue(successEvent())
             .exchange()
             // Then

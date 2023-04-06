@@ -1,6 +1,8 @@
 function subscribe(widgetSessionId) {
   console.log("Subscribe on events for " + widgetSessionId);
-  const eventSource = new EventSource("/api/v1/events/" + widgetSessionId);
+  const eventSource = new EventSource(
+    "/api/v1/event-streams/" + widgetSessionId
+  );
   eventSource.addEventListener("success", function (event) {
     console.log(
       "Received success event for " + widgetSessionId + ": " + event.data

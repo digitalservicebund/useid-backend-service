@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.events
+package de.bund.digitalservice.useid.eventstreams
 
 import java.util.UUID
 

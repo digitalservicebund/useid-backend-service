@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.events
+package de.bund.digitalservice.useid.eventstreams
 
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
@@ -22,17 +22,16 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/event-streams")
 @Timed
-@Tag(name = "Events", description = "Each widget subscribes to events and thereby gets informed about progress of the identification flow by the eID-Client.")
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class EventController(private val eventService: EventService) {
+class EventStreamController(private val eventStreamService: EventStreamService) {
     private val log = KotlinLogging.logger {}
 
     /**
      * Receive a success event from the eID client (i.e. Ident-App) and publish it to the respective consumer.
      */
-    @PostMapping("/events/{widgetSessionId}/success")
+    @PostMapping("/{eventStreamId}/success")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Push SSE to corresponding widget having a success value")
     @ApiResponse(responseCode = "202", content = [Content()])
@@ -41,30 +40,32 @@ class EventController(private val eventService: EventService) {
         description = "No consumer found for that widgetSessionId",
         content = [Content()],
     )
+    @Tag(name = "eID-Client")
     fun sendSuccess(
-        @PathVariable widgetSessionId: UUID,
+        @PathVariable eventStreamId: UUID,
         @RequestBody successEvent: SuccessEvent,
     ): ResponseEntity<Nothing> {
-        log.info { "Received success event for consumer: $widgetSessionId" }
-        eventService.publish(successEvent, EventType.SUCCESS, widgetSessionId)
+        log.info { "Received success event for consumer: $eventStreamId" }
+        eventStreamService.publish(successEvent, EventType.SUCCESS, eventStreamId)
         return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
     /**
      * Receive an error event from the eID client (i.e. Ident-App) and publish it to the respective consumer.
      */
-    @PostMapping("/events/{widgetSessionId}/error")
+    @PostMapping("/{eventStreamId}/error")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @Operation(summary = "Push SSE to corresponding widget having an error value")
     @ApiResponse(responseCode = "202", content = [Content()])
     @ApiResponse(
         responseCode = "404",
-        description = "No consumer found for that widgetSessionId",
+        description = "No consumer found for that eventStreamId",
         content = [Content()],
     )
-    fun sendError(@PathVariable widgetSessionId: UUID, @RequestBody errorEvent: ErrorEvent): ResponseEntity<Nothing> {
-        log.info { "Received event for consumer: $widgetSessionId" }
-        eventService.publish(errorEvent, EventType.ERROR, widgetSessionId)
+    @Tag(name = "eID-Client", description = "Those endpoints are called by the eID-Client, i.e. the BundesIdent app.")
+    fun sendError(@PathVariable eventStreamId: UUID, @RequestBody errorEvent: ErrorEvent): ResponseEntity<Nothing> {
+        log.info { "Received event for consumer: $eventStreamId" }
+        eventStreamService.publish(errorEvent, EventType.ERROR, eventStreamId)
         return ResponseEntity.status(HttpStatus.ACCEPTED).build()
     }
 
@@ -72,10 +73,11 @@ class EventController(private val eventService: EventService) {
      * Subscribe to events for a specific widget.
      */
     @CrossOrigin
-    @GetMapping(path = ["/events/{widgetSessionId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    @Operation(summary = "Subscribe for receiving SSE for the provided widgetSessionId")
+    @GetMapping(path = ["/{eventStreamId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @Operation(summary = "The widget subscribes at this endpoint to events to get informed about progress of the identification flow by the eID-Client.")
     @ApiResponse(responseCode = "200", content = [Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)])
-    fun subscribe(@PathVariable widgetSessionId: UUID): SseEmitter {
-        return eventService.subscribeWidget(widgetSessionId)
+    @Tag(name = "Widget", description = "Those endpoints are called by the web widget included as iframe in the eServer web page.")
+    fun subscribe(@PathVariable eventStreamId: UUID): SseEmitter {
+        return eventStreamService.subscribe(eventStreamId)
     }
 }

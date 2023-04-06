@@ -1,8 +1,8 @@
 package de.bund.digitalservice.useid.credentials
 
-import de.bund.digitalservice.useid.events.AuthenticateEvent
-import de.bund.digitalservice.useid.events.EventService
-import de.bund.digitalservice.useid.events.EventType
+import de.bund.digitalservice.useid.eventstreams.AuthenticateEvent
+import de.bund.digitalservice.useid.eventstreams.EventStreamService
+import de.bund.digitalservice.useid.eventstreams.EventType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -30,7 +30,7 @@ internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
 )
 class CredentialController(
     private val credentialService: CredentialService,
-    private val eventService: EventService,
+    private val eventStreamService: EventStreamService,
 ) {
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start registration for WebAuthn credentials.")
@@ -78,7 +78,7 @@ class CredentialController(
             throw IllegalStateException("Authentication with credentials has not been started yet. credentialId=${credential.credentialId}")
         }
 
-        eventService.publish(
+        eventStreamService.publish(
             AuthenticateEvent(credential.credentialId, credential.assertionRequest!!.toCredentialsGetJson()),
             EventType.AUTHENTICATE,
             credential.widgetSessionId,

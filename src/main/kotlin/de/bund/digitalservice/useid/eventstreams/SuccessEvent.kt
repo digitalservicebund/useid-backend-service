@@ -1,3 +1,3 @@
-package de.bund.digitalservice.useid.events
+package de.bund.digitalservice.useid.eventstreams
 
 data class SuccessEvent(val refreshAddress: String)

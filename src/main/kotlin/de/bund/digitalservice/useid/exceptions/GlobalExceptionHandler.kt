@@ -2,7 +2,7 @@ package de.bund.digitalservice.useid.exceptions
 
 import de.bund.digitalservice.useid.credentials.CredentialNotFoundException
 import de.bund.digitalservice.useid.credentials.InvalidCredentialException
-import de.bund.digitalservice.useid.events.WidgetNotFoundException
+import de.bund.digitalservice.useid.eventstreams.EventStreamNotFoundException
 import de.bund.digitalservice.useid.identification.IdentificationSessionNotFoundException
 import de.bund.digitalservice.useid.tenant.InvalidTenantException
 import mu.KotlinLogging
@@ -17,7 +17,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(
         value = [
-            WidgetNotFoundException::class,
+            EventStreamNotFoundException::class,
             IdentificationSessionNotFoundException::class,
             CredentialNotFoundException::class,
         ],
