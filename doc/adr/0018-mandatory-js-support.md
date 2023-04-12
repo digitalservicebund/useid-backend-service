@@ -1,4 +1,4 @@
-# 17. Mandatory client-side JavaScript support
+# 18. Mandatory client-side JavaScript support
 
 Date: 2023-01-11
 
@@ -9,7 +9,7 @@ Accepted
 ## Context
 
 All eServices should be able to integrate our service seamlessly.
-ADR 0016 determines this integration by specifying the usage of a JavaScript file that creates an iFrame for displaying the widget.
+[17. Widget as iFrame](0017-widget-as-iFrame.md) determines this integration by specifying the usage of a JavaScript file that creates an iFrame for displaying the widget.
 However, the widget needs to execute / fetch logic, everytime it is loaded, to work correctly.
 We need to decide whether we want to have a server-side or client-side approach to prepare the widget.
 Most of the reasons and implications come down to the decision between using client-side JavaScript or not, because a client side approach would require the user to have JavaScript enabled.

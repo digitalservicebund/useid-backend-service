@@ -124,7 +124,7 @@ ktlint applyToIDEAProject
 
 ## Git hooks
 
-The repo contains a [Lefthook](https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md) configuration,
+The repo contains a [Lefthook](https://github.com/evilmartians/lefthook) configuration,
 providing a Git hooks setup out of the box.
 
 **To install these hooks, run:**

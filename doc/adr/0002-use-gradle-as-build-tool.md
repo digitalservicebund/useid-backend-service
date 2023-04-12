@@ -11,7 +11,7 @@ Accepted
 We need to stick to a single build tool to avoid friction that is stemming from forcing engineers
 to (re)learn a new build tool on each new project.
 
-Furthermore, a build tool has be flexible, customizable and fast.
+Furthermore, a build tool has to be flexible, customizable and fast.
 
 ## Decision
 
@@ -22,7 +22,7 @@ We will use [Gradle](https://gradle.org) as build tool.
 Gradle [performs better compared to Maven](https://gradle.org/gradle-vs-maven-performance/), thus we
 may spend less time waiting for the build.
 
-Furthermore it is easily customizable as build script is code and as it was modeled with extensibility
+Furthermore it is easily customizable because the build script is code and it was modeled with extensibility
 in mind; its approach to dependency management is superior; separation of unit and integration tests
 can be accomplished out of the box.
 

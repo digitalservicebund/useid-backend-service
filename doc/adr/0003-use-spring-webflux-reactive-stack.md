@@ -4,7 +4,7 @@ Date: 2021-10-06
 
 ## Status
 
-Superseded
+Superceded by [16. Use Spring MVC instead of WebFlux](0016-use-spring-mvc-instead-of-webflux.md)
 
 ## Context
 

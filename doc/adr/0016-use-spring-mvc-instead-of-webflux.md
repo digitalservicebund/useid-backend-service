@@ -6,6 +6,8 @@ Date: 2021-12-22
 
 Accepted
 
+Supercedes [3. Use Spring WebFlux reactive stack](0003-use-spring-webflux-reactive-stack.md)
+
 ## Context
 
 The team continues to struggle with getting comfortable & confident with WebFlux and reactive programming.
