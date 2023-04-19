@@ -70,7 +70,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identification/sessions/${session.useIdSessionId}/tc-token"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identifications/sessions/${session.useIdSessionId}/tc-token"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
@@ -105,13 +105,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        sendGETRequest("/api/v1/identification/sessions/$invalidId/tc-token").exchange().expectStatus().isBadRequest
+        sendGETRequest("/api/v1/identifications/sessions/$invalidId/tc-token").exchange().expectStatus().isBadRequest
     }
 
     @Test
     fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
         val unknownId = UUID.randomUUID()
-        sendGETRequest("/api/v1/identification/sessions/$unknownId/tc-token").exchange().expectStatus().isNotFound
+        sendGETRequest("/api/v1/identifications/sessions/$unknownId/tc-token").exchange().expectStatus().isNotFound
     }
 
     @Test
@@ -185,7 +185,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         var tcTokenURL = ""
         webTestClient
             .post()
-            .uri("/api/v1/identification/sessions")
+            .uri("/api/v1/identifications")
             .headers {
                 it.set(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key-2")
             }
@@ -203,7 +203,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `identity data endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest("/api/v1/identification/sessions/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+        sendGETRequest("/api/v1/identifications/sessions/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -219,7 +219,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun sendIdentityRequest(eIdSessionId: String) =
-        sendGETRequest("/api/v1/identification/sessions/$eIdSessionId")
+        sendGETRequest("/api/v1/identifications/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 
@@ -231,7 +231,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     private fun sendStartSessionRequest() = webTestClient
         .post()
-        .uri("/api/v1/identification/sessions")
+        .uri("/api/v1/identifications")
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
