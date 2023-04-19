@@ -138,7 +138,7 @@
         hash = `hash=${new URL(window.location).searchParams.get("hash")}`;
         tcToken = window.location.hash.replace("#", "");
         useIdSessionId = decodeURIComponent(tcToken).match(
-          /sessions\/([a-f\d\-]*)\/tc-token/i
+          /tc-tokens\/([a-f\d\-]*)/i
         )[1];
         console.log("useIdSessionId: " + useIdSessionId);
         qrCode = new QRCode(document.getElementById("qrcode"), {

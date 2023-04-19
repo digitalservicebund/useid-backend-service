@@ -41,7 +41,7 @@ class IdentificationSessionService(
     }
 
     private fun buildTcTokenUrl(session: IdentificationSession): String {
-        return "${applicationProperties.baseUrl}$IDENTIFICATIONS_OLD_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
+        return "${applicationProperties.baseUrl}$TCTOKEN_BASE_PATH/${session.useIdSessionId}"
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {

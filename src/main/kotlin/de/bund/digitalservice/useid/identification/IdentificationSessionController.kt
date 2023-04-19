@@ -24,14 +24,10 @@ import java.util.UUID
 
 internal const val IDENTIFICATIONS_BASE_PATH = "/api/v1/identifications"
 internal const val IDENTIFICATIONS_OLD_BASE_PATH = "/api/v1/identification/sessions"
-internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
+internal const val TCTOKEN_BASE_PATH = "/api/v1/tc-tokens"
 
 @RestController
 @Timed
-@Tag(
-    name = "Identification Sessions",
-    description = "An identification session represent an ongoing identification flow of a user and stores the required information.",
-)
 @SecurityScheme(
     type = SecuritySchemeType.HTTP,
     name = "apiKey",
@@ -40,8 +36,8 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
     scheme = "Bearer",
     description = "API key as bearer token in `Authorization` header",
 )
+@Tag(name = "eService")
 class IdentificationSessionsController(private val identificationSessionService: IdentificationSessionService) {
-
     @PostMapping(IDENTIFICATIONS_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")
@@ -62,25 +58,7 @@ class IdentificationSessionsController(private val identificationSessionService:
             .contentType(MediaType.APPLICATION_JSON)
             .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
-
-    @GetMapping(
-        path = ["$IDENTIFICATIONS_OLD_BASE_PATH/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
-        produces = [MediaType.APPLICATION_XML_VALUE],
-    )
-    @Operation(summary = "Get TC token for this session")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(
-        responseCode = "404",
-        description = "No corresponding session found for that useIdSessionId",
-        content = [Content()],
-    )
-    fun getTCToken(@PathVariable useIdSessionId: UUID): ResponseEntity<JakartaTCToken> {
-        val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .contentType(MediaType.APPLICATION_XML)
-            .body(JakartaTCToken.fromTCTokenType(tcToken))
-    }
+    
 
     @GetMapping("$IDENTIFICATIONS_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")

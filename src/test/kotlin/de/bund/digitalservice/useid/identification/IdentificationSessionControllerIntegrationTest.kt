@@ -80,7 +80,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenURL = "${getIdentificationPath(forOldApi = true)}/${session.useIdSessionId}/tc-token"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/${session.useIdSessionId}"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
@@ -115,13 +115,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/$invalidId/tc-token").exchange().expectStatus().isBadRequest
+        sendGETRequest("/api/v1/tc-tokens/$invalidId").exchange().expectStatus().isBadRequest
     }
 
     @Test
     fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
         val unknownId = UUID.randomUUID()
-        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/$unknownId/tc-token").exchange().expectStatus().isNotFound
+        sendGETRequest("/api/v1/tc-tokens/$unknownId").exchange().expectStatus().isNotFound
     }
 
     @Test
@@ -253,7 +253,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         val pathSegments = UriComponentsBuilder
             .fromHttpUrl(tcTokenURL)
             .encode().build().pathSegments
-        val useIdSessionId = pathSegments[pathSegments.size - 2]
+        val useIdSessionId = pathSegments[pathSegments.size - 1]
         return UUID.fromString(useIdSessionId)!!
     }
 
