@@ -5,6 +5,7 @@ import de.bund.digitalservice.useid.tenant.MANAGE_IDENTIFICATION_SESSION_AUTHORI
 import de.bund.digitalservice.useid.tenant.ResolveTenantFilter
 import de.bund.digitalservice.useid.tenant.TenantAuthenticationFilter
 import de.bund.digitalservice.useid.tenant.TenantProperties
+import de.bund.digitalservice.useid.transactioninfo.TRANSACTION_INFO_SUFFIX
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
