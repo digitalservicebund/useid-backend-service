@@ -19,16 +19,15 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identification/sessions"
+internal const val IDENTIFICATIONS_BASE_PATH = "/api/v1/identifications"
+internal const val IDENTIFICATIONS_OLD_BASE_PATH = "/api/v1/identification/sessions"
 internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
 @Timed
-@RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
 @Tag(
     name = "Identification Sessions",
     description = "An identification session represent an ongoing identification flow of a user and stores the required information.",
@@ -43,7 +42,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 )
 class IdentificationSessionsController(private val identificationSessionService: IdentificationSessionService) {
 
-    @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(IDENTIFICATIONS_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
@@ -64,8 +63,23 @@ class IdentificationSessionsController(private val identificationSessionService:
             .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
 
+    @PostMapping(IDENTIFICATIONS_OLD_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Start session for a new identification as eService")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(
+        responseCode = "401",
+        description = "Authentication failed (missing or wrong api key)",
+        content = [Content()],
+    )
+    @SecurityRequirement(name = "apiKey")
+    fun startSessionOld(
+        authentication: Authentication,
+    ): ResponseEntity<CreateIdentificationSessionResponse> {
+        return startSession(authentication)
+    }
+
     @GetMapping(
-        path = ["/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
+        path = ["$IDENTIFICATIONS_OLD_BASE_PATH/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
         produces = [MediaType.APPLICATION_XML_VALUE],
     )
     @Operation(summary = "Get TC token for this session")
@@ -83,7 +97,7 @@ class IdentificationSessionsController(private val identificationSessionService:
             .body(JakartaTCToken.fromTCTokenType(tcToken))
     }
 
-    @GetMapping("/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("$IDENTIFICATIONS_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
@@ -116,5 +130,26 @@ class IdentificationSessionsController(private val identificationSessionService:
         if (tenant.id != identificationSession.tenantId) {
             throw InvalidTenantException("Tenant does not match with tenant used to start the session.")
         }
+    }
+
+    @GetMapping("$IDENTIFICATIONS_OLD_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Fetch data as eService after identification was successful")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(
+        responseCode = "404",
+        description = "No corresponding session found for that eIdSessionId",
+        content = [Content()],
+    )
+    @ApiResponse(
+        responseCode = "401",
+        description = "Authentication failed (missing or wrong api key)",
+        content = [Content()],
+    )
+    @SecurityRequirement(name = "apiKey")
+    fun getIdentityOld(
+        @PathVariable eIdSessionId: UUID,
+        authentication: Authentication,
+    ): ResponseEntity<GetResultResponseType> {
+        return getIdentity(eIdSessionId, authentication)
     }
 }
