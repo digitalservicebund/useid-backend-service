@@ -24,7 +24,6 @@ import java.util.UUID
 
 internal const val IDENTIFICATIONS_BASE_PATH = "/api/v1/identifications"
 internal const val IDENTIFICATIONS_OLD_BASE_PATH = "/api/v1/identification/sessions"
-internal const val TCTOKENS_BASE_PATH = "/api/v1/tc-tokens"
 
 @RestController
 @Timed
