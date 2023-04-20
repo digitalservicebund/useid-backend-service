@@ -35,10 +35,20 @@ import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer valid-api-key-1"
 private const val REFRESH_ADDRESS = "valid-refresh-address-1"
+const val TEST_IDENTIFICATION_SESSIONS_BASE_PATH = "api/v1/identifications"
+const val TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH = "api/v1/identification/sessions"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
 class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+    fun getIdentificationPath(forOldApi: Boolean = false): String {
+        return if (forOldApi) {
+            "${applicationProperties.baseUrl}/$TEST_IDENTIFICATION_SESSIONS_BASE_PATH"
+        } else {
+            "${applicationProperties.baseUrl}/$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH"
+        }
+    }
+
     val attributes = listOf("DG1", "DG2")
 
     @Autowired
@@ -70,13 +80,38 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/identifications/sessions/${session.useIdSessionId}/tc-token"
+        val expectedTcTokenURL = "${getIdentificationPath(forOldApi = true)}/${session.useIdSessionId}/tc-token"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
     @Test
     fun `start session endpoint returns 403 when no authorization header was passed`() {
         sendGETRequest(IDENTIFICATION_SESSIONS_BASE_PATH).exchange().expectStatus().isForbidden
+    }
+
+    @Test
+    fun `old start session endpoint returns TCTokenUrl`() {
+        var tcTokenURL = ""
+
+        sendStartSessionRequest()
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        val session = retrieveIdentificationSession(useIdSessionId)!!
+        assertThat(session.eIdSessionId, nullValue())
+        assertThat(session.useIdSessionId, notNullValue())
+        assertThat(session.requestDataGroups, `is`(attributes))
+        assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
+
+        val expectedTcTokenURL = "${getIdentificationPath(forOldApi = true)}/${session.useIdSessionId}/tc-token"
+        assertEquals(expectedTcTokenURL, tcTokenURL)
+    }
+
+    @Test
+    fun `old start session endpoint returns 403 when no authorization header was passed`() {
+        sendGETRequest(getIdentificationPath()).exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -105,13 +140,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        sendGETRequest("/api/v1/identifications/sessions/$invalidId/tc-token").exchange().expectStatus().isBadRequest
+        sendGETRequest("${getIdentificationPath(forOldApi = true)}/$invalidId/tc-token").exchange().expectStatus().isBadRequest
     }
 
     @Test
     fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
         val unknownId = UUID.randomUUID()
-        sendGETRequest("/api/v1/identifications/sessions/$unknownId/tc-token").exchange().expectStatus().isNotFound
+        sendGETRequest("${getIdentificationPath(forOldApi = true)}/$unknownId/tc-token").exchange().expectStatus().isNotFound
     }
 
     @Test
@@ -185,7 +220,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         var tcTokenURL = ""
         webTestClient
             .post()
-            .uri("/api/v1/identifications")
+            .uri(getIdentificationPath())
             .headers {
                 it.set(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key-2")
             }
@@ -203,12 +238,97 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `identity data endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest("/api/v1/identifications/sessions/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+        sendGETRequest("${getIdentificationPath()}/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
     fun `identity data endpoint returns 404 when passed a random UUID`() {
         sendIdentityRequest(UUID.randomUUID().toString())
+            .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `old identity data endpoint returns valid personal data and removes identification session from database`() {
+        val eIdSessionId = UUID.randomUUID().toString()
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+
+        var tcTokenURL = ""
+        sendStartSessionRequestToOldEndpoint()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody().xpath("TCTokenType").exists()
+
+        val mockResult = Result()
+        mockResult.resultMajor = "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"
+        val personalData = PersonalDataType()
+        personalData.givenNames = "Ben"
+        val mockGetResultResponseType = mockk<GetResultResponseType>()
+        every { mockGetResultResponseType.personalData } returns personalData
+        every { mockGetResultResponseType.fulfilsAgeVerification } returns VerificationResultType()
+        every { mockGetResultResponseType.fulfilsPlaceVerification } returns VerificationResultType()
+        every { mockGetResultResponseType.operationsAllowedByUser } returns OperationsResponderType()
+        every { mockGetResultResponseType.transactionAttestationResponse } returns TransactionAttestationResponseType()
+        every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.HTTP_EIDAS_EUROPA_EU_LO_A_LOW
+        every { mockGetResultResponseType.result } returns mockResult
+        every { anyConstructed<EidService>().getEidInformation(any()) } returns mockGetResultResponseType
+
+        sendIdentityRequestToOldEndpoint(eIdSessionId)
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody()
+            .jsonPath("$.result").value<LinkedHashMap<String, String>> {
+                assertEquals(it["resultMajor"], mockResult.resultMajor)
+            }
+            .jsonPath("$.personalData").value<LinkedHashMap<String, String>> {
+                assertEquals(it["givenNames"], personalData.givenNames)
+            }
+
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+        await().until { retrieveIdentificationSession(useIdSessionId) == null }
+    }
+
+    @Test
+    fun `old identity data endpoint returns 400 when passed an invalid string instead of UUID`() {
+        sendIdentityRequestToOldEndpoint("IamInvalid")
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `old identity data endpoint returns 401 when api key differs from the api key used to create the session`() {
+        val eIdSessionId = UUID.randomUUID().toString()
+        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+
+        var tcTokenURL = ""
+        webTestClient
+            .post()
+            .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
+            .headers {
+                it.set(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key-2")
+            }
+            .exchange()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .exchange()
+            .expectStatus().isOk
+
+        sendIdentityRequestToOldEndpoint(eIdSessionId)
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `old identity data endpoint returns 403 when no authorization header was passed`() {
+        sendGETRequest("${getIdentificationPath(forOldApi = true)}/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+    }
+
+    @Test
+    fun `old identity data endpoint returns 404 when passed a random UUID`() {
+        sendIdentityRequestToOldEndpoint(UUID.randomUUID().toString())
             .expectStatus().isNotFound
     }
 
@@ -219,7 +339,12 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun sendIdentityRequest(eIdSessionId: String) =
-        sendGETRequest("/api/v1/identifications/$eIdSessionId")
+        sendGETRequest("${getIdentificationPath()}/$eIdSessionId")
+            .headers { setAuthorizationHeader(it) }
+            .exchange()
+
+    private fun sendIdentityRequestToOldEndpoint(eIdSessionId: String) =
+        sendGETRequest("${getIdentificationPath(forOldApi = true)}/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 
@@ -231,7 +356,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     private fun sendStartSessionRequest() = webTestClient
         .post()
-        .uri("/api/v1/identifications")
+        .uri(getIdentificationPath())
+        .headers { setAuthorizationHeader(it) }
+        .exchange()
+
+    private fun sendStartSessionRequestToOldEndpoint() = webTestClient
+        .post()
+        .uri(getIdentificationPath(forOldApi = true))
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
