@@ -43,9 +43,9 @@ const val TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH = "api/v1/identification/se
 class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
     fun getIdentificationPath(forOldApi: Boolean = false): String {
         return if (forOldApi) {
-            "${applicationProperties.baseUrl}/$TEST_IDENTIFICATION_SESSIONS_BASE_PATH"
-        } else {
             "${applicationProperties.baseUrl}/$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH"
+        } else {
+            "${applicationProperties.baseUrl}/$TEST_IDENTIFICATION_SESSIONS_BASE_PATH"
         }
     }
 
@@ -106,12 +106,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
         val expectedTcTokenURL = "${getIdentificationPath(forOldApi = true)}/${session.useIdSessionId}/tc-token"
+        println(expectedTcTokenURL)
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 
     @Test
     fun `old start session endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest(getIdentificationPath()).exchange().expectStatus().isForbidden
+        sendGETRequest(TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH).exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -140,13 +141,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        sendGETRequest("${getIdentificationPath(forOldApi = true)}/$invalidId/tc-token").exchange().expectStatus().isBadRequest
+        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/$invalidId/tc-token").exchange().expectStatus().isBadRequest
     }
 
     @Test
     fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
         val unknownId = UUID.randomUUID()
-        sendGETRequest("${getIdentificationPath(forOldApi = true)}/$unknownId/tc-token").exchange().expectStatus().isNotFound
+        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/$unknownId/tc-token").exchange().expectStatus().isNotFound
     }
 
     @Test
@@ -220,7 +221,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         var tcTokenURL = ""
         webTestClient
             .post()
-            .uri(getIdentificationPath())
+            .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
             .headers {
                 it.set(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key-2")
             }
@@ -238,7 +239,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `identity data endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest("${getIdentificationPath()}/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_BASE_PATH/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -323,7 +324,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `old identity data endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest("${getIdentificationPath(forOldApi = true)}/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -339,12 +340,12 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun sendIdentityRequest(eIdSessionId: String) =
-        sendGETRequest("${getIdentificationPath()}/$eIdSessionId")
+        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_BASE_PATH/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 
     private fun sendIdentityRequestToOldEndpoint(eIdSessionId: String) =
-        sendGETRequest("${getIdentificationPath(forOldApi = true)}/$eIdSessionId")
+        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 
@@ -356,13 +357,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     private fun sendStartSessionRequest() = webTestClient
         .post()
-        .uri(getIdentificationPath())
+        .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
     private fun sendStartSessionRequestToOldEndpoint() = webTestClient
         .post()
-        .uri(getIdentificationPath(forOldApi = true))
+        .uri(TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH)
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
