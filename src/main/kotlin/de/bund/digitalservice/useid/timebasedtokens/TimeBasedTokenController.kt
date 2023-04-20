@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.timebasedtokens
 
-import de.bund.digitalservice.useid.identification.IDENTIFICATION_SESSIONS_BASE_PATH
+import de.bund.digitalservice.useid.identification.IDENTIFICATIONS_BASE_PATH
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -19,7 +19,7 @@ import java.util.UUID
 
 @RestController
 @Timed
-@RequestMapping(IDENTIFICATION_SESSIONS_BASE_PATH)
+@RequestMapping(IDENTIFICATIONS_BASE_PATH)
 @Tag(name = "Time-based Tokens", description = "Time-based tokens inside the widget that are only 60 seconds valid and can be checked by the app.")
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class TimeBasedTokenController(private val timeBasedTokenService: TimeBasedTokenService) {

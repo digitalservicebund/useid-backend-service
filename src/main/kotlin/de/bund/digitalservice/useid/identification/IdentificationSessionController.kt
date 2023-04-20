@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-internal const val IDENTIFICATION_SESSIONS_BASE_PATH = "/api/v1/identifications"
-internal const val IDENTIFICATION_SESSIONS_OLD_BASE_PATH = "/api/v1/identification/sessions"
+internal const val IDENTIFICATIONS_BASE_PATH = "/api/v1/identifications"
+internal const val IDENTIFICATIONS_OLD_BASE_PATH = "/api/v1/identification/sessions"
 internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 
 @RestController
@@ -42,7 +42,7 @@ internal const val TCTOKEN_PATH_SUFFIX = "tc-token"
 )
 class IdentificationSessionsController(private val identificationSessionService: IdentificationSessionService) {
 
-    @PostMapping(IDENTIFICATION_SESSIONS_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(IDENTIFICATIONS_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
@@ -63,7 +63,7 @@ class IdentificationSessionsController(private val identificationSessionService:
             .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
 
-    @PostMapping(IDENTIFICATION_SESSIONS_OLD_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(IDENTIFICATIONS_OLD_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
@@ -79,7 +79,7 @@ class IdentificationSessionsController(private val identificationSessionService:
     }
 
     @GetMapping(
-        path = ["$IDENTIFICATION_SESSIONS_OLD_BASE_PATH/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
+        path = ["$IDENTIFICATIONS_OLD_BASE_PATH/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
         produces = [MediaType.APPLICATION_XML_VALUE],
     )
     @Operation(summary = "Get TC token for this session")
@@ -97,7 +97,7 @@ class IdentificationSessionsController(private val identificationSessionService:
             .body(JakartaTCToken.fromTCTokenType(tcToken))
     }
 
-    @GetMapping("$IDENTIFICATION_SESSIONS_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("$IDENTIFICATIONS_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
@@ -132,7 +132,7 @@ class IdentificationSessionsController(private val identificationSessionService:
         }
     }
 
-    @GetMapping("$IDENTIFICATION_SESSIONS_OLD_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("$IDENTIFICATIONS_OLD_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
