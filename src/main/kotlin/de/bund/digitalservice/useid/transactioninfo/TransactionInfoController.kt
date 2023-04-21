@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.transactioninfo
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
@@ -27,6 +28,7 @@ class TransactionInfoController(
         name = "eService",
         description = "Those endpoints are called by the eService.",
     )
+    @SecurityRequirement(name = "apiKey")
     fun createTransactionInfo(
         @PathVariable useIdSessionId: UUID,
         @RequestBody transactionInfo: TransactionInfo,

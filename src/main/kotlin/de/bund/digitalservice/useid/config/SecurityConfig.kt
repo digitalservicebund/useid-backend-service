@@ -26,9 +26,10 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http.authorizeHttpRequests()
-            .requestMatchers(HttpMethod.GET, "$IDENTIFICATIONS_BASE_PATH/*/transaction-info").permitAll()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").authenticated()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
+            .requestMatchers(HttpMethod.POST, "/api/v1/identifications/*/$TRANSACTION_INFO_SUFFIX").authenticated()
+            .requestMatchers(HttpMethod.POST, "/api/v1/identifications/*/$TRANSACTION_INFO_SUFFIX").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
             .anyRequest().permitAll()
             .and().csrf().disable()
             .headers()
