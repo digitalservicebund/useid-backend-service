@@ -20,7 +20,7 @@ class TransactionInfoController(
     private val transactionInfoService: TransactionInfoService,
 ) {
     @PostMapping(
-        path = ["/api/v1/identification/{useIdSessionId}/$TRANSACTION_INFO_SUFFIX"],
+        path = ["/api/v1/identifications/{useIdSessionId}/$TRANSACTION_INFO_SUFFIX"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     @Tag(
