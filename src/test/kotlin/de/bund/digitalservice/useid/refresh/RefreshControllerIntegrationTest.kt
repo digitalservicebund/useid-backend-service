@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.refresh
 
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.identification.TEST_IDENTIFICATION_SESSIONS_BASE_PATH
+import de.bund.digitalservice.useid.identification.TEST_IDENTIFICATIONS_BASE_PATH
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
@@ -45,7 +45,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
 
         webTestClient
             .post()
-            .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
+            .uri(TEST_IDENTIFICATIONS_BASE_PATH)
             .headers { it.set(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER) }
             .exchange()
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }

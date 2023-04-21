@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.statics
 
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.identification.TEST_IDENTIFICATION_SESSIONS_BASE_PATH
+import de.bund.digitalservice.useid.identification.TEST_IDENTIFICATIONS_BASE_PATH
 import io.mockk.every
 import io.mockk.mockkConstructor
 import org.apache.http.client.utils.URIBuilder
@@ -46,7 +46,7 @@ class GlobalStaticErrorIntegrationTest(
 
         var tcTokenURL = ""
         webTestClient.post()
-            .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
+            .uri(TEST_IDENTIFICATIONS_BASE_PATH)
             .header(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key-1")
             .exchange()
             .expectBody()

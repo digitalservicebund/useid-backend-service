@@ -56,7 +56,6 @@ class IdentificationSessionsController(private val identificationSessionService:
             .contentType(MediaType.APPLICATION_JSON)
             .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
-    
 
     @GetMapping("$IDENTIFICATIONS_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
