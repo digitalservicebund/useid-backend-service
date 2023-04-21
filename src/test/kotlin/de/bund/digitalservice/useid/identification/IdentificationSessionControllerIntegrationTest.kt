@@ -90,32 +90,6 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
-    fun `old start session endpoint returns TCTokenUrl`() {
-        var tcTokenURL = ""
-
-        sendStartSessionRequest()
-            .expectStatus().isOk
-            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
-
-        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        val session = retrieveIdentificationSession(useIdSessionId)!!
-        assertThat(session.eIdSessionId, nullValue())
-        assertThat(session.useIdSessionId, notNullValue())
-        assertThat(session.requestDataGroups, `is`(attributes))
-        assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
-
-        val expectedTcTokenURL = "${getIdentificationPath(forOldApi = true)}/${session.useIdSessionId}/tc-token"
-        println(expectedTcTokenURL)
-        assertEquals(expectedTcTokenURL, tcTokenURL)
-    }
-
-    @Test
-    fun `old start session endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest(TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH).exchange().expectStatus().isForbidden
-    }
-
-    @Test
     fun `tcToken endpoint returns valid tc-token and sets correct eIdSessionId in IdentificationSession`() {
         var tcTokenURL = ""
         sendStartSessionRequest()
@@ -248,91 +222,6 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectStatus().isNotFound
     }
 
-    @Test
-    fun `old identity data endpoint returns valid personal data and removes identification session from database`() {
-        val eIdSessionId = UUID.randomUUID().toString()
-        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
-
-        var tcTokenURL = ""
-        sendStartSessionRequestToOldEndpoint()
-            .expectStatus().isOk
-            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
-
-        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .exchange()
-            .expectStatus().isOk
-            .expectBody().xpath("TCTokenType").exists()
-
-        val mockResult = Result()
-        mockResult.resultMajor = "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"
-        val personalData = PersonalDataType()
-        personalData.givenNames = "Ben"
-        val mockGetResultResponseType = mockk<GetResultResponseType>()
-        every { mockGetResultResponseType.personalData } returns personalData
-        every { mockGetResultResponseType.fulfilsAgeVerification } returns VerificationResultType()
-        every { mockGetResultResponseType.fulfilsPlaceVerification } returns VerificationResultType()
-        every { mockGetResultResponseType.operationsAllowedByUser } returns OperationsResponderType()
-        every { mockGetResultResponseType.transactionAttestationResponse } returns TransactionAttestationResponseType()
-        every { mockGetResultResponseType.levelOfAssuranceResult } returns LevelOfAssuranceType.HTTP_EIDAS_EUROPA_EU_LO_A_LOW
-        every { mockGetResultResponseType.result } returns mockResult
-        every { anyConstructed<EidService>().getEidInformation(any()) } returns mockGetResultResponseType
-
-        sendIdentityRequestToOldEndpoint(eIdSessionId)
-            .expectStatus().isOk
-            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
-            .expectBody()
-            .jsonPath("$.result").value<LinkedHashMap<String, String>> {
-                assertEquals(it["resultMajor"], mockResult.resultMajor)
-            }
-            .jsonPath("$.personalData").value<LinkedHashMap<String, String>> {
-                assertEquals(it["givenNames"], personalData.givenNames)
-            }
-
-        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
-        await().until { retrieveIdentificationSession(useIdSessionId) == null }
-    }
-
-    @Test
-    fun `old identity data endpoint returns 400 when passed an invalid string instead of UUID`() {
-        sendIdentityRequestToOldEndpoint("IamInvalid")
-            .expectStatus().isBadRequest
-    }
-
-    @Test
-    fun `old identity data endpoint returns 401 when api key differs from the api key used to create the session`() {
-        val eIdSessionId = UUID.randomUUID().toString()
-        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
-
-        var tcTokenURL = ""
-        webTestClient
-            .post()
-            .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
-            .headers {
-                it.set(HttpHeaders.AUTHORIZATION, "Bearer valid-api-key-2")
-            }
-            .exchange()
-            .expectStatus().isOk
-            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
-
-        sendGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .exchange()
-            .expectStatus().isOk
-
-        sendIdentityRequestToOldEndpoint(eIdSessionId)
-            .expectStatus().isUnauthorized
-    }
-
-    @Test
-    fun `old identity data endpoint returns 403 when no authorization header was passed`() {
-        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
-    }
-
-    @Test
-    fun `old identity data endpoint returns 404 when passed a random UUID`() {
-        sendIdentityRequestToOldEndpoint(UUID.randomUUID().toString())
-            .expectStatus().isNotFound
-    }
-
     private fun mockTcToken(refreshAddress: String) {
         val mockTCToken = mockk<TCTokenType>(relaxed = true)
         every { mockTCToken.refreshAddress } returns refreshAddress
@@ -341,11 +230,6 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     private fun sendIdentityRequest(eIdSessionId: String) =
         sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_BASE_PATH/$eIdSessionId")
-            .headers { setAuthorizationHeader(it) }
-            .exchange()
-
-    private fun sendIdentityRequestToOldEndpoint(eIdSessionId: String) =
-        sendGETRequest("$TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 
@@ -358,12 +242,6 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     private fun sendStartSessionRequest() = webTestClient
         .post()
         .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
-        .headers { setAuthorizationHeader(it) }
-        .exchange()
-
-    private fun sendStartSessionRequestToOldEndpoint() = webTestClient
-        .post()
-        .uri(TEST_IDENTIFICATION_SESSIONS_OLD_BASE_PATH)
         .headers { setAuthorizationHeader(it) }
         .exchange()
 

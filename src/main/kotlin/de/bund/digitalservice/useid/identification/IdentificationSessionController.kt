@@ -63,21 +63,6 @@ class IdentificationSessionsController(private val identificationSessionService:
             .body(CreateIdentificationSessionResponse(tcTokenUrl))
     }
 
-    @PostMapping(IDENTIFICATIONS_OLD_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Start session for a new identification as eService")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(
-        responseCode = "401",
-        description = "Authentication failed (missing or wrong api key)",
-        content = [Content()],
-    )
-    @SecurityRequirement(name = "apiKey")
-    fun startSessionOld(
-        authentication: Authentication,
-    ): ResponseEntity<CreateIdentificationSessionResponse> {
-        return startSession(authentication)
-    }
-
     @GetMapping(
         path = ["$IDENTIFICATIONS_OLD_BASE_PATH/{useIdSessionId}/$TCTOKEN_PATH_SUFFIX"],
         produces = [MediaType.APPLICATION_XML_VALUE],
@@ -130,26 +115,5 @@ class IdentificationSessionsController(private val identificationSessionService:
         if (tenant.id != identificationSession.tenantId) {
             throw InvalidTenantException("Tenant does not match with tenant used to start the session.")
         }
-    }
-
-    @GetMapping("$IDENTIFICATIONS_OLD_BASE_PATH/{eIdSessionId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Fetch data as eService after identification was successful")
-    @ApiResponse(responseCode = "200")
-    @ApiResponse(
-        responseCode = "404",
-        description = "No corresponding session found for that eIdSessionId",
-        content = [Content()],
-    )
-    @ApiResponse(
-        responseCode = "401",
-        description = "Authentication failed (missing or wrong api key)",
-        content = [Content()],
-    )
-    @SecurityRequirement(name = "apiKey")
-    fun getIdentityOld(
-        @PathVariable eIdSessionId: UUID,
-        authentication: Authentication,
-    ): ResponseEntity<GetResultResponseType> {
-        return getIdentity(eIdSessionId, authentication)
     }
 }
