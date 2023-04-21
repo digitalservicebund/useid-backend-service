@@ -16,11 +16,11 @@ class TBTMockDatasource {
         return timeBasedToken
     }
 
-    fun deleteAllByUseIdSessionId(useIdSessionId: UUID) {
-        timeBasedTokens.removeAll { it.useIdSessionId == useIdSessionId }
+    fun deleteAllBySessionId(sessionId: UUID) {
+        timeBasedTokens.removeAll { it.sessionId == sessionId }
     }
 
-    fun findByUseIdSessionIdAndTokenId(useIdSessionId: UUID, tokenId: UUID): TimeBasedToken? {
-        return timeBasedTokens.find { it.useIdSessionId == useIdSessionId && it.tokenId == tokenId }
+    fun findBySessionIdAndTokenId(sessionId: UUID, tokenId: UUID): TimeBasedToken? {
+        return timeBasedTokens.find { it.sessionId == sessionId && it.tokenId == tokenId }
     }
 }
