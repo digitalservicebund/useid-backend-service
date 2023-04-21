@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
@@ -18,10 +19,11 @@ internal const val TCTOKENS_BASE_PATH = "/api/v1/tc-tokens"
 @RestController
 @Timed
 @Tag(name = "eID-Client")
+@RequestMapping(TCTOKENS_BASE_PATH)
 class TcTokenController(private val identificationSessionService: IdentificationSessionService) {
 
     @GetMapping(
-        path = ["$TCTOKENS_BASE_PATH/{useIdSessionId}"],
+        path = ["/{useIdSessionId}"],
         produces = [MediaType.APPLICATION_XML_VALUE],
     )
     @Operation(summary = "Get TC token for this session")
