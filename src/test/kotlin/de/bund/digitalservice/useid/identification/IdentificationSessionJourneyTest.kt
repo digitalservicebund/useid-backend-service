@@ -37,7 +37,7 @@ class IdentificationSessionJourneyTest {
         var tcTokenURL = ""
         webTestClient
             .post()
-            .uri("/api/v1/identification/sessions")
+            .uri(TEST_IDENTIFICATION_SESSIONS_BASE_PATH)
             .headers { setAuthorizationHeader(it) }
             .exchange()
             .expectStatus()
