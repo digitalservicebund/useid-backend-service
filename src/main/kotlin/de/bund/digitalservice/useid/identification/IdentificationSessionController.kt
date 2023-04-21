@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 internal const val IDENTIFICATIONS_BASE_PATH = "/api/v1/identifications"
-internal const val IDENTIFICATIONS_OLD_BASE_PATH = "/api/v1/identification/sessions"
 
 @RestController
 @Timed
