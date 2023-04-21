@@ -25,8 +25,6 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http.authorizeHttpRequests()
-            .requestMatchers("$IDENTIFICATIONS_BASE_PATH/*/tokens/*").permitAll()
-            .requestMatchers("$IDENTIFICATIONS_BASE_PATH/*/tokens").permitAll()
             .requestMatchers(HttpMethod.GET, "$IDENTIFICATIONS_BASE_PATH/*/transaction-info").permitAll()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").authenticated()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
