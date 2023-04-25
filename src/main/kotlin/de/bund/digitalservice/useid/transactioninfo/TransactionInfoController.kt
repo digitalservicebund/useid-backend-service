@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-internal const val TRANSACTION_INFO_SUFFIX = "transaction-infos"
+internal const val TRANSACTION_INFO_SUBPATH = "transaction-infos"
 
 @RestController
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
@@ -21,7 +21,7 @@ class TransactionInfoController(
     private val transactionInfoService: TransactionInfoService,
 ) {
     @PostMapping(
-        path = ["/api/v1/identifications/{useIdSessionId}/$TRANSACTION_INFO_SUFFIX"],
+        path = ["/api/v1/identifications/{useIdSessionId}/$TRANSACTION_INFO_SUBPATH"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     @Tag(
@@ -42,7 +42,7 @@ class TransactionInfoController(
     }
 
     @GetMapping(
-        path = ["/api/v1/$TRANSACTION_INFO_SUFFIX/{useIdSessionId}"],
+        path = ["/api/v1/$TRANSACTION_INFO_SUBPATH/{useIdSessionId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     @Tag(name = "eID-Client")
