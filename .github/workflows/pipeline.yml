@@ -287,7 +287,7 @@ jobs:
           argocd_server: ${{ secrets.ARGOCD_SERVER }}
           argocd_sync_timeout: 300
       - name: Track deploy
-        uses: digitalservicebund/github-actions/track-deployment@808a08421edc16be156787f56af63b846ea6f557
+        uses: digitalservicebund/github-actions/track-deployment@34a48d29a9c4cc2fd6710b8eb37e13618a08fa88
         with:
           project: UseId
           environment: staging
