@@ -26,7 +26,7 @@ class TransactionInfoController(
     )
     @Tag(
         name = "eService",
-        description = "Those endpoints are called by the eService.",
+        description = "The eService calls this endpoint to set transaction info for a session.",
     )
     @SecurityRequirement(name = "apiKey")
     fun createTransactionInfo(
@@ -45,7 +45,10 @@ class TransactionInfoController(
         path = ["/api/v1/$TRANSACTION_INFO_SUBPATH/{useIdSessionId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    @Tag(name = "eID-Client")
+    @Tag(
+        name = "eID-Client",
+        description = "The eID-Client calls this endpoint to get transaction info for a session which can then be shown to the user.",
+    )
     fun getTransactionInfo(@PathVariable useIdSessionId: UUID): ResponseEntity<TransactionInfo> {
         val transactionInfoDto = transactionInfoService.findByUseIdSessionId(useIdSessionId) ?: return ResponseEntity.notFound().build()
 
