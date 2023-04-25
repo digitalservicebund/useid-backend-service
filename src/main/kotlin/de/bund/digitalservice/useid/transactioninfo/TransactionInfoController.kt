@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.transactioninfo
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -21,7 +22,7 @@ class TransactionInfoController(
     private val transactionInfoService: TransactionInfoService,
 ) {
     @PostMapping(
-        path = ["/api/v1/identifications/{useIdSessionId}/$TRANSACTION_INFO_SUBPATH"],
+        path = ["${ApplicationProperties.apiVersionPrefix}/identifications/{useIdSessionId}/$TRANSACTION_INFO_SUBPATH"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     @Tag(
@@ -42,7 +43,7 @@ class TransactionInfoController(
     }
 
     @GetMapping(
-        path = ["/api/v1/$TRANSACTION_INFO_SUBPATH/{useIdSessionId}"],
+        path = ["${ApplicationProperties.apiVersionPrefix}/$TRANSACTION_INFO_SUBPATH/{useIdSessionId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
     @Tag(
