@@ -24,10 +24,6 @@ internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
 @RestController
 @RequestMapping(CREDENTIALS_BASE_PATH)
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-@Tag(
-    name = "Credentials",
-    description = "WebAuthn credentials are used to authenticate the a user in the widget.",
-)
 class CredentialController(
     private val credentialService: CredentialService,
     private val eventStreamService: EventStreamService,
@@ -35,6 +31,10 @@ class CredentialController(
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start registration for WebAuthn credentials.")
     @ApiResponse(responseCode = "201", content = [Content()])
+    @Tag(
+        name = "eID-Client",
+        description = "WebAuthn credentials are created in the app to later authenticate the user in the widget.",
+    )
     fun startRegistration(
         @RequestBody startRegistrationRequest: StartRegistrationRequest,
     ): ResponseEntity<Any> {
@@ -59,6 +59,10 @@ class CredentialController(
     )
     @Operation(summary = "Complete registration for WebAuthn credentials and start authentication. Notifies the widget about the started authentication.")
     @ApiResponse(responseCode = "204", content = [Content()])
+    @Tag(
+        name = "eID-Client",
+        description = "Complete creation of WebAuthn credentials and tell server to start authentication with widget.",
+    )
     fun completeRegistration(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
@@ -91,6 +95,10 @@ class CredentialController(
     )
     @Operation(summary = "Complete authentication with WebAuthn credentials.")
     @ApiResponse(responseCode = "200", content = [Content()])
+    @Tag(
+        name = "Widget",
+        description = "WebAuthn credentials are used to authenticate the user in the widget.",
+    )
     fun completeAuthentication(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
