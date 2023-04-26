@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.eventstreams
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -22,7 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/event-streams")
+@RequestMapping("${ApplicationProperties.apiVersionPrefix}/event-streams")
 @Timed
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class EventStreamController(private val eventStreamService: EventStreamService) {

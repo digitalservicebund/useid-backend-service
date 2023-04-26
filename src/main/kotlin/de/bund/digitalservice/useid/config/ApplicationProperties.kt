@@ -11,4 +11,8 @@ import org.springframework.validation.annotation.Validated
 class ApplicationProperties {
     @NotBlank
     lateinit var baseUrl: String
+
+    companion object {
+        const val apiVersionPrefix = "/api/v1"
+    }
 }
