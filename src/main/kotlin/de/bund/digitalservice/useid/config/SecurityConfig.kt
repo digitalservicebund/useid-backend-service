@@ -5,10 +5,8 @@ import de.bund.digitalservice.useid.tenant.MANAGE_IDENTIFICATION_SESSION_AUTHORI
 import de.bund.digitalservice.useid.tenant.ResolveTenantFilter
 import de.bund.digitalservice.useid.tenant.TenantAuthenticationFilter
 import de.bund.digitalservice.useid.tenant.TenantProperties
-import de.bund.digitalservice.useid.transactioninfo.TRANSACTION_INFO_SUBPATH
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -28,8 +26,6 @@ class SecurityConfig(
         return http.authorizeHttpRequests()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").authenticated()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
-            .requestMatchers(HttpMethod.POST, "${ApplicationProperties.apiVersionPrefix}/identifications/*/$TRANSACTION_INFO_SUBPATH").authenticated()
-            .requestMatchers(HttpMethod.POST, "${ApplicationProperties.apiVersionPrefix}/identifications/*/$TRANSACTION_INFO_SUBPATH").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
             .anyRequest().permitAll()
             .and().csrf().disable()
             .headers()
