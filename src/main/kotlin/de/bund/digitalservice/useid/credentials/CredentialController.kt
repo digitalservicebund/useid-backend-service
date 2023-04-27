@@ -62,7 +62,7 @@ class CredentialController(
     fun completeRegistration(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<Unit> {
         credentialService.finishRegistration(credentialId, publicKeyCredentialJson)
 
         val credential = credentialService.startAuthentication(credentialId)

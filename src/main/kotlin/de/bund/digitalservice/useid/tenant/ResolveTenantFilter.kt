@@ -18,7 +18,7 @@ class ResolveTenantFilter(
     private val log = KotlinLogging.logger {}
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         var resolvedTenant: Tenant? = null
-        if (request.servletPath.equals(REQUEST_PATH_WIDGET)) {
+        if (request.servletPath == REQUEST_PATH_WIDGET) {
             val host = request.getParameter(PARAM_NAME_HOSTNAME)
                 ?: return response.sendError(HttpServletResponse.SC_BAD_REQUEST, "hostname parameter required")
             resolvedTenant = tenantProperties.findByAllowedHost(host)

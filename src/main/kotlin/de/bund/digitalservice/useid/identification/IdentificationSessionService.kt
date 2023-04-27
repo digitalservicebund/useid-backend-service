@@ -90,7 +90,7 @@ class IdentificationSessionService(
         val eidInformation = getEidInformation(eIdSessionId, tenantId)
 
         // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
-        if (eidInformation.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+        if (eidInformation.result.resultMajor == "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok") {
             deleteSession(eIdSessionId)
         } else {
             // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes
