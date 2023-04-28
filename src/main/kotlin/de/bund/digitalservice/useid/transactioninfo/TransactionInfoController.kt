@@ -1,8 +1,9 @@
 package de.bund.digitalservice.useid.transactioninfo
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.EIDClientTag
+import de.bund.digitalservice.useid.documentation.EServiceTag
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -25,10 +26,7 @@ class TransactionInfoController(
         path = ["${ApplicationProperties.apiVersionPrefix}/identifications/{useIdSessionId}/$TRANSACTION_INFO_SUBPATH"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    @Tag(
-        name = "eService",
-        description = "The eService calls this endpoint to set transaction info for a session.",
-    )
+    @EServiceTag
     @SecurityRequirement(name = "apiKey")
     fun createTransactionInfo(
         @PathVariable useIdSessionId: UUID,
@@ -46,10 +44,7 @@ class TransactionInfoController(
         path = ["${ApplicationProperties.apiVersionPrefix}/$TRANSACTION_INFO_SUBPATH/{useIdSessionId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    @Tag(
-        name = "eID-Client",
-        description = "The eID-Client calls this endpoint to get transaction info for a session which can then be shown to the user.",
-    )
+    @EIDClientTag
     fun getTransactionInfo(@PathVariable useIdSessionId: UUID): ResponseEntity<TransactionInfo> {
         val transactionInfoDto = transactionInfoService.findByUseIdSessionId(useIdSessionId) ?: return ResponseEntity.notFound().build()
 
