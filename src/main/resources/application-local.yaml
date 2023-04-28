@@ -34,7 +34,7 @@ eidservice:
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/useid
+    url: jdbc:postgresql://localhost:5433/useid
     username: root
     password: secret
 
