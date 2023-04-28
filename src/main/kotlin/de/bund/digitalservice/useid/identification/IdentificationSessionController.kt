@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.EServiceTag
 import de.bund.digitalservice.useid.tenant.InvalidTenantException
 import de.bund.digitalservice.useid.tenant.Tenant
 import io.micrometer.core.annotation.Timed
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityScheme
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -35,7 +35,7 @@ internal const val IDENTIFICATIONS_BASE_PATH = "${ApplicationProperties.apiVersi
     scheme = "Bearer",
     description = "API key as bearer token in `Authorization` header",
 )
-@Tag(name = "eService")
+@EServiceTag
 class IdentificationSessionsController(private val identificationSessionService: IdentificationSessionService) {
     @PostMapping(IDENTIFICATIONS_BASE_PATH, produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start session for a new identification as eService")

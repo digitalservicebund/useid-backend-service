@@ -1,11 +1,11 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.EIDClientTag
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -19,7 +19,7 @@ internal const val TCTOKENS_BASE_PATH = "${ApplicationProperties.apiVersionPrefi
 
 @RestController
 @Timed
-@Tag(name = "eID-Client")
+@EIDClientTag
 @RequestMapping(TCTOKENS_BASE_PATH)
 class TcTokenController(private val identificationSessionService: IdentificationSessionService) {
 

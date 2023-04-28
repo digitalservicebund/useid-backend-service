@@ -1,11 +1,11 @@
 package de.bund.digitalservice.useid.refresh
 
+import de.bund.digitalservice.useid.documentation.RefreshTag
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,7 +22,7 @@ internal const val REFRESH_PATH = "/refresh"
 
 @RestController
 @Timed
-@Tag(name = "Refresh", description = "The refresh endpoint redirects the caller to the refresh address of the respective service.")
+@RefreshTag
 @RequestMapping(REFRESH_PATH)
 class RefreshController(private val identificationSessionService: IdentificationSessionService) {
 

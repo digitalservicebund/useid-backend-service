@@ -1,13 +1,14 @@
 package de.bund.digitalservice.useid.credentials
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.EIDClientTag
+import de.bund.digitalservice.useid.documentation.WidgetTag
 import de.bund.digitalservice.useid.eventstreams.AuthenticateEvent
 import de.bund.digitalservice.useid.eventstreams.EventStreamService
 import de.bund.digitalservice.useid.eventstreams.EventType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -32,10 +33,7 @@ class CredentialController(
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Start registration for WebAuthn credentials.")
     @ApiResponse(responseCode = "201", content = [Content()])
-    @Tag(
-        name = "eID-Client",
-        description = "WebAuthn credentials are created in the app to later authenticate the user in the widget.",
-    )
+    @EIDClientTag
     fun startRegistration(
         @RequestBody startRegistrationRequest: StartRegistrationRequest,
     ): ResponseEntity<Any> {
@@ -60,10 +58,7 @@ class CredentialController(
     )
     @Operation(summary = "Complete registration for WebAuthn credentials and start authentication. Notifies the widget about the started authentication.")
     @ApiResponse(responseCode = "204", content = [Content()])
-    @Tag(
-        name = "eID-Client",
-        description = "Complete creation of WebAuthn credentials and tell server to start authentication with widget.",
-    )
+    @EIDClientTag
     fun completeRegistration(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,
@@ -96,10 +91,7 @@ class CredentialController(
     )
     @Operation(summary = "Complete authentication with WebAuthn credentials.")
     @ApiResponse(responseCode = "200", content = [Content()])
-    @Tag(
-        name = "Widget",
-        description = "WebAuthn credentials are used to authenticate the user in the widget.",
-    )
+    @WidgetTag
     fun completeAuthentication(
         @PathVariable credentialId: UUID,
         @RequestBody publicKeyCredentialJson: String,

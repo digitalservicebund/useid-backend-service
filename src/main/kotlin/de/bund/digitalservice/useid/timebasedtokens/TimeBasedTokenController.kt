@@ -1,11 +1,12 @@
 package de.bund.digitalservice.useid.timebasedtokens
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.EIDClientTag
+import de.bund.digitalservice.useid.documentation.WidgetTag
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -27,7 +28,7 @@ internal const val TIME_BASED_TOKENS_SUB_PATH = "time-based-tokens"
 class TimeBasedTokenController(private val timeBasedTokenService: TimeBasedTokenService) {
     @PostMapping("/{sessionId}/$TIME_BASED_TOKENS_SUB_PATH", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Create time-based token for this session")
-    @Tag(name = "Widget")
+    @WidgetTag
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Invalid sessionId (session not found)", content = [Content()])
     fun getTimeBasedToken(@PathVariable sessionId: UUID): ResponseEntity<TimeBasedToken> {
@@ -45,7 +46,7 @@ class TimeBasedTokenController(private val timeBasedTokenService: TimeBasedToken
 
     @GetMapping("/{sessionId}/$TIME_BASED_TOKENS_SUB_PATH/{tokenId}")
     @Operation(summary = "Check if time-based token for this session is (still) valid")
-    @Tag(name = "eID-Client")
+    @EIDClientTag
     @ApiResponse(responseCode = "204", description = "Token was found and is valid", content = [Content()])
     @ApiResponse(responseCode = "404", description = "Token was not found (or not valid anymore)", content = [Content()])
     fun timeBasedTokenValidation(@PathVariable sessionId: UUID, @PathVariable tokenId: UUID): ResponseEntity<Nothing> {
