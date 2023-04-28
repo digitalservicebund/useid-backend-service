@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.credentials
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.eventstreams.AuthenticateEvent
 import de.bund.digitalservice.useid.eventstreams.EventStreamService
 import de.bund.digitalservice.useid.eventstreams.EventType
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-internal const val CREDENTIALS_BASE_PATH = "/api/v1/credentials"
+internal const val CREDENTIALS_BASE_PATH = "${ApplicationProperties.apiVersionPrefix}/credentials"
 
 @RestController
 @RequestMapping(CREDENTIALS_BASE_PATH)

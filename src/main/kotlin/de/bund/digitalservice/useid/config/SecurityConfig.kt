@@ -7,7 +7,6 @@ import de.bund.digitalservice.useid.tenant.TenantAuthenticationFilter
 import de.bund.digitalservice.useid.tenant.TenantProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -25,7 +24,6 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http.authorizeHttpRequests()
-            .requestMatchers(HttpMethod.GET, "$IDENTIFICATIONS_BASE_PATH/*/transaction-info").permitAll()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").authenticated()
             .requestMatchers("$IDENTIFICATIONS_BASE_PATH/**").hasAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
             .anyRequest().permitAll()

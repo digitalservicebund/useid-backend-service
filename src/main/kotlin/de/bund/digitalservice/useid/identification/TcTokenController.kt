@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
-internal const val TCTOKENS_BASE_PATH = "/api/v1/tc-tokens"
+internal const val TCTOKENS_BASE_PATH = "${ApplicationProperties.apiVersionPrefix}/tc-tokens"
 
 @RestController
 @Timed

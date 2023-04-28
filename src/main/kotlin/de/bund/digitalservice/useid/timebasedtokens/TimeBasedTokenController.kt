@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.timebasedtokens
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-internal const val TIME_BASED_TOKENS_BASE_PATH = "/api/v1/sessions"
+internal const val TIME_BASED_TOKENS_BASE_PATH = "${ApplicationProperties.apiVersionPrefix}/sessions"
 internal const val TIME_BASED_TOKENS_SUB_PATH = "time-based-tokens"
 
 @RestController

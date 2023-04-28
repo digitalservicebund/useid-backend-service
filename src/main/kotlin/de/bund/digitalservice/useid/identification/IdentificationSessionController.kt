@@ -1,6 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
 import de.bund.bsi.eid230.GetResultResponseType
+import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.tenant.InvalidTenantException
 import de.bund.digitalservice.useid.tenant.Tenant
 import io.micrometer.core.annotation.Timed
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
-internal const val IDENTIFICATIONS_BASE_PATH = "/api/v1/identifications"
+internal const val IDENTIFICATIONS_BASE_PATH = "${ApplicationProperties.apiVersionPrefix}/identifications"
 
 @RestController
 @Timed
