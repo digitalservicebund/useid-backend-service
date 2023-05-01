@@ -103,7 +103,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.18.0")
     testImplementation("org.testcontainers:jdbc:1.18.0")
     testImplementation("org.awaitility:awaitility:4.2.0")
-    testImplementation("org.jsoup:jsoup:1.15.3")
+    testImplementation("org.jsoup:jsoup:1.16.1")
 
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
