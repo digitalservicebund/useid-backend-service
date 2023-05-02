@@ -4,9 +4,9 @@ commit-msg:
       run: npx --yes commitlint --edit
 pre-commit:
   commands:
-    check-format:
+    fix-format:
       tags: style
-      run: ./gradlew :spotlessCheck
+      run: ./gradlew :spotlessApply && git add {staged_files}
 pre-push:
   parallel: true
   commands:
