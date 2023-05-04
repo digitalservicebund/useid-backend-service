@@ -1,3 +1,6 @@
+app:
+  max-percentage-of-eid-failures: ${MAX_PERCENTAGE_OF_EID_FAILURES}
+
 management:
   endpoints:
     web:
