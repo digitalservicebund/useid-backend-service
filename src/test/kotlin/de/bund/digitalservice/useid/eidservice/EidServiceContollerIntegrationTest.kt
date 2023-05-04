@@ -47,16 +47,16 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(expectedStatus, equalTo(status))
+        assertThat(status, equalTo(expectedStatus))
     }
 
     @Test
-    fun `should return UP signal if eService has responded incorrectly for less than the last 5 minutes`() {
+    fun `should return UP signal if eService has responded incorrectly for less than 75 percent in the last 5 minutes`() {
         val expectedStatus = "UP"
         var status = ""
 
         eidServiceRepository.save(EidServiceHealthDataPoint("1", true, Date.from(Date().toInstant().minusSeconds(240))))
-        eidServiceRepository.save(EidServiceHealthDataPoint("2", false, Date.from(Date().toInstant().minusSeconds(180))))
+        eidServiceRepository.save(EidServiceHealthDataPoint("2", true, Date.from(Date().toInstant().minusSeconds(180))))
         eidServiceRepository.save(EidServiceHealthDataPoint("3", false, Date.from(Date().toInstant().minusSeconds(120))))
         eidServiceRepository.save(EidServiceHealthDataPoint("4", false, Date.from(Date().toInstant().minusSeconds(60))))
         eidServiceRepository.save(EidServiceHealthDataPoint("5", false, Date()))
@@ -65,12 +65,12 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(expectedStatus, equalTo(status))
+        assertThat(status, equalTo(expectedStatus))
     }
 
     @Test
-    fun `should return UP signal if eService has responded correctly only for the last minute`() {
-        val expectedStatus = "UP"
+    fun `should return DOWN signal if eService has responded correctly only for the last minute`() {
+        val expectedStatus = "DOWN"
         var status = ""
 
         eidServiceRepository.save(EidServiceHealthDataPoint("1", false, Date.from(Date().toInstant().minusSeconds(240))))
@@ -83,7 +83,7 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(expectedStatus, equalTo(status))
+        assertThat(status, equalTo(expectedStatus))
     }
 
     @Test
@@ -101,6 +101,6 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(expectedStatus, equalTo(status))
+        assertThat(status, equalTo(expectedStatus))
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Timed
-class EidServiceController(private val eidServiceRepository: EidServiceRepository) {
+class EidServiceController(private val eidServiceRepository: EidServiceRepository, private val applicationProperties: ApplicationProperties) {
 
     @GetMapping("${ApplicationProperties.apiVersionPrefix}/eidservice/health", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
@@ -43,6 +43,14 @@ class EidServiceController(private val eidServiceRepository: EidServiceRepositor
 
     fun checkFunctionalityOfEidService(): Boolean {
         val lastResults = eidServiceRepository.findAll()
-        return lastResults.any { it.up }
+        val numberOfDataPoints = lastResults.toList().size
+        lastResults.removeAll { it.up }
+        val numberOfInvalidResults = lastResults.toList().size
+
+        return invalidResultsLowEnough(numberOfInvalidResults, numberOfDataPoints)
+    }
+
+    fun invalidResultsLowEnough(numberOfInvalidResults: Int, numberOfResults: Int): Boolean {
+        return numberOfResults > 0 && (100.0 * numberOfInvalidResults / numberOfResults) < applicationProperties.maxPercentageOfEidFailures
     }
 }
