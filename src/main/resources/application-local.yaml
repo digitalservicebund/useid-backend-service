@@ -37,6 +37,13 @@ spring:
     url: jdbc:postgresql://localhost:5433/useid
     username: root
     password: secret
+  data:
+    redis:
+      repositories:
+        enabled: true
+      host: localhost
+      port: 6381
+
 
 tracking:
   matomo:
