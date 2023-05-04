@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.eidservice
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -11,10 +10,11 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import kotlin.jvm.optionals.getOrNull
 
 @RestController
 @Timed
-class EidServiceController(private val identificationSessionService: IdentificationSessionService) {
+class EidServiceController(private val eidServiceRepository: EidServiceRepository) {
 
     @GetMapping("${ApplicationProperties.apiVersionPrefix}/eidservice/health", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
@@ -29,10 +29,8 @@ class EidServiceController(private val identificationSessionService: Identificat
         description = "Authentication failed (missing or wrong api key)",
         content = [Content()],
     )
-    fun checkFunctionalityOfEidService(): ResponseEntity<String> {
-        try {
-            identificationSessionService.startSession("demo.eid.digitalservicebund.de", listOf("DG4"), "Demo")
-        } catch (e: Exception) {
+    fun getEidServiceHealth(): ResponseEntity<String> {
+        if (!checkFunctionalityOfEidService()) {
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -42,5 +40,10 @@ class EidServiceController(private val identificationSessionService: Identificat
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body("{\"status\":\"UP\",\"groups\":[\"eService\"]}")
+    }
+
+    fun checkFunctionalityOfEidService(): Boolean {
+        val lastResult = eidServiceRepository.findById("1").getOrNull() ?: return false
+        return lastResult.up
     }
 }
