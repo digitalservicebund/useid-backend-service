@@ -74,7 +74,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `start session endpoint returns 403 when no authorization header was passed`() {
-        webTestClient.sendGETRequest(IDENTIFICATIONS_BASE_PATH).exchange().expectStatus().isForbidden
+        webTestClient.sendGETRequest(TEST_IDENTIFICATIONS_BASE_PATH).exchange().expectStatus().isForbidden
     }
 
     @Test
