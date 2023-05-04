@@ -10,7 +10,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import kotlin.jvm.optionals.getOrNull
 
 @RestController
 @Timed
@@ -43,7 +42,7 @@ class EidServiceController(private val eidServiceRepository: EidServiceRepositor
     }
 
     fun checkFunctionalityOfEidService(): Boolean {
-        val lastResult = eidServiceRepository.findById("1").getOrNull() ?: return false
-        return lastResult.up
+        val lastResults = eidServiceRepository.findAll()
+        return lastResults.any { it.up }
     }
 }
