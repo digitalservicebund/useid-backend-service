@@ -1,6 +1,8 @@
 app:
   base-url: http://localhost:8080
   max-percentage-of-eid-failures: 75
+  scheduling:
+    enable: false
 
 tenant:
   tenants:
