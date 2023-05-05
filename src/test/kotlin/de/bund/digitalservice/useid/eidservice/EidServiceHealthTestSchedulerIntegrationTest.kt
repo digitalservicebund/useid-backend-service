@@ -1,10 +1,9 @@
 package de.bund.digitalservice.useid.eidservice
 
-import com.ninjasquad.springmockk.MockkBean
-import de.bund.digitalservice.useid.identification.IdentificationSessionService
+import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
-import net.javacrumbs.shedlock.core.LockAssert
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import io.mockk.mockk
+import io.mockk.mockkConstructor
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
@@ -27,11 +26,9 @@ class EidServiceHealthTestSchedulerIntegrationTest() {
     @Autowired
     private lateinit var eidServiceHealthTestScheduler: EidServiceHealthTestScheduler
 
-    @MockkBean
-    private lateinit var identificationSessionService: IdentificationSessionService
-
     @BeforeAll
     fun setupBeforeAll() {
+        mockkConstructor(EidService::class)
         eidServiceRepository.deleteAll()
     }
 
@@ -43,13 +40,13 @@ class EidServiceHealthTestSchedulerIntegrationTest() {
     @AfterAll
     fun teardown() {
         eidServiceRepository.deleteAll()
-        LockAssert.TestHelper.makeAllAssertsPass(false)
     }
 
     @Test
-    @SchedulerLock(name = "eIdServiceHealthTest")
     fun `should store true if eIdService responds with no error`() {
-        every { identificationSessionService.startSession(any(), any(), any()) } returns "https://someTcTokenUrl.com"
+        val mockTCToken = mockk<TCTokenType>()
+        every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=1234"
+        every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
 
         eidServiceHealthTestScheduler.checkEIDServiceAvailability()
         val foundResults = eidServiceRepository.findAll()
@@ -59,9 +56,8 @@ class EidServiceHealthTestSchedulerIntegrationTest() {
     }
 
     @Test
-    @SchedulerLock(name = "eIdServiceHealthTest")
     fun `should store false if eIdService responds with an exception`() {
-        every { identificationSessionService.startSession(any(), any(), any()) } throws Exception("some error")
+        every { anyConstructed<EidService>().getTcToken(any()) } throws Exception("some error")
 
         eidServiceHealthTestScheduler.checkEIDServiceAvailability()
         val foundResults = eidServiceRepository.findAll()

@@ -1,19 +1,19 @@
 package de.bund.digitalservice.useid.eidservice
 
-import de.bund.digitalservice.useid.identification.IdentificationSessionService
-import org.springframework.scheduling.annotation.Scheduled
+import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.refresh.REFRESH_PATH
 import org.springframework.stereotype.Component
 import java.util.Date
 
 private const val EVERY_MINUTE: String = "* * * * * *"
 
 @Component
-class EidServiceHealthTestScheduler(private val eidServiceRepository: EidServiceRepository, private val identificationSessionService: IdentificationSessionService) {
+class EidServiceHealthTestScheduler(private val eidServiceRepository: EidServiceRepository, private val eidServiceConfig: EidServiceConfig, private val applicationProperties: ApplicationProperties) {
 
-    @Scheduled(cron = EVERY_MINUTE)
     fun checkEIDServiceAvailability() {
+        val eidService = EidService(eidServiceConfig, listOf("DG4"))
         val result = try {
-            identificationSessionService.startSession("demo.eid.digitalservicebund.de", listOf("DG4"), "Demo")
+            eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
             true
         } catch (e: Exception) {
             false
