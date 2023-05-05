@@ -10,7 +10,7 @@ import java.util.Date
 private const val EVERY_MINUTE: String = "* * * * * *"
 
 @Component
-class EidServiceHealthTestScheduler(private val eidServiceRepository: EidServiceRepository, private val eidServiceConfig: EidServiceConfig, private val applicationProperties: ApplicationProperties) {
+class EidHealthService(private val eidServiceRepository: EidServiceRepository, private val eidServiceConfig: EidServiceConfig, private val applicationProperties: ApplicationProperties) {
 
     @Scheduled(cron = EVERY_MINUTE)
     @SchedulerLock(name = "eIdServiceHealtCheck")
@@ -23,5 +23,18 @@ class EidServiceHealthTestScheduler(private val eidServiceRepository: EidService
             false
         }
         eidServiceRepository.save(EidServiceHealthDataPoint("${Date()}", result, Date()))
+    }
+
+    fun checkFunctionalityOfEidService(): Boolean {
+        val lastResults = eidServiceRepository.findAll()
+        val numberOfDataPoints = lastResults.toList().size
+        lastResults.removeAll { it.up }
+        val numberOfInvalidResults = lastResults.toList().size
+
+        return invalidResultsLowEnough(numberOfInvalidResults, numberOfDataPoints)
+    }
+
+    fun invalidResultsLowEnough(numberOfInvalidResults: Int, numberOfResults: Int): Boolean {
+        return numberOfResults > 0 && (100.0 * numberOfInvalidResults / numberOfResults) < applicationProperties.maxPercentageOfEidFailures
     }
 }

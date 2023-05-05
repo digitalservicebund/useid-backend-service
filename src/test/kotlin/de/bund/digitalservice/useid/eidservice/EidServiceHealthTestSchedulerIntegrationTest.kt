@@ -24,7 +24,7 @@ class EidServiceHealthTestSchedulerIntegrationTest() {
     private lateinit var eidServiceRepository: EidServiceRepository
 
     @Autowired
-    private lateinit var eidServiceHealthTestScheduler: EidServiceHealthTestScheduler
+    private lateinit var eidHealthService: EidHealthService
 
     @BeforeAll
     fun setupBeforeAll() {
@@ -48,7 +48,7 @@ class EidServiceHealthTestSchedulerIntegrationTest() {
         every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=1234"
         every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
 
-        eidServiceHealthTestScheduler.checkEidServiceAvailability()
+        eidHealthService.checkEidServiceAvailability()
         val foundResults = eidServiceRepository.findAll()
 
         assertThat(foundResults.toList().size, equalTo(1))
@@ -59,7 +59,7 @@ class EidServiceHealthTestSchedulerIntegrationTest() {
     fun `should store false if eIdService responds with an exception`() {
         every { anyConstructed<EidService>().getTcToken(any()) } throws Exception("some error")
 
-        eidServiceHealthTestScheduler.checkEidServiceAvailability()
+        eidHealthService.checkEidServiceAvailability()
         val foundResults = eidServiceRepository.findAll()
 
         assertThat(foundResults.toList().size, equalTo(1))

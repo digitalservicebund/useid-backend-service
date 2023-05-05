@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Timed
-class EidServiceController(private val eidServiceRepository: EidServiceRepository, private val applicationProperties: ApplicationProperties) {
+class EidServiceController(private val eidHealthService: EidHealthService) {
 
     @GetMapping("${ApplicationProperties.apiVersionPrefix}/eidservice/health", produces = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "Fetch data as eService after identification was successful")
@@ -29,7 +29,7 @@ class EidServiceController(private val eidServiceRepository: EidServiceRepositor
         content = [Content()],
     )
     fun getEidServiceHealth(): ResponseEntity<String> {
-        if (!checkFunctionalityOfEidService()) {
+        if (!eidHealthService.checkFunctionalityOfEidService()) {
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -39,18 +39,5 @@ class EidServiceController(private val eidServiceRepository: EidServiceRepositor
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
             .body("{\"status\":\"UP\",\"groups\":[\"eService\"]}")
-    }
-
-    fun checkFunctionalityOfEidService(): Boolean {
-        val lastResults = eidServiceRepository.findAll()
-        val numberOfDataPoints = lastResults.toList().size
-        lastResults.removeAll { it.up }
-        val numberOfInvalidResults = lastResults.toList().size
-
-        return invalidResultsLowEnough(numberOfInvalidResults, numberOfDataPoints)
-    }
-
-    fun invalidResultsLowEnough(numberOfInvalidResults: Int, numberOfResults: Int): Boolean {
-        return numberOfResults > 0 && (100.0 * numberOfInvalidResults / numberOfResults) < applicationProperties.maxPercentageOfEidFailures
     }
 }
