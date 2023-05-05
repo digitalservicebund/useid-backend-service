@@ -68,7 +68,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         assertThat(session.requestDataGroups, `is`(attributes))
         assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/${session.useIdSessionId}"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/${session.useIdSessionId}?tenant_id=${session.tenantId}"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 

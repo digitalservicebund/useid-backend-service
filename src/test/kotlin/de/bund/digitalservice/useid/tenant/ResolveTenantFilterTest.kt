@@ -6,12 +6,10 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletResponse
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
+import java.util.*
 
 @Tag("test")
 internal class ResolveTenantFilterTest {
@@ -19,14 +17,9 @@ internal class ResolveTenantFilterTest {
     private val tenantProperties: TenantProperties = mockk()
     private val filter = ResolveTenantFilter(tenantProperties)
 
-    private lateinit var validTenant: Tenant
-
-    @BeforeEach
-    fun beforeEach() {
-        validTenant = Tenant().apply {
-            id = "integration_test_1"
-            allowedHosts = listOf("i.am.allowed.de")
-        }
+    private val validTenant: Tenant = Tenant().apply {
+        id = "integration_test_1"
+        allowedHosts = listOf("i.am.allowed.de")
     }
 
     @AfterAll
