@@ -29,6 +29,7 @@ class TenantAuthenticationFilter(private val tenantAuthenticationManager: Authen
 
         if (verifiedAuthentication?.isAuthenticated == true) {
             setAuthentication(verifiedAuthentication)
+            request.setAttribute(REQUEST_ATTR_TENANT, verifiedAuthentication.details as Tenant)
         } else {
             removeAuthentication()
         }
