@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @Tag("integration")
 @Transactional
-class EidServiceHealthTestSchedulerIntegrationTest() {
+class EidHealthServiceIntegrationTest() {
 
     @Autowired
     private lateinit var eidServiceRepository: EidServiceRepository
