@@ -27,6 +27,7 @@ class EidHealthService(private val eidServiceRepository: EidServiceRepository, p
 
     fun checkFunctionalityOfEidService(): Boolean {
         val lastResults = eidServiceRepository.findAll()
+        lastResults.removeAll { it == null } // Remove incorrect data points
         val numberOfDataPoints = lastResults.toList().size
         lastResults.removeAll { it.up }
         val numberOfInvalidResults = lastResults.toList().size
