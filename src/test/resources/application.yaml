@@ -74,11 +74,9 @@ spring:
     username: root
     password: secret
   data:
-    redis: 
+    redis:
       repositories:
         enabled: true
-      host: localhost
-      port: 6381
   profiles:
     active: test
 

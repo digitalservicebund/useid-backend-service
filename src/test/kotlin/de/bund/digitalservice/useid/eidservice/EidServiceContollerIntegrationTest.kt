@@ -2,8 +2,10 @@ package de.bund.digitalservice.useid.identification
 
 import de.bund.digitalservice.useid.eidservice.EidServiceHealthDataPoint
 import de.bund.digitalservice.useid.eidservice.EidServiceRepository
+import de.bund.digitalservice.useid.integration.RedisTestContainerConfig
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -17,13 +19,18 @@ private const val E_SERVICE_HEALTH_PATH = "api/v1/eidservice/health"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestClient) : RedisTestContainerConfig() {
 
     @Autowired
     private lateinit var eidServiceRepository: EidServiceRepository
 
     @BeforeEach
     fun setup() {
+        eidServiceRepository.deleteAll()
+    }
+
+    @AfterAll
+    fun teardown() {
         eidServiceRepository.deleteAll()
     }
 

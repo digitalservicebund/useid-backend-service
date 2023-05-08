@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid.eidservice
 
+import de.bund.digitalservice.useid.integration.RedisTestContainerConfig
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @Tag("integration")
 @Transactional
-class EidHealthServiceIntegrationTest() {
+class EidHealthServiceIntegrationTest() : RedisTestContainerConfig() {
 
     @Autowired
     private lateinit var eidServiceRepository: EidServiceRepository

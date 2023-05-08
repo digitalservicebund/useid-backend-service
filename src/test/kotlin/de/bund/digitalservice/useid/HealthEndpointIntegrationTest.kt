@@ -1,5 +1,6 @@
 package de.bund.digitalservice.useid
 
+import de.bund.digitalservice.useid.integration.RedisTestContainerConfig
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,7 +9,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Tag("integration")
-class HealthEndpointIntegrationTest(@Autowired val webTestClient: WebTestClient) {
+class HealthEndpointIntegrationTest(@Autowired val webTestClient: WebTestClient) : RedisTestContainerConfig() {
     @Test
     fun `should expose health endpoint`() {
         webTestClient.get().uri("/actuator/health").exchange().expectStatus().isOk
