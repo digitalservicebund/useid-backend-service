@@ -15,7 +15,7 @@ abstract class RedisTestContainerConfig {
     companion object {
 
         @JvmStatic
-        var redisContainer = GenericContainer<Nothing>("redis:latest").apply {
+        var redisContainer = GenericContainer<Nothing>("redis:5-alpine").apply {
             withExposedPorts(6379)
             withReuse(true)
             start()
