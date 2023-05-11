@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.util.Date
 
-private const val EVERY_MINUTE: String = "* * * * * *"
+private const val EVERY_MINUTE: String = "0 * * * * *"
 
 @Component
 class EidHealthService(private val eidServiceRepository: EidServiceRepository, private val eidServiceConfig: EidServiceConfig, private val applicationProperties: ApplicationProperties) {
@@ -35,7 +35,7 @@ class EidHealthService(private val eidServiceRepository: EidServiceRepository, p
         return invalidResultsLowEnough(numberOfInvalidResults, numberOfDataPoints)
     }
 
-    fun invalidResultsLowEnough(numberOfInvalidResults: Int, numberOfResults: Int): Boolean {
+    private fun invalidResultsLowEnough(numberOfInvalidResults: Int, numberOfResults: Int): Boolean {
         return numberOfResults > 0 && (100.0 * numberOfInvalidResults / numberOfResults) < applicationProperties.maxPercentageOfEidFailures
     }
 }
