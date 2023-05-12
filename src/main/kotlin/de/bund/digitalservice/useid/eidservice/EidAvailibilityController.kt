@@ -1,9 +1,9 @@
 package de.bund.digitalservice.useid.eidservice
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.MetricTag
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -13,27 +13,18 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Timed
-class EidServiceController(private val eidHealthService: EidHealthService) {
+class EidAvailibilityController(private val eidAvailabilityService: EidAvailabilityService) {
 
-    @GetMapping("${ApplicationProperties.apiVersionPrefix}/eidservice/health", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Fetch data as eService after identification was successful")
+    @GetMapping("${ApplicationProperties.apiVersionPrefix}/health", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @Operation(summary = "Check the health of the eId-Server")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(
-        responseCode = "404",
-        description = "No corresponding session found for that eIdSessionId",
-        content = [Content()],
-    )
-    @ApiResponse(
-        responseCode = "401",
-        description = "Authentication failed (missing or wrong api key)",
-        content = [Content()],
-    )
-    fun getEidServiceHealth(): ResponseEntity<String> {
-        if (!eidHealthService.checkFunctionalityOfEidService()) {
+    @MetricTag
+    fun getEidAvailability(): ResponseEntity<String> {
+        if (!eidAvailabilityService.checkFunctionalityOfEidService()) {
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"status\":\"DOWN\",\"groups\":[\"eService\"]}")
+                .body("{\"status\":\"DEGRADED\",\"groups\":[\"eService\"]}")
         }
         return ResponseEntity
             .status(HttpStatus.OK)

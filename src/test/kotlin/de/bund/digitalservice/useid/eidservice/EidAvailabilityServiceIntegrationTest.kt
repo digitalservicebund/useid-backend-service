@@ -19,28 +19,27 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @Tag("integration")
 @Transactional
-class EidHealthServiceIntegrationTest() : RedisTestContainerConfig() {
+class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
 
     @Autowired
-    private lateinit var eidServiceRepository: EidServiceRepository
+    private lateinit var eidAvailabilityRepository: EidAvailabilityRepository
 
     @Autowired
-    private lateinit var eidHealthService: EidHealthService
+    private lateinit var eidAvailabilityService: EidAvailabilityService
 
     @BeforeAll
     fun setupBeforeAll() {
         mockkConstructor(EidService::class)
-        eidServiceRepository.deleteAll()
     }
 
     @BeforeEach
     fun setup() {
-        eidServiceRepository.deleteAll()
+        eidAvailabilityRepository.deleteAll()
     }
 
     @AfterAll
     fun teardown() {
-        eidServiceRepository.deleteAll()
+        eidAvailabilityRepository.deleteAll()
     }
 
     @Test
@@ -49,8 +48,8 @@ class EidHealthServiceIntegrationTest() : RedisTestContainerConfig() {
         every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=1234"
         every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
 
-        eidHealthService.checkEidServiceAvailability()
-        val foundResults = eidServiceRepository.findAll()
+        eidAvailabilityService.checkEidServiceAvailability()
+        val foundResults = eidAvailabilityRepository.findAll()
 
         assertThat(foundResults.toList().size, equalTo(1))
         assertThat(foundResults.toList()[0].up, equalTo(true))
@@ -60,8 +59,8 @@ class EidHealthServiceIntegrationTest() : RedisTestContainerConfig() {
     fun `should store false if eIdService responds with an exception`() {
         every { anyConstructed<EidService>().getTcToken(any()) } throws Exception("some error")
 
-        eidHealthService.checkEidServiceAvailability()
-        val foundResults = eidServiceRepository.findAll()
+        eidAvailabilityService.checkEidServiceAvailability()
+        val foundResults = eidAvailabilityRepository.findAll()
 
         assertThat(foundResults.toList().size, equalTo(1))
         assertThat(foundResults.toList()[0].up, equalTo(false))
