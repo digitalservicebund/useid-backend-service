@@ -1,5 +1,7 @@
 app:
   base-url: http://localhost:8080
+  max-percentage-of-eid-failures: 100
+
 
 tenant:
   tenants:
@@ -37,6 +39,13 @@ spring:
     url: jdbc:postgresql://localhost:5433/useid
     username: root
     password: secret
+  data:
+    redis:
+      repositories:
+        enabled: true
+      host: localhost
+      port: 6381
+
 
 tracking:
   matomo:

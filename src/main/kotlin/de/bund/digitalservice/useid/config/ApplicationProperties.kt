@@ -12,6 +12,8 @@ class ApplicationProperties {
     @NotBlank
     lateinit var baseUrl: String
 
+    var maxPercentageOfEidFailures: Int = 80
+
     companion object {
         const val apiVersionPrefix = "/api/v1"
     }

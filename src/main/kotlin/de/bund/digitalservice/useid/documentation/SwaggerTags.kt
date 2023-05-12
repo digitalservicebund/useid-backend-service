@@ -25,3 +25,9 @@ annotation class EServiceTag
     description = "The refresh endpoint redirects the caller to the refresh address of the respective service.",
 )
 annotation class RefreshTag
+
+@Tag(
+    name = "Metrics",
+    description = "The metrics endpoints can be used to get information about the health of the service.",
+)
+annotation class MetricTag
