@@ -40,7 +40,6 @@ spring:
     redis:
       repositories:
         enabled: true
-      username: default
 
 springdoc:
   api-docs:
