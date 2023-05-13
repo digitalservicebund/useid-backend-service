@@ -5,7 +5,6 @@ import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.identification.IdentificationSession
 import de.bund.digitalservice.useid.identification.IdentificationSessionService
 import io.mockk.every
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -20,7 +19,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 import java.util.*
 import java.util.stream.Stream
 
-@Tag("test")
 @ExtendWith(value = [SpringExtension::class])
 @WebMvcTest(controllers = [RefreshController::class])
 @Import(value = [ApplicationProperties::class])

@@ -1,10 +1,8 @@
 package de.bund.digitalservice.useid.tenant
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@Tag("test")
 internal class TenantAuthenticationTest {
     private val tenant = Tenant().apply {
         id = "valid-id"

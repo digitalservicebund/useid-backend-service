@@ -5,14 +5,12 @@ import de.bund.bsi.eid230.UseIDRequestType
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(classes = [EidServiceConfig::class])
-@Tag("test")
 @EnableConfigurationProperties(EidServiceProperties::class)
 class EidServiceTest {
 

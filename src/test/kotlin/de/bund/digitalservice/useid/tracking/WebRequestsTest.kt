@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.io.IOException
@@ -13,7 +12,6 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
 
-@Tag("test")
 class WebRequestsTest {
 
     private val mockClient = mockk<HttpClient>()

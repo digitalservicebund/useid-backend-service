@@ -91,22 +91,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-    /** Testing **/
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude("org.mockito", "mockito-core")
-        because("Use MockK instead of Mockito since it is better suited for Kotlin")
-    }
-    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("com.ninja-squad:springmockk:4.0.0")
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("com.tngtech.archunit:archunit-junit5:1.0.0")
-    testImplementation("org.testcontainers:junit-jupiter:1.18.0")
-    testImplementation("org.testcontainers:postgresql:1.18.0")
-    testImplementation("org.testcontainers:testcontainers:1.18.0")
-    testImplementation("org.testcontainers:jdbc:1.18.0")
-    testImplementation("org.awaitility:awaitility:4.2.0")
-    testImplementation("org.jsoup:jsoup:1.16.1")
-
     /** Spring Cloud **/
     implementation("org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3")
     // => CVE-2022-3171
@@ -117,6 +101,93 @@ dependencies {
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
 }
 
+@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude("org.mockito", "mockito-core")
+                    because("Use MockK instead of Mockito since it is better suited for Kotlin")
+                }
+                implementation("org.springframework.boot:spring-boot-starter-webflux")
+                implementation("com.ninja-squad:springmockk:4.0.0")
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.awaitility:awaitility:4.2.0")
+                implementation("org.jsoup:jsoup:1.16.1")
+            }
+        }
+
+        val archTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project())
+                implementation(sourceSets.main.get().output)
+                implementation("com.tngtech.archunit:archunit-junit5:1.0.0")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project())
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude("org.mockito", "mockito-core")
+                    because("Use MockK instead of Mockito since it is better suited for Kotlin")
+                }
+                implementation("org.springframework.boot:spring-boot-starter-webflux")
+                implementation("com.ninja-squad:springmockk:4.0.0")
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.testcontainers:junit-jupiter:1.18.0")
+                implementation("org.testcontainers:postgresql:1.18.0")
+                implementation("org.testcontainers:testcontainers:1.18.0")
+                implementation("org.testcontainers:jdbc:1.18.0")
+                implementation("org.awaitility:awaitility:4.2.0")
+                implementation("org.jsoup:jsoup:1.16.1")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test, archTest)
+                    }
+                }
+            }
+        }
+
+        @Suppress("UNUSED_VARIABLE")
+        val journeyTest by registering(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                implementation(project())
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude("org.mockito", "mockito-core")
+                    because("Use MockK instead of Mockito since it is better suited for Kotlin")
+                }
+                implementation("org.springframework.boot:spring-boot-starter-webflux")
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.awaitility:awaitility:4.2.0")
+                implementation("org.jsoup:jsoup:1.16.1")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test, archTest, integrationTest)
+                    }
+                }
+            }
+        }
+    }
+}
+
+configurations["integrationTestImplementation"].extendsFrom(configurations.implementation.get())
+configurations["journeyTestImplementation"].extendsFrom(configurations.implementation.get())
+
 tasks {
     withType<KotlinCompile> {
         kotlinOptions {
@@ -125,34 +196,8 @@ tasks {
         }
     }
 
-    withType<Test> {
-        useJUnitPlatform {
-            excludeTags("integration", "journey")
-        }
-    }
-
-    register<Test>("integrationTest") {
-        description = "Runs the integration tests."
-        group = "verification"
-        useJUnitPlatform {
-            includeTags("integration")
-        }
-        // So that running integration test require running unit tests first,
-        // and we won"t even attempt running integration tests when there are
-        // failing unit tests.
-        dependsOn(test)
-        finalizedBy(jacocoTestReport)
-    }
     check {
-        dependsOn(getByName("integrationTest"))
-    }
-
-    register<Test>("journeyTest") {
-        description = "Runs the journey tests."
-        group = "verification"
-        useJUnitPlatform {
-            includeTags("journey")
-        }
+        dependsOn(getByName("archTest"), getByName("integrationTest"))
     }
 
     jacocoTestReport {
@@ -205,27 +250,23 @@ tasks {
         }
     }
 
-    sonarqube {
-        // NOTE: sonarqube picks up combined coverage correctly without further configuration from:
-        // build/reports/jacoco/test/jacocoTestReport.xml
-        properties {
-            property("sonar.projectKey", "digitalservicebund_useid-backend-service")
-            property("sonar.organization", "digitalservicebund")
-            property("sonar.host.url", "https://sonarcloud.io")
-            property(
-                "sonar.coverage.exclusions",
-                // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
-                "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/eventstreams/**/*,**/de/bund/digitalservice/useid/credentials/**/*",
-            )
-        }
-    }
     getByName("sonarqube") {
         dependsOn(jacocoTestReport)
     }
+}
 
-    jar {
-        // We have no need for the plain archive, thus skip creation for build speedup!
-        enabled = false
+sonarqube {
+    // NOTE: sonarqube picks up combined coverage correctly without further configuration from:
+    // build/reports/jacoco/test/jacocoTestReport.xml
+    properties {
+        property("sonar.projectKey", "digitalservicebund_useid-backend-service")
+        property("sonar.organization", "digitalservicebund")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property(
+            "sonar.coverage.exclusions",
+            // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
+            "**/config/**,**/de/bund/digitalservice/useid/transactioninfo/**/*,**/de/bund/digitalservice/useid/timebasedtokens/**/*,**/de/bund/digitalservice/useid/eventstreams/**/*,**/de/bund/digitalservice/useid/credentials/**/*",
+        )
     }
 }
 

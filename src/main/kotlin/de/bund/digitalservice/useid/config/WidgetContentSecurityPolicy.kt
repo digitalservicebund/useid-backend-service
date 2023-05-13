@@ -2,9 +2,9 @@ package de.bund.digitalservice.useid.config
 
 import org.springframework.stereotype.Component
 
-internal const val CSP_DEFAULT_CONFIG = "default-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self'"
-internal const val CSP_FRAME_ANCESTORS_SELF = "frame-ancestors 'self'"
-internal const val CSP_FRAME_ANCESTORS_NONE = "frame-ancestors 'none'"
+const val CSP_DEFAULT_CONFIG = "default-src 'self';style-src 'self';font-src 'self';img-src 'self';connect-src 'self'"
+const val CSP_FRAME_ANCESTORS_SELF = "frame-ancestors 'self'"
+const val CSP_FRAME_ANCESTORS_NONE = "frame-ancestors 'none'"
 
 @Component
 class WidgetContentSecurityPolicy {
