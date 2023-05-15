@@ -1,0 +1,82 @@
+[versions]
+org-jacoco = "0.8.8"
+org-springdoc = "2.1.0"
+org-springframework-boot = "3.0.6"
+org-testcontainers = "1.18.0"
+
+[libraries]
+com-fasterxml-jackson-module-jackson-module-kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2"
+com-fasterxml-woodstox-woodstox-core = "com.fasterxml.woodstox:woodstox-core:6.5.0"
+com-github-ua-parser-uap-java = "com.github.ua-parser:uap-java:1.5.4"
+com-google-protobuf-protobuf-java = "com.google.protobuf:protobuf-java:3.23.0"
+com-ninja-squad-springmockk = "com.ninja-squad:springmockk:4.0.0"
+com-tngtech-archunit-archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.0.0"
+com-yubico-webauthn-server-core = "com.yubico:webauthn-server-core:2.4.0"
+commons-collections = "commons-collections:commons-collections:3.2.2"
+de-governikus-autent-sdk-eid-webservice-sdk = "de.governikus.autent.sdk:eid-webservice-sdk:3.73.9"
+de-governikus-autent-utils-autent-key-utils = "de.governikus.autent.utils:autent-key-utils:4.0.14"
+io-github-microutils-kotlin-logging-jvm = "io.github.microutils:kotlin-logging-jvm:3.0.0"
+io-hypersistence-hypersistence-utils-hibernate = "io.hypersistence:hypersistence-utils-hibernate-60:3.3.1"
+io-lettuce-lettuce-core = "io.lettuce:lettuce-core:6.2.4.RELEASE"
+io-micrometer-micrometer-registry-prometheus = "io.micrometer:micrometer-registry-prometheus:1.10.6"
+io-sentry-sentry-spring-boot-starter-jakarta = "io.sentry:sentry-spring-boot-starter-jakarta:6.18.0"
+net-javacrumbs-shedlock-shedlock-provider-jdbc-template = "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.3.0"
+net-javacrumbs-shedlock-shedlock-spring = "net.javacrumbs.shedlock:shedlock-spring:5.2.0"
+nz-net-ultraq-thymeleaf-thymeleaf-layout-dialect = "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0"
+org-apache-logging-log4j-log4j-core = "org.apache.logging.log4j:log4j-core:2.17.1"
+org-apache-santuario-xmlsec = "org.apache.santuario:xmlsec:3.0.0"
+org-awaitility = "org.awaitility:awaitility:4.2.0"
+org-bouncycastle-bcprov-jdk15on = "org.bouncycastle:bcprov-jdk15on:1.70"
+org-flywaydb-flyway-core = "org.flywaydb:flyway-core:9.18.0"
+org-jacoco-org-jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "org-jacoco" }
+org-jacoco-org-jacoco-ant = { module = "org.jacoco:org.jacoco.ant", version.ref = "org-jacoco" }
+org-jetbrains-annotations = "org.jetbrains:annotations:13.0"
+org-jetbrains-kotlin-kotlin-allopen = "org.jetbrains.kotlin:kotlin-allopen:1.8.0"
+org-jetbrains-kotlin-kotlin-compiler-embeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.8.0"
+org-jetbrains-kotlin-kotlin-klib-commonizer-embeddable = "org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable:1.8.0"
+org-jetbrains-kotlin-kotlin-reflect = "org.jetbrains.kotlin:kotlin-reflect:1.8.0"
+org-jetbrains-kotlin-kotlin-scripting-compiler-embeddable = "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.8.0"
+org-jetbrains-kotlin-kotlin-stdlib = "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
+org-jetbrains-kotlin-kotlin-stdlib-common = "org.jetbrains.kotlin:kotlin-stdlib-common:1.8.10"
+org-jetbrains-kotlin-kotlin-stdlib-jdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10"
+org-jetbrains-kotlin-kotlin-stdlib-jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10"
+org-jsoup = "org.jsoup:jsoup:1.16.1"
+org-junit-jupiter-junit-jupiter = "org.junit.jupiter:junit-jupiter:5.10.0-M1"
+org-junit-platform-junit-platform-launcher = "org.junit.platform:junit-platform-launcher:1.10.0-M1"
+org-postgresql = "org.postgresql:postgresql:42.5.4"
+org-springdoc-springdoc-openapi-starter-webmvc-api = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version.ref = "org-springdoc" }
+org-springdoc-springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "org-springdoc" }
+org-springframework-boot-spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "org-springframework-boot" }
+org-springframework-boot-spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "org-springframework-boot" }
+org-springframework-cloud-spring-cloud-starter-kubernetes-client-config = "org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3"
+org-springframework-data-spring-data-redis = "org.springframework.data:spring-data-redis:3.0.5"
+org-springframework-security-spring-security-test = "org.springframework.security:spring-security-test:6.0.3"
+org-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "org-testcontainers" }
+org-testcontainers-jdbc = { module = "org.testcontainers:jdbc", version.ref = "org-testcontainers" }
+org-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "org-testcontainers" }
+org-testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "org-testcontainers" }
+
+[plugins]
+com-adarshr-test-logger = "com.adarshr.test-logger:3.2.0"
+com-diffplug-spotless = "com.diffplug.spotless:6.18.0"
+com-github-ben-manes-versions = "com.github.ben-manes.versions:0.46.0"
+com-github-jk1-dependency-license-report = "com.github.jk1.dependency-license-report:2.1"
+com-gorylenko-gradle-git-properties = "com.gorylenko.gradle-git-properties:2.4.0"
+io-spring-dependency-management = "io.spring.dependency-management:1.1.0"
+kotlin-allopen = "kotlin-allopen:1.8.0"
+kotlin-spring = "kotlin-spring:1.8.0"
+nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.0"
+org-jetbrains-kotlin-jvm = "org.jetbrains.kotlin.jvm:1.8.0"
+org-jetbrains-kotlin-plugin-allopen = "org.jetbrains.kotlin.plugin.allopen:1.8.0"
+org-jetbrains-kotlin-plugin-spring = "org.jetbrains.kotlin.plugin.spring:1.8.0"
+org-sonarqube = "org.sonarqube:4.0.0.2929"
+org-springframework-boot = "org.springframework.boot:3.0.6"
