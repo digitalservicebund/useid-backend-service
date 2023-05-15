@@ -3,8 +3,7 @@ package de.bund.digitalservice.useid.identification
 import de.bund.digitalservice.useid.journey.JourneyTestApplicationProperties
 import de.bund.digitalservice.useid.journey.JourneyTestConfig
 import mu.KotlinLogging
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.matchesPattern
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -70,7 +69,7 @@ class IdentificationSessionJourneyTest {
     private fun validateSessionIdParameter(returnResult: EntityExchangeResult<ByteArray>) {
         val tcToken = String(returnResult.responseBody!!, Charsets.UTF_8)
         val uuidPattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-        assertThat(tcToken, matchesPattern("^(.*?)sessionId=$uuidPattern.*"))
+        assertThat(tcToken).matches("^(.*?)sessionId=$uuidPattern.*")
     }
 
     private fun setAuthorizationHeader(headers: HttpHeaders) {

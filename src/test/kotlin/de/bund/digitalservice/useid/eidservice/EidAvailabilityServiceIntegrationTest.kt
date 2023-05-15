@@ -5,8 +5,7 @@ import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -51,8 +50,8 @@ class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
         eidAvailabilityService.checkEidServiceAvailability()
         val foundResults = eidAvailabilityRepository.findAll()
 
-        assertThat(foundResults.toList().size, equalTo(1))
-        assertThat(foundResults.toList()[0].up, equalTo(true))
+        assertThat(foundResults.toList()).hasSize(1)
+        assertThat(foundResults.toList()[0].up).isTrue
     }
 
     @Test
@@ -62,7 +61,7 @@ class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
         eidAvailabilityService.checkEidServiceAvailability()
         val foundResults = eidAvailabilityRepository.findAll()
 
-        assertThat(foundResults.toList().size, equalTo(1))
-        assertThat(foundResults.toList()[0].up, equalTo(false))
+        assertThat(foundResults.toList()).hasSize(1)
+        assertThat(foundResults.toList()[0].up).isFalse
     }
 }

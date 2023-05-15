@@ -5,8 +5,7 @@ import de.bund.digitalservice.useid.identification.TEST_IDENTIFICATIONS_BASE_PAT
 import io.mockk.every
 import io.mockk.mockkConstructor
 import org.apache.http.client.utils.URIBuilder
-import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.MatcherAssert.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.jsoup.Jsoup
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
@@ -35,7 +34,7 @@ class GlobalStaticErrorIntegrationTest(
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
         assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
-        assertThat(parsedResponseBody.select("a").attr("href"), containsString("mailto:hilfe@bundesident.de"))
+        assertThat(parsedResponseBody.select("a").attr("href")).contains("mailto:hilfe@bundesident.de")
     }
 
     @Test
@@ -67,7 +66,7 @@ class GlobalStaticErrorIntegrationTest(
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
         assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
-        assertThat(parsedResponseBody.select("a").attr("href"), containsString("mailto:hilfe@bundesident.de"))
+        assertThat(parsedResponseBody.select("a").attr("href")).contains("mailto:hilfe@bundesident.de")
     }
 
     @Test
@@ -84,6 +83,6 @@ class GlobalStaticErrorIntegrationTest(
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
         assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
-        assertThat(parsedResponseBody.select("a").attr("href"), containsString("mailto:hilfe@bundesident.de"))
+        assertThat(parsedResponseBody.select("a").attr("href")).contains("mailto:hilfe@bundesident.de")
     }
 }

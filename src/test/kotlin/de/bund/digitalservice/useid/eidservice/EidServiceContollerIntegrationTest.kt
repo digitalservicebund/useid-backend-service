@@ -3,8 +3,7 @@ package de.bund.digitalservice.useid.identification
 import de.bund.digitalservice.useid.eidservice.EidAvailabilityCheck
 import de.bund.digitalservice.useid.eidservice.EidAvailabilityRepository
 import de.bund.digitalservice.useid.integration.RedisTestContainerConfig
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -53,7 +52,7 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(status, equalTo("UP"))
+        assertThat(status).isEqualTo("UP")
     }
 
     @Test
@@ -70,7 +69,7 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(status, equalTo("UP"))
+        assertThat(status).isEqualTo("UP")
     }
 
     @Test
@@ -87,7 +86,7 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(status, equalTo("DEGRADED"))
+        assertThat(status).isEqualTo("DEGRADED")
     }
 
     @Test
@@ -104,6 +103,6 @@ class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody().jsonPath("$.status").value<String> { status = it }
-        assertThat(status, equalTo("DEGRADED"))
+        assertThat(status).isEqualTo("DEGRADED")
     }
 }

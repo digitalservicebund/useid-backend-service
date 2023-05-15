@@ -1,9 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItems
-import org.hamcrest.Matchers.notNullValue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -25,7 +22,7 @@ class IdentificationSessionRepositoryIntegrationTest {
         private val DATA_GROUPS: List<String> = listOf(DG1, DG2)
         private val USEID_SESSION_ID: UUID = UUID.randomUUID()
         private val EID_SESSION_ID: UUID = UUID.randomUUID()
-        private val TENANT_ID: String = "TestTenant"
+        private const val TENANT_ID: String = "TestTenant"
     }
 
     @BeforeAll
@@ -101,11 +98,15 @@ class IdentificationSessionRepositoryIntegrationTest {
     }
 
     private fun validateIdentificationSession(identificationSession: IdentificationSession?) {
-        assertThat(identificationSession?.id, notNullValue())
-        assertThat(identificationSession?.eIdSessionId, equalTo(EID_SESSION_ID))
-        assertThat(identificationSession?.useIdSessionId, equalTo(USEID_SESSION_ID))
-        assertThat(identificationSession?.refreshAddress, equalTo(REFRESH_ADDRESS))
-        assertThat(identificationSession?.requestDataGroups, hasItems(DG1))
-        assertThat(identificationSession?.requestDataGroups, hasItems(DG2))
+        assertThat(identificationSession?.id)
+            .isNotNull
+        assertThat(identificationSession?.eIdSessionId)
+            .isEqualTo(EID_SESSION_ID)
+        assertThat(identificationSession?.useIdSessionId)
+            .isEqualTo(USEID_SESSION_ID)
+        assertThat(identificationSession?.refreshAddress)
+            .isEqualTo(REFRESH_ADDRESS)
+        assertThat(identificationSession?.requestDataGroups)
+            .contains(DG1, DG2)
     }
 }

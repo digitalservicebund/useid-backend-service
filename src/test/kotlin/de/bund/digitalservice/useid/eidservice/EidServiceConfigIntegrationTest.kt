@@ -4,8 +4,7 @@ import de.governikus.autent.key.utils.exceptions.KeyStoreCreationFailedException
 import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
 import io.mockk.every
 import io.mockk.mockk
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -90,8 +89,7 @@ internal class EidServiceConfigIntegrationTest {
         val exception = Assertions.assertThrows(SslConfigException::class.java) {
             config.readCertificate(invalidResource)
         }
-
-        assertThat(exception.cause, Matchers.instanceOf(FileNotFoundException::class.java))
+        assertThat(exception.cause).isInstanceOf(FileNotFoundException::class.java)
     }
 
     @Test

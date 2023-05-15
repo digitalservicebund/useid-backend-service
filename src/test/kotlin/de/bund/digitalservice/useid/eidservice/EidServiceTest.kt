@@ -3,8 +3,7 @@ package de.bund.digitalservice.useid.eidservice
 import de.bund.bsi.eid230.AttributeRequestType
 import de.bund.bsi.eid230.UseIDRequestType
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
-import org.hamcrest.CoreMatchers.isA
-import org.hamcrest.MatcherAssert.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Tag
@@ -25,7 +24,8 @@ class EidServiceTest {
     fun `getWebserviceRequest returns a valid request with no operations set when passed no dataGroups`() {
         val eidService = EidService(config)
         val webserviceRequest = eidService.webserviceRequest
-        assertThat(webserviceRequest, isA(UseIDRequestType::class.java))
+        assertThat(webserviceRequest)
+            .isInstanceOf(UseIDRequestType::class.java)
 
         val operations = webserviceRequest.useOperations
         assertEquals(operations.documentType, null)

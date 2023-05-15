@@ -12,13 +12,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import oasis.names.tc.dss._1_0.core.schema.Result
+import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.awaitility.Awaitility.await
 import org.awaitility.Durations.ONE_SECOND
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
-import org.hamcrest.CoreMatchers.nullValue
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -53,7 +50,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     @Test
-    fun `start session endpoint returns TCTokenUrl`() {
+    fun `start session endpoint creates correct identification session`() {
         var tcTokenURL = ""
 
         webTestClient.sendStartSessionRequest()
@@ -63,12 +60,24 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
         val session = identificationSessionRepository.retrieveIdentificationSession(useIdSessionId)!!
-        assertThat(session.eIdSessionId, nullValue())
-        assertThat(session.useIdSessionId, notNullValue())
-        assertThat(session.requestDataGroups, `is`(attributes))
-        assertThat(session.refreshAddress, `is`(REFRESH_ADDRESS))
+        assertThat(session.eIdSessionId).isNull()
+        assertThat(session.useIdSessionId).isNotNull
+        assertThat(session.requestDataGroups).isEqualTo(attributes)
+        assertThat(session.refreshAddress).isEqualTo(REFRESH_ADDRESS)
+    }
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/${session.useIdSessionId}"
+    @Test
+    fun `start session endpoint returns correct TCTokenUrl`() {
+        var tcTokenURL = ""
+
+        webTestClient.sendStartSessionRequest()
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
+
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/$useIdSessionId"
         assertEquals(expectedTcTokenURL, tcTokenURL)
     }
 

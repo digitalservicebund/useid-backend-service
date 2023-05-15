@@ -7,8 +7,7 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletResponse
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasItem
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -77,7 +76,7 @@ class TenantAuthenticationFilterTest {
                     assertEquals(validTenant.apiKey, tenant.apiKey)
                     assertEquals(validTenant.refreshAddress, tenant.refreshAddress)
 
-                    assertThat(authentication.authorities, hasItem(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)))
+                    assertThat(authentication.authorities).contains(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY))
                 },
             )
         }
