@@ -25,8 +25,8 @@ import kotlin.text.Charsets.UTF_8
 
 internal const val WIDGET_PAGE = "widget"
 internal const val INCOMPATIBLE_PAGE = "incompatible"
-internal const val FALLBACK_PAGE = "eID-Client"
-internal const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
+const val FALLBACK_PAGE = "eID-Client"
+const val WIDGET_START_IDENT_BTN_CLICKED = "start-ident-button-clicked"
 
 /*
     Documentation about the link syntax can be found in Technical Guideline TR-03124-1 – eID-Client, Part 1:
