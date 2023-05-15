@@ -8,6 +8,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.0"
     id("com.diffplug.spotless") version "6.18.0"
     id("jacoco")
+    id("jacoco-report-aggregation")
     id("org.sonarqube") version "4.0.0.2929"
     id("com.github.jk1.dependency-license-report") version "2.1"
     id("com.adarshr.test-logger") version "3.2.0"
@@ -201,34 +202,10 @@ tasks {
     }
 
     jacocoTestReport {
-        // Jacoco hooks into all tasks of type: Test automatically, but results for each of these
-        // tasks are kept separately and are not combined out of the box... we want to gather
-        // coverage of our unit and integration tests as a single report!
-        executionData.setFrom(
-            files(
-                fileTree(project.buildDir.absolutePath) {
-                    include("jacoco/*.exec")
-                },
-            ),
-        )
-
-        // Avoid untested prototype code skewing coverage...
-        classDirectories.setFrom(
-            files(
-                classDirectories.files.map {
-                    fileTree(it) {
-                        exclude("**/ApplicationKt**")
-                    }
-                },
-            ),
-        )
-
         reports {
             xml.required.set(true)
             html.required.set(true)
         }
-
-        dependsOn(getByName("integrationTest")) // All tests are required to run before generating a report..
     }
 
     bootBuildImage {
@@ -251,17 +228,16 @@ tasks {
     }
 
     getByName("sonarqube") {
-        dependsOn(jacocoTestReport)
+        dependsOn(getByName("testCodeCoverageReport"), getByName("integrationTestCodeCoverageReport"))
     }
 }
 
 sonarqube {
-    // NOTE: sonarqube picks up combined coverage correctly without further configuration from:
-    // build/reports/jacoco/test/jacocoTestReport.xml
     properties {
         property("sonar.projectKey", "digitalservicebund_useid-backend-service")
         property("sonar.organization", "digitalservicebund")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/*/jacocoTestReport.xml")
         property(
             "sonar.coverage.exclusions",
             // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
