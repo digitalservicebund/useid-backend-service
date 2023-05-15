@@ -1,7 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -80,12 +79,12 @@ class IdentificationSessionRepositoryIntegrationTest {
 
     private fun verifyIdentificationSessionWasDeleted(session: IdentificationSession) {
         val result = identificationSessionRepository.findByUseIdSessionId(session.useIdSessionId!!)
-        assertEquals(null, result)
+        assertThat(result).isEqualTo(null)
     }
 
     private fun verifyIdentificationSessionExists(session: IdentificationSession) {
         val result = identificationSessionRepository.findByUseIdSessionId(session.useIdSessionId!!)
-        assertEquals(session.id, result?.id)
+        assertThat(result?.id).isEqualTo(session.id)
     }
 
     fun insertNewIdentificationSession(createdAt: LocalDateTime): IdentificationSession {

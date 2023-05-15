@@ -6,8 +6,8 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletResponse
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -45,7 +45,7 @@ internal class ResolveTenantFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        assertEquals(null, request.getAttribute(REQUEST_ATTR_TENANT))
+        assertThat(request.getAttribute(REQUEST_ATTR_TENANT)).isEqualTo(null)
         verify {
             filterChain.doFilter(request, response)
         }
@@ -65,7 +65,7 @@ internal class ResolveTenantFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        assertEquals(validTenant.id, getTenantIdFromRequest(request))
+        assertThat(getTenantIdFromRequest(request)).isEqualTo(validTenant.id)
         verify {
             filterChain.doFilter(request, response)
             tenantProperties.findByAllowedHost(validTenant.allowedHosts[0])
@@ -85,7 +85,7 @@ internal class ResolveTenantFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        assertEquals(validTenant.id, getTenantIdFromRequest(request))
+        assertThat(getTenantIdFromRequest(request)).isEqualTo(validTenant.id)
         verify {
             filterChain.doFilter(request, response)
             tenantProperties.findByTenantId(any())
@@ -105,7 +105,7 @@ internal class ResolveTenantFilterTest {
         filter.doFilter(request, response, filterChain)
 
         // Then
-        assertEquals(null, request.getAttribute(REQUEST_ATTR_TENANT))
+        assertThat(request.getAttribute(REQUEST_ATTR_TENANT)).isEqualTo(null)
         verify {
             filterChain.doFilter(request, response)
             tenantProperties.findByTenantId(any())

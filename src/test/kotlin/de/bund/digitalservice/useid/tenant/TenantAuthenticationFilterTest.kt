@@ -9,7 +9,6 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -69,12 +68,12 @@ class TenantAuthenticationFilterTest {
         verify {
             setAuthentication(
                 withArg { authentication ->
-                    assertEquals(validTenant.apiKey, authentication.principal)
-                    assertEquals(true, authentication.isAuthenticated)
+                    assertThat(authentication.principal).isEqualTo(validTenant.apiKey)
+                    assertThat(authentication.isAuthenticated).isEqualTo(true)
 
                     val tenant = authentication.details as Tenant
-                    assertEquals(validTenant.apiKey, tenant.apiKey)
-                    assertEquals(validTenant.refreshAddress, tenant.refreshAddress)
+                    assertThat(tenant.apiKey).isEqualTo(validTenant.apiKey)
+                    assertThat(tenant.refreshAddress).isEqualTo(validTenant.refreshAddress)
 
                     assertThat(authentication.authorities).contains(SimpleGrantedAuthority(MANAGE_IDENTIFICATION_SESSION_AUTHORITY))
                 },

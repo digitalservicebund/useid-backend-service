@@ -6,8 +6,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -46,7 +46,7 @@ class MatomoTrackingServiceTest {
         val url = matomoTrackingService?.constructEventUrl(e)
 
         val expectedURL = "https://${matomo.domain}?idsite=${matomo.siteId}&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}&uid=${e.sessionId}&ua=$encodedUserAgent&dimension${matomo.dimensionIdTenant}=tenantFoo"
-        assertEquals(expectedURL, url)
+        assertThat(url).isEqualTo(expectedURL)
     }
 
     @Test
@@ -55,7 +55,7 @@ class MatomoTrackingServiceTest {
         val url = matomoTrackingService?.constructEventUrl(e)
 
         val expectedURL = "https://${matomo.domain}?idsite=${matomo.siteId}&rec=1&ca=1&e_c=${e.category}&e_a=${e.action}&e_n=${e.name}"
-        assertEquals(expectedURL, url)
+        assertThat(url).isEqualTo(expectedURL)
     }
 
     @Test

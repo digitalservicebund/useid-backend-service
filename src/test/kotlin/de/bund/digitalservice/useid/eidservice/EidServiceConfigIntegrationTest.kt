@@ -5,9 +5,7 @@ import de.governikus.autent.sdk.eidservice.exceptions.SslConfigException
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,34 +32,34 @@ internal class EidServiceConfigIntegrationTest {
 
     @Test
     fun `getEidServiceWsdlUrl returns a value`() {
-        assertNotNull(config.eidServiceWsdlUrl)
-        assertNotEquals("", config.eidServiceWsdlUrl)
+        assertThat(config.eidServiceWsdlUrl).isNotNull
+        assertThat(config.eidServiceWsdlUrl).isNotEmpty
     }
 
     @Test
     fun `getEidServiceUrl returns a value`() {
-        assertNotNull(config.eidServiceUrl)
-        assertNotEquals("", config.eidServiceUrl)
+        assertThat(config.eidServiceUrl).isNotNull
+        assertThat(config.eidServiceUrl).isNotEmpty
     }
 
     @Test
     fun `getTruststore returns not null`() {
-        assertNotNull(config.truststore)
+        assertThat(config.truststore).isNotNull
     }
 
     @Test
     fun `getXmlSignatureVerificationCertificate returns not null`() {
-        assertNotNull(config.xmlSignatureVerificationCertificate)
+        assertThat(config.xmlSignatureVerificationCertificate).isNotNull
     }
 
     @Test
     fun `getXmlSignatureCreationKeystore returns not null`() {
-        assertNotNull(config.xmlSignatureCreationKeystore)
+        assertThat(config.xmlSignatureCreationKeystore).isNotNull
     }
 
     @Test
     fun `getSslKeystoreForMutualTlsAuthentication returns not null`() {
-        assertNotNull(config.sslKeystoreForMutualTlsAuthentication)
+        assertThat(config.sslKeystoreForMutualTlsAuthentication).isNotNull
     }
 
     @Test
@@ -69,9 +67,9 @@ internal class EidServiceConfigIntegrationTest {
         val keystore = copyKeystore(eidServiceProperties.soapSigKeystore)
         keystore.keystore = invalidResource
 
-        Assertions.assertThrows(FileNotFoundException::class.java) {
+        assertThatThrownBy {
             config.createKeystoreAccessor(keystore)
-        }
+        }.isInstanceOf(FileNotFoundException::class.java)
     }
 
     @Test
@@ -79,17 +77,16 @@ internal class EidServiceConfigIntegrationTest {
         val keystore = copyKeystore(eidServiceProperties.soapSigKeystore)
         keystore.password = "wrong-password"
 
-        Assertions.assertThrows(KeyStoreCreationFailedException::class.java) {
+        assertThatThrownBy {
             config.createKeystoreAccessor(keystore)
-        }
+        }.isInstanceOf(KeyStoreCreationFailedException::class.java)
     }
 
     @Test
     fun `readCertificate throws SslConfigException when passing a false resource path`() {
-        val exception = Assertions.assertThrows(SslConfigException::class.java) {
+        assertThatThrownBy {
             config.readCertificate(invalidResource)
-        }
-        assertThat(exception.cause).isInstanceOf(FileNotFoundException::class.java)
+        }.isInstanceOf(SslConfigException::class.java).hasCauseInstanceOf(FileNotFoundException::class.java)
     }
 
     @Test
@@ -97,9 +94,9 @@ internal class EidServiceConfigIntegrationTest {
         val mockCert = mockk<Resource>()
         every { mockCert.inputStream } throws CertificateException()
 
-        Assertions.assertThrows(SslConfigException::class.java) {
+        assertThatThrownBy {
             config.readCertificate(mockCert)
-        }
+        }.isInstanceOf(SslConfigException::class.java)
     }
 
     private fun copyKeystore(keystore: EidServiceProperties.Keystore): EidServiceProperties.Keystore {

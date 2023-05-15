@@ -3,9 +3,9 @@ package de.bund.digitalservice.useid.identification
 import de.bund.digitalservice.useid.eidservice.EidService
 import io.mockk.every
 import io.mockk.mockkConstructor
+import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.awaitility.Durations
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -49,7 +49,7 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
         val session = identificationSessionRepository.retrieveIdentificationSession(useIdSessionId)!!
-        Assertions.assertEquals(eIdSessionId, session.eIdSessionId)
+        assertThat(session.eIdSessionId).isEqualTo(eIdSessionId)
     }
 
     @Test

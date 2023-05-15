@@ -16,7 +16,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.awaitility.Awaitility.await
 import org.awaitility.Durations.ONE_SECOND
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -78,7 +77,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
 
         val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/$useIdSessionId"
-        assertEquals(expectedTcTokenURL, tcTokenURL)
+        assertThat(tcTokenURL).isEqualTo(expectedTcTokenURL)
     }
 
     @Test
@@ -120,10 +119,10 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody()
             .jsonPath("$.result").value<LinkedHashMap<String, String>> {
-                assertEquals(it["resultMajor"], mockResult.resultMajor)
+                assertThat(it["resultMajor"]).isEqualTo(mockResult.resultMajor)
             }
             .jsonPath("$.personalData").value<LinkedHashMap<String, String>> {
-                assertEquals(it["givenNames"], personalData.givenNames)
+                assertThat(it["givenNames"]).isEqualTo(personalData.givenNames)
             }
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)

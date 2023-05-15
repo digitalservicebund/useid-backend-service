@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.wellknown
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +30,7 @@ class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .isOk
             .expectBody<String>().returnResult().responseBody
 
-        assertEquals(jacksonMapper.readTree(response), jacksonMapper.readTree(iosAssociation))
+        assertThat(jacksonMapper.readTree(iosAssociation)).isEqualTo(jacksonMapper.readTree(response))
     }
 
     @Test
@@ -46,6 +46,6 @@ class WellKnownControllerIntegrationTest(@Autowired val webTestClient: WebTestCl
             .isOk
             .expectBody<String>().returnResult().responseBody
 
-        assertEquals(jacksonMapper.readTree(response), jacksonMapper.readTree(androidAssociation))
+        assertThat(jacksonMapper.readTree(androidAssociation)).isEqualTo(jacksonMapper.readTree(response))
     }
 }

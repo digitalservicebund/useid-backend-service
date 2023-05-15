@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.tenant
 
-import org.junit.jupiter.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -34,30 +34,30 @@ internal class TenantPropertiesTest {
     @Test
     fun findByApiKey() {
         var tenant = tenantProperties.findByApiKey(secondValidTenant.apiKey)
-        Assertions.assertEquals(secondValidTenant.id, tenant!!.id)
+        assertThat(tenant!!.id).isEqualTo(secondValidTenant.id)
 
         tenant = tenantProperties.findByApiKey("invalid-api-key")
-        Assertions.assertEquals(null, tenant)
+        assertThat(tenant).isEqualTo(null)
     }
 
     @Test
     fun findByAllowedHost() {
         var tenant = tenantProperties.findByAllowedHost(firstValidTenant.allowedHosts[1])
-        Assertions.assertEquals(firstValidTenant.id, tenant!!.id)
+        assertThat(tenant!!.id).isEqualTo(firstValidTenant.id)
 
         tenant = tenantProperties.findByAllowedHost(secondValidTenant.allowedHosts[0])
-        Assertions.assertEquals(secondValidTenant.id, tenant!!.id)
+        assertThat(tenant!!.id).isEqualTo(secondValidTenant.id)
 
         tenant = tenantProperties.findByAllowedHost("i.am.not.allowed")
-        Assertions.assertEquals(null, tenant)
+        assertThat(tenant).isEqualTo(null)
     }
 
     @Test
     fun findByTenantId() {
         var tenant = tenantProperties.findByTenantId(firstValidTenant.id)
-        Assertions.assertEquals(firstValidTenant.id, tenant!!.id)
+        assertThat(tenant!!.id).isEqualTo(firstValidTenant.id)
 
         tenant = tenantProperties.findByTenantId("iAmAnInvalidID")
-        Assertions.assertEquals(null, tenant)
+        assertThat(tenant).isEqualTo(null)
     }
 }

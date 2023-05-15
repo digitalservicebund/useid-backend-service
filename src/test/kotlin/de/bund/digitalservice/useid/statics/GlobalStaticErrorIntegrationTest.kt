@@ -7,7 +7,6 @@ import io.mockk.mockkConstructor
 import org.apache.http.client.utils.URIBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.jsoup.Jsoup
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,7 +32,7 @@ class GlobalStaticErrorIntegrationTest(
         val responseBody = client.expectBody().returnResult().responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
+        assertThat(parsedResponseBody.select("img").hasClass("error_icon")).isTrue()
         assertThat(parsedResponseBody.select("a").attr("href")).contains("mailto:hilfe@bundesident.de")
     }
 
@@ -65,7 +64,7 @@ class GlobalStaticErrorIntegrationTest(
         val responseBody = client.expectBody().returnResult().responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
+        assertThat(parsedResponseBody.select("img").hasClass("error_icon")).isTrue()
         assertThat(parsedResponseBody.select("a").attr("href")).contains("mailto:hilfe@bundesident.de")
     }
 
@@ -82,7 +81,7 @@ class GlobalStaticErrorIntegrationTest(
         val responseBody = client.expectBody().returnResult().responseBody?.decodeToString()
         val parsedResponseBody = Jsoup.parse(responseBody!!)
 
-        assertTrue(parsedResponseBody.select("img").hasClass("error_icon"))
+        assertThat(parsedResponseBody.select("img").hasClass("error_icon")).isTrue()
         assertThat(parsedResponseBody.select("a").attr("href")).contains("mailto:hilfe@bundesident.de")
     }
 }
