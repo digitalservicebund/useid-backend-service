@@ -25,16 +25,14 @@ class EidAvailabilityService(private val eidAvailabilityRepository: EidAvailabil
     }
 
     internal fun checkFunctionalityOfEidService(): Boolean {
-        val lastResults = eidAvailabilityRepository.findAll()
-        lastResults.removeAll { it == null } // Remove incorrect data points
-        val numberOfDataPoints = lastResults.toList().size
-        lastResults.removeAll { it.up }
-        val numberOfInvalidResults = lastResults.toList().size
+        val availableResults = eidAvailabilityRepository.findAllByUp(true)
+        val unavailableResults = eidAvailabilityRepository.findAllByUp(false)
 
-        return invalidResultsLowEnough(numberOfInvalidResults, numberOfDataPoints)
+        return unavailableResultsLowEnough(unavailableResults.size, availableResults.size)
     }
 
-    private fun invalidResultsLowEnough(numberOfInvalidResults: Int, numberOfResults: Int): Boolean {
-        return numberOfResults > 0 && (100.0 * numberOfInvalidResults / numberOfResults) < applicationProperties.maxPercentageOfEidFailures
+    private fun unavailableResultsLowEnough(numberOfUnavailableResults: Int, numberOfAvailableResults: Int): Boolean {
+        val numberOfResult = numberOfAvailableResults + numberOfUnavailableResults
+        return numberOfResult > 0 && (100.0 * numberOfUnavailableResults / numberOfResult) < applicationProperties.maxPercentageOfEidFailures
     }
 }
