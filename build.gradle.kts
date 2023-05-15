@@ -237,7 +237,7 @@ sonarqube {
         property("sonar.projectKey", "digitalservicebund_useid-backend-service")
         property("sonar.organization", "digitalservicebund")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/*/jacocoTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/*/*.xml")
         property(
             "sonar.coverage.exclusions",
             // TODO USEID-737: Remove the ignored packages once the desktop prototype development is done
