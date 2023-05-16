@@ -35,6 +35,7 @@ jacoco {
 testlogger { theme = com.adarshr.gradle.testlogger.theme.ThemeType.MOCHA }
 
 dependencies {
+    implementation(platform(libs.org.jetbrains.kotlin.kotlin.bom))
     /** Webservice **/
     implementation(libs.org.springframework.boot.spring.boot.starter.web)
     implementation(libs.org.springframework.boot.spring.boot.starter.validation)
