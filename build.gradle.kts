@@ -77,7 +77,7 @@ dependencies {
     implementation(libs.de.governikus.autent.sdk.eid.webservice.sdk)
     implementation(libs.de.governikus.autent.utils.autent.key.utils)
     // => CVE-2015-7501, CVE-2015-6420
-    implementation(libs.commons.collections)
+    implementation(libs.commons.collections4)
     // => CVE-2021-40690
     implementation(libs.org.apache.santuario.xmlsec)
     // => CVE-2020-28052
