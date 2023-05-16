@@ -74,7 +74,10 @@ dependencies {
     implementation(libs.org.springdoc.springdoc.openapi.starter.webmvc.api)
 
     /** Governikus Autent SDK **/
-    implementation(libs.de.governikus.autent.sdk.eid.webservice.sdk)
+    implementation(libs.de.governikus.autent.sdk.eid.webservice.sdk) {
+        exclude("commons-collections", "commons-collections")
+        because("replaced by commons-collections4")
+    }
     implementation(libs.de.governikus.autent.utils.autent.key.utils)
     // => CVE-2015-7501, CVE-2015-6420
     implementation(libs.commons.collections4)
