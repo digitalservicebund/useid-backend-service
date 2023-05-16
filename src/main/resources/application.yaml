@@ -60,6 +60,8 @@ eidservice:
     type: JKS
     alias: soap-sig
     password: # set via environment
+  connectTimeoutInMillis: 30000 # 30s
+  readTimeoutInMillis: 30000 # 30s
 
 wellknown:
   ios-config:

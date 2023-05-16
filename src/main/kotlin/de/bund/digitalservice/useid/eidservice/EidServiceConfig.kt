@@ -15,6 +15,12 @@ import javax.xml.ws.BindingProvider
 
 @Configuration
 class EidServiceConfig(private var eidServiceProperties: EidServiceProperties) : EidServiceConfiguration {
+
+    init {
+        System.setProperty("sun.net.client.defaultConnectTimeout", eidServiceProperties.connectTimeoutInMillis.toString())
+        System.setProperty("sun.net.client.defaultReadTimeout", eidServiceProperties.readTimeoutInMillis.toString())
+    }
+
     override fun getEidServiceWsdlUrl(): String = eidServiceProperties.wsdlUrl
 
     override fun getEidServiceUrl(): String = eidServiceProperties.url

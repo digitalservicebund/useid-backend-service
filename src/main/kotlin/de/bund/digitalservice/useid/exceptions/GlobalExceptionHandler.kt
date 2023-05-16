@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import java.net.SocketTimeoutException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -36,5 +37,15 @@ class GlobalExceptionHandler {
     fun handleUnauthorized(e: Exception): ResponseEntity<Any> {
         log.info("${e.message}")
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    }
+
+    @ExceptionHandler(
+        value = [
+            SocketTimeoutException::class,
+        ],
+    )
+    fun handleSocketTimeout(e: Exception): ResponseEntity<Any> {
+        log.error("Unexpected timeout during web service request.", e)
+        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).build()
     }
 }

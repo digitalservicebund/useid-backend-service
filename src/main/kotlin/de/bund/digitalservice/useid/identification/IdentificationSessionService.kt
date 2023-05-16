@@ -55,7 +55,7 @@ class IdentificationSessionService(
             metricsService.incrementSuccessCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
         } catch (e: Exception) {
             metricsService.incrementErrorCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
-            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
+            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId")
             throw e
         }
         updateEIdSessionId(useIdSessionId, extractEIdSessionId(tcToken))
