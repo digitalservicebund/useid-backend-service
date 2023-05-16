@@ -20,3 +20,5 @@ eidservice:
     type: PKCS12
     alias: test_xmlsig_keystore
     password: 123456
+  connectTimeoutInMillis: 30000
+  readTimeoutInMillis: 30000
