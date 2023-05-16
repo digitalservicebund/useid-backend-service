@@ -118,8 +118,6 @@ testing {
                 implementation(libs.org.springframework.boot.spring.boot.starter.webflux)
                 implementation(libs.com.ninja.squad.springmockk)
                 implementation(libs.org.springframework.security.spring.security.test)
-                implementation(libs.org.awaitility)
-                implementation(libs.org.jsoup)
             }
         }
 
@@ -147,7 +145,6 @@ testing {
                 }
                 implementation(libs.org.springframework.boot.spring.boot.starter.webflux)
                 implementation(libs.com.ninja.squad.springmockk)
-                implementation(libs.org.springframework.security.spring.security.test)
                 implementation(libs.org.testcontainers.junit.jupiter)
                 implementation(libs.org.testcontainers.postgresql)
                 implementation(libs.org.testcontainers)
@@ -168,15 +165,11 @@ testing {
         val journeyTest by registering(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                implementation(project())
                 implementation(libs.org.springframework.boot.spring.boot.starter.test) {
                     exclude("org.mockito", "mockito-core")
                     because("Use MockK instead of Mockito since it is better suited for Kotlin")
                 }
                 implementation(libs.org.springframework.boot.spring.boot.starter.webflux)
-                implementation(libs.org.springframework.security.spring.security.test)
-                implementation("org.awaitility:awaitility:4.2.0")
-                implementation("org.jsoup:jsoup:1.16.1")
             }
             targets {
                 all {
