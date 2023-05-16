@@ -159,7 +159,6 @@ jobs:
 
   analyze:
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
     needs: [build, vulnerability-scan]
     steps:
       - uses: actions/checkout@v3
