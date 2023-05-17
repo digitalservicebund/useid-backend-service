@@ -3,7 +3,6 @@ package de.bund.digitalservice.useid.tenant
 import de.bund.digitalservice.useid.metrics.METRICS_TAG_NAME_TENANT_ID
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.http.server.observation.ServerRequestObservationContext
@@ -17,6 +16,7 @@ class RequestMetricsTenantTagProviderTest {
     private val tenant = Tenant().apply {
         id = "foobar"
     }
+
     @Test
     fun `tenantIdTag should return tenant id keyValue pair if given context contains tenant as request attribute`() {
         // Given
@@ -26,8 +26,8 @@ class RequestMetricsTenantTagProviderTest {
         val mockHttpServletResponse = MockHttpServletResponse()
 
         val context = ServerRequestObservationContext(
-                mockHttpRequest,
-                mockHttpServletResponse
+            mockHttpRequest,
+            mockHttpServletResponse,
         )
 
         // When
@@ -44,8 +44,8 @@ class RequestMetricsTenantTagProviderTest {
         val mockHttpServletResponse = MockHttpServletResponse()
 
         val context = ServerRequestObservationContext(
-                mockHttpRequest,
-                mockHttpServletResponse
+            mockHttpRequest,
+            mockHttpServletResponse,
         )
 
         // When

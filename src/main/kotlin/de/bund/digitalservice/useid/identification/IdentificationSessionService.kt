@@ -42,7 +42,7 @@ class IdentificationSessionService(
     }
 
     private fun buildTcTokenUrl(session: IdentificationSession): String {
-        return "${applicationProperties.baseUrl}$TCTOKENS_BASE_PATH/${session.useIdSessionId}?${PARAM_NAME_TENANT_ID}=${session.tenantId}"
+        return "${applicationProperties.baseUrl}$TCTOKENS_BASE_PATH/${session.useIdSessionId}?$PARAM_NAME_TENANT_ID=${session.tenantId}"
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {

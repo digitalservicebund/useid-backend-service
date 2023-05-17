@@ -15,7 +15,6 @@ class RequestMetricsTenantTagProvider : DefaultServerRequestObservationConventio
     }
 
     private fun tenantIdTag(context: ServerRequestObservationContext): KeyValues {
-
         val tenant: Tenant? = context.carrier.getAttribute(REQUEST_ATTR_TENANT) as Tenant?
         tenant?.let {
             return KeyValues.of(KeyValue.of(METRICS_TAG_NAME_TENANT_ID, tenant.id))
