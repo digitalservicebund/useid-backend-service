@@ -49,7 +49,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core:9.18.0")
     implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.3.1")
-    implementation("org.springframework.data:spring-data-redis:3.0.5")
+    implementation("org.springframework.data:spring-data-redis:3.1.0")
     implementation("io.lettuce:lettuce-core:6.2.4.RELEASE")
 
     /** Monitoring **/
