@@ -10,7 +10,7 @@ plugins {
     id("jacoco")
     id("jacoco-report-aggregation")
     id("org.sonarqube") version "4.0.0.2929"
-    id("com.github.jk1.dependency-license-report") version "2.1"
+    id("com.github.jk1.dependency-license-report") version "2.2"
     id("com.adarshr.test-logger") version "3.2.0"
     id("com.gorylenko.gradle-git-properties") version "2.4.0"
 }
