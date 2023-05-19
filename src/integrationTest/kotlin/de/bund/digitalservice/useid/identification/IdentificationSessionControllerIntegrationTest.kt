@@ -74,13 +74,13 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/$useIdSessionId"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/$useIdSessionId?tenant_id=integration_test_1"
         assertThat(tcTokenURL).isEqualTo(expectedTcTokenURL)
     }
 
     @Test
     fun `start session endpoint returns 403 when no authorization header was passed`() {
-        webTestClient.sendGETRequest(TEST_IDENTIFICATIONS_BASE_PATH).exchange().expectStatus().isForbidden
+        webTestClient.createGETRequest(TEST_IDENTIFICATIONS_BASE_PATH).exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -93,7 +93,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectStatus().isOk
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+        webTestClient.createGETRequest(extractRelativePathFromURL(tcTokenURL))
             .exchange()
             .expectStatus().isOk
             .expectBody().xpath("TCTokenType").exists()
@@ -149,7 +149,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectStatus().isOk
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+        webTestClient.createGETRequest(extractRelativePathFromURL(tcTokenURL))
             .exchange()
             .expectStatus().isOk
 
@@ -159,7 +159,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `identity data endpoint returns 403 when no authorization header was passed`() {
-        webTestClient.sendGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+        webTestClient.createGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
     }
 
     @Test
@@ -169,7 +169,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun WebTestClient.sendIdentityRequest(eIdSessionId: String) =
-        this.sendGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/$eIdSessionId")
+        this.createGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 }
