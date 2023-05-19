@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import java.util.*
+import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer valid-api-key-1"
 
@@ -18,7 +18,7 @@ internal fun WebTestClient.sendStartSessionRequest() =
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
-internal fun WebTestClient.sendGETRequest(uri: String) =
+internal fun WebTestClient.createGETRequest(uri: String) =
     this.get()
         .uri(uri)
 
@@ -31,7 +31,7 @@ internal fun mockTcToken(refreshAddress: String) {
     every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
 }
 
-internal fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath
+internal fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath + "?" + URI.create(url).rawQuery
 
 internal fun extractUseIdSessionIdFromTcTokenUrl(tcTokenURL: String): UUID {
     val pathSegments = UriComponentsBuilder
