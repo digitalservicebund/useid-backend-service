@@ -1,14 +1,11 @@
 package de.bund.digitalservice.useid.refresh
 
-import de.bund.digitalservice.useid.eidservice.EidService
+import com.ninjasquad.springmockk.MockkBean
 import de.bund.digitalservice.useid.identification.TEST_IDENTIFICATIONS_BASE_PATH
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkConstructor
+import de.bund.digitalservice.useid.identification.mockTcToken
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,10 +19,8 @@ private const val AUTHORIZATION_HEADER = "Bearer valid-api-key-1"
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
 
-    @BeforeAll
-    fun setup() {
-        mockkConstructor(EidService::class)
-    }
+    @MockkBean
+    private lateinit var soapHandler: SoapHandler
 
     @AfterAll
     fun afterTests() {
@@ -36,10 +31,7 @@ class RefreshControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     fun `refresh endpoint redirects client to correct refresh address when eIdSessionId is valid`() {
         var tcTokenURL = ""
         val eIdSessionId = UUID.randomUUID()
-        val mockTCToken = mockk<TCTokenType>()
-
-        every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
-        every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=$eIdSessionId"
+        mockTcToken(soapHandler, "https://www.foobar.com?sessionId=$eIdSessionId")
 
         webTestClient
             .post()

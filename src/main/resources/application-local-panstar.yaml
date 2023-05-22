@@ -1,0 +1,14 @@
+eidservice:
+  url: https://dev.id.governikus-eid.de:8444/eID-Server-240
+  tls-cert: classpath:eid-server-certificates/local-panstar/dev.id.governikus-eid.de.cer
+  sig-cert: classpath:eid-server-certificates/local-panstar/dev.id.governikus-eid.de-ws-sig.cer
+  soap-tls-keystore:
+    keystore: classpath:soap-certificates/panstar/Governikus_Localhost_Authentication_620935.jks
+    type: JKS
+    alias: "panstar sdk sample soap mtls"
+    password: 123456
+  soap-sig-keystore:
+    keystore: classpath:soap-certificates/panstar/Governikus_Localhost_Signature_620935.p12
+    type: PKCS12
+    alias: "saml-signature"
+    password: 620935

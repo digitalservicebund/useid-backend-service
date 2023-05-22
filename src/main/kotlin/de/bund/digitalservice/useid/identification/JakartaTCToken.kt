@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import de.governikus.panstar.sdk.tctoken.TCTokenType
 import jakarta.xml.bind.annotation.XmlAccessType
 import jakarta.xml.bind.annotation.XmlAccessorType
 import jakarta.xml.bind.annotation.XmlElement
@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
     name = "",
-    propOrder = ["serverAddress", "sessionIdentifier", "refreshAddress", "communicationErrorAddress", "binding", "pathSecurityProtocol", "pathSecurityParameters", "levelOfAssurance"],
+    propOrder = ["serverAddress", "sessionIdentifier", "refreshAddress", "communicationErrorAddress", "binding", "pathSecurityProtocol", "pathSecurityParameters"],
 )
 @XmlRootElement(name = "TCTokenType")
 open class JakartaTCToken {
@@ -47,9 +47,6 @@ open class JakartaTCToken {
     @XmlElement(name = "PathSecurity-Parameters")
     protected var pathSecurityParameters: PathSecurityParameters? = null
 
-    @XmlElement(name = "LevelOfAssurance")
-    protected var levelOfAssurance: String? = null
-
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = ["psk"])
     class PathSecurityParameters(
@@ -71,7 +68,6 @@ open class JakartaTCToken {
             pathSecurityProtocol = token.pathSecurityProtocol
             pathSecurityParameters =
                 if (token.pathSecurityParameters != null) PathSecurityParameters(token.pathSecurityParameters.psk) else null
-            levelOfAssurance = token.levelOfAssurance
         }
     }
 }

@@ -1,6 +1,6 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.bsi.eid230.GetResultResponseType
+import de.bund.bsi.eid240.GetResultResponse
 import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.documentation.EServiceTag
 import de.bund.digitalservice.useid.tenant.InvalidTenantException
@@ -75,7 +75,7 @@ class IdentificationSessionsController(private val identificationSessionService:
     fun getIdentity(
         @PathVariable eIdSessionId: UUID,
         authentication: Authentication,
-    ): ResponseEntity<GetResultResponseType> {
+    ): ResponseEntity<GetResultResponse> {
         val tenant = authentication.details as Tenant
         validateTenant(tenant, eIdSessionId)
 

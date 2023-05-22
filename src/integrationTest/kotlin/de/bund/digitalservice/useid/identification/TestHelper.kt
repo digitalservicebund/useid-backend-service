@@ -1,14 +1,15 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.eidservice.EidService
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
+import de.governikus.panstar.sdk.soap.handler.TcTokenWrapper
+import de.governikus.panstar.sdk.tctoken.TCTokenType
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import java.util.*
+import java.util.UUID
 
 private const val AUTHORIZATION_HEADER = "Bearer valid-api-key-1"
 
@@ -25,10 +26,12 @@ internal fun WebTestClient.sendGETRequest(uri: String) =
 internal fun IdentificationSessionRepository.retrieveIdentificationSession(useIdSessionId: UUID) =
     this.findByUseIdSessionId(useIdSessionId)
 
-internal fun mockTcToken(refreshAddress: String) {
+internal fun mockTcToken(soapHandler: SoapHandler, refreshAddress: String) {
     val mockTCToken = mockk<TCTokenType>(relaxed = true)
     every { mockTCToken.refreshAddress } returns refreshAddress
-    every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
+    val mockTCTokenWrapper = mockk<TcTokenWrapper>(relaxed = true)
+    every { mockTCTokenWrapper.tcToken } returns mockTCToken
+    every { soapHandler.getTcToken(any(), any()) } returns mockTCTokenWrapper
 }
 
 internal fun extractRelativePathFromURL(url: String) = URI.create(url).rawPath

@@ -1,8 +1,8 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.eidservice.EidService
+import com.ninjasquad.springmockk.MockkBean
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
 import io.mockk.every
-import io.mockk.mockkConstructor
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.awaitility.Durations
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
@@ -20,10 +20,11 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     @Autowired
     private lateinit var identificationSessionRepository: IdentificationSessionRepository
 
+    @MockkBean
+    private lateinit var soapHandler: SoapHandler
+
     @BeforeAll
     fun setup() {
-        mockkConstructor(EidService::class)
-
         Awaitility.setDefaultTimeout(Durations.ONE_SECOND)
     }
 
@@ -37,7 +38,7 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
 
         val eIdSessionId = UUID.randomUUID()
 
-        mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+        mockTcToken(soapHandler, "https://www.foobar.com?sessionId=$eIdSessionId")
 
         webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
             .exchange()
@@ -64,7 +65,7 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
 
     @Test
     fun `tcToken endpoint returns 500 when error is thrown`() {
-        every { anyConstructed<EidService>().getTcToken(any()) } throws Error("internal server error")
+        every { soapHandler.getTcToken(any(), any()) } throws Error("internal server error")
 
         var tcTokenURL = ""
         webTestClient.sendStartSessionRequest()

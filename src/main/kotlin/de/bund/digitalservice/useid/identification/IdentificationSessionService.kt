@@ -1,14 +1,14 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.bsi.eid230.GetResultResponseType
+import de.bund.bsi.eid240.GetResultResponse
 import de.bund.digitalservice.useid.config.ApplicationProperties
-import de.bund.digitalservice.useid.eidservice.EidService
 import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
 import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_TCTOKEN
 import de.bund.digitalservice.useid.metrics.MetricsService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
-import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
+import de.governikus.panstar.sdk.tctoken.TCTokenType
+import de.governikus.panstar.sdk.utils.RequestData
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
@@ -18,7 +18,7 @@ import java.util.UUID
 class IdentificationSessionService(
     private val identificationSessionRepository: IdentificationSessionRepository,
     private val applicationProperties: ApplicationProperties,
-    private val eidServiceConfig: EidServiceConfiguration,
+    private val soapHandler: SoapHandler,
     private val metricsService: MetricsService,
 ) {
 
@@ -45,21 +45,52 @@ class IdentificationSessionService(
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
-        val identificationSession = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+        val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
             ?: throw IdentificationSessionNotFoundException(useIdSessionId)
+        val tenantID = session.tenantId ?: ""
+
+        val requestData: RequestData = getRequestData(useIdSessionId)
         val tcToken: TCTokenType
-        val tenantID = identificationSession.tenantId ?: ""
         try {
-            val eidService = EidService(eidServiceConfig, identificationSession.requestDataGroups)
-            tcToken = eidService.getTcToken("${applicationProperties.baseUrl}$REFRESH_PATH")
+            tcToken = soapHandler.getTcToken(requestData, "${applicationProperties.baseUrl}$REFRESH_PATH").tcToken
             metricsService.incrementSuccessCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
         } catch (e: Exception) {
             metricsService.incrementErrorCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
             log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId")
             throw e
         }
-        updateEIdSessionId(useIdSessionId, extractEIdSessionId(tcToken))
+        session.eIdSessionId = extractEIdSessionId(tcToken)
+        identificationSessionRepository.save(session)
+        log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
+
         return tcToken
+    }
+
+    private fun getRequestData(useIdSessionId: UUID): RequestData {
+        val identificationSession = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+            ?: throw IdentificationSessionNotFoundException(useIdSessionId)
+
+        val requestData = RequestData()
+
+        identificationSession.requestDataGroups.forEach {
+            when (it) {
+                "DG1" -> requestData.documentType(true)
+                "DG2" -> requestData.issuingState(true)
+                "DG3" -> requestData.dateOfExpiry(true)
+                "DG4" -> requestData.givenNames(true)
+                "DG5" -> requestData.familyNames(true)
+                "DG7" -> requestData.academicTitle(true)
+                "DG8" -> requestData.dateOfBirth(true)
+                "DG9" -> requestData.placeOfBirth(true)
+                "DG10" -> requestData.nationality(true)
+                "DG13" -> requestData.birthName(true)
+                "DG17" -> requestData.placeOfResidence(true)
+                "DG19" -> requestData.residencePermitI(true)
+                else -> error("Invalid data group for this eService")
+            }
+        }
+
+        return requestData
     }
 
     private fun extractEIdSessionId(tcToken: TCTokenType): UUID {
@@ -75,18 +106,10 @@ class IdentificationSessionService(
             ?: throw IdentificationSessionNotFoundException()
     }
 
-    fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID): IdentificationSession {
-        val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
-        session!!.eIdSessionId = eIdSessionId
-        identificationSessionRepository.save(session)
-        log.info("Updated eIdSessionId of identification session. useIdSessionId=${session.useIdSessionId}")
-        return session
-    }
-
     fun getIdentity(
         eIdSessionId: UUID,
         tenantId: String,
-    ): GetResultResponseType {
+    ): GetResultResponse {
         val eidInformation = getEidInformation(eIdSessionId, tenantId)
 
         // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
@@ -102,11 +125,10 @@ class IdentificationSessionService(
     private fun getEidInformation(
         eIdSessionId: UUID,
         tenantId: String,
-    ): GetResultResponseType {
-        val result: GetResultResponseType
+    ): GetResultResponse {
+        val result: GetResultResponse
         try {
-            val eidService = EidService(eidServiceConfig)
-            result = eidService.getEidInformation(eIdSessionId.toString())
+            result = soapHandler.getResult(eIdSessionId.toString())
             metricsService.incrementSuccessCounter(METRIC_NAME_EID_INFORMATION, tenantId)
         } catch (e: Exception) {
             metricsService.incrementErrorCounter(METRIC_NAME_EID_INFORMATION, tenantId)

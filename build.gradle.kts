@@ -26,6 +26,9 @@ repositories {
     maven {
         url = uri("https://nexus-ext.governikus.de/nexus/content/groups/public/")
     }
+    maven {
+        url = uri("https://build.shibboleth.net/nexus/content/repositories/releases/")
+    }
 }
 
 jacoco {
@@ -73,20 +76,12 @@ dependencies {
     implementation(libs.org.springdoc.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.org.springdoc.springdoc.openapi.starter.webmvc.api)
 
-    /** Governikus Autent SDK **/
-    implementation(libs.de.governikus.autent.sdk.eid.webservice.sdk) {
-        exclude("commons-collections", "commons-collections")
-        because("replaced by commons-collections4")
-    }
-    implementation(libs.de.governikus.autent.utils.autent.key.utils)
-    // => CVE-2015-7501, CVE-2015-6420
-    implementation(libs.commons.collections4)
-    // => CVE-2021-40690
-    implementation(libs.org.apache.santuario.xmlsec)
-    // => CVE-2020-28052
-    implementation(libs.org.bouncycastle.bcprov.jdk15on)
-    // => CVE-2022-40153
-    implementation(libs.com.fasterxml.woodstox.woodstox.core)
+    /** Governikus Panstar SDK **/
+    implementation(libs.de.governikus.panstar.sdk.panstar.soap.sdk)
+    implementation(libs.de.governikus.identification.report.impl.java)
+    implementation(libs.javax.xml.ws.jaxws.api)
+    implementation(libs.com.sun.xml.bind.jaxb.impl)
+    implementation(libs.com.sun.xml.messaging.saaj.saaj.impl)
 
     /** WebAuthn **/
     implementation(libs.com.yubico.webauthn.server.core)

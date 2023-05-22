@@ -112,6 +112,26 @@
       "moduleLicense": null,
       "moduleName": "com.yubico:webauthn-server-parent",
       "note": "Declares BSD license. See here: https://mvnrepository.com/artifact/com.yubico/webauthn-server-parent/2.4.0"
+    },
+    {
+      "moduleLicense": null,
+      "moduleVersion": "2.2.0",
+      "moduleName": "de.governikus.panstar.sdk:panstar-soap-sdk"
+    },
+    {
+      "moduleLicense": null,
+      "moduleVersion": "2.2.0",
+      "moduleName": "de.governikus.panstar.sdk:panstar-utils"
+    },
+    {
+      "moduleLicense": "EUPL",
+      "moduleVersion": "1.0.0",
+      "moduleName": "de.governikus:identification-report-impl-java"
+    },
+    {
+      "moduleLicense": "CPL",
+      "moduleVersion": "1.6.3",
+      "moduleName": "wsdl4j:wsdl4j"
     }
   ]
 }

@@ -1,14 +1,13 @@
 package de.bund.digitalservice.useid.eidservice
 
+import com.ninjasquad.springmockk.MockkBean
+import de.bund.digitalservice.useid.identification.mockTcToken
 import de.bund.digitalservice.useid.integration.RedisTestContainerConfig
-import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
 import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkConstructor
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @Transactional
-class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
+class EidAvailabilityServiceIntegrationTest : RedisTestContainerConfig() {
 
     @Autowired
     private lateinit var eidAvailabilityRepository: EidAvailabilityRepository
@@ -25,10 +24,8 @@ class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
     @Autowired
     private lateinit var eidAvailabilityService: EidAvailabilityService
 
-    @BeforeAll
-    fun setupBeforeAll() {
-        mockkConstructor(EidService::class)
-    }
+    @MockkBean
+    private lateinit var soapHandler: SoapHandler
 
     @BeforeEach
     fun setup() {
@@ -42,9 +39,7 @@ class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
 
     @Test
     fun `should store true if eIdService responds with no error`() {
-        val mockTCToken = mockk<TCTokenType>()
-        every { mockTCToken.refreshAddress } returns "https://www.foobar.com?sessionId=1234"
-        every { anyConstructed<EidService>().getTcToken(any()) } returns mockTCToken
+        mockTcToken(soapHandler, "https://www.foobar.com?sessionId=1234")
 
         eidAvailabilityService.checkEidServiceAvailability()
         val foundResults = eidAvailabilityRepository.findAll()
@@ -55,7 +50,7 @@ class EidAvailabilityServiceIntegrationTest() : RedisTestContainerConfig() {
 
     @Test
     fun `should store false if eIdService responds with an exception`() {
-        every { anyConstructed<EidService>().getTcToken(any()) } throws Exception("some error")
+        every { soapHandler.getTcToken(any(), any()) } throws Exception("some error")
 
         eidAvailabilityService.checkEidServiceAvailability()
         val foundResults = eidAvailabilityRepository.findAll()

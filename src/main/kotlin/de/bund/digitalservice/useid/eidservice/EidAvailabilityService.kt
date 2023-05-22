@@ -1,6 +1,8 @@
 package de.bund.digitalservice.useid.eidservice
 
 import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.governikus.panstar.sdk.soap.handler.SoapHandler
+import de.governikus.panstar.sdk.utils.RequestData
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -9,14 +11,17 @@ import java.util.Date
 private const val EVERY_MINUTE: String = "0 * * * * *"
 
 @Component
-class EidAvailabilityService(private val eidAvailabilityRepository: EidAvailabilityRepository, private val eidServiceConfig: EidServiceConfig, private val applicationProperties: ApplicationProperties) {
+class EidAvailabilityService(
+    private val eidAvailabilityRepository: EidAvailabilityRepository,
+    private val soapHandler: SoapHandler,
+    private val applicationProperties: ApplicationProperties,
+) {
 
     @Scheduled(cron = EVERY_MINUTE)
     @SchedulerLock(name = "eIdAvailabilityCheck")
     fun checkEidServiceAvailability() {
-        val eidService = EidService(eidServiceConfig, listOf("DG4"))
         val result = try {
-            eidService.getTcToken("dummyRefreshUrlOnlyForAvailabilityCheck")
+            soapHandler.getTcToken(RequestData(), "dummyRefreshUrlOnlyForAvailabilityCheck").tcToken
             true
         } catch (e: Exception) {
             false
