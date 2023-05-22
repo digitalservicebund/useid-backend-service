@@ -159,6 +159,7 @@ jobs:
 
   analyze:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
     needs: [build, vulnerability-scan]
     steps:
       - uses: actions/checkout@v3
