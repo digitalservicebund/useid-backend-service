@@ -47,7 +47,7 @@ org-springframework-boot-spring-boot-starter-web = { module = "org.springframewo
 org-springframework-boot-spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 # @pin
 org-springframework-cloud-spring-cloud-starter-kubernetes-client-config = "org.springframework.cloud:spring-cloud-starter-kubernetes-client-config:2.1.3"
-org-springframework-data-spring-data-redis = "org.springframework.data:spring-data-redis:3.0.5"
+org-springframework-data-spring-data-redis = { module = "org.springframework.data:spring-data-redis" }
 org-springframework-security-spring-security-test = { module = "org.springframework.security:spring-security-test" }
 org-testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "org-testcontainers" }
 org-testcontainers-jdbc = { module = "org.testcontainers:jdbc", version.ref = "org-testcontainers" }
