@@ -16,7 +16,7 @@ import java.util.Date
 private const val E_SERVICE_HEALTH_PATH = "api/v1/health"
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class EidServiceContollerIntegrationTest(@Autowired val webTestClient: WebTestClient) : RedisTestContainerConfig() {
+class EidAvailabilityControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) : RedisTestContainerConfig() {
 
     @Autowired
     private lateinit var eidAvailabilityRepository: EidAvailabilityRepository
