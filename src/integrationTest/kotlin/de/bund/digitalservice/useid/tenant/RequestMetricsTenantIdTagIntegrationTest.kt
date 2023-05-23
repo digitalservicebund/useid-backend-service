@@ -1,16 +1,15 @@
 package de.bund.digitalservice.useid.tenant
 
 import de.bund.digitalservice.useid.eidservice.EidService
-import de.bund.digitalservice.useid.identification.createGETRequest
 import de.bund.digitalservice.useid.identification.extractRelativePathFromURL
 import de.bund.digitalservice.useid.identification.mockTcToken
+import de.bund.digitalservice.useid.identification.sendGETRequest
 import de.bund.digitalservice.useid.identification.sendStartSessionRequest
 import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability
@@ -20,7 +19,6 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("integration")
 @AutoConfigureObservability
 @TestPropertySource(properties = ["management.endpoints.web.exposure.include=prometheus"])
 class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: WebTestClient) {
@@ -38,7 +36,7 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
     }
 
     @Test
-    fun `prometheus log contains server request metric with tenant ID for start session endpoint after start session call`() {
+    fun `prometheus metric contains tenant ID tag for start session`() {
         // Given
         val expectedPrometheusLogRegex = Regex("http_server_requests_seconds_count\\{error=\"none\",exception=\"none\",method=\"POST\",outcome=\"SUCCESS\",status=\"200\",tenant_id=\"(.+)\",uri=\"/api/v1/identifications\",}")
 
@@ -51,7 +49,7 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
     }
 
     @Test
-    fun `prometheus log contains server request metric with tenant ID for tc token endpoint after tc token is requested`() {
+    fun `prometheus metric contains tenant ID tag for tc token endpoint`() {
         // Given
         val expectedPrometheusLogRegex = Regex("http_server_requests_seconds_count\\{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",tenant_id=\"(.+)\",uri=\"/api/v1/tc-tokens/\\{useIdSessionId}\",}")
 
@@ -61,8 +59,7 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
         val eIdSessionId = UUID.randomUUID()
         mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
-        webTestClient.createGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .exchange()
+        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
 
         // Then
         val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
@@ -70,14 +67,13 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
     }
 
     @Test
-    fun `prometheus log contains server request metric with tenant ID for widget endpoint after widget is requested`() {
+    fun `prometheus metric contains tenant ID tag for widget endpoint`() {
         // Given
         val expectedPrometheusLogRegex = Regex("http_server_requests_seconds_count\\{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",tenant_id=\"(.+)\",uri=\"/widget\",}")
         val allowedHost = "i.am.allowed.1"
 
         // When
-        webTestClient.createGETRequest("/widget?hostname=$allowedHost")
-            .exchange()
+        webTestClient.sendGETRequest("/widget?hostname=$allowedHost")
             .expectStatus().isOk
 
         // Then
@@ -88,8 +84,7 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
     private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex): String? {
         var tenantId: String? = ""
         webTestClient
-            .createGETRequest("actuator/prometheus")
-            .exchange()
+            .sendGETRequest("actuator/prometheus")
             .expectStatus().isOk
             .expectBody()
             .returnResult()

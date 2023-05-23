@@ -18,9 +18,10 @@ internal fun WebTestClient.sendStartSessionRequest() =
         .headers { setAuthorizationHeader(it) }
         .exchange()
 
-internal fun WebTestClient.createGETRequest(uri: String) =
+internal fun WebTestClient.sendGETRequest(uri: String) =
     this.get()
         .uri(uri)
+        .exchange()
 
 internal fun IdentificationSessionRepository.retrieveIdentificationSession(useIdSessionId: UUID) =
     this.findByUseIdSessionId(useIdSessionId)

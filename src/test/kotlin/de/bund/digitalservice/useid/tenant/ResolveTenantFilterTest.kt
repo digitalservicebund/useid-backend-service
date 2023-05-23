@@ -8,11 +8,9 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 
-@Tag("test")
 internal class ResolveTenantFilterTest {
 
     private val tenantProperties: TenantProperties = mockk()
