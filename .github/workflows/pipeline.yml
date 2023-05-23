@@ -31,9 +31,8 @@ jobs:
         with:
           java-version: "17.0"
           distribution: "temurin"
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
       - name: Build with Gradle
         run: ./gradlew build
       - name: Send status to Slack
@@ -62,9 +61,8 @@ jobs:
         with:
           java-version: "17.0"
           distribution: "temurin"
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
       - name: Run license scanner
         run: ./gradlew checkLicense
       - name: Send status to Slack
@@ -96,9 +94,8 @@ jobs:
         with:
           java-version: "17.0"
           distribution: "temurin"
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
       - name: Build container image
         run: ./gradlew bootBuildImage
       - name: Run Trivy vulnerability scanner
@@ -170,14 +167,13 @@ jobs:
         with:
           java-version: "17.0"
           distribution: "temurin"
-          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
       - name: Cache SonarQube packages
         uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
       - name: Scan with SonarQube
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
@@ -228,9 +224,8 @@ jobs:
         with:
           java-version: "17.0"
           distribution: "temurin"
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
       - name: Build and publish container image
         run: CONTAINER_REGISTRY_USER=${{ github.actor }} CONTAINER_REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }} ./gradlew bootBuildImage --publishImage
       - name: Install cosign
@@ -315,9 +310,8 @@ jobs:
         with:
           java-version: "17.0"
           distribution: "temurin"
-          cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
       - name: Run journey tests
         run: ./gradlew journeyTest
         env:
