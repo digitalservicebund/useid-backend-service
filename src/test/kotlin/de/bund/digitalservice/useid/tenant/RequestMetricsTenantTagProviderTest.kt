@@ -2,13 +2,11 @@ package de.bund.digitalservice.useid.tenant
 
 import de.bund.digitalservice.useid.metrics.METRICS_TAG_NAME_TENANT_ID
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.http.server.observation.ServerRequestObservationContext
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 
-@Tag("test")
 class RequestMetricsTenantTagProviderTest {
 
     private val requestMetricsTenantTagProvider = RequestMetricsTenantTagProvider()
