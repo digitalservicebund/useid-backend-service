@@ -50,15 +50,16 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
 
     @Test
     fun `prometheus metric contains tenant ID tag for tc token endpoint`() {
-        // Given
         val expectedPrometheusLogRegex = Regex("http_server_requests_seconds_count\\{error=\"none\",exception=\"none\",method=\"GET\",outcome=\"SUCCESS\",status=\"200\",tenant_id=\"(.+)\",uri=\"/api/v1/tc-tokens/\\{useIdSessionId}\",}")
 
-        // When
+        // Given
         var tcTokenURL = ""
         webTestClient.sendStartSessionRequest()
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
         val eIdSessionId = UUID.randomUUID()
         mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
+
+        // When
         webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
 
         // Then
