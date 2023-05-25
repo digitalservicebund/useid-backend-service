@@ -1,18 +1,21 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.error
 
-import de.bund.digitalservice.useid.config.ApplicationProperties
 import org.springframework.boot.web.error.ErrorAttributeOptions
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.util.UriUtils
 import kotlin.text.Charsets.UTF_8
 
+const val SHOW_REPORT_EMAIL = "showReportEmail"
+const val ERROR_REPORT_EMAIL_LINK = "errorReportEmailLink"
+
 @Component
-class GlobalStaticError(
-    private val applicationProperties: ApplicationProperties,
+class GlobalErrorAttributes(
     private val messageSource: MessageSource,
 ) : DefaultErrorAttributes() {
 
@@ -23,9 +26,11 @@ class GlobalStaticError(
         val errorAttributes = super.getErrorAttributes(webRequest, options)
         val statusCode = errorAttributes["status"] as Int
 
-        errorAttributes["showReportEmail"] = true
-        errorAttributes["errorReportEmailLink"] = createEmailReportLink(statusCode)
-        errorAttributes["baseUrl"] = applicationProperties.baseUrl
+        val acceptedMediaType = webRequest?.getHeaderValues(HttpHeaders.ACCEPT)?.get(0)
+        if (acceptedMediaType != null && acceptedMediaType.contains(MediaType.TEXT_HTML_VALUE)) {
+            errorAttributes[SHOW_REPORT_EMAIL] = true
+            errorAttributes[ERROR_REPORT_EMAIL_LINK] = createEmailReportLink(statusCode)
+        }
 
         return errorAttributes
     }
