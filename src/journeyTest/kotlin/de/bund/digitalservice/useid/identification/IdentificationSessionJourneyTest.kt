@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid.identification
 
-import de.bund.digitalservice.useid.journey.JourneyTestApplicationProperties
-import de.bund.digitalservice.useid.journey.JourneyTestConfig
+import de.bund.digitalservice.useid.config.JourneyTestApplicationProperties
+import de.bund.digitalservice.useid.config.JourneyTestConfig
 import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.widget
 
-import de.bund.digitalservice.useid.config.ApplicationProperties
 import io.micrometer.core.annotation.Timed
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Controller
@@ -16,9 +15,7 @@ internal const val APP_SIMULATOR_PAGE = "app-simulator"
 @Controller
 @Timed
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
-class QRCodeWidgetController(
-    private val applicationProperties: ApplicationProperties,
-) {
+class QRCodeWidgetController {
     @GetMapping("/$QRCODE_WIDGET_PAGE")
     fun getQRCodeWidgetPage(
         model: Model,
@@ -27,16 +24,7 @@ class QRCodeWidgetController(
     ): ModelAndView {
         // no tracking for desktop solution while prototyping
 
-        val widgetViewConfig = mapOf(
-            "baseUrl" to applicationProperties.baseUrl,
-            "isWidget" to true,
-            "additionalClass" to "",
-        )
-
-        val modelAndView = ModelAndView(QRCODE_WIDGET_PAGE)
-        modelAndView.addAllObjects(widgetViewConfig)
-
-        return modelAndView
+        return ModelAndView(QRCODE_WIDGET_PAGE)
     }
 
     @GetMapping("/$APP_SIMULATOR_PAGE")
@@ -46,14 +34,8 @@ class QRCodeWidgetController(
     ): ModelAndView {
         // no tracking for desktop solution while prototyping
 
-        val widgetViewConfig = mapOf(
-            "baseUrl" to applicationProperties.baseUrl,
-            "widgetSessionId" to widgetSessionId,
-        )
-
         val modelAndView = ModelAndView(APP_SIMULATOR_PAGE)
-        modelAndView.addAllObjects(widgetViewConfig)
-
+        modelAndView.addObject("widgetSessionId" to widgetSessionId)
         return modelAndView
     }
 }

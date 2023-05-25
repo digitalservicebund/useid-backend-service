@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.exceptions
+package de.bund.digitalservice.useid.error
 
 import de.bund.digitalservice.useid.credentials.CredentialNotFoundException
 import de.bund.digitalservice.useid.credentials.InvalidCredentialException

@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.home
 
 import io.micrometer.core.annotation.Timed
 import org.springframework.stereotype.Controller
