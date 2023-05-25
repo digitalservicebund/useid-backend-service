@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClient) {
@@ -60,6 +60,20 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
         val unknownId = UUID.randomUUID()
         webTestClient.sendGETRequest("/api/v1/tc-tokens/$unknownId").exchange().expectStatus().isNotFound
+    }
+
+    @Test
+    fun `tcToken endpoint returns 406 when accepted media type is not XML`() {
+        var tcTokenURL = ""
+        webTestClient.sendStartSessionRequest()
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .accept(MediaType.TEXT_HTML)
+            .exchange()
+            .expectStatus().isEqualTo(406)
     }
 
     @Test
