@@ -26,10 +26,11 @@ class GlobalErrorAttributes(
         val errorAttributes = super.getErrorAttributes(webRequest, options)
         val statusCode = errorAttributes["status"] as Int
 
-        val acceptedMediaType = webRequest?.getHeaderValues(HttpHeaders.ACCEPT)?.get(0)
-        if (acceptedMediaType != null && acceptedMediaType.contains(MediaType.TEXT_HTML_VALUE)) {
-            errorAttributes[SHOW_REPORT_EMAIL] = true
-            errorAttributes[ERROR_REPORT_EMAIL_LINK] = createEmailReportLink(statusCode)
+        webRequest?.getHeaderValues(HttpHeaders.ACCEPT)?.get(0)?.let { acceptedMediaType ->
+            if (acceptedMediaType.contains(MediaType.TEXT_HTML_VALUE)) {
+                errorAttributes[SHOW_REPORT_EMAIL] = true
+                errorAttributes[ERROR_REPORT_EMAIL_LINK] = createEmailReportLink(statusCode)
+            }
         }
 
         return errorAttributes
