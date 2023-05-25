@@ -26,7 +26,7 @@ nz-net-ultraq-thymeleaf-thymeleaf-layout-dialect = { module = "nz.net.ultraq.thy
 org-apache-santuario-xmlsec = "org.apache.santuario:xmlsec:3.0.2"
 org-awaitility = "org.awaitility:awaitility:4.2.0"
 org-bouncycastle-bcprov-jdk15on = "org.bouncycastle:bcprov-jdk15on:1.70"
-org-flywaydb-flyway-core = "org.flywaydb:flyway-core:9.18.0"
+org-flywaydb-flyway-core = "org.flywaydb:flyway-core:9.19.1"
 org-jetbrains-kotlin-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
 org-jetbrains-kotlin-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 org-jetbrains-kotlin-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
