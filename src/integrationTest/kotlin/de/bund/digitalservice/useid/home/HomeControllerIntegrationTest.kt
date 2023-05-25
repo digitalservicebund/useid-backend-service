@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.statics
+package de.bund.digitalservice.useid.home
 
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
