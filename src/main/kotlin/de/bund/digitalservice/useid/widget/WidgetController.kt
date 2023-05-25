@@ -77,16 +77,9 @@ class WidgetController(
             return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent, tenant)
         }
 
-        val modelAttributes = mapOf(
-            "eidClientURL" to "#",
-            "isWidget" to true,
-            "additionalClass" to "",
-            "tenantId" to tenant.id,
-            "cspNonce" to cspNonce,
-        )
-
         val modelAndView = ModelAndView(WIDGET_PAGE)
-        modelAndView.addAllObjects(modelAttributes)
+        modelAndView.addObject("tenantId" to tenant.id)
+        modelAndView.addObject("cspNonce" to cspNonce)
         return modelAndView
     }
 
@@ -106,6 +99,7 @@ class WidgetController(
             userAgent,
             tenant?.id,
         )
+
         val modelAttributes = mapOf(
             "eidClientURL" to "$eIdClientBaseUrl?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
             "isFallback" to true,

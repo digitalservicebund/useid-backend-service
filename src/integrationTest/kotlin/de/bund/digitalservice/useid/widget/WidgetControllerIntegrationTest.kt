@@ -31,10 +31,9 @@ class WidgetControllerIntegrationTest(
     }
 
     val validTenantId = "integration_test_1"
-    val invalidTenantId = "anInvalidTenantId"
-
     val allowedHost = "i.am.allowed.1"
     val forbiddenHost = "i.am.forbidden"
+    val tcTokenUrl = "https://www.foo.bar"
 
     @Test
     fun `widget endpoint WIDGET_START_IDENT_BTN_CLICKED should return 200 when query parameter tenant_id has correct value`() {
@@ -79,8 +78,7 @@ class WidgetControllerIntegrationTest(
             .uri("/widget?hostname=$allowedHost")
             .exchange()
             // THEN
-            .expectStatus()
-            .isOk
+            .expectStatus().isOk
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
@@ -93,6 +91,26 @@ class WidgetControllerIntegrationTest(
             )
             .expectHeader()
             .valueEquals(HttpHeaders.VARY, HttpHeaders.ORIGIN)
+    }
+
+    @Test
+    fun `widget page includes script to set href on eidClientButton`() {
+        // GIVEN
+        val nonce = UUID.randomUUID().toString()
+        mockkStatic(UUID::class)
+        every { UUID.randomUUID().toString() } returns nonce
+
+        val result = webTestClient
+            // WHEN
+            .get()
+            .uri("/widget?hostname=$allowedHost")
+            .exchange()
+            // THEN
+            .expectStatus().isOk
+            .expectBody()
+            .returnResult()
+
+        assertThat(result.responseBody!!.decodeToString()).contains("eidClientButton.setAttribute(\"href\", eidClientURL);")
     }
 
     @Test
@@ -164,41 +182,39 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `widget endpoint FALLBACK_PAGE should return 200 and should contain errorTitle`() {
-        val result = webTestClient
-            .get()
-            .uri("/$FALLBACK_PAGE?tcTokenURL=foobar")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .returnResult()
+    fun `fallback page returns 200 with fallback class on container`() {
+        // when
+        val result = getFallbackPageResponseBody()
+        val parsedResponseBody = Jsoup.parse(result)
 
-        val responseBody: String? = result.responseBody?.decodeToString()
-        val parsedResponseBody = Jsoup.parse(responseBody!!)
-
+        // then
         val containerFallback = parsedResponseBody.getElementsByClass("container").attr("class")
         assertThat(containerFallback).contains("fallback")
+    }
 
+    @Test
+    fun `fallback page returns 200 and contains errorTitle`() {
+        // when
+        val result = getFallbackPageResponseBody()
+        val parsedResponseBody = Jsoup.parse(result)
+
+        // then
         val actualErrorTitle = parsedResponseBody.getElementsByClass("error_title").text()
         val expectedErrorTitle = messageSource.getMessage("error.default.title", null, Locale.GERMAN)
         assertThat(actualErrorTitle).contains(expectedErrorTitle)
     }
 
     @Test
-    fun `widget endpoint FALLBACK_PAGE returns Content-Security-Policy with nonce and disallowing use of frames`() {
-        // GIVEN
+    fun `fallback page returns Content-Security-Policy with nonce and disallowing use of frames`() {
+        // given
         val nonce = UUID.randomUUID().toString()
         mockkStatic(UUID::class)
         every { UUID.randomUUID().toString() } returns nonce
 
-        webTestClient
-            // WHEN
-            .get()
-            .uri("/eID-Client?tcTokenURL=foobar")
-            .exchange()
-            // THEN
-            .expectStatus()
-            .isOk
+        // when
+        getFallbackPage()
+            // then
+            .expectStatus().isOk
             .expectHeader()
             .valueEquals(
                 "Content-Security-Policy",
@@ -207,22 +223,47 @@ class WidgetControllerIntegrationTest(
     }
 
     @Test
-    fun `fallback page should encode tcTokenURL param for identification button when the query param is passed`() {
-        val tcTokenUrl = "https://www.foo.bar"
-        val result = webTestClient
-            .get()
-            .uri("/$FALLBACK_PAGE?tcTokenURL=$tcTokenUrl") // tcTokenURL is automatically encoded by webTestClient
-            .exchange()
+    fun `fallback page shows identification button which links to eID-Client URL with bundesident scheme`() {
+        // when
+        val responseBody: String = getFallbackPageResponseBody()
+
+        // then
+        val eidClientButton = Jsoup.parse(responseBody).getElementById("eid-client-button")?.attr("href")
+        assertThat(eidClientButton).startsWith("bundesident://127.0.0.1:24727/eID-Client")
+    }
+
+    @Test
+    fun `fallback page encodes tcTokenURL param for identification button when the query param is passed`() {
+        // when
+        val result = getFallbackPageResponseBody()
+
+        // then
+        val eidClientButton = Jsoup.parse(result).getElementById("eid-client-button")?.attr("href")
+        assertThat(eidClientButton).endsWith("?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
+    }
+
+    @Test
+    fun `fallback page does not include script to set eidClientButton href on fallback page`() {
+        // when
+        val result = getFallbackPageResponseBody()
+
+        // then
+        assertThat(result).doesNotContain("eidClientButton.setAttribute(\"href\", eidClientURL);")
+    }
+
+    private fun getFallbackPageResponseBody(): String {
+        val result = getFallbackPage()
             .expectStatus().isOk
             .expectBody()
             .returnResult()
 
-        val responseBody: String? = result.responseBody?.decodeToString()
-        val parsedResponseBody = Jsoup.parse(responseBody!!)
-
-        val eidClientButton = parsedResponseBody.getElementById("eid-client-button")?.attr("href")
-        assertThat(eidClientButton).isEqualTo("bundesident://127.0.0.1:24727/eID-Client?tcTokenURL=https%3A%2F%2Fwww.foo.bar")
+        return result.responseBody!!.decodeToString()
     }
+
+    private fun getFallbackPage() = webTestClient
+        .get()
+        .uri("/$FALLBACK_PAGE?tcTokenURL=$tcTokenUrl")
+        .exchange()
 
     private fun fetchWidgetPageWithMobileDevices(
         androidUserAgent: String,

@@ -24,15 +24,7 @@ class QRCodeWidgetController {
     ): ModelAndView {
         // no tracking for desktop solution while prototyping
 
-        val modelAttributes = mapOf(
-            "isWidget" to true,
-            "additionalClass" to "",
-        )
-
-        val modelAndView = ModelAndView(QRCODE_WIDGET_PAGE)
-        modelAndView.addAllObjects(modelAttributes)
-
-        return modelAndView
+        return ModelAndView(QRCODE_WIDGET_PAGE)
     }
 
     @GetMapping("/$APP_SIMULATOR_PAGE")
