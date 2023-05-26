@@ -7,7 +7,6 @@ import de.bund.digitalservice.useid.identification.sendGETRequest
 import de.bund.digitalservice.useid.identification.sendStartSessionRequest
 import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
-import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -79,11 +78,12 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .expectStatus().isOk
 
         // Then
-        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, printLog = true)
+        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, debug = true)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
 
-    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex, printLog: Boolean = false): String? {
+    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex, debug: Boolean = false): String? {
+        // val log = KotlinLogging.logger {}
         var tenantId: String? = ""
         webTestClient
             .sendGETRequest("actuator/prometheus")
@@ -92,14 +92,14 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .returnResult()
             .responseBody?.let { prometheusLogRaw ->
             val prometheusLog = String(bytes = prometheusLogRaw)
-            if (printLog) {
-                val log = KotlinLogging.logger {}
-                println("##### DEBUG LOG \n $prometheusLog")
-                log.info {
-                    "##### DEBUG LOG \n" +
-                        " $prometheusLog"
-                }
-            }
+
+            //     if (debug) {
+            //     println("##### DEBUG LOG \n $prometheusLog")
+            //     log.info {
+            //         "##### DEBUG LOG \n" +
+            //             " $prometheusLog"
+            //     }
+            // }
             val result = expectedPrometheusLogRegex.find(prometheusLog)
             tenantId = result?.groupValues?.get(1)
         }
