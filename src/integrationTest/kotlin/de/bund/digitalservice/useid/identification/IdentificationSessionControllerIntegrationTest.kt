@@ -74,7 +74,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
         val useIdSessionId = extractUseIdSessionIdFromTcTokenUrl(tcTokenURL)
 
-        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/$useIdSessionId"
+        val expectedTcTokenURL = "${applicationProperties.baseUrl}/api/v1/tc-tokens/$useIdSessionId?tenant_id=integration_test_1"
         assertThat(tcTokenURL).isEqualTo(expectedTcTokenURL)
     }
 
