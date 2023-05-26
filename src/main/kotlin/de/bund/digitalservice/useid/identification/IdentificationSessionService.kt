@@ -7,7 +7,6 @@ import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_INFORMATION
 import de.bund.digitalservice.useid.metrics.METRIC_NAME_EID_TCTOKEN
 import de.bund.digitalservice.useid.metrics.MetricsService
 import de.bund.digitalservice.useid.refresh.REFRESH_PATH
-import de.bund.digitalservice.useid.tenant.PARAM_NAME_TENANT_ID
 import de.governikus.autent.sdk.eidservice.config.EidServiceConfiguration
 import de.governikus.autent.sdk.eidservice.tctoken.TCTokenType
 import mu.KotlinLogging
@@ -42,7 +41,7 @@ class IdentificationSessionService(
     }
 
     private fun buildTcTokenUrl(session: IdentificationSession): String {
-        return "${applicationProperties.baseUrl}$TCTOKENS_BASE_PATH/${session.useIdSessionId}?$PARAM_NAME_TENANT_ID=${session.tenantId}"
+        return "${applicationProperties.baseUrl}$TCTOKENS_BASE_PATH/${session.useIdSessionId}"
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
