@@ -38,16 +38,6 @@ class TcTokenController(private val identificationSessionService: Identification
         content = [Content()],
     )
     fun getTCToken(@PathVariable useIdSessionId: UUID, request: HttpServletRequest): ResponseEntity<JakartaTCToken> {
-        attachTenantIdToRequest(useIdSessionId, request)
-
-        val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .contentType(MediaType.APPLICATION_XML)
-            .body(JakartaTCToken.fromTCTokenType(tcToken))
-    }
-
-    private fun attachTenantIdToRequest(useIdSessionId: UUID, request: HttpServletRequest) {
         identificationSessionService.findByUseIdSessionId(useIdSessionId)?.let { identificationSession ->
             identificationSession.tenantId?.let { tenantId ->
                 tenantProperties.findByTenantId(tenantId).let { tenant ->
@@ -55,5 +45,11 @@ class TcTokenController(private val identificationSessionService: Identification
                 }
             }
         }
+
+        val tcToken = identificationSessionService.startSessionWithEIdServer(useIdSessionId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_XML)
+            .body(JakartaTCToken.fromTCTokenType(tcToken))
     }
 }
