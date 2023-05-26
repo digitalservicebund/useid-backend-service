@@ -78,11 +78,11 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .expectStatus().isOk
 
         // Then
-        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, debug = true)
+        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
 
-    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex, debug: Boolean = false): String? {
+    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex): String? {
         var tenantId: String? = ""
         webTestClient
             .sendGETRequest("actuator/prometheus")
@@ -91,7 +91,6 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .returnResult()
             .responseBody?.let { prometheusLogRaw ->
             val prometheusLog = String(bytes = prometheusLogRaw)
-            if (debug) { println("##### DEBUG LOG \n $prometheusLog") }
             val result = expectedPrometheusLogRegex.find(prometheusLog)
             tenantId = result?.groupValues?.get(1)
         }
