@@ -39,7 +39,8 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
 
         mockTcToken("https://www.foobar.com?sessionId=$eIdSessionId")
 
-        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+        webTestClient.createGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .exchange()
             .expectStatus().isOk
             .expectHeader().contentType(MediaType.APPLICATION_XML)
             .expectBody().xpath("TCTokenType").exists()
@@ -52,13 +53,13 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     @Test
     fun `tcToken endpoint returns 400 when passed an invalid UUID as useIdSessionID`() {
         val invalidId = "IamInvalid"
-        webTestClient.sendGETRequest("/api/v1/tc-tokens/$invalidId").expectStatus().isBadRequest
+        webTestClient.createGETRequest("/api/v1/tc-tokens/$invalidId").exchange().expectStatus().isBadRequest
     }
 
     @Test
     fun `tcToken endpoint returns 404 when passed a unknown UUID as useIdSessionID`() {
         val unknownId = UUID.randomUUID()
-        webTestClient.sendGETRequest("/api/v1/tc-tokens/$unknownId").expectStatus().isNotFound
+        webTestClient.createGETRequest("/api/v1/tc-tokens/$unknownId").exchange().expectStatus().isNotFound
     }
 
     @Test
@@ -85,6 +86,6 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL)).expectStatus().is5xxServerError
+        webTestClient.createGETRequest(extractRelativePathFromURL(tcTokenURL)).exchange().expectStatus().is5xxServerError
     }
 }
