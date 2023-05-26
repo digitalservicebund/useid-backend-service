@@ -38,7 +38,7 @@ class TcTokenController(private val identificationSessionService: Identification
         content = [Content()],
     )
     fun getTCToken(@PathVariable useIdSessionId: UUID, request: HttpServletRequest): ResponseEntity<JakartaTCToken> {
-        identificationSessionService.findByUseIdSessionId(useIdSessionId)?.let { identificationSession ->
+        identificationSessionService.findByUseIdSessionIdOrThrow(useIdSessionId).let { identificationSession ->
             identificationSession.tenantId?.let { tenantId ->
                 tenantProperties.findByTenantId(tenantId).let { tenant ->
                     request.setAttribute(REQUEST_ATTR_TENANT, tenant)
