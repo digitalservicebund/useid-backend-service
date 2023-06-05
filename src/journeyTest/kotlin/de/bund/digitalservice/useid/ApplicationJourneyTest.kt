@@ -1,7 +1,7 @@
 package de.bund.digitalservice.useid
 
-import de.bund.digitalservice.useid.journey.JourneyTestApplicationProperties
-import de.bund.digitalservice.useid.journey.JourneyTestConfig
+import de.bund.digitalservice.useid.config.JourneyTestApplicationProperties
+import de.bund.digitalservice.useid.config.JourneyTestConfig
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired

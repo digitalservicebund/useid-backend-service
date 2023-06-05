@@ -41,7 +41,7 @@ class IdentificationSessionsController(private val identificationSessionService:
     @Operation(summary = "Start session for a new identification as eService")
     @ApiResponse(responseCode = "200")
     @ApiResponse(
-        responseCode = "401",
+        responseCode = "403",
         description = "Authentication failed (missing or wrong api key)",
         content = [Content()],
     )
@@ -67,7 +67,7 @@ class IdentificationSessionsController(private val identificationSessionService:
         content = [Content()],
     )
     @ApiResponse(
-        responseCode = "401",
+        responseCode = "403",
         description = "Authentication failed (missing or wrong api key)",
         content = [Content()],
     )

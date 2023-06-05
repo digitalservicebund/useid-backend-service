@@ -62,6 +62,20 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
     }
 
     @Test
+    fun `tcToken endpoint returns 406 when accepted media type is not XML`() {
+        var tcTokenURL = ""
+        webTestClient.sendStartSessionRequest()
+            .expectStatus().isOk
+            .expectHeader().contentType(MediaType.APPLICATION_JSON)
+            .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
+
+        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+            .accept(MediaType.TEXT_HTML)
+            .exchange()
+            .expectStatus().isEqualTo(406)
+    }
+
+    @Test
     fun `tcToken endpoint returns 500 when error is thrown`() {
         every { anyConstructed<EidService>().getTcToken(any()) } throws Error("internal server error")
 

@@ -1,4 +1,4 @@
-package de.bund.digitalservice.useid.journey
+package de.bund.digitalservice.useid.config
 
 import de.bund.digitalservice.useid.yaml.YamlPropertySourceFactory
 import org.springframework.boot.context.properties.ConfigurationProperties

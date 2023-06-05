@@ -102,7 +102,7 @@
       })();
     </script>
     <script
-      th:if="${isWidget}"
+      th:unless="${isFallback}"
       type="text/javascript"
       th:inline="javascript"
       th:attr="nonce=${cspNonce}"

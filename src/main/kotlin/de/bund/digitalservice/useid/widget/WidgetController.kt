@@ -1,6 +1,5 @@
 package de.bund.digitalservice.useid.widget
 
-import de.bund.digitalservice.useid.config.ApplicationProperties
 import de.bund.digitalservice.useid.config.REQUEST_ATTR_CSP_NONCE
 import de.bund.digitalservice.useid.tenant.REQUEST_ATTR_TENANT
 import de.bund.digitalservice.useid.tenant.Tenant
@@ -38,14 +37,9 @@ private const val eIdClientBaseUrl = "bundesident://127.0.0.1:24727/eID-Client"
 @Controller
 @Timed
 class WidgetController(
-    applicationProperties: ApplicationProperties,
     private val widgetTracking: WidgetTracking,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
-    private val defaultViewHeaderConfig = mapOf(
-        "baseUrl" to applicationProperties.baseUrl,
-    )
-
     @PostMapping("/$WIDGET_START_IDENT_BTN_CLICKED")
     fun handleStartIdentButtonClicked(
         @RequestParam(required = false, name = "hash") sessionHash: String?,
@@ -83,16 +77,9 @@ class WidgetController(
             return handleRequestWithIncompatibleOSVersion(sessionHash, userAgent, tenant)
         }
 
-        val widgetViewConfig = mapOf(
-            "eidClientURL" to "#",
-            "isWidget" to true,
-            "additionalClass" to "",
-            "tenantId" to tenant.id,
-            "cspNonce" to cspNonce,
-        )
-
         val modelAndView = ModelAndView(WIDGET_PAGE)
-        modelAndView.addAllObjects(defaultViewHeaderConfig + widgetViewConfig)
+        modelAndView.addObject("tenantId" to tenant.id)
+        modelAndView.addObject("cspNonce" to cspNonce)
         return modelAndView
     }
 
@@ -112,7 +99,8 @@ class WidgetController(
             userAgent,
             tenant?.id,
         )
-        val widgetViewFallbackConfig = mapOf(
+
+        val modelAttributes = mapOf(
             "eidClientURL" to "$eIdClientBaseUrl?tcTokenURL=${URLEncoder.encode(tcTokenURL, UTF_8)}",
             "isFallback" to true,
             "additionalClass" to "fallback",
@@ -121,7 +109,7 @@ class WidgetController(
         )
 
         val modelAndView = ModelAndView(WIDGET_PAGE)
-        modelAndView.addAllObjects(defaultViewHeaderConfig + widgetViewFallbackConfig)
+        modelAndView.addAllObjects(modelAttributes)
         return modelAndView
     }
 
@@ -162,12 +150,8 @@ class WidgetController(
             userAgent,
             tenant.id,
         )
-        val incompatibleViewHeader = mapOf(
-            "tenantId" to tenant.id,
-        )
         val modelAndView = ModelAndView(INCOMPATIBLE_PAGE)
-        modelAndView.addAllObjects(defaultViewHeaderConfig + incompatibleViewHeader)
-
+        modelAndView.addObject("tenantId" to tenant.id)
         return modelAndView
     }
 }
