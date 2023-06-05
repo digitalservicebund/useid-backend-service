@@ -58,7 +58,7 @@ org-testcontainers-postgresql = { module = "org.testcontainers:postgresql", vers
 com-adarshr-test-logger = "com.adarshr.test-logger:3.2.0"
 com-diffplug-spotless = "com.diffplug.spotless:6.19.0"
 com-github-ben-manes-versions = "com.github.ben-manes.versions:0.46.0"
-com-github-jk1-dependency-license-report = "com.github.jk1.dependency-license-report:2.3"
+com-github-jk1-dependency-license-report = "com.github.jk1.dependency-license-report:2.4"
 com-gorylenko-gradle-git-properties = "com.gorylenko.gradle-git-properties:2.4.1"
 io-spring-dependency-management = "io.spring.dependency-management:1.1.0"
 nl-littlerobots-version-catalog-update = "nl.littlerobots.version-catalog-update:0.8.0"
