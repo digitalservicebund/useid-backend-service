@@ -91,18 +91,18 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .expectBody()
             .returnResult()
             .responseBody?.let { prometheusLogRaw ->
-            val prometheusLog = String(bytes = prometheusLogRaw)
-            if (printLog) {
-                val log = KotlinLogging.logger {}
-                println("##### DEBUG LOG \n $prometheusLog")
-                log.info {
-                    "##### DEBUG LOG \n" +
-                        " $prometheusLog"
+                val prometheusLog = String(bytes = prometheusLogRaw)
+                if (printLog) {
+                    val log = KotlinLogging.logger {}
+                    println("##### DEBUG LOG \n $prometheusLog")
+                    log.info {
+                        "##### DEBUG LOG \n" +
+                            " $prometheusLog"
+                    }
                 }
+                val result = expectedPrometheusLogRegex.find(prometheusLog)
+                tenantId = result?.groupValues?.get(1)
             }
-            val result = expectedPrometheusLogRegex.find(prometheusLog)
-            tenantId = result?.groupValues?.get(1)
-        }
         return tenantId
     }
 }
