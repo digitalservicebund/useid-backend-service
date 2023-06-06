@@ -75,6 +75,10 @@ class IdentificationSessionService(
             ?: throw IdentificationSessionNotFoundException()
     }
 
+    fun findByUseIdSessionId(useIdSessionId: UUID): IdentificationSession? {
+        return identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+    }
+
     fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID): IdentificationSession {
         val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
         session!!.eIdSessionId = eIdSessionId

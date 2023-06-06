@@ -80,7 +80,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `start session endpoint returns 403 when no authorization header was passed`() {
-        webTestClient.sendGETRequest(TEST_IDENTIFICATIONS_BASE_PATH).exchange().expectStatus().isForbidden
+        webTestClient.sendGETRequest(TEST_IDENTIFICATIONS_BASE_PATH).expectStatus().isForbidden
     }
 
     @Test
@@ -94,7 +94,6 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .exchange()
             .expectStatus().isOk
             .expectBody().xpath("TCTokenType").exists()
 
@@ -150,7 +149,6 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
         webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
-            .exchange()
             .expectStatus().isOk
 
         webTestClient.sendIdentityRequest(eIdSessionId)
@@ -159,7 +157,7 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
 
     @Test
     fun `identity data endpoint returns 403 when no authorization header was passed`() {
-        webTestClient.sendGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/${UUID.randomUUID()}").exchange().expectStatus().isForbidden
+        webTestClient.sendGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/${UUID.randomUUID()}").expectStatus().isForbidden
     }
 
     @Test
@@ -169,7 +167,8 @@ class IdentificationSessionControllerIntegrationTest(@Autowired val webTestClien
     }
 
     private fun WebTestClient.sendIdentityRequest(eIdSessionId: String) =
-        this.sendGETRequest("$TEST_IDENTIFICATIONS_BASE_PATH/$eIdSessionId")
+        this.get()
+            .uri("$TEST_IDENTIFICATIONS_BASE_PATH/$eIdSessionId")
             .headers { setAuthorizationHeader(it) }
             .exchange()
 }
