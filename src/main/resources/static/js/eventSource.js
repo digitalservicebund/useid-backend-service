@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 function subscribe(widgetSessionId) {
   console.log("Subscribe on events for " + widgetSessionId);
   const eventSource = new EventSource(

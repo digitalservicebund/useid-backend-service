@@ -53,7 +53,7 @@ tracking:
     dimensionIdTenant: "3"
 
 features:
-  desktop-solution-enabled: true
+  desktop-solution-enabled: true # PROTOTYPE LINE
 
 springdoc:
   show-actuator: true

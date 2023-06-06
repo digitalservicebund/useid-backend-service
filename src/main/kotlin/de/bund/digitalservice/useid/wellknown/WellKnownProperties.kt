@@ -24,7 +24,7 @@ class WellKnownProperties {
         lateinit var appIdPreview: String
 
         @NotEmpty
-        lateinit var appIdPrototype: String
+        lateinit var appIdPrototype: String // PROTOTYPE LINE
 
         @NotEmpty
         lateinit var pathUrl: String

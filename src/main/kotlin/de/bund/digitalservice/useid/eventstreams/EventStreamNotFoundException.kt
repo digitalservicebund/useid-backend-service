@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 package de.bund.digitalservice.useid.eventstreams
 
 import java.util.UUID

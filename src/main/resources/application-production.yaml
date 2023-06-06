@@ -17,4 +17,4 @@ tracking:
     dimensionIdTenant: "1"
 
 features:
-  desktop-solution-enabled: false
+  desktop-solution-enabled: false # PROTOTYPE LINE
