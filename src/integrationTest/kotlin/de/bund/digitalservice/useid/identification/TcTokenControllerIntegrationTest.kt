@@ -69,7 +69,8 @@ class TcTokenControllerIntegrationTest(@Autowired val webTestClient: WebTestClie
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
             .expectBody().jsonPath("$.tcTokenUrl").value<String> { tcTokenURL = it }
 
-        webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
+        webTestClient.get()
+            .uri(extractRelativePathFromURL(tcTokenURL))
             .accept(MediaType.TEXT_HTML)
             .exchange()
             .expectStatus().isEqualTo(406)
