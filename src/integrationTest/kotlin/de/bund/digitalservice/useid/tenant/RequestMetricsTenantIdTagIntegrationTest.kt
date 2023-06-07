@@ -7,7 +7,6 @@ import de.bund.digitalservice.useid.identification.sendGETRequest
 import de.bund.digitalservice.useid.identification.sendStartSessionRequest
 import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
-import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterAll
@@ -83,13 +82,13 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
         // Then
         await().atMost(3, TimeUnit.SECONDS)
             .until {
-                getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, printLog = true) != null
+                getTenantIdFromPrometheusLog(expectedPrometheusLogRegex) != null
             }
-        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, printLog = true)
+        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
 
-    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex, printLog: Boolean = false): String? {
+    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex): String? {
         var tenantId: String? = ""
         webTestClient
             .sendGETRequest("actuator/prometheus")
@@ -98,14 +97,6 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .returnResult()
             .responseBody?.let { prometheusLogRaw ->
                 val prometheusLog = String(bytes = prometheusLogRaw)
-                if (printLog) {
-                    val log = KotlinLogging.logger {}
-                    println("##### DEBUG LOG \n $prometheusLog")
-                    log.info {
-                        "##### DEBUG LOG \n" +
-                            " $prometheusLog"
-                    }
-                }
                 val result = expectedPrometheusLogRegex.find(prometheusLog)
                 tenantId = result?.groupValues?.get(1)
             }
