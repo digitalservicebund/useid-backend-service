@@ -9,6 +9,7 @@ import io.mockk.mockkConstructor
 import io.mockk.unmockkAll
 import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureObservability
@@ -79,6 +81,10 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .expectStatus().isOk
 
         // Then
+        await().atMost(3, TimeUnit.SECONDS)
+            .until {
+                getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, printLog = true) != null
+            }
         val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex, printLog = true)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
