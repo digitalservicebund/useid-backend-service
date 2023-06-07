@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 /**
  * This method is only used by the app simulator. The registration would usually be done by the eID-Client in production.
  */

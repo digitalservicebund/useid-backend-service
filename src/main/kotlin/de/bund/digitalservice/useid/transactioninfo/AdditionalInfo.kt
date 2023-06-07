@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 package de.bund.digitalservice.useid.transactioninfo
 
 data class AdditionalInfo(

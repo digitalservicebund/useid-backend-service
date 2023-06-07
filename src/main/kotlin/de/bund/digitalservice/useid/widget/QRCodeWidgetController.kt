@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 package de.bund.digitalservice.useid.widget
 
 import io.micrometer.core.annotation.Timed

@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 const useIdUrl = new URL(document.currentScript.src).origin;
 const widgetContainerId = "useid-widget-container";
 

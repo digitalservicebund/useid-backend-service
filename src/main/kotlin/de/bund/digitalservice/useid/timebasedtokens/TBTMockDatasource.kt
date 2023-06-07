@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 package de.bund.digitalservice.useid.timebasedtokens
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

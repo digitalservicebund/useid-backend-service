@@ -1,3 +1,5 @@
+// PROTOTYPE FILE
+
 package de.bund.digitalservice.useid.timebasedtokens
 
 import java.time.LocalDateTime
