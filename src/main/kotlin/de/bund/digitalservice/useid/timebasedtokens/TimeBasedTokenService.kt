@@ -7,27 +7,27 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
 
-class InvalidUseIdSessionIdException : Exception("No session for useIdSessionId found")
+class InvalidSessionIdException : Exception("No session for this sessionId found")
 
 @Service
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class TimeBasedTokenService(private val mockDatasource: TBTMockDatasource, private val identificationSessionRepository: IdentificationSessionRepository) {
     private val log = KotlinLogging.logger {}
 
-    fun updateOrCreate(useIdSessionId: UUID): TimeBasedToken {
-        if (!identificationSessionRepository.existsByUseIdSessionId(useIdSessionId)) {
-            throw InvalidUseIdSessionIdException()
+    fun updateOrCreate(sessionId: UUID): TimeBasedToken {
+        if (!identificationSessionRepository.existsByUseIdSessionId(sessionId)) {
+            throw InvalidSessionIdException()
         }
         try {
-            mockDatasource.deleteAllByUseIdSessionId(useIdSessionId)
+            mockDatasource.deleteAllBySessionId(sessionId)
         } catch (e: Exception) {
             log.error("Error when deleting time based token", e)
         }
-        return mockDatasource.save(TimeBasedToken(useIdSessionId, UUID.randomUUID()))
+        return mockDatasource.save(TimeBasedToken(sessionId, UUID.randomUUID()))
     }
 
-    fun isTokenValid(useIdSessionId: UUID, tokenId: UUID): Boolean {
-        val token = mockDatasource.findByUseIdSessionIdAndTokenId(useIdSessionId, tokenId)
+    fun isTokenValid(sessionId: UUID, tokenId: UUID): Boolean {
+        val token = mockDatasource.findBySessionIdAndTokenId(sessionId, tokenId)
         return token?.createdAt?.let { it.plusSeconds(60) > LocalDateTime.now() } ?: false
     }
 }

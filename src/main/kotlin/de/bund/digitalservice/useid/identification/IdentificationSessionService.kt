@@ -41,7 +41,7 @@ class IdentificationSessionService(
     }
 
     private fun buildTcTokenUrl(session: IdentificationSession): String {
-        return "${applicationProperties.baseUrl}$IDENTIFICATION_SESSIONS_BASE_PATH/${session.useIdSessionId}/$TCTOKEN_PATH_SUFFIX"
+        return "${applicationProperties.baseUrl}$TCTOKENS_BASE_PATH/${session.useIdSessionId}"
     }
 
     fun startSessionWithEIdServer(useIdSessionId: UUID): TCTokenType {
@@ -55,7 +55,7 @@ class IdentificationSessionService(
             metricsService.incrementSuccessCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
         } catch (e: Exception) {
             metricsService.incrementErrorCounter(METRIC_NAME_EID_TCTOKEN, tenantID)
-            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId", e)
+            log.error("Failed to get tc token for identification session. useIdSessionId=$useIdSessionId")
             throw e
         }
         updateEIdSessionId(useIdSessionId, extractEIdSessionId(tcToken))
@@ -75,6 +75,10 @@ class IdentificationSessionService(
             ?: throw IdentificationSessionNotFoundException()
     }
 
+    fun findByUseIdSessionId(useIdSessionId: UUID): IdentificationSession? {
+        return identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
+    }
+
     fun updateEIdSessionId(useIdSessionId: UUID, eIdSessionId: UUID): IdentificationSession {
         val session = identificationSessionRepository.findByUseIdSessionId(useIdSessionId)
         session!!.eIdSessionId = eIdSessionId
@@ -90,7 +94,7 @@ class IdentificationSessionService(
         val eidInformation = getEidInformation(eIdSessionId, tenantId)
 
         // resultMajor for success can be found in TR 03112 Part 1 -> Section 4.1.2 ResponseType
-        if (eidInformation.result.resultMajor.equals("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok")) {
+        if (eidInformation.result.resultMajor == "http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok") {
             deleteSession(eIdSessionId)
         } else {
             // resultMinor error codes can be found in TR 03130 Part 1 -> 3.4.1 Error Codes

@@ -102,6 +102,10 @@
       "moduleName": "org.apache.groovy:groovy-bom"
     },
     {
+      "moduleLicense": null,
+      "moduleName": "org.jetbrains.kotlin:kotlin-bom"
+    },
+    {
       "moduleLicense": "BSD3"
     },
     {

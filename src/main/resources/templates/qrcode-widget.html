@@ -123,7 +123,7 @@
       const baseUrl = "desktopident://127.0.0.1:24727/eID-Client";
 
       function refreshTimeBasedToken() {
-        fetch(`/api/v1/identification/sessions/${useIdSessionId}/tokens`, {
+        fetch(`/api/v1/sessions/${useIdSessionId}/time-based-tokens`, {
           method: "POST",
         })
           .then((r) => r.json())
@@ -138,7 +138,7 @@
         hash = `hash=${new URL(window.location).searchParams.get("hash")}`;
         tcToken = window.location.hash.replace("#", "");
         useIdSessionId = decodeURIComponent(tcToken).match(
-          /sessions\/([a-f\d\-]*)\/tc-token/i
+          /tc-tokens\/([a-f\d\-]*)/i
         )[1];
         console.log("useIdSessionId: " + useIdSessionId);
         qrCode = new QRCode(document.getElementById("qrcode"), {

@@ -1,10 +1,12 @@
 package de.bund.digitalservice.useid.eventstreams
 
+import de.bund.digitalservice.useid.config.ApplicationProperties
+import de.bund.digitalservice.useid.documentation.EIDClientTag
+import de.bund.digitalservice.useid.documentation.WidgetTag
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.tags.Tag
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
@@ -22,7 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/event-streams")
+@RequestMapping("${ApplicationProperties.apiVersionPrefix}/event-streams")
 @Timed
 @ConditionalOnProperty(name = ["features.desktop-solution-enabled"], havingValue = "true")
 class EventStreamController(private val eventStreamService: EventStreamService) {
@@ -40,7 +42,7 @@ class EventStreamController(private val eventStreamService: EventStreamService) 
         description = "No consumer found for that widgetSessionId",
         content = [Content()],
     )
-    @Tag(name = "eID-Client")
+    @EIDClientTag
     fun sendSuccess(
         @PathVariable eventStreamId: UUID,
         @RequestBody successEvent: SuccessEvent,
@@ -62,7 +64,7 @@ class EventStreamController(private val eventStreamService: EventStreamService) 
         description = "No consumer found for that eventStreamId",
         content = [Content()],
     )
-    @Tag(name = "eID-Client", description = "Those endpoints are called by the eID-Client, i.e. the BundesIdent app.")
+    @EIDClientTag
     fun sendError(@PathVariable eventStreamId: UUID, @RequestBody errorEvent: ErrorEvent): ResponseEntity<Nothing> {
         log.info { "Received event for consumer: $eventStreamId" }
         eventStreamService.publish(errorEvent, EventType.ERROR, eventStreamId)
@@ -76,7 +78,7 @@ class EventStreamController(private val eventStreamService: EventStreamService) 
     @GetMapping(path = ["/{eventStreamId}"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     @Operation(summary = "The widget subscribes at this endpoint to events to get informed about progress of the identification flow by the eID-Client.")
     @ApiResponse(responseCode = "200", content = [Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)])
-    @Tag(name = "Widget", description = "Those endpoints are called by the web widget included as iframe in the eServer web page.")
+    @WidgetTag
     fun subscribe(@PathVariable eventStreamId: UUID): SseEmitter {
         return eventStreamService.subscribe(eventStreamId)
     }

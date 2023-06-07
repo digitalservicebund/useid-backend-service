@@ -3,8 +3,7 @@ package de.bund.digitalservice.useid.tracking
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Tag
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.io.IOException
@@ -13,7 +12,6 @@ import java.net.http.HttpClient
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
 
-@Tag("test")
 class WebRequestsTest {
 
     private val mockClient = mockk<HttpClient>()
@@ -32,11 +30,11 @@ class WebRequestsTest {
         val succeeded = webRequests.POST(url)
 
         // THEN
-        assertEquals(true, succeeded)
+        assertThat(succeeded).isEqualTo(true)
         verify {
             mockClient.send(
                 withArg { request ->
-                    assertEquals(URI(url), request.uri())
+                    assertThat(request.uri()).isEqualTo(URI(url))
                 },
                 BodyHandlers.ofString(),
             )
@@ -52,6 +50,6 @@ class WebRequestsTest {
         val failed = webRequests.POST(url)
 
         // THEN
-        assertEquals(false, failed)
+        assertThat(failed).isEqualTo(false)
     }
 }

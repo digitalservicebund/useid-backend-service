@@ -2,6 +2,7 @@ package de.bund.digitalservice.useid.eidservice
 
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
@@ -29,6 +30,12 @@ class EidServiceProperties {
 
     @Valid
     var soapSigKeystore: Keystore = Keystore()
+
+    @NotNull
+    var connectTimeoutInMillis: Int? = null
+
+    @NotNull
+    var readTimeoutInMillis: Int? = null
 
     class Keystore {
         lateinit var keystore: Resource

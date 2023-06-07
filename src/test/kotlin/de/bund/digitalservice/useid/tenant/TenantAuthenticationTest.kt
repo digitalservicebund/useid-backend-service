@@ -1,10 +1,8 @@
 package de.bund.digitalservice.useid.tenant
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Tag
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-@Tag("test")
 internal class TenantAuthenticationTest {
     private val tenant = Tenant().apply {
         id = "valid-id"
@@ -15,34 +13,34 @@ internal class TenantAuthenticationTest {
 
     @Test
     fun getName() {
-        assertEquals(null, tenantAuthentication.name)
+        assertThat(tenantAuthentication.name).isEqualTo(null)
     }
 
     @Test
     fun getDetails() {
-        assertEquals(tenant.id, tenantAuthentication.details.id)
+        assertThat(tenantAuthentication.details.id).isEqualTo(tenant.id)
     }
 
     @Test
     fun getPrincipal() {
-        assertEquals(tenant.apiKey, tenantAuthentication.principal)
+        assertThat(tenantAuthentication.principal).isEqualTo(tenant.apiKey)
     }
 
     @Test
     fun getAuthorities() {
-        assertEquals(1, tenantAuthentication.authorities.size)
-        assertEquals(MANAGE_IDENTIFICATION_SESSION_AUTHORITY, tenantAuthentication.authorities.first().authority)
+        assertThat(tenantAuthentication.authorities.size).isEqualTo(1)
+        assertThat(tenantAuthentication.authorities.first().authority).isEqualTo(MANAGE_IDENTIFICATION_SESSION_AUTHORITY)
     }
 
     @Test
     fun getCredentials() {
-        assertEquals(tenant.apiKey, tenantAuthentication.credentials)
+        assertThat(tenantAuthentication.credentials).isEqualTo(tenant.apiKey)
     }
 
     @Test
     fun setAuthenticated() {
-        assertEquals(false, tenantAuthentication.isAuthenticated)
+        assertThat(tenantAuthentication.isAuthenticated).isEqualTo(false)
         tenantAuthentication.isAuthenticated = true
-        assertEquals(true, tenantAuthentication.isAuthenticated)
+        assertThat(tenantAuthentication.isAuthenticated).isEqualTo(true)
     }
 }

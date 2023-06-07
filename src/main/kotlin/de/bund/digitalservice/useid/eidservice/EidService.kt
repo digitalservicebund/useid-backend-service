@@ -59,9 +59,7 @@ class EidService constructor(config: EidServiceConfiguration, private val dataGr
 
                 "DG19" -> selector.residencePermitI = AttributeRequestType.REQUIRED
 
-                else -> {
-                    throw IllegalStateException("Invalid data group for this eService")
-                }
+                else -> error("Invalid data group for this eService")
             }
         }
 
