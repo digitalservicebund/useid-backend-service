@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriUtils
+import java.time.Duration
 import java.util.stream.Stream
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,8 +38,9 @@ class GlobalErrorAttributesIntegrationTest(
     @ParameterizedTest
     @MethodSource("acceptedMediaTypesContainingHtml")
     fun `error attributes added if accepted media type contains html`(acceptHeader: String) {
+        val webTestClientWithHigherTimeout = webTestClient.mutate().responseTimeout(Duration.ofSeconds(10)).build()
         // given
-        val response = webTestClient.get()
+        val response = webTestClientWithHigherTimeout.get()
             .uri("/foo/bar")
             .header(HttpHeaders.ACCEPT, acceptHeader)
             // when
@@ -68,7 +70,7 @@ class GlobalErrorAttributesIntegrationTest(
         val nonExistingPath = "/foo/bar"
 
         // when
-        val response = webTestClient.get()
+        webTestClient.get()
             .uri(nonExistingPath)
             .header(HttpHeaders.ACCEPT, acceptHeader)
             .exchange()
