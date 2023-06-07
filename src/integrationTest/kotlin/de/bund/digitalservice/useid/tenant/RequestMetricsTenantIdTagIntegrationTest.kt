@@ -46,7 +46,7 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
         webTestClient.sendStartSessionRequest()
 
         // Then
-        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
+        val tenantId = waitForTenantIdInPrometheusLog(expectedPrometheusLogRegex)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
 
@@ -65,7 +65,7 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
         webTestClient.sendGETRequest(extractRelativePathFromURL(tcTokenURL))
 
         // Then
-        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
+        val tenantId = waitForTenantIdInPrometheusLog(expectedPrometheusLogRegex)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
 
@@ -80,15 +80,19 @@ class RequestMetricsTenantIdTagIntegrationTest(@Autowired val webTestClient: Web
             .expectStatus().isOk
 
         // Then
-        await().atMost(3, TimeUnit.SECONDS)
-            .until {
-                getTenantIdFromPrometheusLog(expectedPrometheusLogRegex) != null
-            }
-        val tenantId = getTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
+        val tenantId = waitForTenantIdInPrometheusLog(expectedPrometheusLogRegex)
         assertThat(tenantId).isEqualTo(expectedTenantId)
     }
 
-    private fun getTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex): String? {
+    private fun waitForTenantIdInPrometheusLog(expectedPrometheusLogRegex: Regex): String? {
+        await().atMost(3, TimeUnit.SECONDS)
+            .until {
+                readTenantIdFromPrometheusLog(expectedPrometheusLogRegex) != null
+            }
+        return readTenantIdFromPrometheusLog(expectedPrometheusLogRegex)
+    }
+
+    private fun readTenantIdFromPrometheusLog(expectedPrometheusLogRegex: Regex): String? {
         var tenantId: String? = ""
         webTestClient
             .sendGETRequest("actuator/prometheus")
