@@ -19,7 +19,7 @@ io-github-microutils-kotlin-logging-jvm = "io.github.microutils:kotlin-logging-j
 io-hypersistence-hypersistence-utils-hibernate = "io.hypersistence:hypersistence-utils-hibernate-60:3.4.2"
 io-lettuce-lettuce-core = "io.lettuce:lettuce-core:6.2.4.RELEASE"
 io-micrometer-micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
-io-sentry-sentry-spring-boot-starter-jakarta = "io.sentry:sentry-spring-boot-starter-jakarta:6.22.0"
+io-sentry-sentry-spring-boot-starter-jakarta = "io.sentry:sentry-spring-boot-starter-jakarta:6.23.0"
 net-javacrumbs-shedlock-shedlock-provider-jdbc-template = "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.4.0"
 net-javacrumbs-shedlock-shedlock-spring = "net.javacrumbs.shedlock:shedlock-spring:5.4.0"
 nz-net-ultraq-thymeleaf-thymeleaf-layout-dialect = { module = "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect" }
