@@ -16,7 +16,7 @@ commons-collections4 = "org.apache.commons:commons-collections4:4.4"
 de-governikus-autent-sdk-eid-webservice-sdk = "de.governikus.autent.sdk:eid-webservice-sdk:3.73.9"
 de-governikus-autent-utils-autent-key-utils = "de.governikus.autent.utils:autent-key-utils:4.0.15"
 io-github-microutils-kotlin-logging-jvm = "io.github.microutils:kotlin-logging-jvm:3.0.5"
-io-hypersistence-hypersistence-utils-hibernate = "io.hypersistence:hypersistence-utils-hibernate-60:3.4.2"
+io-hypersistence-hypersistence-utils-hibernate = "io.hypersistence:hypersistence-utils-hibernate-60:3.5.1"
 io-lettuce-lettuce-core = "io.lettuce:lettuce-core:6.2.4.RELEASE"
 io-micrometer-micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
 io-sentry-sentry-spring-boot-starter-jakarta = "io.sentry:sentry-spring-boot-starter-jakarta:6.23.0"
